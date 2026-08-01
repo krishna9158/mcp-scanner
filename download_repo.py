@@ -15,7 +15,7 @@ def download_repo(github_url, destination_folder="downloaded_repo"):
     print(f"Saving to: {destination_folder}")
 
     try:
-        git.Repo.clone_from(github_url, destination_folder)
+        git.Repo.clone_from(github_url, destination_folder, depth=1)
         print("Success! The code has been downloaded.")
         return destination_folder
     except Exception as e:

@@ -16,8 +16,18 @@ PAGE = """
         <button type="submit" style="padding: 8px;">Scan</button>
     </form>
 
+    {% if error %}
+        <h2 style="color: red;">Scan failed</h2>
+        <p>{{ error }}</p>
+    {% endif %}
+
     {% if report %}
         <h2>Results</h2>
+        {% if report|length == 0 %}
+            <p>No MCP tool definitions were found in this repo. This scanner currently only
+               recognizes Python-based MCP servers (looking for <code>Tool(...)</code> patterns) -
+               it may not support this repo's language or structure yet.</p>
+        {% endif %}
         {% for entry in report %}
             <div style="border: 1px solid #ccc; padding: 10px; margin: 10px 0;">
                 <b>Tool:</b> {{ entry.name }}<br>
@@ -48,12 +58,18 @@ PAGE = """
 @app.route("/", methods=["GET", "POST"])
 def index():
     report = None
+    error = None
     if request.method == "POST":
         github_url = request.form.get("github_url")
-        folder = download_repo(github_url)
-        if folder:
-            report = compare(folder)
-    return render_template_string(PAGE, report=report)
+        try:
+            folder = download_repo(github_url)
+            if folder:
+                report = compare(folder)
+            else:
+                error = "Could not download that repo. Double-check the GitHub URL is correct and public."
+        except Exception as e:
+            error = f"Something went wrong while scanning this repo: {e}"
+    return render_template_string(PAGE, report=report, error=error)
 
 if __name__ == "__main__":
     app.run(debug=True)

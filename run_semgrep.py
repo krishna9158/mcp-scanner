@@ -4,12 +4,22 @@ import json
 def run_semgrep_scan(folder):
     print(f"Scanning {folder} with Semgrep... this may take a minute.")
 
-    result = subprocess.run(
-        ["python", "-m", "semgrep", "--config=auto", "--json", folder],
-        capture_output=True,
-        text=True,
-        timeout=300
-    )
+    try:
+        result = subprocess.run(
+            ["semgrep", "--config=auto", "--json", folder],
+            capture_output=True,
+            text=True,
+            timeout=120  # don't let one huge repo hang the whole app
+        )
+    except subprocess.TimeoutExpired:
+        print("Semgrep timed out on this repo (likely too large) - skipping semgrep findings.")
+        return []
+    except FileNotFoundError:
+        print("Semgrep is not installed/available on this system - skipping semgrep findings.")
+        return []
+    except Exception as e:
+        print(f"Semgrep failed to run: {e}")
+        return []
 
     print("---- RAW OUTPUT START ----")
     print(result.stdout[:500])  # print first 500 characters only
