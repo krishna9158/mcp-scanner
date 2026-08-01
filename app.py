@@ -24,6 +24,16 @@ PAGE = """
                 <b>Claims to do:</b> {{ entry.description[:150] }}<br>
                 <b>Actual behavior:</b> {{ entry.actual_behavior or "None" }}<br>
                 <b>Mismatches:</b> {{ entry.mismatches or "None" }}<br>
+                <b>Semgrep findings:</b>
+                {% if entry.semgrep_findings %}
+                    <ul>
+                    {% for f in entry.semgrep_findings %}
+                        <li>[{{ f.severity }}] Line {{ f.line }}: {{ f.message }}</li>
+                    {% endfor %}
+                    </ul>
+                {% else %}
+                    None
+                {% endif %}<br>
                 <b>Score:</b>
                 <span style="color: {{ 'green' if entry.score == 'GREEN' else ('orange' if entry.score == 'YELLOW' else 'red') }}; font-weight: bold;">
                     {{ entry.score }}
