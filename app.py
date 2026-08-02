@@ -14,6 +14,11 @@ PAGE = """
         <input type="text" name="github_url" placeholder="Paste a GitHub URL"
                style="width: 400px; padding: 8px;">
         <button type="submit" style="padding: 8px;">Scan</button>
+        <br><br>
+        <label style="font-size: 14px; color: #555;">
+            <input type="checkbox" name="full_scan" value="yes">
+            Full scan - no file limit (may be slow on huge repos, use with care)
+        </label>
     </form>
 
     {% if error %}
@@ -27,7 +32,7 @@ PAGE = """
         </div>
     {% endif %}
 
-    {% if report %}
+    {% if report is not none %}
         <h2>Results</h2>
         {% if report|length == 0 %}
             <p>No MCP tool definitions were found in this repo. This scanner currently only
@@ -68,10 +73,11 @@ def index():
     warning = None
     if request.method == "POST":
         github_url = request.form.get("github_url")
+        full_scan = request.form.get("full_scan") == "yes"
         try:
             folder = download_repo(github_url)
             if folder:
-                report, warning = compare(folder)
+                report, warning = compare(folder, full_scan=full_scan)
             else:
                 error = "Could not download that repo. Double-check the GitHub URL is correct and public."
         except Exception as e:

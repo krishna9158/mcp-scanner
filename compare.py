@@ -47,40 +47,48 @@ def group_semgrep_findings_by_file(semgrep_results, folder):
     return grouped
 
 
-def compare(folder, run_semgrep=True):
+def compare(folder, run_semgrep=True, full_scan=False):
     warning = None
 
-    # Fast pre-check: count files up to the higher tool-scan limit, without
-    # reading their contents, to decide how much of this repo we can afford
-    # to look at.
-    sample_files = find_server_files(folder, max_files=MAX_FILES_FOR_TOOL_SCAN + 1)
-    file_count = len(sample_files)
-    tool_scan_capped = file_count > MAX_FILES_FOR_TOOL_SCAN
-    semgrep_too_large = file_count > MAX_FILES_FOR_SEMGREP
-
-    if tool_scan_capped:
-        tools = scan_folder_for_tools(folder, max_files=MAX_FILES_FOR_TOOL_SCAN)
-        behavior_flags = scan_folder(folder, max_files=MAX_FILES_FOR_TOOL_SCAN)
-    else:
+    if full_scan:
+        # Deliberately no limits - only use this for local/CLI runs where
+        # you control the machine and are willing to wait. Never expose
+        # this on the public web app: an unlimited scan on a huge repo
+        # could hang the server for every visitor, not just you.
         tools = scan_folder_for_tools(folder)
         behavior_flags = scan_folder(folder)
+    else:
+        # Fast pre-check: count files up to the higher tool-scan limit, without
+        # reading their contents, to decide how much of this repo we can afford
+        # to look at.
+        sample_files = find_server_files(folder, max_files=MAX_FILES_FOR_TOOL_SCAN + 1)
+        file_count = len(sample_files)
+        tool_scan_capped = file_count > MAX_FILES_FOR_TOOL_SCAN
+        semgrep_too_large = file_count > MAX_FILES_FOR_SEMGREP
 
-    if semgrep_too_large:
-        run_semgrep = False
+        if tool_scan_capped:
+            tools = scan_folder_for_tools(folder, max_files=MAX_FILES_FOR_TOOL_SCAN)
+            behavior_flags = scan_folder(folder, max_files=MAX_FILES_FOR_TOOL_SCAN)
+        else:
+            tools = scan_folder_for_tools(folder)
+            behavior_flags = scan_folder(folder)
 
-    if tool_scan_capped:
-        warning = (
-            f"This repo has more than {MAX_FILES_FOR_TOOL_SCAN} Python files - "
-            f"only the first {MAX_FILES_FOR_TOOL_SCAN} were scanned for tools, "
-            f"and Semgrep was skipped entirely. Try a smaller/more focused "
-            f"MCP server repo for a fully complete scan."
-        )
-    elif semgrep_too_large:
-        warning = (
-            f"This repo has more than {MAX_FILES_FOR_SEMGREP} Python files, so "
-            f"Semgrep was skipped to avoid timing out (tool names/descriptions "
-            f"were still scanned across up to {MAX_FILES_FOR_TOOL_SCAN} files)."
-        )
+        if semgrep_too_large:
+            run_semgrep = False
+
+        if tool_scan_capped:
+            warning = (
+                f"This repo has more than {MAX_FILES_FOR_TOOL_SCAN} Python files - "
+                f"only the first {MAX_FILES_FOR_TOOL_SCAN} were scanned for tools, "
+                f"and Semgrep was skipped entirely. Try a smaller/more focused "
+                f"MCP server repo for a fully complete scan."
+            )
+        elif semgrep_too_large:
+            warning = (
+                f"This repo has more than {MAX_FILES_FOR_SEMGREP} Python files, so "
+                f"Semgrep was skipped to avoid timing out (tool names/descriptions "
+                f"were still scanned across up to {MAX_FILES_FOR_TOOL_SCAN} files)."
+            )
 
     semgrep_by_file = {}
     if run_semgrep:
@@ -141,7 +149,10 @@ def print_report(report):
 
 if __name__ == "__main__":
     folder = input("Path to the downloaded repo folder (e.g. downloaded_repo): ")
-    report, warning = compare(folder)
+    choice = input("Scan ALL files with no limit? This may take a while on huge repos. (y/N): ")
+    full_scan = choice.strip().lower() == "y"
+
+    report, warning = compare(folder, full_scan=full_scan)
     if warning:
         print(f"\n⚠ {warning}\n")
     print_report(report)
