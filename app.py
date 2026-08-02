@@ -1,8 +1,25 @@
 from flask import Flask, request, render_template_string
 from download_repo import download_repo
 from compare import compare
+from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutureTimeoutError
 
 app = Flask(__name__)
+
+# Hard wall-clock cap on the whole scan (download + analysis combined).
+# File-count limits in compare.py help, but they can't catch every slow
+# case (a huge/slow clone, antivirus scanning downloaded files, a network
+# hiccup). This is the real backstop: no matter what's slow, the request
+# always comes back within this many seconds instead of hanging forever.
+SCAN_TIMEOUT_SECONDS = 90
+
+_executor = ThreadPoolExecutor(max_workers=2)
+
+
+def run_scan(github_url, full_scan):
+    folder = download_repo(github_url)
+    if not folder:
+        raise RuntimeError("Could not download that repo. Double-check the GitHub URL is correct and public.")
+    return compare(folder, full_scan=full_scan)
 
 PAGE = """
 <!doctype html>
@@ -75,14 +92,18 @@ def index():
         github_url = request.form.get("github_url")
         full_scan = request.form.get("full_scan") == "yes"
         try:
-            folder = download_repo(github_url)
-            if folder:
-                report, warning = compare(folder, full_scan=full_scan)
-            else:
-                error = "Could not download that repo. Double-check the GitHub URL is correct and public."
+            future = _executor.submit(run_scan, github_url, full_scan)
+            report, warning = future.result(timeout=SCAN_TIMEOUT_SECONDS)
+        except FutureTimeoutError:
+            error = (
+                f"This scan took longer than {SCAN_TIMEOUT_SECONDS} seconds and was stopped "
+                f"to keep the site responsive. This usually means the repo is very large or "
+                f"slow to download. Try a smaller/more focused MCP server repo, or use the "
+                f"'Full scan' option only for repos you know are small."
+            )
         except Exception as e:
             error = f"Something went wrong while scanning this repo: {e}"
     return render_template_string(PAGE, report=report, error=error, warning=warning)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, threaded=True)
