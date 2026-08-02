@@ -24,8 +24,9 @@ def scan_file(filepath):
 
     return findings
 
-def scan_folder(folder):
+def scan_folder(folder, max_files=None):
     results = {}
+    count = 0
     for root, dirs, files in os.walk(folder):
         for file in files:
             if file.endswith(".py"):
@@ -33,6 +34,9 @@ def scan_folder(folder):
                 findings = scan_file(filepath)
                 if findings:
                     results[filepath] = findings
+                count += 1
+                if max_files is not None and count >= max_files:
+                    return results
     return results
 
 if __name__ == "__main__":

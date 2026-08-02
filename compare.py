@@ -1,7 +1,13 @@
 import os
-from extract_tools import scan_folder_for_tools
+from extract_tools import scan_folder_for_tools, find_server_files
 from scan_behavior import scan_folder
 from run_semgrep import run_semgrep_scan
+
+# If a repo has more Python files than this, skip Semgrep entirely and cap
+# the scan - without this, a huge repo (e.g. thousands of files) can make
+# the whole request run long enough that the hosting platform itself times
+# out the request before our own code ever gets a chance to respond.
+MAX_FILES_FOR_FULL_SCAN = 150
 
 EXPECTED_KEYWORDS = {
     "file_access": ["file", "disk", "read", "write", "save", "load"],
@@ -38,8 +44,27 @@ def group_semgrep_findings_by_file(semgrep_results, folder):
 
 
 def compare(folder, run_semgrep=True):
-    tools = scan_folder_for_tools(folder)
-    behavior_flags = scan_folder(folder)
+    warning = None
+
+    # Fast pre-check: just count up to MAX_FILES_FOR_FULL_SCAN + 1 files,
+    # without reading their contents, to decide if this repo is too big
+    # for a full scan.
+    sample_files = find_server_files(folder, max_files=MAX_FILES_FOR_FULL_SCAN + 1)
+    too_large = len(sample_files) > MAX_FILES_FOR_FULL_SCAN
+
+    if too_large:
+        warning = (
+            f"This repo has more than {MAX_FILES_FOR_FULL_SCAN} Python files. "
+            f"To avoid timing out, Semgrep was skipped and only the first "
+            f"{MAX_FILES_FOR_FULL_SCAN} files were scanned for tools. "
+            f"Try a smaller/more focused MCP server repo for a complete scan."
+        )
+        tools = scan_folder_for_tools(folder, max_files=MAX_FILES_FOR_FULL_SCAN)
+        behavior_flags = scan_folder(folder, max_files=MAX_FILES_FOR_FULL_SCAN)
+        run_semgrep = False
+    else:
+        tools = scan_folder_for_tools(folder)
+        behavior_flags = scan_folder(folder)
 
     semgrep_by_file = {}
     if run_semgrep:
@@ -82,7 +107,7 @@ def compare(folder, run_semgrep=True):
             "score": score
         })
 
-    return report
+    return report, warning
 
 def print_report(report):
     if not report:
@@ -100,5 +125,7 @@ def print_report(report):
 
 if __name__ == "__main__":
     folder = input("Path to the downloaded repo folder (e.g. downloaded_repo): ")
-    report = compare(folder)
+    report, warning = compare(folder)
+    if warning:
+        print(f"\n⚠ {warning}\n")
     print_report(report)

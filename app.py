@@ -21,6 +21,12 @@ PAGE = """
         <p>{{ error }}</p>
     {% endif %}
 
+    {% if warning %}
+        <div style="background: #fff3cd; border: 1px solid #ffc107; padding: 10px; margin: 15px 0;">
+            ⚠ {{ warning }}
+        </div>
+    {% endif %}
+
     {% if report %}
         <h2>Results</h2>
         {% if report|length == 0 %}
@@ -59,17 +65,18 @@ PAGE = """
 def index():
     report = None
     error = None
+    warning = None
     if request.method == "POST":
         github_url = request.form.get("github_url")
         try:
             folder = download_repo(github_url)
             if folder:
-                report = compare(folder)
+                report, warning = compare(folder)
             else:
                 error = "Could not download that repo. Double-check the GitHub URL is correct and public."
         except Exception as e:
             error = f"Something went wrong while scanning this repo: {e}"
-    return render_template_string(PAGE, report=report, error=error)
+    return render_template_string(PAGE, report=report, error=error, warning=warning)
 
 if __name__ == "__main__":
     app.run(debug=True)

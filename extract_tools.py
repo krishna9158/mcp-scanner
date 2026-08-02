@@ -1,12 +1,14 @@
 import os
 import re
 
-def find_server_files(folder):
+def find_server_files(folder, max_files=None):
     matches = []
     for root, dirs, files in os.walk(folder):
         for file in files:
             if file.endswith(".py"):
                 matches.append(os.path.join(root, file))
+                if max_files is not None and len(matches) >= max_files:
+                    return matches
     return matches
 
 def build_enum_value_map(content):
@@ -86,9 +88,9 @@ def extract_tools_from_file(filepath):
 
     return tools_found
 
-def scan_folder_for_tools(folder):
+def scan_folder_for_tools(folder, max_files=None):
     all_tools = []
-    files = find_server_files(folder)
+    files = find_server_files(folder, max_files=max_files)
     for filepath in files:
         tools = extract_tools_from_file(filepath)
         all_tools.extend(tools)
