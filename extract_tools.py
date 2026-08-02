@@ -1,12 +1,29 @@
 import os
 import re
 
+def is_test_path(path):
+    """
+    Recognizes common test file/folder conventions so we can skip them.
+    Test fixtures often construct fake Tool(...) objects for mocking, which
+    aren't real server tools and just add noise to the report.
+    """
+    normalized = path.replace("\\", "/").lower()
+    parts = normalized.split("/")
+    if any(part in ("test", "tests", "testing") for part in parts):
+        return True
+    filename = parts[-1]
+    return filename.startswith("test_") or filename.endswith("_test.py") or filename == "conftest.py"
+
+
 def find_server_files(folder, max_files=None):
     matches = []
     for root, dirs, files in os.walk(folder):
         for file in files:
             if file.endswith(".py"):
-                matches.append(os.path.join(root, file))
+                filepath = os.path.join(root, file)
+                if is_test_path(filepath):
+                    continue
+                matches.append(filepath)
                 if max_files is not None and len(matches) >= max_files:
                     return matches
     return matches
@@ -74,6 +91,14 @@ def extract_tools_from_file(filepath):
         name = None
         if raw_name_match:
             name = resolve_name(raw_name_match.group(1), enum_map)
+
+        # If we can't find a name AND can't find a description, this almost
+        # certainly isn't a real tool definition - just some unrelated code
+        # that happens to contain the text "Tool(" (a class definition, an
+        # SDK internal type, part of a vendored dependency, etc). Skip it
+        # rather than reporting a confusing "UNKNOWN / no description" entry.
+        if not name and not desc_match:
+            continue
 
         if not name:
             name = "UNKNOWN"

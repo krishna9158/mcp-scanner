@@ -3,11 +3,15 @@ from extract_tools import scan_folder_for_tools, find_server_files
 from scan_behavior import scan_folder
 from run_semgrep import run_semgrep_scan
 
-# If a repo has more Python files than this, skip Semgrep entirely and cap
-# the scan - without this, a huge repo (e.g. thousands of files) can make
-# the whole request run long enough that the hosting platform itself times
-# out the request before our own code ever gets a chance to respond.
-MAX_FILES_FOR_FULL_SCAN = 150
+# Tool/description scanning is cheap (just reads files and runs regex), so
+# it can handle a much larger repo before it's worth worrying about.
+MAX_FILES_FOR_TOOL_SCAN = 2000
+
+# Semgrep is the truly slow part (deep static analysis per file), so it
+# needs a smaller, safer limit to avoid the whole request running too long.
+# (Semgrep also has its own internal timeout in run_semgrep.py as a backup
+# safety net, in case a repo with fewer files than this still runs slow.)
+MAX_FILES_FOR_SEMGREP = 350
 
 EXPECTED_KEYWORDS = {
     "file_access": ["file", "disk", "read", "write", "save", "load"],
@@ -46,25 +50,37 @@ def group_semgrep_findings_by_file(semgrep_results, folder):
 def compare(folder, run_semgrep=True):
     warning = None
 
-    # Fast pre-check: just count up to MAX_FILES_FOR_FULL_SCAN + 1 files,
-    # without reading their contents, to decide if this repo is too big
-    # for a full scan.
-    sample_files = find_server_files(folder, max_files=MAX_FILES_FOR_FULL_SCAN + 1)
-    too_large = len(sample_files) > MAX_FILES_FOR_FULL_SCAN
+    # Fast pre-check: count files up to the higher tool-scan limit, without
+    # reading their contents, to decide how much of this repo we can afford
+    # to look at.
+    sample_files = find_server_files(folder, max_files=MAX_FILES_FOR_TOOL_SCAN + 1)
+    file_count = len(sample_files)
+    tool_scan_capped = file_count > MAX_FILES_FOR_TOOL_SCAN
+    semgrep_too_large = file_count > MAX_FILES_FOR_SEMGREP
 
-    if too_large:
-        warning = (
-            f"This repo has more than {MAX_FILES_FOR_FULL_SCAN} Python files. "
-            f"To avoid timing out, Semgrep was skipped and only the first "
-            f"{MAX_FILES_FOR_FULL_SCAN} files were scanned for tools. "
-            f"Try a smaller/more focused MCP server repo for a complete scan."
-        )
-        tools = scan_folder_for_tools(folder, max_files=MAX_FILES_FOR_FULL_SCAN)
-        behavior_flags = scan_folder(folder, max_files=MAX_FILES_FOR_FULL_SCAN)
-        run_semgrep = False
+    if tool_scan_capped:
+        tools = scan_folder_for_tools(folder, max_files=MAX_FILES_FOR_TOOL_SCAN)
+        behavior_flags = scan_folder(folder, max_files=MAX_FILES_FOR_TOOL_SCAN)
     else:
         tools = scan_folder_for_tools(folder)
         behavior_flags = scan_folder(folder)
+
+    if semgrep_too_large:
+        run_semgrep = False
+
+    if tool_scan_capped:
+        warning = (
+            f"This repo has more than {MAX_FILES_FOR_TOOL_SCAN} Python files - "
+            f"only the first {MAX_FILES_FOR_TOOL_SCAN} were scanned for tools, "
+            f"and Semgrep was skipped entirely. Try a smaller/more focused "
+            f"MCP server repo for a fully complete scan."
+        )
+    elif semgrep_too_large:
+        warning = (
+            f"This repo has more than {MAX_FILES_FOR_SEMGREP} Python files, so "
+            f"Semgrep was skipped to avoid timing out (tool names/descriptions "
+            f"were still scanned across up to {MAX_FILES_FOR_TOOL_SCAN} files)."
+        )
 
     semgrep_by_file = {}
     if run_semgrep:

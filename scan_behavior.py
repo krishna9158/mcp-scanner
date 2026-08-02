@@ -1,5 +1,6 @@
 import os
 import re
+from extract_tools import is_test_path
 
 SUSPICIOUS_PATTERNS = {
     "file_access": [r'\bopen\s*\(', r'\bos\.remove\(', r'\bos\.rename\(', r'\bshutil\.'],
@@ -31,6 +32,8 @@ def scan_folder(folder, max_files=None):
         for file in files:
             if file.endswith(".py"):
                 filepath = os.path.join(root, file)
+                if is_test_path(filepath):
+                    continue
                 findings = scan_file(filepath)
                 if findings:
                     results[filepath] = findings
