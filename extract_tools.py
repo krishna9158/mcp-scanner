@@ -70,6 +70,51 @@ def resolve_name(raw_name, enum_map):
     return None
 
 
+DECORATOR_PATTERN = re.compile(
+    r'@(?:mcp\.tool\s*\([^)]*\)'                                   # @mcp.tool(...)
+    r'|(?:app|router)\.(?:get|post|put|delete|patch)\s*\([^)]*\))' # @app.get(...) / @router.post(...)
+    r'\s*\n'
+    r'(?:async\s+)?def\s+(\w+)\s*\([^)]*\)\s*(?:->\s*[^:]+)?:\s*\n'
+    r'\s*(?:"""(.*?)"""|\'\'\'(.*?)\'\'\')?',
+    re.DOTALL
+)
+
+
+def extract_decorator_tools_from_file(filepath):
+    """
+    Finds tools defined FastMCP-decorator style, e.g.:
+        @mcp.tool()
+        async def search_documentation(...):
+            \"\"\"Searches AWS documentation...\"\"\"
+    or FastAPI-route style (auto-converted to MCP tools by libraries like
+    fastapi_mcp), e.g.:
+        @app.get("/users/{user_id}")
+        def get_user(user_id: int):
+            \"\"\"Fetch a user by their ID.\"\"\"
+    The tool name comes from the function name; the description comes
+    from its docstring, if present.
+    """
+    with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
+        content = f.read()
+
+    if "@mcp.tool" not in content and "@app." not in content and "@router." not in content:
+        return []
+
+    tools_found = []
+    for match in DECORATOR_PATTERN.finditer(content):
+        name = match.group(1)
+        description = match.group(2) or match.group(3)
+        description = description.strip() if description else "No description found"
+
+        tools_found.append({
+            "file": filepath,
+            "name": name,
+            "description": description[:200]
+        })
+
+    return tools_found
+
+
 def extract_tools_from_file(filepath):
     with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
         content = f.read()
@@ -117,8 +162,18 @@ def scan_folder_for_tools(folder, max_files=None):
     all_tools = []
     files = find_server_files(folder, max_files=max_files)
     for filepath in files:
-        tools = extract_tools_from_file(filepath)
-        all_tools.extend(tools)
+        explicit_tools = extract_tools_from_file(filepath)
+        decorator_tools = extract_decorator_tools_from_file(filepath)
+
+        all_tools.extend(explicit_tools)
+
+        # Avoid double-counting if the same tool name was already found via
+        # the explicit Tool(...) style in this same file.
+        seen_names = {t["name"] for t in explicit_tools}
+        for tool in decorator_tools:
+            if tool["name"] not in seen_names:
+                all_tools.append(tool)
+
     return all_tools
 
 if __name__ == "__main__":
