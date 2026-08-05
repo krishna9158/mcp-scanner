@@ -9,21 +9,23 @@ SUSPICIOUS_PATTERNS = {
     "environment_access": [r'\bos\.environ'],
 }
 
-def scan_file(filepath):
+def scan_text(content):
     findings = []
-    try:
-        with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
-            content = f.read()
-    except Exception:
-        return findings
-
     for category, patterns in SUSPICIOUS_PATTERNS.items():
         for pattern in patterns:
             if re.search(pattern, content):
                 findings.append(category)
                 break
-
     return findings
+
+
+def scan_file(filepath):
+    try:
+        with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
+            content = f.read()
+    except Exception:
+        return []
+    return scan_text(content)
 
 def scan_folder(folder, max_files=None):
     results = {}

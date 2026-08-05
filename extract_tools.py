@@ -70,6 +70,28 @@ def resolve_name(raw_name, enum_map):
     return None
 
 
+def _extract_function_body(content, def_line_start_index):
+    """
+    Given the index where a 'def ...' line starts, returns the full text
+    of that function - from the def line down to (but not including) the
+    next line that isn't indented (i.e. back at the top level, meaning the
+    function has ended). This is a simple indentation-based heuristic, not
+    a full Python parser, but it's enough to isolate one function's code
+    from the rest of the file.
+    """
+    remainder = content[def_line_start_index:]
+    lines = remainder.split("\n")
+    body_lines = [lines[0]]
+    for line in lines[1:]:
+        if line.strip() == "":
+            body_lines.append(line)
+            continue
+        if line[0] not in (" ", "\t"):
+            break
+        body_lines.append(line)
+    return "\n".join(body_lines)
+
+
 DECORATOR_PATTERN = re.compile(
     r'@(?:mcp\.tool\s*\([^)]*\)'                                   # @mcp.tool(...)
     r'|(?:app|router)\.(?:get|post|put|delete|patch)\s*\([^)]*\))' # @app.get(...) / @router.post(...)
@@ -106,10 +128,16 @@ def extract_decorator_tools_from_file(filepath):
         description = match.group(2) or match.group(3)
         description = description.strip() if description else "No description found"
 
+        # Find where this function's `def` line actually starts, so we can
+        # grab its full body for function-scoped behavior checking.
+        def_start = content.find("def ", match.start())
+        code_snippet = _extract_function_body(content, def_start) if def_start != -1 else ""
+
         tools_found.append({
             "file": filepath,
             "name": name,
-            "description": description[:200]
+            "description": description[:200],
+            "code_snippet": code_snippet,
         })
 
     return tools_found

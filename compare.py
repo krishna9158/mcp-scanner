@@ -1,6 +1,6 @@
 import os
 from extract_tools import scan_folder_for_tools, find_server_files
-from scan_behavior import scan_folder
+from scan_behavior import scan_folder, scan_text
 from run_semgrep import run_semgrep_scan
 
 # Tool/description scanning is cheap (just reads files and runs regex), so
@@ -100,8 +100,20 @@ def compare(folder, run_semgrep=True, full_scan=False):
     for tool in tools:
         filepath = tool["file"]
         abs_filepath = os.path.normpath(os.path.abspath(filepath))
-        flags_for_file = behavior_flags.get(filepath, [])
         semgrep_findings = semgrep_by_file.get(abs_filepath, [])
+
+        if tool.get("code_snippet"):
+            # Decorator-style tool: we know exactly which function
+            # implements it, so check behavior against just that function's
+            # code instead of the whole file.
+            flags_for_file = scan_text(tool["code_snippet"])
+        else:
+            # Explicit Tool(...) style: the tool's registration and its
+            # actual implementation are often in different places in the
+            # file, so we fall back to file-level behavior checking here.
+            # This is coarser and can occasionally attribute another
+            # function's behavior to this tool - a known limitation.
+            flags_for_file = behavior_flags.get(filepath, [])
 
         mismatches = []
         for flag in flags_for_file:
