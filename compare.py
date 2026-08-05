@@ -2,6 +2,7 @@ import os
 from extract_tools import scan_folder_for_tools, find_server_files
 from scan_behavior import scan_folder, scan_text
 from run_semgrep import run_semgrep_scan
+from semantic_check import semantic_check_available, verify_mismatch_with_llm
 
 # Tool/description scanning is cheap (just reads files and runs regex), so
 # it can handle a much larger repo before it's worth worrying about.
@@ -13,11 +14,29 @@ MAX_FILES_FOR_TOOL_SCAN = 2000
 # safety net, in case a repo with fewer files than this still runs slow.)
 MAX_FILES_FOR_SEMGREP = 350
 
+# Cap on how many LLM verification calls one scan can make. Semantic
+# verification only runs on tools that ALREADY show a keyword-based
+# mismatch (not every tool), but a huge repo could still have many
+# mismatches - this keeps API cost/time bounded per scan.
+MAX_LLM_VERIFICATIONS_PER_SCAN = 20
+
 EXPECTED_KEYWORDS = {
     "file_access": ["file", "disk", "read", "write", "save", "load"],
     "network_access": ["url", "http", "web", "internet", "fetch", "download", "api", "request"],
     "subprocess_execution": ["run", "execute", "command", "process", "shell"],
     "environment_access": ["environment", "config", "variable", "setting"],
+}
+
+# How serious it is when a tool's code does this WITHOUT its description
+# saying so. Reading env vars (often secrets/credentials) or running
+# arbitrary commands is a much bigger deal to hide than simply touching a
+# file - so these should weigh differently in the final score, not just
+# be counted the same way.
+CAPABILITY_SEVERITY = {
+    "environment_access": "HIGH",
+    "subprocess_execution": "HIGH",
+    "network_access": "MEDIUM",
+    "file_access": "LOW",
 }
 
 def description_mentions_capability(description, category):
@@ -96,6 +115,8 @@ def compare(folder, run_semgrep=True, full_scan=False):
         semgrep_by_file = group_semgrep_findings_by_file(semgrep_results, folder)
 
     report = []
+    llm_calls_used = 0
+    llm_available = semantic_check_available()
 
     for tool in tools:
         filepath = tool["file"]
@@ -120,15 +141,40 @@ def compare(folder, run_semgrep=True, full_scan=False):
             if not description_mentions_capability(tool["description"], flag):
                 mismatches.append(flag)
 
+        # Second opinion pass: for each keyword-based mismatch, ask an LLM
+        # whether the description actually covers it in plain English (just
+        # phrased differently than our keyword list expects). This is
+        # purely additive - it can only REMOVE a mismatch that turns out to
+        # be a false positive, never hide a real one the keyword check
+        # missed. Capped per scan, and only runs on tools that already
+        # have a candidate mismatch, to keep API usage bounded.
+        semantic_notes = []
+        if llm_available and mismatches:
+            code_for_check = tool.get("code_snippet", "")
+            confirmed_mismatches = []
+            for flag in mismatches:
+                if llm_calls_used >= MAX_LLM_VERIFICATIONS_PER_SCAN:
+                    confirmed_mismatches.append(flag)
+                    continue
+                result = verify_mismatch_with_llm(tool["name"], tool["description"], flag, code_for_check)
+                llm_calls_used += 1
+                semantic_notes.append({"category": flag, **result})
+                if not result["covered"]:
+                    confirmed_mismatches.append(flag)
+            mismatches = confirmed_mismatches
+
         # Semgrep findings are proven code-level issues, not just
         # description mismatches -> they push severity up on their own.
         has_high_severity_semgrep = any(
             f["severity"] in ("ERROR", "WARNING") for f in semgrep_findings
         )
 
-        if has_high_severity_semgrep or len(mismatches) > 1:
+        mismatch_severities = {CAPABILITY_SEVERITY.get(m, "LOW") for m in mismatches}
+        if has_high_severity_semgrep or "HIGH" in mismatch_severities:
             score = "RED"
-        elif len(mismatches) == 1 or semgrep_findings:
+        elif "MEDIUM" in mismatch_severities:
+            score = "YELLOW"
+        elif "LOW" in mismatch_severities or semgrep_findings:
             score = "YELLOW"
         else:
             score = "GREEN"
@@ -140,6 +186,7 @@ def compare(folder, run_semgrep=True, full_scan=False):
             "actual_behavior": flags_for_file,
             "mismatches": mismatches,
             "semgrep_findings": semgrep_findings,
+            "semantic_notes": semantic_notes,
             "score": score
         })
 

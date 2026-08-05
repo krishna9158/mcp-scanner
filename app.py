@@ -62,6 +62,14 @@ PAGE = """
                 <b>Claims to do:</b> {{ entry.description[:150] }}<br>
                 <b>Actual behavior:</b> {{ entry.actual_behavior or "None" }}<br>
                 <b>Mismatches:</b> {{ entry.mismatches or "None" }}<br>
+                {% if entry.semantic_notes %}
+                    <b>Semantic check notes:</b>
+                    <ul>
+                    {% for note in entry.semantic_notes %}
+                        <li>{{ note.category }}: {{ "covered" if note.covered else "not covered" }} - {{ note.reasoning }}</li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
                 <b>Semgrep findings:</b>
                 {% if entry.semgrep_findings %}
                     <ul>
