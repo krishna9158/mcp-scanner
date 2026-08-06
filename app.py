@@ -1,8 +1,10 @@
-from flask import Flask, request, render_template_string
+from flask import Flask, request, render_template_string, Response
 from download_repo import download_repo
 from compare import compare
 from secret_detector import scan_folder_for_secrets
 from dependency_check import scan_dependencies
+from badge import generate_badge_svg
+from badge_store import save_scan_result, get_last_scan_result
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutureTimeoutError
 
 app = Flask(__name__)
@@ -15,6 +17,28 @@ app = Flask(__name__)
 SCAN_TIMEOUT_SECONDS = 90
 
 _executor = ThreadPoolExecutor(max_workers=2)
+
+
+def compute_overall_score(report, secrets, dependencies):
+    """
+    Rolls up every finding (tool mismatches, secrets, vulnerable deps) into
+    a single overall score for the whole repo - this is what the README
+    badge shows. Worst finding wins: any RED-equivalent issue anywhere
+    makes the whole repo RED, regardless of how many tools are otherwise
+    clean.
+    """
+    if secrets:
+        return "RED"
+    if dependencies and dependencies.get("findings"):
+        return "RED"
+    if report:
+        scores = {entry["score"] for entry in report}
+        if "RED" in scores:
+            return "RED"
+        if "YELLOW" in scores:
+            return "YELLOW"
+        return "GREEN"
+    return "UNKNOWN"
 
 
 def run_scan(github_url, full_scan):
@@ -51,6 +75,14 @@ PAGE = """
     {% if warning %}
         <div style="background: #fff3cd; border: 1px solid #ffc107; padding: 10px; margin: 15px 0;">
             ⚠ {{ warning }}
+        </div>
+    {% endif %}
+
+    {% if badge_markdown %}
+        <div style="border: 1px solid #ccc; padding: 10px; margin: 15px 0; background: #f7f7f7;">
+            <b>Add this badge to your README:</b><br>
+            <img src="{{ badge_url }}" alt="MCP Security Badge"><br><br>
+            <code style="font-size: 12px;">{{ badge_markdown }}</code>
         </div>
     {% endif %}
 
@@ -135,12 +167,19 @@ def index():
     warning = None
     secrets = None
     dependencies = None
+    badge_markdown = None
+    badge_url = None
     if request.method == "POST":
         github_url = request.form.get("github_url")
         full_scan = request.form.get("full_scan") == "yes"
         try:
             future = _executor.submit(run_scan, github_url, full_scan)
             report, warning, secrets, dependencies = future.result(timeout=SCAN_TIMEOUT_SECONDS)
+
+            overall_score = compute_overall_score(report, secrets, dependencies)
+            save_scan_result(github_url, overall_score)
+            badge_url = f"{request.host_url.rstrip('/')}/badge?repo={github_url}"
+            badge_markdown = f"[![MCP Security]({badge_url})]({github_url})"
         except FutureTimeoutError:
             error = (
                 f"This scan took longer than {SCAN_TIMEOUT_SECONDS} seconds and was stopped "
@@ -150,7 +189,19 @@ def index():
             )
         except Exception as e:
             error = f"Something went wrong while scanning this repo: {e}"
-    return render_template_string(PAGE, report=report, error=error, warning=warning, secrets=secrets, dependencies=dependencies)
+    return render_template_string(
+        PAGE, report=report, error=error, warning=warning, secrets=secrets,
+        dependencies=dependencies, badge_markdown=badge_markdown, badge_url=badge_url
+    )
+
+
+@app.route("/badge")
+def badge_endpoint():
+    github_url = request.args.get("repo", "")
+    result = get_last_scan_result(github_url) if github_url else None
+    score = result["score"] if result else "UNKNOWN"
+    svg = generate_badge_svg("MCP Security", score)
+    return Response(svg, mimetype="image/svg+xml", headers={"Cache-Control": "no-cache, max-age=0"})
 
 if __name__ == "__main__":
     app.run(debug=True, threaded=True)
