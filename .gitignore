@@ -1,0 +1,14 @@
+# Scan output - may contain findings about third-party repos (including
+# secrets they found) that shouldn't be published in this repo's history.
+scan_results.json
+
+# Temporary clones of scanned repos - never this project's own code.
+downloaded_repo/
+downloaded_repo*/
+
+# Python bytecode cache - regenerated automatically, no need to track it.
+__pycache__/
+*.pyc
+
+# Local environment / secrets
+.env
