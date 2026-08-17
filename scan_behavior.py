@@ -31,6 +31,7 @@ def scan_folder(folder, max_files=None):
     results = {}
     count = 0
     for root, dirs, files in os.walk(folder):
+        dirs[:] = [d for d in dirs if d.lower() not in (".git", "node_modules", "dist", "build", "vendor", "third_party", ".pytest_cache", ".venv", "venv", ".next", "coverage")]
         for file in files:
             if file.endswith(".py"):
                 filepath = os.path.join(root, file)
@@ -43,6 +44,7 @@ def scan_folder(folder, max_files=None):
                 if max_files is not None and count >= max_files:
                     return results
     return results
+
 
 if __name__ == "__main__":
     folder = input("Path to the downloaded repo folder (e.g. downloaded_repo): ")

@@ -1,6 +1,12 @@
 import os
 
 try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
+try:
     import requests
 except ImportError:
     requests = None
@@ -9,11 +15,24 @@ ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages"
 MODEL = "claude-haiku-4-5-20251001"
 
 
+_semantic_check_failed_permanently = False
+
+
 def semantic_check_available():
+    global _semantic_check_failed_permanently
+    if _semantic_check_failed_permanently:
+        return False
     return bool(os.environ.get("ANTHROPIC_API_KEY")) and requests is not None
 
 
 def verify_mismatch_with_llm(tool_name, description, category, code_snippet):
+    global _semantic_check_failed_permanently
+    if _semantic_check_failed_permanently:
+        return {
+            "covered": False,
+            "reasoning": "Semantic verification skipped (previous API call failed).",
+        }
+
     api_key = os.environ.get("ANTHROPIC_API_KEY")
     if not api_key or requests is None:
         return {
@@ -47,8 +66,14 @@ def verify_mismatch_with_llm(tool_name, description, category, code_snippet):
                 "max_tokens": 150,
                 "messages": [{"role": "user", "content": prompt}],
             },
-            timeout=15,
+            timeout=5,
         )
+        if response.status_code in (401, 403):
+            _semantic_check_failed_permanently = True
+            return {
+                "covered": False,
+                "reasoning": "Anthropic API key is invalid or unauthorized - disabling semantic verification for remaining tools.",
+            }
         response.raise_for_status()
         data = response.json()
         text = "".join(
@@ -64,3 +89,4 @@ def verify_mismatch_with_llm(tool_name, description, category, code_snippet):
             "covered": False,
             "reasoning": f"Semantic verification call failed ({e}) - keeping keyword-based result.",
         }
+

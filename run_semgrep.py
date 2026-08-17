@@ -1,36 +1,100 @@
 import subprocess
 import sys
 import json
+import os
+import shutil
+import site
+import sysconfig
 
 
-def _run_semgrep_command(command, folder):
+def _get_semgrep_env_and_candidates():
+    """Finds available candidate commands for semgrep and sets up PATH."""
+    dirs_to_check = []
+    if hasattr(site, "getuserbase"):
+        ub = site.getuserbase()
+        py_ver = f"Python{sys.version_info.major}{sys.version_info.minor}"
+        dirs_to_check.append(os.path.join(ub, py_ver, "Scripts"))
+        dirs_to_check.append(os.path.join(ub, "Scripts"))
+    try:
+        dirs_to_check.append(sysconfig.get_path("scripts"))
+    except Exception:
+        pass
+    dirs_to_check.append(os.path.join(sys.prefix, "Scripts"))
+
+    valid_dirs = [d for d in dirs_to_check if d and os.path.isdir(d)]
+    env = os.environ.copy()
+    if valid_dirs:
+        env["PATH"] = os.pathsep.join(valid_dirs) + os.pathsep + env.get("PATH", "")
+
+    candidates = []
+    # Look for semgrep or pysemgrep in PATH (including python scripts folders)
+    for bin_name in ["semgrep", "pysemgrep", "semgrep.exe", "pysemgrep.exe"]:
+        bin_path = shutil.which(bin_name, path=env.get("PATH"))
+        if bin_path and [bin_path] not in candidates:
+            candidates.append([bin_path])
+
+    if ["semgrep"] not in candidates:
+        candidates.append(["semgrep"])
+    if ["pysemgrep"] not in candidates:
+        candidates.append(["pysemgrep"])
+
+    return candidates, env
+
+
+SEMGREP_EXCLUDES = [
+    "--exclude=.git",
+    "--exclude=node_modules",
+    "--exclude=dist",
+    "--exclude=build",
+    "--exclude=.venv",
+    "--exclude=venv",
+    "--exclude=vendor",
+    "--exclude=third_party",
+    "--exclude=.next",
+    "--exclude=coverage",
+    "--exclude=.pytest_cache",
+    "--exclude=*.min.js",
+    "--exclude=*.min.css",
+    "--exclude=*-lock.json",
+    "--exclude=*.lock",
+    "--max-target-bytes=2000000",
+]
+
+
+def _run_semgrep_command(command, folder, env=None):
     """Runs one candidate way of invoking Semgrep. Returns the completed
     process, or raises FileNotFoundError/TimeoutExpired for the caller to
     handle."""
     return subprocess.run(
-        command + ["--config=auto", "--json", folder],
-        capture_output=True, text=True, timeout=120
+        command + ["--config=auto", "--json"] + SEMGREP_EXCLUDES + [folder],
+        capture_output=True,
+        encoding="utf-8",
+        errors="replace",
+        timeout=45,
+        env=env,
     )
+
 
 
 def run_semgrep_scan(folder):
     print(f"Scanning {folder} with Semgrep... this may take a minute.")
 
-    # Two ways to invoke Semgrep, tried in order:
-    #   1. The plain "semgrep" command - works when it's on the system PATH.
-    #   2. "python -m semgrep" - works even when the "semgrep" command isn't
-    #      on PATH (a common situation right after "pip install semgrep" on
-    #      Windows), since this runs it through the exact same Python
-    #      interpreter that's already running this script, with no
-    #      dependency on PATH at all.
-    candidate_commands = [["semgrep"], [sys.executable, "-m", "semgrep"]]
+    candidates, env = _get_semgrep_env_and_candidates()
 
     result = None
     last_error = None
-    for command in candidate_commands:
+    for command in candidates:
         try:
-            result = _run_semgrep_command(command, folder)
-            break
+            res = _run_semgrep_command(command, folder, env=env)
+            if res.stdout and res.stdout.strip().startswith("{"):
+                result = res
+                break
+            elif res.returncode == 0:
+                result = res
+                break
+            else:
+                last_error = f"Command {command} returned code {res.returncode}: {res.stderr.strip() if res.stderr else res.stdout.strip()}"
+                continue
         except FileNotFoundError as e:
             last_error = e
             continue
@@ -38,13 +102,12 @@ def run_semgrep_scan(folder):
             print("Semgrep timed out on this repo (likely too large) - skipping semgrep findings.")
             return []
         except Exception as e:
-            print(f"Semgrep failed to run: {e}")
-            return []
+            last_error = e
+            continue
 
-    if result is None:
+    if result is None or not result.stdout.strip():
         print(
-            "Semgrep is not installed/available on this system (tried both "
-            "'semgrep' and 'python -m semgrep') - skipping semgrep findings. "
+            f"Semgrep is not available or failed to produce JSON output ({last_error or 'no output'}) - skipping semgrep findings. "
             "Install it with: pip install semgrep"
         )
         return []
@@ -73,3 +136,4 @@ if __name__ == "__main__":
     folder = input("Path to the downloaded repo folder (e.g. downloaded_repo): ")
     findings = run_semgrep_scan(folder)
     summarize_findings(findings)
+

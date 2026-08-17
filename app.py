@@ -5,7 +5,14 @@ import threading
 import uuid
 import multiprocessing
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 from flask import Flask, request, render_template_string, Response, jsonify
+
 from download_repo import download_repo, remove_readonly
 from badge import generate_badge_svg
 from badge_store import save_scan_result, get_last_scan_result
@@ -63,13 +70,18 @@ def run_scan_with_hard_timeout(github_url, full_scan):
 
     try:
         process.start()
-        process.join(timeout=SCAN_TIMEOUT_SECONDS)
-
-        if process.is_alive():
-            process.terminate()
-            process.join(5)
+        # Read from the queue BEFORE joining the process. If a large report
+        # is put into the queue, the background feeder thread blocks until
+        # the parent drains the pipe. Calling process.join() before result_queue.get()
+        # causes a classic multiprocessing pipe-buffer deadlock.
+        try:
+            status, payload = result_queue.get(timeout=SCAN_TIMEOUT_SECONDS)
+        except Exception:
             if process.is_alive():
-                process.kill()
+                process.terminate()
+                process.join(5)
+                if process.is_alive():
+                    process.kill()
             raise TimeoutError(
                 f"This scan took longer than {SCAN_TIMEOUT_SECONDS} seconds and was stopped "
                 f"to keep the site responsive. This usually means the repo is very large or "
@@ -77,10 +89,11 @@ def run_scan_with_hard_timeout(github_url, full_scan):
                 f"'Full scan' option only for repos you know are small."
             )
 
-        if result_queue.empty():
-            raise RuntimeError("The scan process ended unexpectedly without a result.")
+        process.join(timeout=10)
+        if process.is_alive():
+            process.terminate()
+            process.join(2)
 
-        status, payload = result_queue.get()
         if status == "error":
             raise RuntimeError(payload)
 
@@ -89,6 +102,7 @@ def run_scan_with_hard_timeout(github_url, full_scan):
     finally:
         if os.path.exists(destination_folder):
             shutil.rmtree(destination_folder, onerror=remove_readonly, ignore_errors=True)
+
 
 def execute_scan(github_url, full_scan):
     """
@@ -266,6 +280,46 @@ PAGE = """
                         <b>What to do:</b> {{ entry.risk_prevention }}
                     </div>
                 {% endif %}
+
+                {# Blast Radius (Feature 2) #}
+                {% if entry.blast_radius %}
+                    <b>Blast radius:</b>
+                    {% set br_score = entry.blast_radius.score %}
+                    {% set br_label = entry.blast_radius.label %}
+                    <span style="font-weight: bold; color: {{ '#b30000' if br_score >= 75 else ('#d17b00' if br_score >= 50 else ('#8a7500' if br_score >= 25 else '#2e7d32')) }};">
+                        {{ br_score }}/100 — {{ br_label }}
+                    </span>
+                    {% if entry.blast_radius.attack_paths %}
+                        <div style="font-size: 13px; color: #555; margin: 4px 0 4px 12px;">
+                            <b>Attack paths:</b>
+                            <ul style="margin: 4px 0 4px 16px; padding: 0;">
+                            {% for ap in entry.blast_radius.attack_paths %}
+                                <li>{{ ap }}</li>
+                            {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                {% endif %}
+
+                {# Permission Matrix (Feature 1) #}
+                {% if entry.permission_matrix %}
+                    {% set pm = entry.permission_matrix %}
+                    <b>Permission analysis:</b>
+                    <span style="font-size: 12px; color: {{ '#b30000' if pm.severity == 'HIGH' else ('#d17b00' if pm.severity == 'MEDIUM' else '#555') }};">
+                        severity={{ pm.severity }}
+                    </span>
+                    {% if pm.findings %}
+                        <div style="font-size: 13px; color: #555; margin: 4px 0 4px 12px;">
+                            <b>Findings:</b>
+                            <ul style="margin: 4px 0 4px 16px; padding: 0;">
+                            {% for f in pm.findings %}
+                                <li>[{{ f.severity }}] {{ f.type }}: {{ f.detail }}</li>
+                            {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                {% endif %}
+
                 <b>Actual behavior:</b> {{ entry.actual_behavior or "None" }}<br>
                 <b>Mismatches:</b> {{ entry.mismatches or "None" }}<br>
                 {% if entry.mismatch_impacts %}

@@ -8,6 +8,8 @@ from risk_classifier import classify_tool_risk
 from prompt_injection_check import check_description_for_injection
 from tool_shadowing_check import scan_tools_for_shadowing
 from impact_guide import get_capability_impact, get_risk_prevention, INJECTION_IMPACT, SHADOWING_IMPACT
+from tool_analyzer import analyze_tool_permissions
+from blast_radius import compute_blast_radius, compute_all_blast_radii, get_repo_blast_summary
 
 # Tool/description scanning is cheap (just reads files and runs regex), so
 # it can handle a much larger repo before it's worth worrying about. This
@@ -204,6 +206,19 @@ def compare(folder, run_semgrep=True, full_scan=False):
         else:
             score = "GREEN"
 
+        # Tool & Permission Analyzer (Feature 1): declared vs actual
+        # capabilities per tool, plus permission discrepancy detection.
+        permission_matrix = analyze_tool_permissions(tool)
+
+        # Blast Radius & Attack-Path Analysis (Feature 2): score how far
+        # a compromised tool's impact could reach.
+        blast_radius = compute_blast_radius(
+            tool["name"],
+            tool["description"],
+            flags_for_file,
+            risk_info["risk_level"],
+        )
+
         report.append({
             "name": tool["name"],
             "description": tool["description"],
@@ -223,6 +238,8 @@ def compare(folder, run_semgrep=True, full_scan=False):
             "injection_impact": INJECTION_IMPACT if injection_findings else None,
             "shadowing_findings": shadowing_findings,
             "shadowing_impact": SHADOWING_IMPACT if shadowing_findings else None,
+            "permission_matrix": permission_matrix,
+            "blast_radius": blast_radius,
             "score": score
         })
 

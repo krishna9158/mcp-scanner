@@ -42,10 +42,7 @@ def is_test_or_build_path(path):
 def find_js_ts_files(folder, max_files=None):
     matches = []
     for root, dirs, files in os.walk(folder):
-        # Prune noisy/huge directories BEFORE descending into them - far
-        # faster than walking into node_modules (which can be tens of
-        # thousands of files) and filtering afterwards.
-        dirs[:] = [d for d in dirs if d.lower() not in ("node_modules", "dist", "build", ".next", "coverage", ".git")]
+        dirs[:] = [d for d in dirs if d.lower() not in ("node_modules", "dist", "build", ".next", "coverage", ".git", ".venv", "venv", ".pytest_cache")]
         for file in files:
             if file.endswith(JS_TS_EXTENSIONS):
                 filepath = os.path.join(root, file)
@@ -59,39 +56,10 @@ def find_js_ts_files(folder, max_files=None):
 
 # --- Tool extraction -----------------------------------------------------
 
-# Matches the two common ways an MCP tool is registered with the official
-# JS/TS SDK:
-#   server.tool("name", "description", schema, handler)
-#   server.registerTool("name", { title, description: "...", ... }, handler)
-TOOL_CALL_PATTERN = re.compile(
-    r'\.(?:tool|registerTool)\s*\(\s*'
-    r'["\'`]([^"\'`]+)["\'`]'
-    r'\s*,\s*'
-    r'(?:'
-    r'["\'`]([^"\'`]*)["\'`]'
-    r'|'
-    r'\{[^{}]*?description\s*:\s*["\'`]([^"\'`]*)["\'`]'
-    r')',
-    re.DOTALL
-)
-
-# Matches raw tool object literals some servers build by hand, e.g.:
-#   { name: "search", description: "Searches the web", inputSchema: {...} }
-RAW_TOOL_OBJECT_PATTERN = re.compile(
-    r'\{\s*name\s*:\s*["\'`]([^"\'`]+)["\'`]\s*,\s*description\s*:\s*["\'`]([^"\'`]*)["\'`]',
-    re.DOTALL
-)
-
-
-def _extract_balanced_braces(content, start_index, max_length=4000):
+def _extract_balanced_braces(content, start_index, max_length=100000):
     """
-    JS/TS has no indentation rule like Python, so isolating "just this
-    one tool's code" needs a different approach than extract_tools.py's
-    indentation-based function extractor. This walks forward from an
-    opening ( or { counting matching brace/paren depth until it returns
-    to zero, which marks where this call/block actually ends - capped at
-    max_length as a safety limit against unusually large or malformed
-    files.
+    Isolates tool handler blocks in JS/TS by walking matching brace/paren
+    depth up to max_length (100k chars) to support large tools in big files.
     """
     depth = 0
     started = False
@@ -115,37 +83,84 @@ def extract_tools_from_js_file(filepath):
     except Exception:
         return []
 
-    if ".tool(" not in content and ".registerTool(" not in content and "description" not in content:
+    if ".tool(" not in content and ".registerTool(" not in content and ".addTool(" not in content and "description" not in content:
         return []
 
     tools_found = []
     seen_names = set()
 
-    for match in TOOL_CALL_PATTERN.finditer(content):
-        name = match.group(1)
-        description = match.group(2) or match.group(3) or "No description found"
-        code_snippet = _extract_balanced_braces(content, match.start())
-        tools_found.append({
-            "file": filepath,
-            "name": name,
-            "description": description.strip()[:200],
-            "code_snippet": code_snippet,
-        })
-        seen_names.add(name)
+    # 1. Matches .tool(...) or .registerTool(...) or .addTool(...)
+    call_matches = re.finditer(r'\.(?:tool|registerTool|addTool)\s*\(', content)
+    for call_match in call_matches:
+        start_idx = call_match.start()
+        call_snippet = _extract_balanced_braces(content, start_idx, max_length=100000)
 
-    for match in RAW_TOOL_OBJECT_PATTERN.finditer(content):
-        name = match.group(1)
-        if name in seen_names:
+        # Positional string name first: .tool("name", ...)
+        pos_match = re.match(
+            r'\.(?:tool|registerTool|addTool)\s*\(\s*["\'`]([^"\'`]+)["\'`]',
+            call_snippet
+        )
+        if pos_match:
+            name = pos_match.group(1)
+            desc = "No description found"
+            desc_arg_match = re.match(
+                r'\.(?:tool|registerTool|addTool)\s*\(\s*["\'`][^"\'`]+["\'`]\s*,\s*["\'`]([^"\'`]*)["\'`]',
+                call_snippet
+            )
+            if desc_arg_match:
+                desc = desc_arg_match.group(1)
+            else:
+                desc_obj_match = re.search(r'description\s*:\s*["\'`]([^"\'`]*)["\'`]', call_snippet)
+                if desc_obj_match:
+                    desc = desc_obj_match.group(1)
+
+            if name not in seen_names:
+                tools_found.append({
+                    "file": filepath,
+                    "name": name,
+                    "description": desc.strip(),
+                    "code_snippet": call_snippet,
+                })
+                seen_names.add(name)
             continue
-        description = match.group(2)
-        code_snippet = _extract_balanced_braces(content, match.start())
-        tools_found.append({
-            "file": filepath,
-            "name": name,
-            "description": description.strip()[:200],
-            "code_snippet": code_snippet,
-        })
-        seen_names.add(name)
+
+        # Options object argument: .tool({ name: "...", description: "..." })
+        name_match = re.search(r'name\s*:\s*["\'`]([^"\'`]+)["\'`]', call_snippet)
+        desc_match = re.search(r'description\s*:\s*["\'`]([^"\'`]*)["\'`]', call_snippet)
+        if name_match:
+            name = name_match.group(1)
+            desc = desc_match.group(1) if desc_match else "No description found"
+            if name not in seen_names:
+                tools_found.append({
+                    "file": filepath,
+                    "name": name,
+                    "description": desc.strip(),
+                    "code_snippet": call_snippet,
+                })
+                seen_names.add(name)
+
+    # 2. Raw tool object literals in arrays/variables
+    obj_matches = re.finditer(
+        r'\{[^{}]*?name\s*:\s*["\'`]([^"\'`]+)["\'`][^{}]*?\}|\{[^{}]*?description\s*:\s*["\'`]([^"\'`]+)["\'`][^{}]*?\}',
+        content,
+        re.DOTALL
+    )
+    for obj_match in obj_matches:
+        block = obj_match.group(0)
+        name_m = re.search(r'name\s*:\s*["\'`]([^"\'`]+)["\'`]', block)
+        desc_m = re.search(r'description\s*:\s*["\'`]([^"\'`]*)["\'`]', block)
+        if name_m and desc_m:
+            name = name_m.group(1)
+            if name not in seen_names and name not in ("type", "string", "number", "boolean", "object", "array"):
+                desc = desc_m.group(1)
+                snippet = _extract_balanced_braces(content, obj_match.start(), max_length=100000)
+                tools_found.append({
+                    "file": filepath,
+                    "name": name,
+                    "description": desc.strip(),
+                    "code_snippet": snippet,
+                })
+                seen_names.add(name)
 
     return tools_found
 
@@ -155,6 +170,7 @@ def scan_folder_for_js_tools(folder, max_files=None):
     for filepath in find_js_ts_files(folder, max_files=max_files):
         all_tools.extend(extract_tools_from_js_file(filepath))
     return all_tools
+
 
 
 # --- Behavior scanning (JS/TS equivalent of scan_behavior.py) -----------
@@ -189,7 +205,7 @@ def scan_js_file(filepath):
 def scan_js_folder(folder, max_files=None):
     results = {}
     count = 0
-    for filepath in find_js_ts_files(folder, max_files=None):
+    for filepath in find_js_ts_files(folder, max_files=max_files):
         findings = scan_js_file(filepath)
         if findings:
             results[filepath] = findings
@@ -197,6 +213,7 @@ def scan_js_folder(folder, max_files=None):
         if max_files is not None and count >= max_files:
             break
     return results
+
 
 
 if __name__ == "__main__":

@@ -49,7 +49,8 @@ PLACEHOLDER_VALUES = {
 # obfuscated code, not secrets, and lockfiles/vendored code isn't this
 # project's own secrets to fix even if something matched.
 SKIP_FILENAME_PATTERNS = (".min.js", ".min.css", "-lock.json", ".lock")
-SKIP_PATH_SEGMENTS = ("vendor", "third_party", "node_modules", "dist", "build")
+SKIP_PATH_SEGMENTS = ("vendor", "third_party", "node_modules", "dist", "build", ".git", ".pytest_cache", ".venv", "venv", ".next", "coverage")
+MAX_INDIVIDUAL_FILE_BYTES = 5 * 1024 * 1024  # 5 MB max per file for regex analysis
 
 
 def _should_skip_file(filepath):
@@ -81,6 +82,10 @@ ENTROPY_THRESHOLD = 3.5
 def scan_text_for_secrets(content, filepath="unknown"):
     findings = []
 
+    # Limit string length processed at once to prevent regex hangs on giant strings
+    if len(content) > MAX_INDIVIDUAL_FILE_BYTES:
+        content = content[:MAX_INDIVIDUAL_FILE_BYTES]
+
     for secret_type, pattern in KNOWN_SECRET_PATTERNS.items():
         for match in pattern.finditer(content):
             findings.append({
@@ -108,7 +113,7 @@ def scan_text_for_secrets(content, filepath="unknown"):
     return findings
 
 
-def scan_folder_for_secrets(folder, max_files=500):
+def scan_folder_for_secrets(folder, max_files=5000):
     all_findings = []
     count = 0
     for root, dirs, files in os.walk(folder):
@@ -119,13 +124,17 @@ def scan_folder_for_secrets(folder, max_files=500):
                 if _should_skip_file(filepath):
                     continue
                 try:
+                    # Skip extremely large binary/data dumps
+                    if os.path.getsize(filepath) > 20 * 1024 * 1024:
+                        continue
                     with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
-                        content = f.read()
+                        content = f.read(MAX_INDIVIDUAL_FILE_BYTES)
                 except Exception:
                     continue
                 findings = scan_text_for_secrets(content, filepath)
                 all_findings.extend(findings)
                 count += 1
-                if count >= max_files:
+                if max_files is not None and count >= max_files:
                     return all_findings
     return all_findings
+

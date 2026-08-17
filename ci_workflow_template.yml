@@ -40,8 +40,32 @@ jobs:
       - name: Install scanner dependencies
         run: pip install -r scanner/requirements.txt
 
-      - name: Run MCP security scan
-        run: python scanner/ci_scan.py target-repo --json-out scan-results.json
+      # --- STRICT MODE: fail on any finding above configured thresholds ---
+      # Uses fine-grained thresholds (Feature 5) instead of only --fail-on RED.
+      - name: Run MCP security scan (strict thresholds)
+        run: |
+          python scanner/ci_scan.py target-repo \
+            --json-out scan-results.json \
+            --fail-on RED \
+            --fail-on-secret HIGH \
+            --fail-on-dependency HIGH \
+            --fail-on-typosquat MEDIUM \
+            --fail-on-tool YELLOW \
+            --fail-on-injection MEDIUM \
+            --fail-on-shadowing HIGH
+
+      # --- LENIENT MODE (uncomment to use instead of strict) ---
+      # - name: Run MCP security scan (lenient thresholds)
+      #   run: |
+      #     python scanner/ci_scan.py target-repo \
+      #       --json-out scan-results.json \
+      #       --fail-on RED \
+      #       --fail-on-secret CRITICAL \
+      #       --fail-on-dependency CRITICAL \
+      #       --fail-on-typosquat LOW \
+      #       --fail-on-tool RED \
+      #       --fail-on-injection HIGH \
+      #       --fail-on-shadowing CRITICAL
 
       - name: Upload full scan results
         if: always()   # upload even if the scan step above failed the build

@@ -37,8 +37,9 @@ def run_scan_worker(github_url, full_scan, destination_folder, result_queue):
             result_queue.put(("error", "Could not download that repo. Double-check the GitHub URL is correct and public."))
             return
         report, warning = compare(folder, full_scan=full_scan)
-        secrets = scan_folder_for_secrets(folder)
-        dependencies = scan_dependencies(folder, max_packages=30)
+        secrets = scan_folder_for_secrets(folder, max_files=None if full_scan else 5000)
+        dependencies = scan_dependencies(folder, max_packages=100 if full_scan else 30)
+
 
         typosquats = []
         req_path = os.path.join(folder, "requirements.txt")
