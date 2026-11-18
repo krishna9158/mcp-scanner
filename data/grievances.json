@@ -1,0 +1,62 @@
+[
+  {
+    "reference_id": "GRV-1795033169-7C0C",
+    "name": "Alice User",
+    "email": "alice@example.com",
+    "company": "",
+    "category": "Privacy Rights",
+    "description": "Request erasure under DPDP",
+    "submission_date": "2026-11-18 20:19:29 UTC",
+    "status": "RECEIVED",
+    "assigned_to": "Privacy & Grievance Contact",
+    "investigation_notes": "Ticket logged via public Trust Centre. Acknowledged.",
+    "resolution_date": null,
+    "audit_history": [
+      {
+        "timestamp": "2026-11-18 20:19:29 UTC",
+        "action": "Ticket Created",
+        "details": "Category: Privacy Rights"
+      }
+    ]
+  },
+  {
+    "reference_id": "GRV-1795034340-1B04",
+    "name": "Jane Principal",
+    "email": "jane@data-principal.in",
+    "company": "Data Subject Rights",
+    "category": "Consent Withdrawal Inquiry",
+    "description": "Requesting confirmation of stop-processing instruction.",
+    "submission_date": "2026-11-18 20:39:00 UTC",
+    "status": "RECEIVED",
+    "assigned_to": "Privacy & Grievance Contact",
+    "investigation_notes": "Ticket logged via public Trust Centre. Acknowledged.",
+    "resolution_date": null,
+    "audit_history": [
+      {
+        "timestamp": "2026-11-18 20:39:00 UTC",
+        "action": "Ticket Created",
+        "details": "Category: Consent Withdrawal Inquiry"
+      }
+    ]
+  },
+  {
+    "reference_id": "GRV-1795034488-058E",
+    "name": "Jane Principal",
+    "email": "jane@data-principal.in",
+    "company": "Data Subject Rights",
+    "category": "Consent Withdrawal Inquiry",
+    "description": "Requesting confirmation of stop-processing instruction.",
+    "submission_date": "2026-11-18 20:41:28 UTC",
+    "status": "RECEIVED",
+    "assigned_to": "Privacy & Grievance Contact",
+    "investigation_notes": "Ticket logged via public Trust Centre. Acknowledged.",
+    "resolution_date": null,
+    "audit_history": [
+      {
+        "timestamp": "2026-11-18 20:41:28 UTC",
+        "action": "Ticket Created",
+        "details": "Category: Consent Withdrawal Inquiry"
+      }
+    ]
+  }
+]

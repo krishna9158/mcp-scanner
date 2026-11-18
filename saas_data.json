@@ -566,6 +566,312 @@
       "created_at": 1795029988.0546324,
       "max_projects": 10,
       "scans_count": 0
+    },
+    "org-ea336624": {
+      "id": "org-ea336624",
+      "name": "Fintech Startup Ltd",
+      "slug": "fintech-startup-ltd",
+      "plan": "starter",
+      "created_at": 1795033920.341696,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-deeb6414": {
+      "id": "org-deeb6414",
+      "name": "Company Alpha",
+      "slug": "company-alpha",
+      "plan": "starter",
+      "created_at": 1795033921.8704133,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-3f0c0a16": {
+      "id": "org-3f0c0a16",
+      "name": "Company Beta",
+      "slug": "company-beta",
+      "plan": "starter",
+      "created_at": 1795033922.1511738,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-fa0dd67f": {
+      "id": "org-fa0dd67f",
+      "name": "Corp Alpha",
+      "slug": "corp-alpha",
+      "plan": "starter",
+      "created_at": 1795033922.4811008,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-bba651a3": {
+      "id": "org-bba651a3",
+      "name": "Corp Beta",
+      "slug": "corp-beta",
+      "plan": "starter",
+      "created_at": 1795033922.8232708,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-ec84628e": {
+      "id": "org-ec84628e",
+      "name": "Fintech Startup Ltd",
+      "slug": "fintech-startup-ltd",
+      "plan": "starter",
+      "created_at": 1795034172.002876,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-de9f0776": {
+      "id": "org-de9f0776",
+      "name": "Company Alpha",
+      "slug": "company-alpha",
+      "plan": "starter",
+      "created_at": 1795034173.2331064,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-4f3b5710": {
+      "id": "org-4f3b5710",
+      "name": "Company Beta",
+      "slug": "company-beta",
+      "plan": "starter",
+      "created_at": 1795034173.5751975,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-4f667a10": {
+      "id": "org-4f667a10",
+      "name": "Corp Alpha",
+      "slug": "corp-alpha",
+      "plan": "starter",
+      "created_at": 1795034173.9204657,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-a4807472": {
+      "id": "org-a4807472",
+      "name": "Corp Beta",
+      "slug": "corp-beta",
+      "plan": "starter",
+      "created_at": 1795034174.1950285,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-e48dbf53": {
+      "id": "org-e48dbf53",
+      "name": "Fintech Startup Ltd",
+      "slug": "fintech-startup-ltd",
+      "plan": "starter",
+      "created_at": 1795034256.2765832,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-fc686c4f": {
+      "id": "org-fc686c4f",
+      "name": "Company Alpha",
+      "slug": "company-alpha",
+      "plan": "starter",
+      "created_at": 1795034257.737092,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-7a8a58a4": {
+      "id": "org-7a8a58a4",
+      "name": "Company Beta",
+      "slug": "company-beta",
+      "plan": "starter",
+      "created_at": 1795034258.018497,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-a4af902f": {
+      "id": "org-a4af902f",
+      "name": "Corp Alpha",
+      "slug": "corp-alpha",
+      "plan": "starter",
+      "created_at": 1795034258.364823,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-c0d86193": {
+      "id": "org-c0d86193",
+      "name": "Corp Beta",
+      "slug": "corp-beta",
+      "plan": "starter",
+      "created_at": 1795034258.672326,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-37ba8a7c": {
+      "id": "org-37ba8a7c",
+      "name": "Fintech Startup Ltd",
+      "slug": "fintech-startup-ltd",
+      "plan": "starter",
+      "created_at": 1795034286.9385126,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-4287bc8d": {
+      "id": "org-4287bc8d",
+      "name": "Company Alpha",
+      "slug": "company-alpha",
+      "plan": "starter",
+      "created_at": 1795034288.3530457,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-8744ba3b": {
+      "id": "org-8744ba3b",
+      "name": "Company Beta",
+      "slug": "company-beta",
+      "plan": "starter",
+      "created_at": 1795034288.6498663,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-eb086205": {
+      "id": "org-eb086205",
+      "name": "Corp Alpha",
+      "slug": "corp-alpha",
+      "plan": "starter",
+      "created_at": 1795034288.9674609,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-c65530fc": {
+      "id": "org-c65530fc",
+      "name": "Corp Beta",
+      "slug": "corp-beta",
+      "plan": "starter",
+      "created_at": 1795034289.2854185,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-648c8960": {
+      "id": "org-648c8960",
+      "name": "Fintech Startup Ltd",
+      "slug": "fintech-startup-ltd",
+      "plan": "starter",
+      "created_at": 1795034335.8795297,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-feb7c942": {
+      "id": "org-feb7c942",
+      "name": "Company Alpha",
+      "slug": "company-alpha",
+      "plan": "starter",
+      "created_at": 1795034337.1218898,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-2df3a509": {
+      "id": "org-2df3a509",
+      "name": "Company Beta",
+      "slug": "company-beta",
+      "plan": "starter",
+      "created_at": 1795034337.4098804,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-f2a960f1": {
+      "id": "org-f2a960f1",
+      "name": "Corp Alpha",
+      "slug": "corp-alpha",
+      "plan": "starter",
+      "created_at": 1795034337.7384715,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-f6f39c8f": {
+      "id": "org-f6f39c8f",
+      "name": "Corp Beta",
+      "slug": "corp-beta",
+      "plan": "starter",
+      "created_at": 1795034338.02104,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-606879db": {
+      "id": "org-606879db",
+      "name": "Legacy Corp",
+      "slug": "legacy-corp",
+      "plan": "starter",
+      "created_at": 1795034339.275611,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-dd2bad56": {
+      "id": "org-dd2bad56",
+      "name": "MFA Corp",
+      "slug": "mfa-corp",
+      "plan": "starter",
+      "created_at": 1795034339.9147007,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-81ceffd8": {
+      "id": "org-81ceffd8",
+      "name": "Legacy Corp",
+      "slug": "legacy-corp",
+      "plan": "starter",
+      "created_at": 1795034486.6793618,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-f7d13a9a": {
+      "id": "org-f7d13a9a",
+      "name": "MFA Corp",
+      "slug": "mfa-corp",
+      "plan": "starter",
+      "created_at": 1795034487.4257154,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-43a239d7": {
+      "id": "org-43a239d7",
+      "name": "Fintech Startup Ltd",
+      "slug": "fintech-startup-ltd",
+      "plan": "starter",
+      "created_at": 1795034489.7837152,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-e8cca69e": {
+      "id": "org-e8cca69e",
+      "name": "Company Alpha",
+      "slug": "company-alpha",
+      "plan": "starter",
+      "created_at": 1795034490.715526,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-eb8f7967": {
+      "id": "org-eb8f7967",
+      "name": "Company Beta",
+      "slug": "company-beta",
+      "plan": "starter",
+      "created_at": 1795034491.0260952,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-a7e66eac": {
+      "id": "org-a7e66eac",
+      "name": "Corp Alpha",
+      "slug": "corp-alpha",
+      "plan": "starter",
+      "created_at": 1795034491.3483224,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-56e19ce1": {
+      "id": "org-56e19ce1",
+      "name": "Corp Beta",
+      "slug": "corp-beta",
+      "plan": "starter",
+      "created_at": 1795034491.640742,
+      "max_projects": 10,
+      "scans_count": 0
     }
   },
   "users": {
@@ -1196,6 +1502,482 @@
       "pwd_hash": "477c0fed10abb41753b9f6fc9e7829e0bb66c2ab4b48d2df04070d7f570dae31",
       "salt": "60656e9e96c0e302307d08bf2e8bf129",
       "created_at": 1795029988.0546348
+    },
+    "usr-45f200b4": {
+      "id": "usr-45f200b4",
+      "org_id": "org-ea336624",
+      "email": "compliance_b7b04e@acme.ai",
+      "name": "Compliance Lead",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$c652daa0cbae1c3abe03e7d63f34de4b$593c16f4da8adcd40f7bdc99d0ba0fa609e90a5300a6b5f33aa9d8af394b0b9c",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "c652daa0cbae1c3abe03e7d63f34de4b",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795033920.3416977
+    },
+    "usr-0a2ee528": {
+      "id": "usr-0a2ee528",
+      "org_id": "org-deeb6414",
+      "email": "alice_974b4f@tenant-a.com",
+      "name": "Alice A",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$2e6f51166c045554b82bbbf1ba4a6019$209d241fb0fe3be83b6fcec341287c2b550c39e2e29759ef2825a581d3b11f79",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "2e6f51166c045554b82bbbf1ba4a6019",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795033921.8704152
+    },
+    "usr-bda92584": {
+      "id": "usr-bda92584",
+      "org_id": "org-3f0c0a16",
+      "email": "bob_c29b28@tenant-b.com",
+      "name": "Bob B",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$0d1e799e7cd730db7695f06bc95036d6$c1768961883aa7d60ce7f9b632714e617dcd067351c967ff20e0b93563749460",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "0d1e799e7cd730db7695f06bc95036d6",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795033922.1511762
+    },
+    "usr-b0a8117c": {
+      "id": "usr-b0a8117c",
+      "org_id": "org-fa0dd67f",
+      "email": "dev_a_2dd2cb@corp-a.com",
+      "name": "Dev A",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$c7af1796494e527e04a8a5e1e5b5d22a$4b9e429f64b2e36d68455182ba1be89327668ec79b7d4424acdf949b4237c91e",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "c7af1796494e527e04a8a5e1e5b5d22a",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795033922.4811032
+    },
+    "usr-15669aab": {
+      "id": "usr-15669aab",
+      "org_id": "org-bba651a3",
+      "email": "dev_b_998ab4@corp-b.com",
+      "name": "Dev B",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$12136f98ad6635ae87e86d401850f83b$d11e04e44229b8955d2f65dec79a30aa6f0ef445dc428631f7f79eb6bfd3bd9a",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "12136f98ad6635ae87e86d401850f83b",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795033922.8232734
+    },
+    "usr-59e84c1c": {
+      "id": "usr-59e84c1c",
+      "org_id": "org-ec84628e",
+      "email": "compliance_f7fd18@acme.ai",
+      "name": "Compliance Lead",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$f0dab9e8a1f21c04167f6164d0dc77db$d1769d2923a95a28cd7464a88df399b77b5e084f1b1a09a233a2ae4c030177cc",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "f0dab9e8a1f21c04167f6164d0dc77db",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795034172.0028784
+    },
+    "usr-85940930": {
+      "id": "usr-85940930",
+      "org_id": "org-de9f0776",
+      "email": "alice_fb34c4@tenant-a.com",
+      "name": "Alice A",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$b513bd06bb7da9adb510f7483f847778$79b56b6b5ab5d94692233dcdf4b71b0742e606e2cb6f64540b8f081805efb43d",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "b513bd06bb7da9adb510f7483f847778",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795034173.233109
+    },
+    "usr-7227d0c0": {
+      "id": "usr-7227d0c0",
+      "org_id": "org-4f3b5710",
+      "email": "bob_21c9c8@tenant-b.com",
+      "name": "Bob B",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$b9a08e75b4d19f6d7cdc72c65f96f7d8$8e3a12718ec2dc80e374944e76ceeb61ceb50339bdf5da0d6a2e47c7b389eb5e",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "b9a08e75b4d19f6d7cdc72c65f96f7d8",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795034173.5751998
+    },
+    "usr-2ec2ec0d": {
+      "id": "usr-2ec2ec0d",
+      "org_id": "org-4f667a10",
+      "email": "dev_a_9636fd@corp-a.com",
+      "name": "Dev A",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$5e2e9dc593c1bd1d39e04e1195d7a1f0$1ac0a525df8377d5ae25006c69a1c4671f019edfd0687b262543efeca1895fd5",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "5e2e9dc593c1bd1d39e04e1195d7a1f0",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795034173.9204683
+    },
+    "usr-fa2e7d2d": {
+      "id": "usr-fa2e7d2d",
+      "org_id": "org-a4807472",
+      "email": "dev_b_4f3bc7@corp-b.com",
+      "name": "Dev B",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$89d0cba556bbd2617fa60de1c59de60d$e18074c4a9dc508bc61634ebf7824b3db4205526ec5fb092bc4f1e05a672ed65",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "89d0cba556bbd2617fa60de1c59de60d",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795034174.195032
+    },
+    "usr-be4faf07": {
+      "id": "usr-be4faf07",
+      "org_id": "org-e48dbf53",
+      "email": "compliance_394c2b@acme.ai",
+      "name": "Compliance Lead",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$1124faf8a4d18f870ea61746cd266daf$ea40baac64f88957b82154728c1bb1e375d0d45c51542bba239aaaef7f1b1eff",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "1124faf8a4d18f870ea61746cd266daf",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795034256.276586
+    },
+    "usr-22bbabec": {
+      "id": "usr-22bbabec",
+      "org_id": "org-fc686c4f",
+      "email": "alice_53dd08@tenant-a.com",
+      "name": "Alice A",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$e7c21189fad61d7629932eca5e595274$c2d85844e790b776dbb3b36da8ede4725ab0df9c45486d388bb489df31499e56",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "e7c21189fad61d7629932eca5e595274",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795034257.7370946
+    },
+    "usr-7cebb356": {
+      "id": "usr-7cebb356",
+      "org_id": "org-7a8a58a4",
+      "email": "bob_144f84@tenant-b.com",
+      "name": "Bob B",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$f75ddc7c7bddbbc3122e82a22bc1faff$ecc8e85afec9cb8cc85edf8c9119208d59fb0b5568f4250eabbfa3d490429d17",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "f75ddc7c7bddbbc3122e82a22bc1faff",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795034258.0184996
+    },
+    "usr-2790bfa2": {
+      "id": "usr-2790bfa2",
+      "org_id": "org-a4af902f",
+      "email": "dev_a_368364@corp-a.com",
+      "name": "Dev A",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$55686961594c84babf9d7061f3fe8171$4636c573f321d24a9a019000cf126ec8316cf7a856cd38c805a317dbb9bec992",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "55686961594c84babf9d7061f3fe8171",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795034258.364826
+    },
+    "usr-11f8995e": {
+      "id": "usr-11f8995e",
+      "org_id": "org-c0d86193",
+      "email": "dev_b_e33b80@corp-b.com",
+      "name": "Dev B",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$4ab02dd6fb9103af41c1cef48bbfd87a$201175e899e8325c93cc9260563949d344bae6585934e5ad00381520b32ee4c4",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "4ab02dd6fb9103af41c1cef48bbfd87a",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795034258.6723292
+    },
+    "usr-bbf739d6": {
+      "id": "usr-bbf739d6",
+      "org_id": "org-37ba8a7c",
+      "email": "compliance_4b6140@acme.ai",
+      "name": "Compliance Lead",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$bdbeabf8161bd08f7d5fc8a04bb90fa1$20f282ae92cf4b1de1387c1d9a4fb910c986341422baf1ab20c95ecef6fbc4f6",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "bdbeabf8161bd08f7d5fc8a04bb90fa1",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795034286.9385142
+    },
+    "usr-0c7d15cf": {
+      "id": "usr-0c7d15cf",
+      "org_id": "org-4287bc8d",
+      "email": "alice_0b6f1b@tenant-a.com",
+      "name": "Alice A",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$3c2589c95cef4d3ff02390e68cdbc95b$7109c800b19c5f4c8cc075e40cc9b45af0c47b7231baa858bbf7f99edebaab74",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "3c2589c95cef4d3ff02390e68cdbc95b",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795034288.3530478
+    },
+    "usr-4f171ce1": {
+      "id": "usr-4f171ce1",
+      "org_id": "org-8744ba3b",
+      "email": "bob_f54e70@tenant-b.com",
+      "name": "Bob B",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$bb35806a1959e5a350ec345ad0b67ab4$0fdeddf95f1dedea30ca2f06450b5a26485cd1b2a2d07efda1ae7bc25dfe00d3",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "bb35806a1959e5a350ec345ad0b67ab4",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795034288.6498687
+    },
+    "usr-5cd42887": {
+      "id": "usr-5cd42887",
+      "org_id": "org-eb086205",
+      "email": "dev_a_652e38@corp-a.com",
+      "name": "Dev A",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$9f5edb890711cd10f54e2d14a9b6fe6d$1f9d3b48cec3b9b67c8577b0ed86be4aabdac4f968339a255f976601d9d9ce21",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "9f5edb890711cd10f54e2d14a9b6fe6d",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795034288.9674635
+    },
+    "usr-e83e8d61": {
+      "id": "usr-e83e8d61",
+      "org_id": "org-c65530fc",
+      "email": "dev_b_493926@corp-b.com",
+      "name": "Dev B",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$810b82d9971c537ed838132e44cda3df$85c1447163904769681070dd6330ba8bb04bf8192b3a6bb44ec97ef3a40a8281",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "810b82d9971c537ed838132e44cda3df",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795034289.2854214
+    },
+    "usr-cdb42c30": {
+      "id": "usr-cdb42c30",
+      "org_id": "org-648c8960",
+      "email": "compliance_312a8d@acme.ai",
+      "name": "Compliance Lead",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$ae39fcfd8d54d85d034e00c2f1d99601$0039d65ff35307bf2f20768daf3ad408eaedc48e68556d45a053309f2b6f781b",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "ae39fcfd8d54d85d034e00c2f1d99601",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795034335.8795319
+    },
+    "usr-3cb79a13": {
+      "id": "usr-3cb79a13",
+      "org_id": "org-feb7c942",
+      "email": "alice_0e859a@tenant-a.com",
+      "name": "Alice A",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$c31ca0e89cbd63f713c7400500c4c19d$091bbde8983ea7faf7e7aad49c643333da8e3841ea8246c2c2f0b6f783c7209e",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "c31ca0e89cbd63f713c7400500c4c19d",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795034337.1218941
+    },
+    "usr-f7baff4f": {
+      "id": "usr-f7baff4f",
+      "org_id": "org-2df3a509",
+      "email": "bob_9116e6@tenant-b.com",
+      "name": "Bob B",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$21ac147edb484dd7e13f7df1ae00b043$d777b3d5966a4113b24dc9ceaa1ab482aae4aec949e283158b1a9922d25b9125",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "21ac147edb484dd7e13f7df1ae00b043",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795034337.4098823
+    },
+    "usr-3d4455cb": {
+      "id": "usr-3d4455cb",
+      "org_id": "org-f2a960f1",
+      "email": "dev_a_4e887b@corp-a.com",
+      "name": "Dev A",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$30a2802496a86feb0373a1b3fb1e587d$47584b7ec7e96267af625f5bfafd927d4f1fdaf04d15f55b4ace3e2319c661cb",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "30a2802496a86feb0373a1b3fb1e587d",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795034337.7384734
+    },
+    "usr-2433a9cb": {
+      "id": "usr-2433a9cb",
+      "org_id": "org-f6f39c8f",
+      "email": "dev_b_241679@corp-b.com",
+      "name": "Dev B",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$554c337fa27de6c7b4e04288d12a4847$f95787fe47e77be6840a64c21c0e4b236537f8b3212e8314d869d1f2d0bd3dc1",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "554c337fa27de6c7b4e04288d12a4847",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795034338.021042
+    },
+    "usr-2d857223": {
+      "id": "usr-2d857223",
+      "org_id": "org-606879db",
+      "email": "legacy_243432@old-tenant.com",
+      "name": "Legacy Lead",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$da05e3c5771c7dc27db63a8e7b2d1b9d$f920b81dffc6171a1085ec2ee22153deeac3ec9644cfa036ce4cac6d5dfe37ef",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "da05e3c5771c7dc27db63a8e7b2d1b9d",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795034339.275613
+    },
+    "usr-efa5254b": {
+      "id": "usr-efa5254b",
+      "org_id": "org-dd2bad56",
+      "email": "mfa_413fe5@mfa-corp.com",
+      "name": "MFA Lead",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$ec5c9ec627ed72861676a742d542dcec$012a753950a8ead6463864defbb58fe1707848b7c4e2476caa5d57ef1460ab2a",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "ec5c9ec627ed72861676a742d542dcec",
+      "mfa_enabled": true,
+      "mfa_secret": "3XOLWWB775PAZ2AXWOXIJDSZVCCKOMS2",
+      "created_at": 1795034339.9147034
+    },
+    "usr-3f1673b3": {
+      "id": "usr-3f1673b3",
+      "org_id": "org-81ceffd8",
+      "email": "legacy_93cb9e@old-tenant.com",
+      "name": "Legacy Lead",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$0a1a76057978efcc6f526869ec7784eb$f678e1947cc023cb0d28aa17b17d5fa0ac41d0093e6580531df08cce9d90ed09",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "0a1a76057978efcc6f526869ec7784eb",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795034486.6793637
+    },
+    "usr-0eedc3fe": {
+      "id": "usr-0eedc3fe",
+      "org_id": "org-f7d13a9a",
+      "email": "mfa_70ad10@mfa-corp.com",
+      "name": "MFA Lead",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$493f4ac0e229eb1d53e3f3dc23baa94d$2ea57a004bd1a9bf529190c16e7bc78a41f8faa804c33ec2986f71531fca9f7d",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "493f4ac0e229eb1d53e3f3dc23baa94d",
+      "mfa_enabled": true,
+      "mfa_secret": "5SM2MDRCNR3JVYQH7NNDKQMFF5E7HCAM",
+      "created_at": 1795034487.4257178
+    },
+    "usr-845d18da": {
+      "id": "usr-845d18da",
+      "org_id": "org-43a239d7",
+      "email": "compliance_7215c6@acme.ai",
+      "name": "Compliance Lead",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$eb4c37cbc57c25c964e867917b71e30b$c3fef8afc6847affbf9fe3cd14ec56a3c4bbfa72313362c7946eccc2e338a10c",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "eb4c37cbc57c25c964e867917b71e30b",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795034489.7837176
+    },
+    "usr-8a388723": {
+      "id": "usr-8a388723",
+      "org_id": "org-e8cca69e",
+      "email": "alice_a00dc4@tenant-a.com",
+      "name": "Alice A",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$c04565fbf556261a7ab6fcb614acf7be$7a70a06578327a996c1016ef761981fab037bac05fe5b7d6bc282e2fb4e6f258",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "c04565fbf556261a7ab6fcb614acf7be",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795034490.7155285
+    },
+    "usr-b085ae9e": {
+      "id": "usr-b085ae9e",
+      "org_id": "org-eb8f7967",
+      "email": "bob_ef09d7@tenant-b.com",
+      "name": "Bob B",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$c9d20b71ac9fe14ff158cf5d2f9e1d69$1eb53184d877ea0fd1cf22a1c1bea0010579f86b5b98b84aa628f6cebfbf3e8b",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "c9d20b71ac9fe14ff158cf5d2f9e1d69",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795034491.0260973
+    },
+    "usr-5f8f9e12": {
+      "id": "usr-5f8f9e12",
+      "org_id": "org-a7e66eac",
+      "email": "dev_a_1ca3d8@corp-a.com",
+      "name": "Dev A",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$4341a4f3e0c640cc0d95566c27394db8$f4cd7456169c5590db3cad00507ca53c64bdc4b12d7ed020016907d9c13e2f62",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "4341a4f3e0c640cc0d95566c27394db8",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795034491.348325
+    },
+    "usr-988faf8c": {
+      "id": "usr-988faf8c",
+      "org_id": "org-56e19ce1",
+      "email": "dev_b_dde6d2@corp-b.com",
+      "name": "Dev B",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$ce9a0dcd65534b67206c1c0be98a973b$f75a0d73f9f4505805aaf3566f8881fbcdd3cbb2fb677f03977e756317d7129f",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "ce9a0dcd65534b67206c1c0be98a973b",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795034491.6407444
     }
   },
   "projects": {
@@ -36488,6 +37270,126 @@
       "critical_findings": 0,
       "open_findings": 0,
       "last_scan": 1795029988.0970654
+    },
+    "proj-74ca654b": {
+      "id": "proj-74ca654b",
+      "org_id": "org-fa0dd67f",
+      "name": "Alpha Secret Backend",
+      "target_type": "repository",
+      "repo_url": "https://github.com/corp-a/17f443",
+      "website_url": "",
+      "mcp_servers_count": 1,
+      "regression_status": "PASS",
+      "monitoring_status": "ACTIVE",
+      "scan_frequency": "daily",
+      "next_scan_at": 1795120322.8746743,
+      "timeline": [],
+      "created_at": 1795033922.8746753,
+      "last_score": 100,
+      "last_grade": "A",
+      "critical_findings": 0,
+      "open_findings": 0,
+      "last_scan": 1795033922.874677
+    },
+    "proj-120fdbd1": {
+      "id": "proj-120fdbd1",
+      "org_id": "org-4f667a10",
+      "name": "Alpha Secret Backend",
+      "target_type": "repository",
+      "repo_url": "https://github.com/corp-a/9950dd",
+      "website_url": "",
+      "mcp_servers_count": 1,
+      "regression_status": "PASS",
+      "monitoring_status": "ACTIVE",
+      "scan_frequency": "daily",
+      "next_scan_at": 1795120574.241805,
+      "timeline": [],
+      "created_at": 1795034174.2418058,
+      "last_score": 100,
+      "last_grade": "A",
+      "critical_findings": 0,
+      "open_findings": 0,
+      "last_scan": 1795034174.2418077
+    },
+    "proj-0c33bed3": {
+      "id": "proj-0c33bed3",
+      "org_id": "org-a4af902f",
+      "name": "Alpha Secret Backend",
+      "target_type": "repository",
+      "repo_url": "https://github.com/corp-a/60a652",
+      "website_url": "",
+      "mcp_servers_count": 1,
+      "regression_status": "PASS",
+      "monitoring_status": "ACTIVE",
+      "scan_frequency": "daily",
+      "next_scan_at": 1795120658.7245934,
+      "timeline": [],
+      "created_at": 1795034258.7245944,
+      "last_score": 100,
+      "last_grade": "A",
+      "critical_findings": 0,
+      "open_findings": 0,
+      "last_scan": 1795034258.7245963
+    },
+    "proj-3edd7305": {
+      "id": "proj-3edd7305",
+      "org_id": "org-eb086205",
+      "name": "Alpha Secret Backend",
+      "target_type": "repository",
+      "repo_url": "https://github.com/corp-a/f81a70",
+      "website_url": "",
+      "mcp_servers_count": 1,
+      "regression_status": "PASS",
+      "monitoring_status": "ACTIVE",
+      "scan_frequency": "daily",
+      "next_scan_at": 1795120689.3328657,
+      "timeline": [],
+      "created_at": 1795034289.3328662,
+      "last_score": 100,
+      "last_grade": "A",
+      "critical_findings": 0,
+      "open_findings": 0,
+      "last_scan": 1795034289.332868
+    },
+    "proj-f1af853e": {
+      "id": "proj-f1af853e",
+      "org_id": "org-f2a960f1",
+      "name": "Alpha Secret Backend",
+      "target_type": "repository",
+      "repo_url": "https://github.com/corp-a/2a1349",
+      "website_url": "",
+      "mcp_servers_count": 1,
+      "regression_status": "PASS",
+      "monitoring_status": "ACTIVE",
+      "scan_frequency": "daily",
+      "next_scan_at": 1795120738.0663102,
+      "timeline": [],
+      "created_at": 1795034338.0663114,
+      "last_score": 100,
+      "last_grade": "A",
+      "critical_findings": 0,
+      "open_findings": 0,
+      "last_scan": 1795034338.066314
+    },
+    "proj-da4cc43b": {
+      "id": "proj-da4cc43b",
+      "org_id": "org-a7e66eac",
+      "name": "Alpha Secret Backend",
+      "target_type": "repository",
+      "repo_url": "https://github.com/corp-a/3ddc20",
+      "website_url": "",
+      "mcp_servers_count": 1,
+      "regression_status": "PASS",
+      "monitoring_status": "ACTIVE",
+      "scan_frequency": "daily",
+      "next_scan_at": 1795120891.6896985,
+      "timeline": [],
+      "created_at": 1795034491.6896994,
+      "last_score": 100,
+      "last_grade": "A",
+      "critical_findings": 0,
+      "open_findings": 0,
+      "last_scan": 1795034491.689701
     }
   },
   "scans": {
@@ -36614,7 +37516,7 @@
     "org-default": {
       "organization_name": "Acme AI Labs",
       "country": "India",
-      "assessed_at": "2026-11-18 19:26:27 UTC",
+      "assessed_at": "2026-11-18 20:41:30 UTC",
       "applicability": {
         "DPDP": {
           "applicable": true,
@@ -38980,6 +39882,940 @@
         "SOC2",
         "ISO27001"
       ]
+    },
+    "org-ea336624": {
+      "company_name": "Fintech Startup Ltd",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-deeb6414": {
+      "company_name": "Company Alpha",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-3f0c0a16": {
+      "company_name": "Company Beta",
+      "country": "USA",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-fa0dd67f": {
+      "company_name": "Corp Alpha",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-bba651a3": {
+      "company_name": "Corp Beta",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-ec84628e": {
+      "company_name": "Fintech Startup Ltd",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-de9f0776": {
+      "company_name": "Company Alpha",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-4f3b5710": {
+      "company_name": "Company Beta",
+      "country": "USA",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-4f667a10": {
+      "company_name": "Corp Alpha",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-a4807472": {
+      "company_name": "Corp Beta",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-e48dbf53": {
+      "company_name": "Fintech Startup Ltd",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-fc686c4f": {
+      "company_name": "Company Alpha",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-7a8a58a4": {
+      "company_name": "Company Beta",
+      "country": "USA",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-a4af902f": {
+      "company_name": "Corp Alpha",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-c0d86193": {
+      "company_name": "Corp Beta",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-37ba8a7c": {
+      "company_name": "Fintech Startup Ltd",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-4287bc8d": {
+      "company_name": "Company Alpha",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-8744ba3b": {
+      "company_name": "Company Beta",
+      "country": "USA",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-eb086205": {
+      "company_name": "Corp Alpha",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-c65530fc": {
+      "company_name": "Corp Beta",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-648c8960": {
+      "company_name": "Fintech Startup Ltd",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-feb7c942": {
+      "company_name": "Company Alpha",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-2df3a509": {
+      "company_name": "Company Beta",
+      "country": "USA",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-f2a960f1": {
+      "company_name": "Corp Alpha",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-f6f39c8f": {
+      "company_name": "Corp Beta",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-606879db": {
+      "company_name": "Legacy Corp",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-dd2bad56": {
+      "company_name": "MFA Corp",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-81ceffd8": {
+      "company_name": "Legacy Corp",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-f7d13a9a": {
+      "company_name": "MFA Corp",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-43a239d7": {
+      "company_name": "Fintech Startup Ltd",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-e8cca69e": {
+      "company_name": "Company Alpha",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-eb8f7967": {
+      "company_name": "Company Beta",
+      "country": "USA",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-a7e66eac": {
+      "company_name": "Corp Alpha",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-56e19ce1": {
+      "company_name": "Corp Beta",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
     }
-  }
+  },
+  "deletion_audit_log": [
+    {
+      "deletion_request_date": "2026-11-18 20:19:29 UTC",
+      "completion_timestamp": "2026-11-18 20:19:29 UTC",
+      "organization_id": "org-6d4396fc",
+      "organization_name": "Enterprise Corp",
+      "status": "COMPLETED",
+      "data_categories_deleted": [
+        "User Accounts & Password Hashes",
+        "Project Repositories & Scan Findings",
+        "Evidence Vault Artifacts & Hashes",
+        "Organization Compliance Profiles",
+        "Active Session Tokens"
+      ],
+      "active_storage_retention": "0-day (Immediate scrubbing)",
+      "backup_expiration_period": "30 days (Automated snapshot rotation)"
+    },
+    {
+      "deletion_request_date": "2026-11-18 20:39:00 UTC",
+      "completion_timestamp": "2026-11-18 20:39:00 UTC",
+      "organization_id": "org-455d7bc0",
+      "organization_name": "Purge Corp",
+      "status": "COMPLETED",
+      "data_categories_deleted": [
+        "User Accounts & Password Hashes",
+        "Project Repositories & Scan Findings",
+        "Evidence Vault Artifacts & Hashes",
+        "Organization Compliance Profiles",
+        "Active Session Tokens"
+      ],
+      "active_storage_retention": "0-day (Immediate scrubbing)",
+      "backup_expiration_period": "30 days (Automated snapshot rotation)"
+    },
+    {
+      "deletion_request_date": "2026-11-18 20:41:28 UTC",
+      "completion_timestamp": "2026-11-18 20:41:28 UTC",
+      "organization_id": "org-97db950e",
+      "organization_name": "Purge Corp",
+      "status": "COMPLETED",
+      "data_categories_deleted": [
+        "User Accounts & Password Hashes",
+        "Project Repositories & Scan Findings",
+        "Evidence Vault Artifacts & Hashes",
+        "Organization Compliance Profiles",
+        "Active Session Tokens"
+      ],
+      "active_storage_retention": "0-day (Immediate scrubbing)",
+      "backup_expiration_period": "30 days (Automated snapshot rotation)"
+    }
+  ]
 }

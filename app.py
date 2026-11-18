@@ -1425,21 +1425,30 @@ def github_webhook():
 # TENANT HELPER & SESSION AUTHENTICATION
 # ==============================================================================
 
-def get_current_tenant_and_user():
-    """Extracts authenticated user and organization ID with graceful demo fallback."""
+def get_current_tenant_and_user(require_auth: bool = False):
+    """
+    Extracts authenticated user and organization ID with strict multi-tenant boundary checks.
+    When require_auth=True, returns (None, None) if the session token is missing or invalid.
+    """
     auth_header = request.headers.get("Authorization", "")
     token = None
     if auth_header.startswith("Bearer "):
         token = auth_header[7:].strip()
     elif "trustaudit_session" in request.cookies:
         token = request.cookies.get("trustaudit_session")
-    is_valid, user, org_id = saas_store.validate_session(token)
+
+    is_valid, user, org_id = saas_store.validate_session(
+        token,
+        allow_demo_fallback=(not require_auth and not token)
+    )
+    if require_auth and (not is_valid or not org_id):
+        return None, None
     return org_id, user
 
 
 @app.route("/api/auth/register", methods=["POST"])
 def api_auth_register():
-    """Registers a new organization and administrator account."""
+    """Registers a new organization and administrator account with OWASP password hashing."""
     data = request.get_json(silent=True) or {}
     email = data.get("email", "")
     password = data.get("password", "")
@@ -1456,24 +1465,49 @@ def api_auth_register():
 
     resp = jsonify({"status": "success", "message": msg, "data": res})
     if res and res.get("token"):
-        resp.set_cookie("trustaudit_session", res["token"], max_age=30*86400, httponly=True, samesite="Lax")
+        is_https = request.is_secure or (request.headers.get("X-Forwarded-Proto", "").lower() == "https")
+        resp.set_cookie(
+            "trustaudit_session",
+            res["token"],
+            max_age=30*86400,
+            httponly=True,
+            secure=is_https,
+            samesite="Lax"
+        )
     return resp, 201
 
 
 @app.route("/api/auth/login", methods=["POST"])
 def api_auth_login():
-    """Authenticates user credentials and returns session token."""
+    """Authenticates credentials with rate limiting, OWASP hashing, and TOTP MFA."""
     data = request.get_json(silent=True) or {}
     email = data.get("email", "")
     password = data.get("password", "")
+    totp_code = data.get("totp_code") or data.get("code")
 
-    ok, msg, res = saas_store.authenticate_user(email, password)
+    ok, msg, res = saas_store.authenticate_user(email, password, totp_code=totp_code)
     if not ok:
-        return jsonify({"status": "error", "message": msg}), 401
+        if msg == "MFA_REQUIRED":
+            return jsonify({
+                "status": "mfa_required",
+                "message": "Multi-Factor Authentication code required.",
+                "mfa_required": True,
+                "user_id": res.get("user_id") if res else None
+            }), 200
+        status_code = 429 if "Too many failed login" in msg else 401
+        return jsonify({"status": "error", "message": msg}), status_code
 
     resp = jsonify({"status": "success", "message": msg, "data": res})
     if res and res.get("token"):
-        resp.set_cookie("trustaudit_session", res["token"], max_age=30*86400, httponly=True, samesite="Lax")
+        is_https = request.is_secure or (request.headers.get("X-Forwarded-Proto", "").lower() == "https")
+        resp.set_cookie(
+            "trustaudit_session",
+            res["token"],
+            max_age=30*86400,
+            httponly=True,
+            secure=is_https,
+            samesite="Lax"
+        )
     return resp, 200
 
 
@@ -1495,6 +1529,199 @@ def api_auth_me():
     org_id, user = get_current_tenant_and_user()
     org = saas_store.get_organization(org_id)
     return jsonify({"user": user, "organization": org})
+
+
+@app.route("/api/auth/forgot-password", methods=["POST"])
+def api_auth_forgot_password():
+    """Generates single-use 1-hour password reset token."""
+    data = request.get_json(silent=True) or {}
+    email = data.get("email", "")
+    if not email:
+        return jsonify({"status": "error", "message": "Email address is required."}), 400
+    ok, msg, token = saas_store.create_password_reset_token(email)
+    return jsonify({"status": "success", "message": msg, "reset_token": token}), 200
+
+
+@app.route("/api/auth/reset-password", methods=["POST"])
+def api_auth_reset_password():
+    """Validates reset token and sets new 600,000-iteration PBKDF2 password."""
+    data = request.get_json(silent=True) or {}
+    token = data.get("token", "")
+    new_password = data.get("new_password", "")
+    if not token or not new_password:
+        return jsonify({"status": "error", "message": "Token and new password are required."}), 400
+    ok, msg = saas_store.reset_password_with_token(token, new_password)
+    if not ok:
+        return jsonify({"status": "error", "message": msg}), 400
+    return jsonify({"status": "success", "message": msg}), 200
+
+
+@app.route("/api/auth/mfa/setup", methods=["POST"])
+def api_auth_mfa_setup():
+    """Initiates RFC 6238 TOTP MFA setup for authenticated user."""
+    org_id, user = get_current_tenant_and_user(require_auth=True)
+    if not user:
+        return jsonify({"error": "Unauthorized. Active session token required."}), 401
+    ok, msg, res = saas_store.setup_mfa_for_user(user["id"])
+    if not ok:
+        return jsonify({"error": msg}), 400
+    return jsonify({"status": "success", "data": res}), 200
+
+
+@app.route("/api/auth/mfa/enable", methods=["POST"])
+def api_auth_mfa_enable():
+    """Confirms TOTP code and activates MFA on account."""
+    org_id, user = get_current_tenant_and_user(require_auth=True)
+    if not user:
+        return jsonify({"error": "Unauthorized. Active session token required."}), 401
+    data = request.get_json(silent=True) or {}
+    code = data.get("code", "")
+    ok, msg = saas_store.confirm_and_enable_mfa(user["id"], code)
+    if not ok:
+        return jsonify({"status": "error", "message": msg}), 400
+    return jsonify({"status": "success", "message": msg}), 200
+
+
+@app.route("/api/auth/mfa/disable", methods=["POST"])
+def api_auth_mfa_disable():
+    """Disables MFA after validating current TOTP code."""
+    org_id, user = get_current_tenant_and_user(require_auth=True)
+    if not user:
+        return jsonify({"error": "Unauthorized. Active session token required."}), 401
+    data = request.get_json(silent=True) or {}
+    code = data.get("code", "")
+    ok, msg = saas_store.disable_mfa_for_user(user["id"], code)
+    if not ok:
+        return jsonify({"status": "error", "message": msg}), 400
+    return jsonify({"status": "success", "message": msg}), 200
+
+
+@app.route("/api/account/delete", methods=["POST"])
+def api_account_delete():
+    """Executes complete organization deletion and scrubbing of all assets."""
+    org_id, user = get_current_tenant_and_user(require_auth=True)
+    if not user or user.get("role") != "admin":
+        return jsonify({"error": "Unauthorized. Administrator session token required."}), 401
+    ok, msg, audit = saas_store.delete_organization_account(org_id)
+    if not ok:
+        return jsonify({"error": msg}), 400
+    resp = jsonify({"status": "success", "message": msg, "deletion_audit_record": audit})
+    resp.delete_cookie("trustaudit_session")
+    return resp, 200
+
+
+@app.route("/api/public/grievance/submit", methods=["POST"])
+def api_public_grievance_submit():
+    """Submits a privacy, personal data rights, or security grievance."""
+    data = request.get_json(silent=True) or {}
+    name = data.get("name", "").strip()
+    email = data.get("email", "").strip()
+    category = data.get("category", "Privacy & Personal Data").strip()
+    description = data.get("description", "").strip()
+    company = data.get("company", "").strip()
+
+    if not name or not email or not description:
+        return jsonify({"status": "error", "message": "Name, email, and description are required."}), 400
+
+    ticket = saas_store.submit_grievance(name, email, category, description, company)
+    return jsonify({
+        "status": "success",
+        "message": f"Your grievance has been recorded and assigned reference ID {ticket['reference_id']}. A confirmation has been logged for review.",
+        "ticket": ticket
+    }), 201
+
+
+@app.route("/.well-known/security.txt", methods=["GET"])
+def well_known_security_txt():
+    """RFC 9116 standard security disclosure metadata."""
+    txt = (
+        "Contact: mailto:security@trustaudit.io\n"
+        "Contact: mailto:grievance@trustaudit.io\n"
+        "Expires: 2027-11-19T00:00:00.000Z\n"
+        "Preferred-Languages: en\n"
+        "Canonical: https://mcp-scanner.onrender.com/.well-known/security.txt\n"
+        "Policy: https://mcp-scanner.onrender.com/trust#disclosure\n"
+        "Hiring: https://mcp-scanner.onrender.com/\n"
+    )
+    return Response(txt, mimetype="text/plain; charset=utf-8")
+
+
+@app.route("/api/public/quick-check", methods=["POST"])
+def api_public_quick_check():
+    """Executes safe, non-invasive public perimeter and privacy checks with SSRF protection."""
+    import ssrf_protection
+
+    data = request.get_json(silent=True) or {}
+    raw_url = data.get("url", "").strip()
+    if not raw_url:
+        return jsonify({"status": "error", "message": "URL is required."}), 400
+
+    if not (raw_url.startswith("http://") or raw_url.startswith("https://")):
+        raw_url = "https://" + raw_url
+
+    # SSRF Validation
+    try:
+        ssrf_meta = ssrf_protection.validate_target_url_ssrf_safe(raw_url)
+    except ssrf_protection.SSRFSecurityError as e:
+        return jsonify({
+            "status": "blocked",
+            "message": f"Target blocked by SSRF security policy: {e}",
+            "checks": {
+                "https": "BLOCKED",
+                "tls": "BLOCKED",
+                "hsts": "BLOCKED",
+                "privacy_policy": "BLOCKED",
+                "privacy_contact": "BLOCKED"
+            }
+        }), 400
+
+    # Execute safe HTTP fetch
+    fetch_res = ssrf_protection.safe_http_fetch(raw_url, method="GET", timeout=(3.0, 4.0))
+    if not fetch_res.get("success"):
+        err_type = fetch_res.get("error_type", "ERROR")
+        return jsonify({
+            "status": "partial",
+            "url": raw_url,
+            "message": fetch_res.get("error", "Failed to connect to target."),
+            "checks": {
+                "https": "PASS" if ssrf_meta["scheme"] == "https" else "NOT ENFORCED",
+                "tls": "FAILED" if err_type == "SSL_ERROR" else ("TIMEOUT" if err_type == "TIMEOUT" else "CHECK FAILED"),
+                "hsts": "UNKNOWN",
+                "privacy_policy": "NOT CHECKED",
+                "privacy_contact": "NOT CHECKED"
+            }
+        })
+
+    headers = fetch_res.get("headers", {})
+    body_text = fetch_res.get("content_text", "").lower()
+    final_url = fetch_res.get("final_url", "")
+
+    is_https = final_url.startswith("https://") or (ssrf_meta["scheme"] == "https")
+    https_status = "PASS" if is_https else "MISSING"
+    tls_status = "CHECKED" if is_https else "NOT APPLICABLE"
+
+    has_hsts = "strict-transport-security" in [k.lower() for k in headers.keys()]
+    hsts_status = "PASS" if has_hsts else "MISSING"
+
+    privacy_link_found = any(k in body_text for k in ["privacy policy", "privacy notice", "/privacy", "privacy-policy", "data protection"])
+    privacy_status = "FOUND" if privacy_link_found else "NOT DETECTED"
+
+    has_contact = any(k in body_text for k in ["grievance@", "privacy@", "dpo@", "data.protection@", "security@", "compliance@"])
+    contact_status = "FOUND" if has_contact else "NOT DETECTED"
+
+    return jsonify({
+        "status": "success",
+        "url": final_url,
+        "checks": {
+            "https": https_status,
+            "tls": tls_status,
+            "hsts": hsts_status,
+            "privacy_policy": privacy_status,
+            "privacy_contact": contact_status
+        },
+        "disclaimer": "This quick check evaluates basic observable network transport and privacy indicators. It does NOT constitute a comprehensive security audit or legal compliance determination under DPDP Act 2023.",
+        "duration_ms": fetch_res.get("duration_ms")
+    })
 
 
 # ==============================================================================
@@ -1833,8 +2060,9 @@ def api_public_trust_status():
         "security_controls": {
             "encryption_in_transit": "TLS 1.3 / TLS 1.2 Enforced",
             "encryption_at_rest": "AES-256 Provider-Managed (Render/AWS)",
-            "password_hashing": "PBKDF2-HMAC-SHA256 (100,000 iterations)",
-            "mfa_status": "Roadmap"
+            "password_hashing": "PBKDF2-HMAC-SHA256 (600,000 iterations, OWASP-compliant with rehash-on-login)",
+            "mfa_status": "Operational (RFC 6238 TOTP for Organization Administrators)",
+            "ssrf_protection": "Enforced (Strict dual-stack DNS re-validation, private IP blocking, cloud metadata isolation)"
         }
     }
     _PUBLIC_TRUST_CACHE["data"] = telemetry

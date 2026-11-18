@@ -1350,8 +1350,9 @@ DASHBOARD_HTML = """<!doctype html>
                     <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;">Block pull requests introducing high severity vulnerabilities or secrets.</p>
                     <pre style="background: #070b12; border: 1px solid var(--border-subtle); border-radius: 6px; padding: 12px; font-size: 11.5px; color: #38bdf8; overflow-x: auto;">- name: TrustAudit Security Gate
   run: |
-    curl -X POST http://127.0.0.1:5000/api/scan \\
+    curl -X POST https://mcp-scanner.onrender.com/api/scan \\
       -H "Content-Type: application/json" \\
+      -H "Authorization: Bearer ${{ secrets.TRUSTAUDIT_API_TOKEN }}" \\
       -d '{"target": "https://github.com/owner/repository"}'</pre>
                 </div>
             </div>

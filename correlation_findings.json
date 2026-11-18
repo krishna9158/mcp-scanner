@@ -860,7 +860,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989669.671146,
-      "last_detected": 1795023053.5697703
+      "last_detected": 1795033382.5540974
     },
     "VULN-INTEL-87CD5D1B": {
       "id": "VULN-INTEL-87CD5D1B",
@@ -1407,7 +1407,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989770.071667,
-      "last_detected": 1795022831.3354595
+      "last_detected": 1795032987.1442137
     },
     "VULN-INTEL-E0DE433D": {
       "id": "VULN-INTEL-E0DE433D",
@@ -1455,7 +1455,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989770.071667,
-      "last_detected": 1795022831.3354595
+      "last_detected": 1795032987.1442137
     },
     "VULN-INTEL-0ECEB446": {
       "id": "VULN-INTEL-0ECEB446",
@@ -1543,7 +1543,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989779.613583,
-      "last_detected": 1795022839.4599805
+      "last_detected": 1795032994.421
     },
     "VULN-INTEL-D2BDCA35": {
       "id": "VULN-INTEL-D2BDCA35",
@@ -1588,7 +1588,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989779.613583,
-      "last_detected": 1795022839.4599805
+      "last_detected": 1795032994.421
     },
     "VULN-INTEL-90FC4E04": {
       "id": "VULN-INTEL-90FC4E04",
@@ -1632,7 +1632,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989779.613583,
-      "last_detected": 1795022839.4599805
+      "last_detected": 1795032994.421
     },
     "VULN-INTEL-361158FF": {
       "id": "VULN-INTEL-361158FF",
@@ -1677,7 +1677,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989779.613583,
-      "last_detected": 1795022839.4599805
+      "last_detected": 1795032994.421
     },
     "VULN-INTEL-CE5E2A36": {
       "id": "VULN-INTEL-CE5E2A36",
@@ -1722,7 +1722,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989789.2406712,
-      "last_detected": 1795014153.3373523
+      "last_detected": 1795033001.9121199
     },
     "VULN-INTEL-9FDDF70B": {
       "id": "VULN-INTEL-9FDDF70B",
@@ -1766,7 +1766,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989794.0584536,
-      "last_detected": 1795014158.193039
+      "last_detected": 1795033005.6437883
     },
     "VULN-INTEL-1721EF02": {
       "id": "VULN-INTEL-1721EF02",
@@ -1811,7 +1811,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989794.0584536,
-      "last_detected": 1795014158.193039
+      "last_detected": 1795033005.6437883
     },
     "VULN-INTEL-46C86F0F": {
       "id": "VULN-INTEL-46C86F0F",
@@ -1855,7 +1855,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989794.0584536,
-      "last_detected": 1795014158.193039
+      "last_detected": 1795033005.6437883
     },
     "VULN-INTEL-A49083E0": {
       "id": "VULN-INTEL-A49083E0",
@@ -1899,7 +1899,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989794.0584536,
-      "last_detected": 1795014158.193039
+      "last_detected": 1795033005.6437883
     },
     "VULN-INTEL-286A891A": {
       "id": "VULN-INTEL-286A891A",
@@ -1943,7 +1943,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989794.0584536,
-      "last_detected": 1795014158.193039
+      "last_detected": 1795033005.6437883
     },
     "VULN-INTEL-F3025094": {
       "id": "VULN-INTEL-F3025094",
@@ -1992,7 +1992,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989817.6514127,
-      "last_detected": 1795014180.7154927
+      "last_detected": 1795033022.6199477
     },
     "VULN-INTEL-FE29A9E6": {
       "id": "VULN-INTEL-FE29A9E6",
@@ -2037,7 +2037,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989837.5607102,
-      "last_detected": 1795014197.8649209
+      "last_detected": 1795033038.6659882
     },
     "VULN-INTEL-D3A411DB": {
       "id": "VULN-INTEL-D3A411DB",
@@ -2082,7 +2082,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989837.5607102,
-      "last_detected": 1795014197.8649209
+      "last_detected": 1795033038.6659882
     },
     "VULN-INTEL-5BC7B8AC": {
       "id": "VULN-INTEL-5BC7B8AC",
@@ -2127,7 +2127,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989851.732462,
-      "last_detected": 1795014207.415572
+      "last_detected": 1795033047.6105313
     },
     "VULN-INTEL-F4CA4820": {
       "id": "VULN-INTEL-F4CA4820",
@@ -2176,7 +2176,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989920.573,
-      "last_detected": 1795014263.3732586
+      "last_detected": 1795033104.1784747
     },
     "VULN-INTEL-491EC224": {
       "id": "VULN-INTEL-491EC224",
@@ -2223,7 +2223,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989920.573,
-      "last_detected": 1795014263.3732586
+      "last_detected": 1795033104.1784747
     },
     "VULN-INTEL-17BB24B6": {
       "id": "VULN-INTEL-17BB24B6",
@@ -2272,7 +2272,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989920.573,
-      "last_detected": 1795014263.3732586
+      "last_detected": 1795033104.1784747
     },
     "VULN-INTEL-BD169487": {
       "id": "VULN-INTEL-BD169487",
@@ -2319,7 +2319,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989920.573,
-      "last_detected": 1795014263.3732586
+      "last_detected": 1795033104.1784747
     },
     "VULN-INTEL-4E141013": {
       "id": "VULN-INTEL-4E141013",
@@ -2368,7 +2368,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989920.573,
-      "last_detected": 1795014263.3732586
+      "last_detected": 1795033104.1784747
     },
     "VULN-INTEL-08437305": {
       "id": "VULN-INTEL-08437305",
@@ -2417,7 +2417,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989920.573,
-      "last_detected": 1795014263.3732586
+      "last_detected": 1795033104.1784747
     },
     "VULN-INTEL-FCB0E91E": {
       "id": "VULN-INTEL-FCB0E91E",
@@ -2465,7 +2465,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989920.573,
-      "last_detected": 1795014263.3732586
+      "last_detected": 1795033104.1784747
     },
     "VULN-INTEL-591F6B42": {
       "id": "VULN-INTEL-591F6B42",
@@ -2511,7 +2511,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989920.573,
-      "last_detected": 1795014263.3732586
+      "last_detected": 1795033104.1784747
     },
     "VULN-INTEL-4242FA3A": {
       "id": "VULN-INTEL-4242FA3A",
@@ -2560,7 +2560,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989920.573,
-      "last_detected": 1795014263.3732586
+      "last_detected": 1795033104.1784747
     },
     "VULN-INTEL-48412630": {
       "id": "VULN-INTEL-48412630",
@@ -2608,7 +2608,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989920.573,
-      "last_detected": 1795014263.3732586
+      "last_detected": 1795033104.1784747
     },
     "VULN-INTEL-38316950": {
       "id": "VULN-INTEL-38316950",
@@ -2657,7 +2657,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989920.573,
-      "last_detected": 1795014263.3732586
+      "last_detected": 1795033104.1784747
     },
     "VULN-INTEL-670CBFA5": {
       "id": "VULN-INTEL-670CBFA5",
@@ -2706,7 +2706,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989920.573,
-      "last_detected": 1795014263.3732586
+      "last_detected": 1795033104.1784747
     },
     "VULN-INTEL-C40B953B": {
       "id": "VULN-INTEL-C40B953B",
@@ -2755,7 +2755,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989920.573,
-      "last_detected": 1795014263.3732586
+      "last_detected": 1795033104.1784747
     },
     "VULN-INTEL-D9255459": {
       "id": "VULN-INTEL-D9255459",
@@ -2802,7 +2802,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989920.573,
-      "last_detected": 1795014263.3732586
+      "last_detected": 1795033104.1784747
     },
     "VULN-INTEL-59E2B057": {
       "id": "VULN-INTEL-59E2B057",
@@ -2849,7 +2849,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989920.573,
-      "last_detected": 1795014263.3732586
+      "last_detected": 1795033104.1784747
     },
     "VULN-INTEL-A986D39F": {
       "id": "VULN-INTEL-A986D39F",
@@ -2898,7 +2898,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989920.573,
-      "last_detected": 1795014263.3732586
+      "last_detected": 1795033104.1784747
     },
     "VULN-INTEL-FE7E7E6A": {
       "id": "VULN-INTEL-FE7E7E6A",
@@ -2947,7 +2947,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989939.8684487,
-      "last_detected": 1795014278.8307707
+      "last_detected": 1795033124.5238788
     },
     "VULN-INTEL-6378B224": {
       "id": "VULN-INTEL-6378B224",
@@ -3004,7 +3004,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989939.8684487,
-      "last_detected": 1795014278.8307707
+      "last_detected": 1795033124.5238788
     },
     "VULN-INTEL-8949DB99": {
       "id": "VULN-INTEL-8949DB99",
@@ -3061,7 +3061,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989939.8684487,
-      "last_detected": 1795014278.8307707
+      "last_detected": 1795033124.5238788
     },
     "VULN-INTEL-DBA5B5EC": {
       "id": "VULN-INTEL-DBA5B5EC",
@@ -3116,7 +3116,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989939.8684487,
-      "last_detected": 1795014278.8307707
+      "last_detected": 1795033124.5238788
     },
     "VULN-INTEL-FBB264D5": {
       "id": "VULN-INTEL-FBB264D5",
@@ -3165,7 +3165,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989939.8684487,
-      "last_detected": 1795014278.8307707
+      "last_detected": 1795033124.5238788
     },
     "VULN-INTEL-D24BACFC": {
       "id": "VULN-INTEL-D24BACFC",
@@ -3214,7 +3214,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989939.8684487,
-      "last_detected": 1795014278.8307707
+      "last_detected": 1795033124.5238788
     },
     "VULN-INTEL-8C408CC6": {
       "id": "VULN-INTEL-8C408CC6",
@@ -3271,7 +3271,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989939.8684487,
-      "last_detected": 1795014278.8307707
+      "last_detected": 1795033124.5238788
     },
     "VULN-INTEL-71B3AB83": {
       "id": "VULN-INTEL-71B3AB83",
@@ -3326,7 +3326,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989939.8684487,
-      "last_detected": 1795014278.8307707
+      "last_detected": 1795033124.5238788
     },
     "VULN-INTEL-8B4769D7": {
       "id": "VULN-INTEL-8B4769D7",
@@ -3373,7 +3373,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989939.8684487,
-      "last_detected": 1795014278.8307707
+      "last_detected": 1795033124.5238788
     },
     "VULN-INTEL-2E1FBF1A": {
       "id": "VULN-INTEL-2E1FBF1A",
@@ -3424,7 +3424,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989939.8684487,
-      "last_detected": 1795014278.8307707
+      "last_detected": 1795033124.5238788
     },
     "VULN-INTEL-6E3EA49C": {
       "id": "VULN-INTEL-6E3EA49C",
@@ -3468,7 +3468,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989955.3119862,
-      "last_detected": 1795014288.2214665
+      "last_detected": 1795033135.0999546
     },
     "VULN-INTEL-29405EA1": {
       "id": "VULN-INTEL-29405EA1",
@@ -3519,7 +3519,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989955.3119862,
-      "last_detected": 1795014288.2214665
+      "last_detected": 1795033135.0999546
     },
     "VULN-INTEL-12768BC6": {
       "id": "VULN-INTEL-12768BC6",
@@ -3562,7 +3562,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989995.8371387,
-      "last_detected": 1795014314.441621
+      "last_detected": 1795033164.4028847
     },
     "VULN-INTEL-22C9BA1C": {
       "id": "VULN-INTEL-22C9BA1C",
@@ -3609,7 +3609,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794990096.935008,
-      "last_detected": 1795022917.876046
+      "last_detected": 1795033239.2506385
     },
     "VULN-INTEL-CF2B0BE1": {
       "id": "VULN-INTEL-CF2B0BE1",
@@ -3653,7 +3653,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794990103.8086767,
-      "last_detected": 1795022922.896136
+      "last_detected": 1795033248.3605807
     },
     "VULN-INTEL-714E9D15": {
       "id": "VULN-INTEL-714E9D15",
@@ -3697,7 +3697,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794990103.8086767,
-      "last_detected": 1795022922.896136
+      "last_detected": 1795033248.3605807
     },
     "VULN-INTEL-A7D1DB75": {
       "id": "VULN-INTEL-A7D1DB75",
@@ -3742,7 +3742,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991559.1898153,
-      "last_detected": 1795025591.772263
+      "last_detected": 1795032283.2073076
     },
     "VULN-INTEL-A35F6867": {
       "id": "VULN-INTEL-A35F6867",
@@ -3788,7 +3788,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991559.1898153,
-      "last_detected": 1795025591.772263
+      "last_detected": 1795032283.2073076
     },
     "VULN-INTEL-369851F5": {
       "id": "VULN-INTEL-369851F5",
@@ -3833,7 +3833,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991559.1898153,
-      "last_detected": 1795025591.772263
+      "last_detected": 1795032283.2073076
     },
     "VULN-INTEL-0A8150F6": {
       "id": "VULN-INTEL-0A8150F6",
@@ -3878,7 +3878,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991559.1898153,
-      "last_detected": 1795025591.772263
+      "last_detected": 1795032283.2073076
     },
     "VULN-INTEL-3B44C11F": {
       "id": "VULN-INTEL-3B44C11F",
@@ -3926,7 +3926,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991559.1898153,
-      "last_detected": 1795025591.772263
+      "last_detected": 1795032283.2073076
     },
     "VULN-INTEL-69F111F8": {
       "id": "VULN-INTEL-69F111F8",
@@ -3971,7 +3971,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991559.1898153,
-      "last_detected": 1795025591.772263
+      "last_detected": 1795032283.2073076
     },
     "VULN-INTEL-593A61CE": {
       "id": "VULN-INTEL-593A61CE",
@@ -4016,7 +4016,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991559.1898153,
-      "last_detected": 1795025591.772263
+      "last_detected": 1795032283.2073076
     },
     "VULN-INTEL-5E21B8BF": {
       "id": "VULN-INTEL-5E21B8BF",
@@ -4061,7 +4061,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991559.1898153,
-      "last_detected": 1795025591.772263
+      "last_detected": 1795032283.2073076
     },
     "VULN-INTEL-FB5F9EA8": {
       "id": "VULN-INTEL-FB5F9EA8",
@@ -4103,7 +4103,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991559.1898153,
-      "last_detected": 1795025591.772263
+      "last_detected": 1795032283.2073076
     },
     "VULN-INTEL-0B56C161": {
       "id": "VULN-INTEL-0B56C161",
@@ -4152,7 +4152,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991559.1898153,
-      "last_detected": 1795025591.772263
+      "last_detected": 1795032283.2073076
     },
     "VULN-INTEL-CDFFE0D0": {
       "id": "VULN-INTEL-CDFFE0D0",
@@ -4197,7 +4197,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991559.1898153,
-      "last_detected": 1795025591.772263
+      "last_detected": 1795032283.2073076
     },
     "VULN-INTEL-64EA72D9": {
       "id": "VULN-INTEL-64EA72D9",
@@ -4243,7 +4243,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991561.2046552,
-      "last_detected": 1795025593.033449
+      "last_detected": 1795032284.3778212
     },
     "VULN-INTEL-5F6CF631": {
       "id": "VULN-INTEL-5F6CF631",
@@ -4289,7 +4289,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991561.2046552,
-      "last_detected": 1795025593.033449
+      "last_detected": 1795032284.3778212
     },
     "VULN-INTEL-E23496B2": {
       "id": "VULN-INTEL-E23496B2",
@@ -4339,7 +4339,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991561.2046552,
-      "last_detected": 1795025593.033449
+      "last_detected": 1795032284.3778212
     },
     "VULN-INTEL-5F80B2A8": {
       "id": "VULN-INTEL-5F80B2A8",
@@ -4384,7 +4384,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991561.2046552,
-      "last_detected": 1795025593.033449
+      "last_detected": 1795032284.3778212
     },
     "VULN-INTEL-307CBED8": {
       "id": "VULN-INTEL-307CBED8",
@@ -4431,7 +4431,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991561.2046552,
-      "last_detected": 1795025593.033449
+      "last_detected": 1795032284.3778212
     },
     "VULN-INTEL-9FB105ED": {
       "id": "VULN-INTEL-9FB105ED",
@@ -4477,7 +4477,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991562.5139062,
-      "last_detected": 1795025593.946282
+      "last_detected": 1795032286.0799062
     },
     "VULN-INTEL-D798B9AD": {
       "id": "VULN-INTEL-D798B9AD",
@@ -4524,7 +4524,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991562.5139062,
-      "last_detected": 1795025593.946282
+      "last_detected": 1795032286.0799062
     },
     "VULN-INTEL-ABB25566": {
       "id": "VULN-INTEL-ABB25566",
@@ -4569,7 +4569,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991564.716061,
-      "last_detected": 1795025595.0621755
+      "last_detected": 1795032287.5432374
     },
     "VULN-INTEL-0F7BFF61": {
       "id": "VULN-INTEL-0F7BFF61",
@@ -4615,7 +4615,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991564.716061,
-      "last_detected": 1795025595.0621755
+      "last_detected": 1795032287.5432374
     },
     "VULN-INTEL-F13A3B59": {
       "id": "VULN-INTEL-F13A3B59",
@@ -4660,7 +4660,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991564.716061,
-      "last_detected": 1795025595.0621755
+      "last_detected": 1795032287.5432374
     },
     "VULN-INTEL-CCE22201": {
       "id": "VULN-INTEL-CCE22201",
@@ -4705,7 +4705,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991564.716061,
-      "last_detected": 1795025595.0621755
+      "last_detected": 1795032287.5432374
     },
     "VULN-INTEL-C30F085B": {
       "id": "VULN-INTEL-C30F085B",
@@ -4753,7 +4753,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991564.716061,
-      "last_detected": 1795025595.0621755
+      "last_detected": 1795032287.5432374
     },
     "VULN-INTEL-14370B2B": {
       "id": "VULN-INTEL-14370B2B",
@@ -4798,7 +4798,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991564.716061,
-      "last_detected": 1795025595.0621755
+      "last_detected": 1795032287.5432374
     },
     "VULN-INTEL-9C965EE5": {
       "id": "VULN-INTEL-9C965EE5",
@@ -4843,7 +4843,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991564.716061,
-      "last_detected": 1795025595.0621755
+      "last_detected": 1795032287.5432374
     },
     "VULN-INTEL-AC9F1301": {
       "id": "VULN-INTEL-AC9F1301",
@@ -4888,7 +4888,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991564.716061,
-      "last_detected": 1795025595.0621755
+      "last_detected": 1795032287.5432374
     },
     "VULN-INTEL-67B0FC56": {
       "id": "VULN-INTEL-67B0FC56",
@@ -4930,7 +4930,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991564.716061,
-      "last_detected": 1795025595.0621755
+      "last_detected": 1795032287.5432374
     },
     "VULN-INTEL-71DD56FA": {
       "id": "VULN-INTEL-71DD56FA",
@@ -4979,7 +4979,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991564.716061,
-      "last_detected": 1795025595.0621755
+      "last_detected": 1795032287.5432374
     },
     "VULN-INTEL-8E67EB60": {
       "id": "VULN-INTEL-8E67EB60",
@@ -5024,7 +5024,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991564.716061,
-      "last_detected": 1795025595.0621755
+      "last_detected": 1795032287.5432374
     },
     "VULN-INTEL-6957C2A5": {
       "id": "VULN-INTEL-6957C2A5",
@@ -5069,7 +5069,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991571.1524162,
-      "last_detected": 1795025596.3203263
+      "last_detected": 1795032288.841429
     },
     "VULN-INTEL-EE680ADE": {
       "id": "VULN-INTEL-EE680ADE",
@@ -5114,7 +5114,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991571.1524162,
-      "last_detected": 1795025596.3203263
+      "last_detected": 1795032288.841429
     },
     "VULN-INTEL-D18EB760": {
       "id": "VULN-INTEL-D18EB760",
@@ -5158,7 +5158,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991571.1524162,
-      "last_detected": 1795025596.3203263
+      "last_detected": 1795032288.841429
     },
     "VULN-INTEL-93311BA0": {
       "id": "VULN-INTEL-93311BA0",
@@ -5205,7 +5205,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991571.1524162,
-      "last_detected": 1795025596.3203263
+      "last_detected": 1795032288.841429
     },
     "VULN-INTEL-F33B647B": {
       "id": "VULN-INTEL-F33B647B",
@@ -5248,7 +5248,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991598.4789855,
-      "last_detected": 1795025614.352913
+      "last_detected": 1795032307.0362167
     },
     "VULN-INTEL-F6C49A9B": {
       "id": "VULN-INTEL-F6C49A9B",
@@ -5292,7 +5292,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991598.4789855,
-      "last_detected": 1795025614.352913
+      "last_detected": 1795032307.0362167
     },
     "VULN-INTEL-3B6261E9": {
       "id": "VULN-INTEL-3B6261E9",
@@ -5336,7 +5336,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991598.4789855,
-      "last_detected": 1795025614.352913
+      "last_detected": 1795032307.0362167
     },
     "VULN-INTEL-7BE2788B": {
       "id": "VULN-INTEL-7BE2788B",
@@ -5383,7 +5383,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991700.4697518,
-      "last_detected": 1795025697.7289994
+      "last_detected": 1795032379.1270912
     },
     "VULN-INTEL-A37BA672": {
       "id": "VULN-INTEL-A37BA672",
@@ -5432,7 +5432,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991707.1171634,
-      "last_detected": 1795025702.9260576
+      "last_detected": 1795032384.4497962
     },
     "VULN-INTEL-2FE5147D": {
       "id": "VULN-INTEL-2FE5147D",
@@ -5481,7 +5481,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991707.1171634,
-      "last_detected": 1795025702.9260576
+      "last_detected": 1795032384.4497962
     },
     "VULN-INTEL-D3884EAB": {
       "id": "VULN-INTEL-D3884EAB",
@@ -5530,7 +5530,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991707.1171634,
-      "last_detected": 1795025702.9260576
+      "last_detected": 1795032384.4497962
     },
     "VULN-INTEL-E025EA2E": {
       "id": "VULN-INTEL-E025EA2E",
@@ -5579,7 +5579,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991707.1171634,
-      "last_detected": 1795025702.9260576
+      "last_detected": 1795032384.4497962
     },
     "VULN-INTEL-B9460748": {
       "id": "VULN-INTEL-B9460748",
@@ -5628,7 +5628,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991707.1171634,
-      "last_detected": 1795025702.9260576
+      "last_detected": 1795032384.4497962
     },
     "VULN-INTEL-A401A572": {
       "id": "VULN-INTEL-A401A572",
@@ -5672,7 +5672,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991707.1171634,
-      "last_detected": 1795025702.9260576
+      "last_detected": 1795032384.4497962
     },
     "VULN-INTEL-D0B3414D": {
       "id": "VULN-INTEL-D0B3414D",
@@ -5716,7 +5716,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991707.1171634,
-      "last_detected": 1795025702.9260576
+      "last_detected": 1795032384.4497962
     },
     "VULN-INTEL-E524549D": {
       "id": "VULN-INTEL-E524549D",
@@ -5763,7 +5763,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991720.3454902,
-      "last_detected": 1795025713.5463634
+      "last_detected": 1795032397.77733
     },
     "VULN-INTEL-F4E2D681": {
       "id": "VULN-INTEL-F4E2D681",
@@ -5806,7 +5806,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991745.4683638,
-      "last_detected": 1795025733.2055936
+      "last_detected": 1795032420.381556
     },
     "VULN-INTEL-C523B799": {
       "id": "VULN-INTEL-C523B799",
@@ -5850,7 +5850,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991745.4683638,
-      "last_detected": 1795025733.2055936
+      "last_detected": 1795032420.381556
     },
     "VULN-INTEL-C331930B": {
       "id": "VULN-INTEL-C331930B",
@@ -5894,7 +5894,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991745.4683638,
-      "last_detected": 1795025733.2055936
+      "last_detected": 1795032420.381556
     },
     "VULN-INTEL-02FDB3A2": {
       "id": "VULN-INTEL-02FDB3A2",
@@ -5941,7 +5941,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991841.4506555,
-      "last_detected": 1795025803.7491999
+      "last_detected": 1795032496.8581922
     },
     "VULN-INTEL-A9632B69": {
       "id": "VULN-INTEL-A9632B69",
@@ -5990,7 +5990,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991847.9057922,
-      "last_detected": 1795025808.3712404
+      "last_detected": 1795032501.6231883
     },
     "VULN-INTEL-1B7C4615": {
       "id": "VULN-INTEL-1B7C4615",
@@ -6039,7 +6039,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991847.9057922,
-      "last_detected": 1795025808.3712404
+      "last_detected": 1795032501.6231883
     },
     "VULN-INTEL-F764BA06": {
       "id": "VULN-INTEL-F764BA06",
@@ -6088,7 +6088,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991847.9057922,
-      "last_detected": 1795025808.3712404
+      "last_detected": 1795032501.6231883
     },
     "VULN-INTEL-E6BE1DBF": {
       "id": "VULN-INTEL-E6BE1DBF",
@@ -6137,7 +6137,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991847.9057922,
-      "last_detected": 1795025808.3712404
+      "last_detected": 1795032501.6231883
     },
     "VULN-INTEL-84113957": {
       "id": "VULN-INTEL-84113957",
@@ -6186,7 +6186,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991847.9057922,
-      "last_detected": 1795025808.3712404
+      "last_detected": 1795032501.6231883
     },
     "VULN-INTEL-19C10612": {
       "id": "VULN-INTEL-19C10612",
@@ -6230,7 +6230,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991847.9057922,
-      "last_detected": 1795025808.3712404
+      "last_detected": 1795032501.6231883
     },
     "VULN-INTEL-5DB4DF97": {
       "id": "VULN-INTEL-5DB4DF97",
@@ -6274,7 +6274,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991847.9057922,
-      "last_detected": 1795025808.3712404
+      "last_detected": 1795032501.6231883
     },
     "VULN-INTEL-3E7ACFF0": {
       "id": "VULN-INTEL-3E7ACFF0",
@@ -6321,7 +6321,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991860.8505785,
-      "last_detected": 1795025817.2014506
+      "last_detected": 1795032512.608041
     },
     "VULN-INTEL-2685F07F": {
       "id": "VULN-INTEL-2685F07F",
@@ -6367,7 +6367,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991863.383011,
-      "last_detected": 1795025819.010895
+      "last_detected": 1795032514.3666835
     },
     "VULN-INTEL-2F8C91F7": {
       "id": "VULN-INTEL-2F8C91F7",
@@ -6414,7 +6414,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991863.383011,
-      "last_detected": 1795025819.010895
+      "last_detected": 1795032514.3666835
     },
     "VULN-INTEL-095B8217": {
       "id": "VULN-INTEL-095B8217",
@@ -6459,7 +6459,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991864.9085212,
-      "last_detected": 1795025820.8224325
+      "last_detected": 1795032515.6288366
     },
     "VULN-INTEL-AD074907": {
       "id": "VULN-INTEL-AD074907",
@@ -6505,7 +6505,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991864.9085212,
-      "last_detected": 1795025820.8224325
+      "last_detected": 1795032515.6288366
     },
     "VULN-INTEL-3F013191": {
       "id": "VULN-INTEL-3F013191",
@@ -6550,7 +6550,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991864.9085212,
-      "last_detected": 1795025820.8224325
+      "last_detected": 1795032515.6288366
     },
     "VULN-INTEL-E46DC17F": {
       "id": "VULN-INTEL-E46DC17F",
@@ -6595,7 +6595,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991864.9085212,
-      "last_detected": 1795025820.8224325
+      "last_detected": 1795032515.6288366
     },
     "VULN-INTEL-BD4A5D5E": {
       "id": "VULN-INTEL-BD4A5D5E",
@@ -6643,7 +6643,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991864.9085212,
-      "last_detected": 1795025820.8224325
+      "last_detected": 1795032515.6288366
     },
     "VULN-INTEL-787692FB": {
       "id": "VULN-INTEL-787692FB",
@@ -6688,7 +6688,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991864.9085212,
-      "last_detected": 1795025820.8224325
+      "last_detected": 1795032515.6288366
     },
     "VULN-INTEL-4A5ED2E3": {
       "id": "VULN-INTEL-4A5ED2E3",
@@ -6733,7 +6733,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991864.9085212,
-      "last_detected": 1795025820.8224325
+      "last_detected": 1795032515.6288366
     },
     "VULN-INTEL-B9A4FE46": {
       "id": "VULN-INTEL-B9A4FE46",
@@ -6778,7 +6778,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991864.9085212,
-      "last_detected": 1795025820.8224325
+      "last_detected": 1795032515.6288366
     },
     "VULN-INTEL-D0F0CCD8": {
       "id": "VULN-INTEL-D0F0CCD8",
@@ -6820,7 +6820,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991864.9085212,
-      "last_detected": 1795025820.8224325
+      "last_detected": 1795032515.6288366
     },
     "VULN-INTEL-D000538D": {
       "id": "VULN-INTEL-D000538D",
@@ -6869,7 +6869,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991864.9085212,
-      "last_detected": 1795025820.8224325
+      "last_detected": 1795032515.6288366
     },
     "VULN-INTEL-5D6D15F2": {
       "id": "VULN-INTEL-5D6D15F2",
@@ -6914,7 +6914,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991864.9085212,
-      "last_detected": 1795025820.8224325
+      "last_detected": 1795032515.6288366
     },
     "VULN-INTEL-947A8FBA": {
       "id": "VULN-INTEL-947A8FBA",
@@ -6959,7 +6959,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991866.7485232,
-      "last_detected": 1795025822.6476507
+      "last_detected": 1795032517.5110097
     },
     "VULN-INTEL-F377A0F7": {
       "id": "VULN-INTEL-F377A0F7",
@@ -7004,7 +7004,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991866.7485232,
-      "last_detected": 1795025822.6476507
+      "last_detected": 1795032517.5110097
     },
     "VULN-INTEL-AD65FC21": {
       "id": "VULN-INTEL-AD65FC21",
@@ -7048,7 +7048,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991866.7485232,
-      "last_detected": 1795025822.6476507
+      "last_detected": 1795032517.5110097
     },
     "VULN-INTEL-9ECED0DB": {
       "id": "VULN-INTEL-9ECED0DB",
@@ -7095,7 +7095,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991866.7485232,
-      "last_detected": 1795025822.6476507
+      "last_detected": 1795032517.5110097
     },
     "VULN-INTEL-D0ED858D": {
       "id": "VULN-INTEL-D0ED858D",
@@ -7138,7 +7138,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991890.7291434,
-      "last_detected": 1795025846.158355
+      "last_detected": 1795032535.9229732
     },
     "VULN-INTEL-2B0D9DE8": {
       "id": "VULN-INTEL-2B0D9DE8",
@@ -7182,7 +7182,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991890.7291434,
-      "last_detected": 1795025846.158355
+      "last_detected": 1795032535.9229732
     },
     "VULN-INTEL-76548CD4": {
       "id": "VULN-INTEL-76548CD4",
@@ -7226,7 +7226,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991890.7291434,
-      "last_detected": 1795025846.158355
+      "last_detected": 1795032535.9229732
     },
     "VULN-INTEL-4504623D": {
       "id": "VULN-INTEL-4504623D",
@@ -7273,7 +7273,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991987.1807966,
-      "last_detected": 1795025926.3740408
+      "last_detected": 1795032609.877069
     },
     "VULN-INTEL-8C2C917A": {
       "id": "VULN-INTEL-8C2C917A",
@@ -7322,7 +7322,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991993.895723,
-      "last_detected": 1795025931.2764492
+      "last_detected": 1795032614.7701378
     },
     "VULN-INTEL-7E525918": {
       "id": "VULN-INTEL-7E525918",
@@ -7371,7 +7371,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991993.895723,
-      "last_detected": 1795025931.2764492
+      "last_detected": 1795032614.7701378
     },
     "VULN-INTEL-9598B59B": {
       "id": "VULN-INTEL-9598B59B",
@@ -7420,7 +7420,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991993.895723,
-      "last_detected": 1795025931.2764492
+      "last_detected": 1795032614.7701378
     },
     "VULN-INTEL-230A940E": {
       "id": "VULN-INTEL-230A940E",
@@ -7469,7 +7469,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991993.895723,
-      "last_detected": 1795025931.2764492
+      "last_detected": 1795032614.7701378
     },
     "VULN-INTEL-9C5FE960": {
       "id": "VULN-INTEL-9C5FE960",
@@ -7518,7 +7518,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991993.895723,
-      "last_detected": 1795025931.2764492
+      "last_detected": 1795032614.7701378
     },
     "VULN-INTEL-05305FCE": {
       "id": "VULN-INTEL-05305FCE",
@@ -7562,7 +7562,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991993.895723,
-      "last_detected": 1795025931.2764492
+      "last_detected": 1795032614.7701378
     },
     "VULN-INTEL-13C04146": {
       "id": "VULN-INTEL-13C04146",
@@ -7606,7 +7606,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991993.895723,
-      "last_detected": 1795025931.2764492
+      "last_detected": 1795032614.7701378
     },
     "VULN-INTEL-9C7BF7D9": {
       "id": "VULN-INTEL-9C7BF7D9",
@@ -7653,7 +7653,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992007.886414,
-      "last_detected": 1795025942.544973
+      "last_detected": 1795032624.078415
     },
     "VULN-INTEL-C1B0ADBF": {
       "id": "VULN-INTEL-C1B0ADBF",
@@ -7698,7 +7698,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992011.8331106,
-      "last_detected": 1795025946.1151059
+      "last_detected": 1795032627.011446
     },
     "VULN-INTEL-E9E65083": {
       "id": "VULN-INTEL-E9E65083",
@@ -7743,7 +7743,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992011.8331106,
-      "last_detected": 1795025946.1151059
+      "last_detected": 1795032627.011446
     },
     "VULN-INTEL-750B14D6": {
       "id": "VULN-INTEL-750B14D6",
@@ -7790,7 +7790,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992011.8331106,
-      "last_detected": 1795025946.1151059
+      "last_detected": 1795032627.011446
     },
     "VULN-INTEL-3F7DD6D5": {
       "id": "VULN-INTEL-3F7DD6D5",
@@ -7837,7 +7837,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992011.8331106,
-      "last_detected": 1795025946.1151059
+      "last_detected": 1795032627.011446
     },
     "VULN-INTEL-8C357565": {
       "id": "VULN-INTEL-8C357565",
@@ -7884,7 +7884,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992011.8331106,
-      "last_detected": 1795025946.1151059
+      "last_detected": 1795032627.011446
     },
     "VULN-INTEL-3C27D1CE": {
       "id": "VULN-INTEL-3C27D1CE",
@@ -7929,7 +7929,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992011.8331106,
-      "last_detected": 1795025946.1151059
+      "last_detected": 1795032627.011446
     },
     "VULN-INTEL-4416E4E8": {
       "id": "VULN-INTEL-4416E4E8",
@@ -7978,7 +7978,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992011.8331106,
-      "last_detected": 1795025946.1151059
+      "last_detected": 1795032627.011446
     },
     "VULN-INTEL-1EFE835A": {
       "id": "VULN-INTEL-1EFE835A",
@@ -8029,7 +8029,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992011.8331106,
-      "last_detected": 1795025946.1151059
+      "last_detected": 1795032627.011446
     },
     "VULN-INTEL-3004AFC7": {
       "id": "VULN-INTEL-3004AFC7",
@@ -8073,7 +8073,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992015.6652758,
-      "last_detected": 1795025949.3337107
+      "last_detected": 1795032630.575994
     },
     "VULN-INTEL-A01EE0C6": {
       "id": "VULN-INTEL-A01EE0C6",
@@ -8118,7 +8118,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992015.6652758,
-      "last_detected": 1795025949.3337107
+      "last_detected": 1795032630.575994
     },
     "VULN-INTEL-395E7E8A": {
       "id": "VULN-INTEL-395E7E8A",
@@ -8163,7 +8163,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-565BA638": {
       "id": "VULN-INTEL-565BA638",
@@ -8208,7 +8208,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-E1A56888": {
       "id": "VULN-INTEL-E1A56888",
@@ -8253,7 +8253,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-295887DF": {
       "id": "VULN-INTEL-295887DF",
@@ -8298,7 +8298,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-89A17C59": {
       "id": "VULN-INTEL-89A17C59",
@@ -8341,7 +8341,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-65A3C9BE": {
       "id": "VULN-INTEL-65A3C9BE",
@@ -8386,7 +8386,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-DA3ADF71": {
       "id": "VULN-INTEL-DA3ADF71",
@@ -8431,7 +8431,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-85343C80": {
       "id": "VULN-INTEL-85343C80",
@@ -8476,7 +8476,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-A9F95C52": {
       "id": "VULN-INTEL-A9F95C52",
@@ -8520,7 +8520,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-7C18A57F": {
       "id": "VULN-INTEL-7C18A57F",
@@ -8563,7 +8563,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-A827DDA7": {
       "id": "VULN-INTEL-A827DDA7",
@@ -8608,7 +8608,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-A36AC142": {
       "id": "VULN-INTEL-A36AC142",
@@ -8653,7 +8653,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-CDC540FD": {
       "id": "VULN-INTEL-CDC540FD",
@@ -8696,7 +8696,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-0CA42C5A": {
       "id": "VULN-INTEL-0CA42C5A",
@@ -8741,7 +8741,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-C109D4B8": {
       "id": "VULN-INTEL-C109D4B8",
@@ -8785,7 +8785,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-643DF202": {
       "id": "VULN-INTEL-643DF202",
@@ -8828,7 +8828,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-B4F38395": {
       "id": "VULN-INTEL-B4F38395",
@@ -8873,7 +8873,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-0F84CE28": {
       "id": "VULN-INTEL-0F84CE28",
@@ -8918,7 +8918,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-EF916061": {
       "id": "VULN-INTEL-EF916061",
@@ -8963,7 +8963,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-72928EEB": {
       "id": "VULN-INTEL-72928EEB",
@@ -9008,7 +9008,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-CCD206ED": {
       "id": "VULN-INTEL-CCD206ED",
@@ -9053,7 +9053,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-0A8DF5EC": {
       "id": "VULN-INTEL-0A8DF5EC",
@@ -9098,7 +9098,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-EEF4E693": {
       "id": "VULN-INTEL-EEF4E693",
@@ -9143,7 +9143,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-465138B2": {
       "id": "VULN-INTEL-465138B2",
@@ -9186,7 +9186,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-60A58138": {
       "id": "VULN-INTEL-60A58138",
@@ -9231,7 +9231,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-50CDB602": {
       "id": "VULN-INTEL-50CDB602",
@@ -9274,7 +9274,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-280DEE7F": {
       "id": "VULN-INTEL-280DEE7F",
@@ -9318,7 +9318,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-E374DB81": {
       "id": "VULN-INTEL-E374DB81",
@@ -9361,7 +9361,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-73ECB6D2": {
       "id": "VULN-INTEL-73ECB6D2",
@@ -9405,7 +9405,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-F6E8F92F": {
       "id": "VULN-INTEL-F6E8F92F",
@@ -9448,7 +9448,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-115D5355": {
       "id": "VULN-INTEL-115D5355",
@@ -9493,7 +9493,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-C0B9C63B": {
       "id": "VULN-INTEL-C0B9C63B",
@@ -9538,7 +9538,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-A633B980": {
       "id": "VULN-INTEL-A633B980",
@@ -9581,7 +9581,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-EDB737A5": {
       "id": "VULN-INTEL-EDB737A5",
@@ -9626,7 +9626,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-2C9A86DB": {
       "id": "VULN-INTEL-2C9A86DB",
@@ -9671,7 +9671,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-B5602F99": {
       "id": "VULN-INTEL-B5602F99",
@@ -9716,7 +9716,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-0386324B": {
       "id": "VULN-INTEL-0386324B",
@@ -9759,7 +9759,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-41900B1C": {
       "id": "VULN-INTEL-41900B1C",
@@ -9804,7 +9804,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-78E3D391": {
       "id": "VULN-INTEL-78E3D391",
@@ -9847,7 +9847,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-8A8D482B": {
       "id": "VULN-INTEL-8A8D482B",
@@ -9892,7 +9892,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-F3920BA7": {
       "id": "VULN-INTEL-F3920BA7",
@@ -9937,7 +9937,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-FA3770F2": {
       "id": "VULN-INTEL-FA3770F2",
@@ -9982,7 +9982,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-B7F064F0": {
       "id": "VULN-INTEL-B7F064F0",
@@ -10027,7 +10027,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795025951.7160847
+      "last_detected": 1795032633.18794
     },
     "VULN-INTEL-97E07C0A": {
       "id": "VULN-INTEL-97E07C0A",
@@ -10072,7 +10072,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992028.5459151,
-      "last_detected": 1795025958.8340685
+      "last_detected": 1795032639.8022008
     },
     "VULN-INTEL-DF723F78": {
       "id": "VULN-INTEL-DF723F78",
@@ -10115,7 +10115,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992048.4313772,
-      "last_detected": 1795025972.4312515
+      "last_detected": 1795032649.3243234
     },
     "VULN-INTEL-BBAB3886": {
       "id": "VULN-INTEL-BBAB3886",
@@ -10162,7 +10162,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992049.6498082,
-      "last_detected": 1795025973.5510952
+      "last_detected": 1795032650.1611044
     },
     "VULN-INTEL-ACCC1367": {
       "id": "VULN-INTEL-ACCC1367",
@@ -10207,7 +10207,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992069.808192,
-      "last_detected": 1795025997.462619
+      "last_detected": 1795032667.0267026
     },
     "VULN-INTEL-2D1EBCF9": {
       "id": "VULN-INTEL-2D1EBCF9",
@@ -10254,7 +10254,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992071.4564316,
-      "last_detected": 1795025998.434748
+      "last_detected": 1795032668.2103763
     },
     "VULN-INTEL-DB45B70A": {
       "id": "VULN-INTEL-DB45B70A",
@@ -10301,7 +10301,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992071.4564316,
-      "last_detected": 1795025998.434748
+      "last_detected": 1795032668.2103763
     },
     "VULN-INTEL-75D92D1A": {
       "id": "VULN-INTEL-75D92D1A",
@@ -10346,7 +10346,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992139.0897381,
-      "last_detected": 1795026056.8955681
+      "last_detected": 1795032716.8843067
     },
     "VULN-INTEL-C82DE442": {
       "id": "VULN-INTEL-C82DE442",
@@ -10391,7 +10391,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992139.0897381,
-      "last_detected": 1795026056.8955681
+      "last_detected": 1795032716.8843067
     },
     "VULN-INTEL-ACB97B3F": {
       "id": "VULN-INTEL-ACB97B3F",
@@ -10435,7 +10435,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992147.9833477,
-      "last_detected": 1795026063.4582472
+      "last_detected": 1795032722.7493923
     },
     "VULN-INTEL-BDDB8312": {
       "id": "VULN-INTEL-BDDB8312",
@@ -10482,7 +10482,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992329.1462872,
-      "last_detected": 1795022527.2525682
+      "last_detected": 1795032839.6527083
     },
     "VULN-INTEL-D76C9D10": {
       "id": "VULN-INTEL-D76C9D10",
@@ -10529,7 +10529,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992329.1462872,
-      "last_detected": 1795022527.2525682
+      "last_detected": 1795032839.6527083
     },
     "VULN-INTEL-C5A9CD9B": {
       "id": "VULN-INTEL-C5A9CD9B",
@@ -10573,7 +10573,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795022549.8633587
+      "last_detected": 1795032865.0368092
     },
     "VULN-INTEL-3170DA45": {
       "id": "VULN-INTEL-3170DA45",
@@ -10618,7 +10618,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795022549.8633587
+      "last_detected": 1795032865.0368092
     },
     "VULN-INTEL-065B87C6": {
       "id": "VULN-INTEL-065B87C6",
@@ -10663,7 +10663,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795022549.8633587
+      "last_detected": 1795032865.0368092
     },
     "VULN-INTEL-F1A54643": {
       "id": "VULN-INTEL-F1A54643",
@@ -10706,7 +10706,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795022549.8633587
+      "last_detected": 1795032865.0368092
     },
     "VULN-INTEL-E94A12A4": {
       "id": "VULN-INTEL-E94A12A4",
@@ -10753,7 +10753,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795022549.8633587
+      "last_detected": 1795032865.0368092
     },
     "VULN-INTEL-8F7BD95E": {
       "id": "VULN-INTEL-8F7BD95E",
@@ -10796,7 +10796,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795022549.8633587
+      "last_detected": 1795032865.0368092
     },
     "VULN-INTEL-091B1E05": {
       "id": "VULN-INTEL-091B1E05",
@@ -10841,7 +10841,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795022549.8633587
+      "last_detected": 1795032865.0368092
     },
     "VULN-INTEL-E8FDDDE6": {
       "id": "VULN-INTEL-E8FDDDE6",
@@ -10886,7 +10886,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795022549.8633587
+      "last_detected": 1795032865.0368092
     },
     "VULN-INTEL-04E34309": {
       "id": "VULN-INTEL-04E34309",
@@ -10931,7 +10931,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795022549.8633587
+      "last_detected": 1795032865.0368092
     },
     "VULN-INTEL-F2622285": {
       "id": "VULN-INTEL-F2622285",
@@ -10976,7 +10976,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795022549.8633587
+      "last_detected": 1795032865.0368092
     },
     "VULN-INTEL-58FB1F2E": {
       "id": "VULN-INTEL-58FB1F2E",
@@ -11023,7 +11023,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795022549.8633587
+      "last_detected": 1795032865.0368092
     },
     "VULN-INTEL-FF7EFED3": {
       "id": "VULN-INTEL-FF7EFED3",
@@ -11068,7 +11068,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795022549.8633587
+      "last_detected": 1795032865.0368092
     },
     "VULN-INTEL-4B678A76": {
       "id": "VULN-INTEL-4B678A76",
@@ -11113,7 +11113,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795022549.8633587
+      "last_detected": 1795032865.0368092
     },
     "VULN-INTEL-291361C7": {
       "id": "VULN-INTEL-291361C7",
@@ -11160,7 +11160,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795022549.8633587
+      "last_detected": 1795032865.0368092
     },
     "VULN-INTEL-B41EBF73": {
       "id": "VULN-INTEL-B41EBF73",
@@ -11206,7 +11206,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795022549.8633587
+      "last_detected": 1795032865.0368092
     },
     "VULN-INTEL-5A52BBEA": {
       "id": "VULN-INTEL-5A52BBEA",
@@ -11253,7 +11253,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795022549.8633587
+      "last_detected": 1795032865.0368092
     },
     "VULN-INTEL-5CDA915A": {
       "id": "VULN-INTEL-5CDA915A",
@@ -11300,7 +11300,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795022549.8633587
+      "last_detected": 1795032865.0368092
     },
     "VULN-INTEL-4702097C": {
       "id": "VULN-INTEL-4702097C",
@@ -11347,7 +11347,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795022549.8633587
+      "last_detected": 1795032865.0368092
     },
     "VULN-INTEL-3FF3BEFD": {
       "id": "VULN-INTEL-3FF3BEFD",
@@ -11394,7 +11394,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795022549.8633587
+      "last_detected": 1795032865.0368092
     },
     "VULN-INTEL-F8DB96DD": {
       "id": "VULN-INTEL-F8DB96DD",
@@ -11439,7 +11439,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795022549.8633587
+      "last_detected": 1795032865.0368092
     },
     "VULN-INTEL-6255A398": {
       "id": "VULN-INTEL-6255A398",
@@ -11484,7 +11484,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795022549.8633587
+      "last_detected": 1795032865.0368092
     },
     "VULN-INTEL-F150B5B6": {
       "id": "VULN-INTEL-F150B5B6",
@@ -11529,7 +11529,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795022549.8633587
+      "last_detected": 1795032865.0368092
     },
     "VULN-INTEL-3D9F8D9D": {
       "id": "VULN-INTEL-3D9F8D9D",
@@ -11574,7 +11574,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795022549.8633587
+      "last_detected": 1795032865.0368092
     },
     "VULN-INTEL-61F3A9B0": {
       "id": "VULN-INTEL-61F3A9B0",
@@ -11621,7 +11621,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795022549.8633587
+      "last_detected": 1795032865.0368092
     },
     "VULN-INTEL-B3D66424": {
       "id": "VULN-INTEL-B3D66424",
@@ -11666,7 +11666,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795022549.8633587
+      "last_detected": 1795032865.0368092
     },
     "VULN-INTEL-7DF73F42": {
       "id": "VULN-INTEL-7DF73F42",
@@ -11713,7 +11713,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795022549.8633587
+      "last_detected": 1795032865.0368092
     },
     "VULN-INTEL-07792319": {
       "id": "VULN-INTEL-07792319",
@@ -11758,7 +11758,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795022549.8633587
+      "last_detected": 1795032865.0368092
     },
     "VULN-INTEL-EDC6F7F8": {
       "id": "VULN-INTEL-EDC6F7F8",
@@ -11805,7 +11805,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795022549.8633587
+      "last_detected": 1795032865.0368092
     },
     "VULN-INTEL-7BE02BB3": {
       "id": "VULN-INTEL-7BE02BB3",
@@ -11852,7 +11852,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795022549.8633587
+      "last_detected": 1795032865.0368092
     },
     "VULN-INTEL-DDEC682E": {
       "id": "VULN-INTEL-DDEC682E",
@@ -11897,7 +11897,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795022549.8633587
+      "last_detected": 1795032865.0368092
     },
     "VULN-INTEL-675F973B": {
       "id": "VULN-INTEL-675F973B",
@@ -11942,7 +11942,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795022549.8633587
+      "last_detected": 1795032865.0368092
     },
     "VULN-INTEL-AF67FF33": {
       "id": "VULN-INTEL-AF67FF33",
@@ -11987,7 +11987,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795022549.8633587
+      "last_detected": 1795032865.0368092
     },
     "VULN-INTEL-21B6A8B2": {
       "id": "VULN-INTEL-21B6A8B2",
@@ -12032,7 +12032,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795022549.8633587
+      "last_detected": 1795032865.0368092
     },
     "VULN-INTEL-74E361E1": {
       "id": "VULN-INTEL-74E361E1",
@@ -12077,7 +12077,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795022549.8633587
+      "last_detected": 1795032865.0368092
     },
     "VULN-INTEL-5A87E8F1": {
       "id": "VULN-INTEL-5A87E8F1",
@@ -12122,7 +12122,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795022549.8633587
+      "last_detected": 1795032865.0368092
     },
     "VULN-INTEL-344386C0": {
       "id": "VULN-INTEL-344386C0",
@@ -12167,7 +12167,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795022549.8633587
+      "last_detected": 1795032865.0368092
     },
     "VULN-INTEL-29FCFF48": {
       "id": "VULN-INTEL-29FCFF48",
@@ -12214,7 +12214,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992371.4710255,
-      "last_detected": 1795022553.3993387
+      "last_detected": 1795032868.6405463
     },
     "VULN-INTEL-F365EAAF": {
       "id": "VULN-INTEL-F365EAAF",
@@ -12261,7 +12261,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992371.4710255,
-      "last_detected": 1795022553.3993387
+      "last_detected": 1795032868.6405463
     },
     "VULN-INTEL-3BF04396": {
       "id": "VULN-INTEL-3BF04396",
@@ -12306,7 +12306,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992371.4710255,
-      "last_detected": 1795022553.3993387
+      "last_detected": 1795032868.6405463
     },
     "VULN-INTEL-97302C30": {
       "id": "VULN-INTEL-97302C30",
@@ -12355,7 +12355,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992374.1293428,
-      "last_detected": 1795022555.55776
+      "last_detected": 1795032870.472076
     },
     "VULN-INTEL-29533046": {
       "id": "VULN-INTEL-29533046",
@@ -12406,7 +12406,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992374.1293428,
-      "last_detected": 1795022555.55776
+      "last_detected": 1795032870.472076
     },
     "VULN-INTEL-33BD3522": {
       "id": "VULN-INTEL-33BD3522",
@@ -12457,7 +12457,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992374.1293428,
-      "last_detected": 1795022555.55776
+      "last_detected": 1795032870.472076
     },
     "VULN-INTEL-C87F14E9": {
       "id": "VULN-INTEL-C87F14E9",
@@ -12508,7 +12508,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992374.1293428,
-      "last_detected": 1795022555.55776
+      "last_detected": 1795032870.472076
     },
     "VULN-INTEL-9282FE7A": {
       "id": "VULN-INTEL-9282FE7A",
@@ -12559,7 +12559,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992374.1293428,
-      "last_detected": 1795022555.55776
+      "last_detected": 1795032870.472076
     },
     "VULN-INTEL-F998B202": {
       "id": "VULN-INTEL-F998B202",
@@ -12610,7 +12610,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992374.1293428,
-      "last_detected": 1795022555.55776
+      "last_detected": 1795032870.472076
     },
     "VULN-INTEL-7072C562": {
       "id": "VULN-INTEL-7072C562",
@@ -12661,7 +12661,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992374.1293428,
-      "last_detected": 1795022555.55776
+      "last_detected": 1795032870.472076
     },
     "VULN-INTEL-A6707D6A": {
       "id": "VULN-INTEL-A6707D6A",
@@ -13613,7 +13613,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794993118.7771916,
-      "last_detected": 1795022981.9886265
+      "last_detected": 1795033284.1362734
     },
     "VULN-INTEL-A9CC5435": {
       "id": "VULN-INTEL-A9CC5435",
@@ -13659,7 +13659,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1795013303.042424,
-      "last_detected": 1795023067.6525435
+      "last_detected": 1795033396.3730237
     },
     "VULN-INTEL-05B9F559": {
       "id": "VULN-INTEL-05B9F559",
@@ -13706,7 +13706,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1795013303.042424,
-      "last_detected": 1795023067.6525435
+      "last_detected": 1795033396.3730237
     },
     "VULN-INTEL-E4EE0F11": {
       "id": "VULN-INTEL-E4EE0F11",
@@ -13751,7 +13751,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1795013314.4011827,
-      "last_detected": 1795023068.999524
+      "last_detected": 1795033397.7353082
     },
     "VULN-INTEL-772E3511": {
       "id": "VULN-INTEL-772E3511",
@@ -13797,7 +13797,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1795013314.4011827,
-      "last_detected": 1795023068.999524
+      "last_detected": 1795033397.7353082
     },
     "VULN-INTEL-C05D813A": {
       "id": "VULN-INTEL-C05D813A",
@@ -13842,7 +13842,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1795013314.4011827,
-      "last_detected": 1795023068.999524
+      "last_detected": 1795033397.7353082
     },
     "VULN-INTEL-E3E9E8E8": {
       "id": "VULN-INTEL-E3E9E8E8",
@@ -13887,7 +13887,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1795013314.4011827,
-      "last_detected": 1795023068.999524
+      "last_detected": 1795033397.7353082
     },
     "VULN-INTEL-A8017938": {
       "id": "VULN-INTEL-A8017938",
@@ -13935,7 +13935,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1795013314.4011827,
-      "last_detected": 1795023068.999524
+      "last_detected": 1795033397.7353082
     },
     "VULN-INTEL-E4FB246F": {
       "id": "VULN-INTEL-E4FB246F",
@@ -13980,7 +13980,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1795013314.4011827,
-      "last_detected": 1795023068.999524
+      "last_detected": 1795033397.7353082
     },
     "VULN-INTEL-5D3C4AF3": {
       "id": "VULN-INTEL-5D3C4AF3",
@@ -14025,7 +14025,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1795013314.4011827,
-      "last_detected": 1795023068.999524
+      "last_detected": 1795033397.7353082
     },
     "VULN-INTEL-91303E9A": {
       "id": "VULN-INTEL-91303E9A",
@@ -14070,7 +14070,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1795013314.4011827,
-      "last_detected": 1795023068.999524
+      "last_detected": 1795033397.7353082
     },
     "VULN-INTEL-FA8048EF": {
       "id": "VULN-INTEL-FA8048EF",
@@ -14112,7 +14112,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1795013314.4011827,
-      "last_detected": 1795023068.999524
+      "last_detected": 1795033397.7353082
     },
     "VULN-INTEL-A6C3E55C": {
       "id": "VULN-INTEL-A6C3E55C",
@@ -14161,7 +14161,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1795013314.4011827,
-      "last_detected": 1795023068.999524
+      "last_detected": 1795033397.7353082
     },
     "VULN-INTEL-C8088B6A": {
       "id": "VULN-INTEL-C8088B6A",
@@ -14206,7 +14206,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1795013314.4011827,
-      "last_detected": 1795023068.999524
+      "last_detected": 1795033397.7353082
     },
     "VULN-INTEL-7910B9AB": {
       "id": "VULN-INTEL-7910B9AB",
@@ -14251,7 +14251,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1795013315.6293569,
-      "last_detected": 1795023070.3200793
+      "last_detected": 1795033399.1370676
     },
     "VULN-INTEL-D5002D40": {
       "id": "VULN-INTEL-D5002D40",
@@ -14296,7 +14296,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1795013315.6293569,
-      "last_detected": 1795023070.3200793
+      "last_detected": 1795033399.1370676
     },
     "VULN-INTEL-7158B14A": {
       "id": "VULN-INTEL-7158B14A",
@@ -14340,7 +14340,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1795013315.6293569,
-      "last_detected": 1795023070.3200793
+      "last_detected": 1795033399.1370676
     },
     "VULN-INTEL-71267F52": {
       "id": "VULN-INTEL-71267F52",
@@ -14387,7 +14387,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1795013315.6293569,
-      "last_detected": 1795023070.3200793
+      "last_detected": 1795033399.1370676
     }
   }
 }

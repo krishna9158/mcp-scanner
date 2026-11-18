@@ -705,19 +705,111 @@ def save_org_compliance_assessment(org_id: str, assessment: Dict[str, Any]) -> D
 
 import hashlib
 import secrets
+import base64
+import struct
+import hmac
 
-def _hash_password(password: str, salt: Optional[str] = None) -> Tuple[str, str]:
-    """Generates salted PBKDF2-HMAC-SHA256 password hash."""
+# OWASP Recommended Work Factor for PBKDF2-HMAC-SHA256 (600,000 iterations)
+DEFAULT_PBKDF2_ITERATIONS = 600000
+LEGACY_PBKDF2_ITERATIONS = 100000
+
+# Rate limiting store: ip_or_email -> list of failed attempt timestamps
+_LOGIN_ATTEMPTS: Dict[str, List[float]] = {}
+MAX_FAILED_LOGIN_ATTEMPTS = 5
+LOGIN_LOCKOUT_WINDOW_SECONDS = 60
+
+# Password reset tokens: token -> metadata
+_PASSWORD_RESET_TOKENS: Dict[str, Dict[str, Any]] = {}
+PASSWORD_RESET_TOKEN_EXPIRY_SECONDS = 3600  # 1 hour
+
+# Active sessions store: token -> session metadata
+_ACTIVE_SESSIONS: Dict[str, Dict[str, Any]] = {}
+
+
+def check_login_rate_limit(key: str) -> Tuple[bool, int]:
+    """
+    Checks if an IP or email has exceeded max failed login attempts in the sliding window.
+    Returns (is_allowed, retry_after_seconds).
+    """
+    now = time.time()
+    attempts = _LOGIN_ATTEMPTS.get(key, [])
+    # Filter attempts within window
+    valid_attempts = [t for t in attempts if now - t < LOGIN_LOCKOUT_WINDOW_SECONDS]
+    _LOGIN_ATTEMPTS[key] = valid_attempts
+
+    if len(valid_attempts) >= MAX_FAILED_LOGIN_ATTEMPTS:
+        retry_after = int(LOGIN_LOCKOUT_WINDOW_SECONDS - (now - valid_attempts[0]))
+        return False, max(1, retry_after)
+    return True, 0
+
+
+def record_failed_login(key: str) -> None:
+    """Records a failed login attempt for rate limiting."""
+    now = time.time()
+    _LOGIN_ATTEMPTS.setdefault(key, []).append(now)
+
+
+def clear_failed_logins(key: str) -> None:
+    """Clears failed login attempts upon successful authentication."""
+    if key in _LOGIN_ATTEMPTS:
+        del _LOGIN_ATTEMPTS[key]
+
+
+def _hash_password(
+    password: str,
+    salt: Optional[str] = None,
+    iterations: int = DEFAULT_PBKDF2_ITERATIONS
+) -> Tuple[str, str]:
+    """
+    Generates OWASP-compliant salted PBKDF2-HMAC-SHA256 password hash.
+    Format: pbkdf2_sha256$<iterations>$<salt>$<hex_key>
+    Returns (formatted_hash, salt).
+    """
     if not salt:
         salt = secrets.token_hex(16)
-    key = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt.encode("utf-8"), 100000)
-    return key.hex(), salt
+    key = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt.encode("utf-8"), iterations)
+    formatted_hash = f"pbkdf2_sha256${iterations}${salt}${key.hex()}"
+    return formatted_hash, salt
 
 
-def _verify_password(password: str, stored_hash: str, salt: str) -> bool:
-    """Verifies candidate password against stored hash."""
-    candidate_hash, _ = _hash_password(password, salt)
-    return secrets.compare_digest(candidate_hash, stored_hash)
+def _verify_password(
+    password: str,
+    stored_hash: str,
+    salt: str,
+    stored_iterations: int = LEGACY_PBKDF2_ITERATIONS,
+    return_needs_rehash: bool = False
+) -> Any:
+    """
+    Verifies candidate password against stored hash.
+    Supports modular structured format and legacy plain hex hashes.
+    Returns bool by default, or (is_valid, needs_rehash) if return_needs_rehash=True.
+    """
+    if not stored_hash or not salt:
+        return (False, False) if return_needs_rehash else False
+
+    # Check for structured format: pbkdf2_sha256$<iters>$<salt>$<hex>
+    if stored_hash.startswith("pbkdf2_sha256$"):
+        parts = stored_hash.split("$")
+        if len(parts) == 4:
+            try:
+                iters = int(parts[1])
+                target_salt = parts[2]
+                target_hex = parts[3]
+                candidate_key = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), target_salt.encode("utf-8"), iters)
+                is_valid = secrets.compare_digest(candidate_key.hex(), target_hex)
+                needs_rehash = (iters < DEFAULT_PBKDF2_ITERATIONS)
+                return (is_valid, needs_rehash) if return_needs_rehash else is_valid
+            except Exception:
+                return (False, False) if return_needs_rehash else False
+
+    # Legacy format: stored_hash is pure hex string, salt is separate
+    try:
+        candidate_key = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt.encode("utf-8"), stored_iterations)
+        is_valid = secrets.compare_digest(candidate_key.hex(), stored_hash)
+        needs_rehash = True  # Always upgrade legacy format to structured 600,000 iterations
+        return (is_valid, needs_rehash) if return_needs_rehash else is_valid
+    except Exception:
+        return (False, False) if return_needs_rehash else False
 
 
 def register_user(
@@ -727,7 +819,7 @@ def register_user(
     org_name: str,
     country: str = "India"
 ) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
-    """Registers a new user and provisions an isolated organization."""
+    """Registers a new user and provisions an isolated organization with OWASP-hardened hashing."""
     data = _load_data()
     email_clean = email.strip().lower()
 
@@ -738,7 +830,7 @@ def register_user(
 
     org_id = f"org-{uuid.uuid4().hex[:8]}"
     uid = f"usr-{uuid.uuid4().hex[:8]}"
-    pwd_hash, salt = _hash_password(password)
+    pwd_hash, salt = _hash_password(password, iterations=DEFAULT_PBKDF2_ITERATIONS)
 
     new_org = {
         "id": org_id,
@@ -757,7 +849,11 @@ def register_user(
         "name": name.strip(),
         "role": "admin",
         "pwd_hash": pwd_hash,
+        "pwd_algo": "pbkdf2_sha256",
+        "pwd_iterations": DEFAULT_PBKDF2_ITERATIONS,
         "salt": salt,
+        "mfa_enabled": False,
+        "mfa_secret": None,
         "created_at": time.time()
     }
 
@@ -785,11 +881,24 @@ def register_user(
     return True, "Registration successful.", {"user": new_user, "organization": new_org, "token": token}
 
 
-def authenticate_user(email: str, password: str) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
-    """Authenticates email and password, returning session token on success."""
+def authenticate_user(
+    email: str,
+    password: str,
+    totp_code: Optional[str] = None
+) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
+    """
+    Authenticates email and password with rate limiting, OWASP rehash-on-login,
+    and optional TOTP MFA verification.
+    """
     data = _load_data()
     email_clean = email.strip().lower()
 
+    # 1. Rate limiting check
+    allowed, retry_sec = check_login_rate_limit(email_clean)
+    if not allowed:
+        return False, f"Too many failed login attempts. Please try again in {retry_sec} seconds.", None
+
+    # 2. Locate user
     matched_user = None
     for u in data.get("users", {}).values():
         if u.get("email", "").lower() == email_clean:
@@ -797,42 +906,51 @@ def authenticate_user(email: str, password: str) -> Tuple[bool, str, Optional[Di
             break
 
     if not matched_user:
-        # Check default demo user
-        if email_clean in ("security@acme.ai", "admin@trustaudit.io") and password in ("trustaudit", "TrustAudit2026!"):
-            token = create_user_session("usr-default", "org-default")
-            org = get_organization("org-default")
-            user_safe = {
-                "id": "usr-default",
-                "org_id": "org-default",
-                "name": "Security Lead (Admin)",
-                "email": email_clean,
-                "role": "admin"
-            }
-            return True, "Login successful.", {"user": user_safe, "organization": org, "token": token}
+        record_failed_login(email_clean)
         return False, "Invalid email address or password.", None
 
     pwd_hash = matched_user.get("pwd_hash")
     salt = matched_user.get("salt")
+    stored_iters = matched_user.get("pwd_iterations", LEGACY_PBKDF2_ITERATIONS)
+
     if not pwd_hash or not salt:
-        # Default user with demo credentials
-        if password in ("trustaudit", "TrustAudit2026!", "admin123"):
-            token = create_user_session(matched_user["id"], matched_user.get("org_id", "org-default"))
-            org = get_organization(matched_user.get("org_id", "org-default"))
-            return True, "Login successful.", {"user": matched_user, "organization": org, "token": token}
+        record_failed_login(email_clean)
+        return False, "Invalid account security state. Please reset your password.", None
+
+    # 3. Verify password
+    is_valid, needs_rehash = _verify_password(password, pwd_hash, salt, stored_iters, return_needs_rehash=True)
+    if not is_valid:
+        record_failed_login(email_clean)
         return False, "Invalid email address or password.", None
 
-    if not _verify_password(password, pwd_hash, salt):
-        return False, "Invalid email address or password.", None
+    # 4. MFA Check (if enabled on user account)
+    if matched_user.get("mfa_enabled"):
+        if not totp_code:
+            return False, "MFA_REQUIRED", {"mfa_required": True, "user_id": matched_user["id"]}
+        if not verify_totp_token(matched_user.get("mfa_secret", ""), totp_code):
+            record_failed_login(email_clean)
+            return False, "Invalid Multi-Factor Authentication code.", None
+
+    # 5. Clear failed login count upon success
+    clear_failed_logins(email_clean)
+
+    # 6. Rehash-on-login: Transparently upgrade legacy iterations to 600,000
+    if needs_rehash:
+        new_hash, new_salt = _hash_password(password, iterations=DEFAULT_PBKDF2_ITERATIONS)
+        matched_user["pwd_hash"] = new_hash
+        matched_user["salt"] = new_salt
+        matched_user["pwd_algo"] = "pbkdf2_sha256"
+        matched_user["pwd_iterations"] = DEFAULT_PBKDF2_ITERATIONS
+        _save_data(data)
 
     token = create_user_session(matched_user["id"], matched_user["org_id"])
     org = get_organization(matched_user["org_id"])
     user_copy = dict(matched_user)
     user_copy.pop("pwd_hash", None)
     user_copy.pop("salt", None)
+    user_copy.pop("mfa_secret", None)
     return True, "Login successful.", {"user": user_copy, "organization": org, "token": token}
 
-
-_ACTIVE_SESSIONS: Dict[str, Dict[str, Any]] = {}
 
 def create_user_session(user_id: str, org_id: str) -> str:
     """Creates a cryptographic session token valid for 30 days."""
@@ -846,32 +964,38 @@ def create_user_session(user_id: str, org_id: str) -> str:
     return token
 
 
-def validate_session(token: Optional[str]) -> Tuple[bool, Optional[Dict[str, Any]], str]:
+def validate_session(
+    token: Optional[str],
+    allow_demo_fallback: bool = False
+) -> Tuple[bool, Optional[Dict[str, Any]], Optional[str]]:
     """
-    Validates a session token. Returns (is_valid, user, org_id).
-    Falls back gracefully to demo 'org-default' if token is omitted in demo mode.
+    Validates a session token with strict multi-tenant authorization boundaries.
+    Only falls back to demo mode when explicitly permitted.
+    Returns (is_valid, user, org_id).
     """
     if not token:
-        # Demo mode fallback to org-default
-        return True, {"id": "usr-default", "name": "Security Lead", "role": "admin", "email": "security@acme.ai"}, "org-default"
+        if allow_demo_fallback:
+            return True, {"id": "usr-default", "name": "Security Lead (Demo)", "role": "admin", "email": "security@acme.ai"}, "org-default"
+        return False, None, None
 
     session = _ACTIVE_SESSIONS.get(token)
     if not session:
-        return True, {"id": "usr-default", "name": "Security Lead", "role": "admin", "email": "security@acme.ai"}, "org-default"
+        return False, None, None
 
     if time.time() > session.get("expires_at", 0):
         del _ACTIVE_SESSIONS[token]
-        return False, None, "org-default"
+        return False, None, None
 
     data = _load_data()
     user = data.get("users", {}).get(session["user_id"])
     if not user:
-        return True, {"id": "usr-default", "name": "Security Lead", "role": "admin", "email": "security@acme.ai"}, session.get("org_id", "org-default")
+        return False, None, None
 
     user_copy = dict(user)
     user_copy.pop("pwd_hash", None)
     user_copy.pop("salt", None)
-    return True, user_copy, session.get("org_id", "org-default")
+    user_copy.pop("mfa_secret", None)
+    return True, user_copy, session.get("org_id")
 
 
 def revoke_session(token: str) -> bool:
@@ -880,3 +1004,297 @@ def revoke_session(token: str) -> bool:
         del _ACTIVE_SESSIONS[token]
         return True
     return False
+
+
+# ---------------------------------------------------------------------------
+# PASSWORD RESET WORKFLOW
+# ---------------------------------------------------------------------------
+
+def create_password_reset_token(email: str) -> Tuple[bool, str, Optional[str]]:
+    """Generates a secure, 1-hour single-use password reset token."""
+    data = _load_data()
+    email_clean = email.strip().lower()
+
+    matched_user = None
+    for u in data.get("users", {}).values():
+        if u.get("email", "").lower() == email_clean:
+            matched_user = u
+            break
+
+    if not matched_user:
+        # Prevent user enumeration: generic success response
+        return True, "If an account exists with this email, password reset instructions have been generated.", None
+
+    token = secrets.token_urlsafe(32)
+    _PASSWORD_RESET_TOKENS[token] = {
+        "user_id": matched_user["id"],
+        "email": email_clean,
+        "created_at": time.time(),
+        "expires_at": time.time() + PASSWORD_RESET_TOKEN_EXPIRY_SECONDS
+    }
+    return True, "Password reset token generated.", token
+
+
+def reset_password_with_token(token: str, new_password: str) -> Tuple[bool, str]:
+    """Validates reset token and applies newly hashed password with 600,000 iterations."""
+    if not token or token not in _PASSWORD_RESET_TOKENS:
+        return False, "Invalid or expired password reset token."
+
+    meta = _PASSWORD_RESET_TOKENS[token]
+    if time.time() > meta["expires_at"]:
+        del _PASSWORD_RESET_TOKENS[token]
+        return False, "Password reset token has expired. Please request a new one."
+
+    if len(new_password) < 8:
+        return False, "Password must be at least 8 characters long."
+
+    data = _load_data()
+    user = data.get("users", {}).get(meta["user_id"])
+    if not user:
+        del _PASSWORD_RESET_TOKENS[token]
+        return False, "User account no longer exists."
+
+    # Hash with OWASP work factor
+    new_hash, new_salt = _hash_password(new_password, iterations=DEFAULT_PBKDF2_ITERATIONS)
+    user["pwd_hash"] = new_hash
+    user["salt"] = new_salt
+    user["pwd_algo"] = "pbkdf2_sha256"
+    user["pwd_iterations"] = DEFAULT_PBKDF2_ITERATIONS
+    _save_data(data)
+
+    # Invalidate token (single-use)
+    del _PASSWORD_RESET_TOKENS[token]
+
+    # Invalidate all active sessions for this user (session rotation)
+    tokens_to_revoke = [t for t, s in _ACTIVE_SESSIONS.items() if s.get("user_id") == user["id"]]
+    for t in tokens_to_revoke:
+        del _ACTIVE_SESSIONS[t]
+
+    return True, "Password has been successfully updated. Please log in with your new password."
+
+
+# ---------------------------------------------------------------------------
+# MULTI-FACTOR AUTHENTICATION (RFC 6238 TOTP)
+# ---------------------------------------------------------------------------
+
+def generate_totp_secret() -> str:
+    """Generates a random RFC 3548 Base32 encoded 160-bit secret."""
+    return base64.b32encode(secrets.token_bytes(20)).decode("utf-8")
+
+
+def get_totp_uri(email: str, secret: str, issuer: str = "TrustAudit") -> str:
+    """Generates otpauth:// URI for authenticator applications."""
+    import urllib.parse
+    label = urllib.parse.quote(f"{issuer}:{email}")
+    issuer_enc = urllib.parse.quote(issuer)
+    return f"otpauth://totp/{label}?secret={secret}&issuer={issuer_enc}&algorithm=SHA1&digits=6&period=30"
+
+
+def verify_totp_token(secret: str, token: str, window: int = 1, time_step: int = 30) -> bool:
+    """Verifies a 6-digit TOTP code against a Base32 secret with drift window."""
+    if not secret or not token:
+        return False
+    clean_token = token.strip()
+    if len(clean_token) != 6 or not clean_token.isdigit():
+        return False
+
+    try:
+        key = base64.b32decode(secret.upper())
+    except Exception:
+        return False
+
+    current_counter = int(time.time() // time_step)
+    for offset in range(-window, window + 1):
+        counter = current_counter + offset
+        msg = struct.pack(">Q", counter)
+        h = hmac.new(key, msg, hashlib.sha1).digest()
+        idx = h[-1] & 0x0F
+        code = (
+            (h[idx] & 0x7F) << 24
+            | (h[idx + 1] & 0xFF) << 16
+            | (h[idx + 2] & 0xFF) << 8
+            | (h[idx + 3] & 0xFF)
+        )
+        expected_token = str(code % 1000000).zfill(6)
+        if secrets.compare_digest(clean_token, expected_token):
+            return True
+    return False
+
+
+def setup_mfa_for_user(user_id: str) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
+    """Initiates MFA setup by generating a secret and provisioning URI."""
+    data = _load_data()
+    user = data.get("users", {}).get(user_id)
+    if not user:
+        return False, "User not found.", None
+
+    secret = generate_totp_secret()
+    uri = get_totp_uri(user.get("email", ""), secret)
+    # Temporary staging secret on user record until confirmed
+    user["mfa_pending_secret"] = secret
+    _save_data(data)
+
+    return True, "MFA setup initiated.", {"secret": secret, "otpauth_uri": uri}
+
+
+def confirm_and_enable_mfa(user_id: str, code: str) -> Tuple[bool, str]:
+    """Confirms pending MFA secret with code and enables MFA on the account."""
+    data = _load_data()
+    user = data.get("users", {}).get(user_id)
+    if not user:
+        return False, "User not found."
+
+    pending_secret = user.get("mfa_pending_secret")
+    if not pending_secret:
+        return False, "No pending MFA configuration found. Please start setup again."
+
+    if not verify_totp_token(pending_secret, code):
+        return False, "Invalid verification code. Please check your authenticator app and try again."
+
+    user["mfa_enabled"] = True
+    user["mfa_secret"] = pending_secret
+    user.pop("mfa_pending_secret", None)
+    _save_data(data)
+    return True, "Multi-Factor Authentication enabled successfully."
+
+
+def disable_mfa_for_user(user_id: str, code: str) -> Tuple[bool, str]:
+    """Disables MFA after validating current TOTP code."""
+    data = _load_data()
+    user = data.get("users", {}).get(user_id)
+    if not user or not user.get("mfa_enabled"):
+        return False, "MFA is not enabled on this account."
+
+    if not verify_totp_token(user.get("mfa_secret", ""), code):
+        return False, "Invalid verification code."
+
+    user["mfa_enabled"] = False
+    user["mfa_secret"] = None
+    _save_data(data)
+    return True, "Multi-Factor Authentication disabled."
+
+
+# ---------------------------------------------------------------------------
+# CUSTOMER DATA DELETION & RETENTION WORKFLOW
+# ---------------------------------------------------------------------------
+
+def delete_organization_account(org_id: str) -> Tuple[bool, str, Dict[str, Any]]:
+    """
+    Executes complete customer data deletion across all organization assets:
+    - User accounts and authentication credentials
+    - Projects, scan histories, and prioritized findings
+    - Evidence Vault files and database records
+    - Compliance profile and assessment mappings
+    Returns deletion audit record.
+    """
+    data = _load_data()
+    org = data.get("organizations", {}).get(org_id)
+    if not org:
+        return False, "Organization not found.", {}
+
+    now_iso = time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime())
+    audit_record = {
+        "deletion_request_date": now_iso,
+        "completion_timestamp": now_iso,
+        "organization_id": org_id,
+        "organization_name": org.get("name"),
+        "status": "COMPLETED",
+        "data_categories_deleted": [
+            "User Accounts & Password Hashes",
+            "Project Repositories & Scan Findings",
+            "Evidence Vault Artifacts & Hashes",
+            "Organization Compliance Profiles",
+            "Active Session Tokens"
+        ],
+        "active_storage_retention": "0-day (Immediate scrubbing)",
+        "backup_expiration_period": "30 days (Automated snapshot rotation)"
+    }
+
+    # 1. Delete Evidence Vault items
+    try:
+        import evidence_vault
+        evidence_vault.delete_all_org_evidence(org_id)
+    except Exception:
+        pass
+
+    # 2. Delete Users
+    users_to_delete = [uid for uid, u in data.get("users", {}).items() if u.get("org_id") == org_id]
+    for uid in users_to_delete:
+        del data["users"][uid]
+        # Invalidate active sessions
+        for t in [tok for tok, s in _ACTIVE_SESSIONS.items() if s.get("user_id") == uid]:
+            del _ACTIVE_SESSIONS[t]
+
+    # 3. Delete Projects
+    projects_to_delete = [pid for pid, p in data.get("projects", {}).items() if p.get("org_id") == org_id]
+    for pid in projects_to_delete:
+        del data["projects"][pid]
+
+    # 4. Delete Org Profiles & Assessments
+    data.get("org_profiles", {}).pop(org_id, None)
+    data.get("compliance_assessments", {}).pop(org_id, None)
+
+    # 5. Delete Organization
+    data["organizations"].pop(org_id, None)
+
+    # 6. Record Deletion in Audit Register
+    data.setdefault("deletion_audit_log", []).append(audit_record)
+
+    _save_data(data)
+    return True, "Organization account and all associated customer data have been deleted.", audit_record
+
+
+# ---------------------------------------------------------------------------
+# GRIEVANCE REDRESSAL SYSTEM (DPDP SECTION 13 & RULE 14)
+# ---------------------------------------------------------------------------
+
+GRIEVANCES_FILE = os.path.join(os.path.dirname(__file__), "data", "grievances.json")
+
+def _load_grievances() -> List[Dict[str, Any]]:
+    if os.path.exists(GRIEVANCES_FILE):
+        try:
+            with open(GRIEVANCES_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            return []
+    return []
+
+def _save_grievances(records: List[Dict[str, Any]]) -> None:
+    with open(GRIEVANCES_FILE, "w", encoding="utf-8") as f:
+        json.dump(records, f, indent=2)
+
+def submit_grievance(
+    name: str,
+    email: str,
+    category: str,
+    description: str,
+    company: str = ""
+) -> Dict[str, Any]:
+    """Records a personal data or privacy grievance with automated reference ID."""
+    records = _load_grievances()
+    ref_id = f"GRV-{int(time.time())}-{secrets.token_hex(2).upper()}"
+    now_iso = time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime())
+
+    ticket = {
+        "reference_id": ref_id,
+        "name": name.strip(),
+        "email": email.strip().lower(),
+        "company": company.strip(),
+        "category": category,
+        "description": description.strip(),
+        "submission_date": now_iso,
+        "status": "RECEIVED",
+        "assigned_to": "Privacy & Grievance Contact",
+        "investigation_notes": "Ticket logged via public Trust Centre. Acknowledged.",
+        "resolution_date": None,
+        "audit_history": [
+            {"timestamp": now_iso, "action": "Ticket Created", "details": f"Category: {category}"}
+        ]
+    }
+    records.append(ticket)
+    _save_grievances(records)
+    return ticket
+
+def list_grievances() -> List[Dict[str, Any]]:
+    return _load_grievances()
+

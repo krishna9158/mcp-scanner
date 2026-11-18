@@ -1,18 +1,22 @@
 """
-TrustAudit Interactive Enterprise Security & Compliance Trust Centre Template.
+TrustAudit Interactive Enterprise Security & Compliance Command Centre Template.
 
 Design Standard:
-- Enterprise command-centre visual identity (comparable to Vanta, Wiz, Aikido, Linear)
-- Dark technical theme (#070b12, #0f172a, #1e293b, #0284c7, #38bdf8, #10b981)
-- Interactive Live Control Explorer (Accordion cards, framework filters, illustrative JSON previews, safe remediation diffs)
-- Interactive Client-Side Secret Redaction Sandbox (zero network transmission, live detection -> masking -> safe preview)
-- Interactive Enterprise Security Questionnaire Simulator (sequential auto-fill, evidence links, progress tracking)
-- Interactive Data Flow Architecture Diagram (clickable nodes with stage inspection panels)
-- Live CISA KEV Telemetry Card (powered by /api/public/trust-status)
-- Enterprise Trust Pack Builder (interactive drawer, document selection, ZIP / Markdown downloads)
-- Sticky Glassmorphism Navigation with real-time scroll progress and section tracking
-- Responsive Bento Grid and cursor-following spotlight (disabled on touch devices)
-- 100% accessible, semantic, keyboard-navigable, and respects prefers-reduced-motion
+- Enterprise command-centre visual identity (comparable to Linear, Wiz, Vanta, Aikido)
+- Dark technical cybersecurity theme (#070b12, #0f172a, #162032, #1e293b, #0284c7, #38bdf8, #10b981, #6366f1)
+- 100% Lucide 18px stroke icons in subtle containers (zero system emojis)
+- Mouse-following Bento spotlight with CSS variables (touch-safe, prefers-reduced-motion)
+- Segmented Pre-Launch vs Post-Launch toggle in Framework Explorer
+- 4 Deep Frameworks (DPDP Act 2023 & Rules 2025, SOC 2 Criteria, ISO/IEC 27001:2022, GDPR)
+- 4 High-Fidelity Illustrative Remediation Modals (DPDP Sec 6(4)-(6), SOC 2 CC8.1/CC6.1, ISO A.8.28/A.8.8, GDPR Art 32-34)
+- Animated SVG Architecture Pipeline (Ephemeral Scan Workspace, amber cleanup transition, node inspector)
+- Client-Side Secret Redaction Sandbox (100% in-browser, textContent XSS protection, live entropy scoring)
+- Enterprise Security Questionnaire Simulator (3 questions, 150ms typewriter animation, honest labels)
+- Live CISA KEV Telemetry Card (count-up animation, rotating refresh, live API polling)
+- Quick Perimeter & Privacy Check Widget (SSRF-protected, non-invasive transport/privacy checks, CTA)
+- Governance & India Hosting Section (AWS ap-south-1 Planned disclosure, Privacy & Grievance contact, Grievance modal)
+- Enterprise Trust Pack Builder (custom-styled checkboxes, radio buttons, ZIP & Markdown downloads)
+- RFC 9116 security.txt link and comprehensive legal disclaimers
 """
 
 TRUST_CENTRE_HTML_TEMPLATE = """<!DOCTYPE html>
@@ -21,7 +25,7 @@ TRUST_CENTRE_HTML_TEMPLATE = """<!DOCTYPE html>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TrustAudit Security, Compliance & Trust Center</title>
-    <meta name="description" content="Explore how TrustAudit handles source code, detects security vulnerabilities, maps compliance frameworks (DPDP, SOC 2, ISO 27001, GDPR), and enforces multi-tenant boundaries.">
+    <meta name="description" content="Explore how TrustAudit protects source code, detects vulnerabilities, maps DPDP Act 2023, SOC 2, and ISO 27001 compliance, and enforces multi-tenant isolation.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -39,83 +43,105 @@ TRUST_CENTRE_HTML_TEMPLATE = """<!DOCTYPE html>
             --accent: #6366f1;
             --success: #10b981;
             --warning: #f59e0b;
+            --danger: #ef4444;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --text-dim: #64748b;
-            --radius-sm: 6px;
-            --radius-md: 10px;
-            --radius-lg: 14px;
-            --radius-xl: 18px;
+            --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
         body {
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: var(--bg-base);
+            background-color: var(--bg-base);
             color: var(--text-main);
+            font-family: var(--font-sans);
+            font-size: 15px;
             line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
             overflow-x: hidden;
-            position: relative;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* Ambient subtle radial background */
-        .ambient-bg {
-            position: fixed;
-            top: 0; left: 0; right: 0; height: 600px;
-            background: radial-gradient(circle at 50% -10%, rgba(2, 132, 199, 0.12) 0%, rgba(99, 102, 241, 0.04) 40%, transparent 70%);
-            pointer-events: none;
-            z-index: 0;
+        /* SVG Icon Helpers */
+        .icon-svg {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            stroke-width: 2;
+            stroke: currentColor;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            vertical-align: middle;
         }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 24px;
-            position: relative;
-            z-index: 1;
+        .icon-box {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: rgba(56, 189, 248, 0.08);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            color: var(--primary-light);
+            margin-bottom: 12px;
+        }
+        .icon-box.green {
+            background: rgba(16, 185, 129, 0.08);
+            border-color: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+        .icon-box.purple {
+            background: rgba(99, 102, 241, 0.08);
+            border-color: rgba(99, 102, 241, 0.2);
+            color: var(--accent);
+        }
+        .icon-box.amber {
+            background: rgba(245, 158, 11, 0.08);
+            border-color: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
         }
 
         /* Top Progress Bar */
         #scroll-progress {
             position: fixed;
-            top: 0; left: 0; height: 3px;
-            background: linear-gradient(90deg, #0284c7, #38bdf8, #6366f1);
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #38bdf8, #6366f1, #10b981);
+            z-index: 1000;
             width: 0%;
-            z-index: 100;
-            transition: width 0.1s linear;
+            transition: width 0.1s ease-out;
         }
 
-        /* Sticky Glass Navigation */
+        /* Glass Navbar */
         .navbar {
             position: sticky;
             top: 0;
-            z-index: 90;
-            background: rgba(7, 11, 18, 0.85);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            z-index: 999;
+            background: rgba(7, 11, 18, 0.82);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
             border-bottom: 1px solid var(--border);
-            padding: 14px 0;
-            transition: border-color 0.2s;
+            padding: 12px 0;
         }
         .nav-inner {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 20px;
         }
         .brand {
             display: flex;
             align-items: center;
             gap: 10px;
-            font-weight: 700;
-            font-size: 17px;
-            color: #fff;
             text-decoration: none;
-            letter-spacing: -0.01em;
+            color: #fff;
+            font-weight: 800;
+            font-size: 18px;
+            letter-spacing: -0.02em;
         }
-        .brand-icon {
+        .brand-logo-shield {
             width: 32px;
             height: 32px;
             border-radius: 8px;
@@ -123,32 +149,36 @@ TRUST_CENTRE_HTML_TEMPLATE = """<!DOCTYPE html>
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
-            box-shadow: 0 0 12px rgba(2, 132, 199, 0.3);
+            color: #fff;
+            box-shadow: 0 0 14px rgba(2, 132, 199, 0.4);
         }
         .nav-menu {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 20px;
             list-style: none;
         }
-        .nav-item a {
+        .nav-link {
             color: var(--text-muted);
             text-decoration: none;
             font-size: 13.5px;
             font-weight: 500;
-            padding: 6px 12px;
-            border-radius: var(--radius-sm);
-            transition: all 0.15s ease;
+            transition: color 0.2s;
+            position: relative;
+            padding: 4px 0;
         }
-        .nav-item a:hover {
+        .nav-link:hover, .nav-link.active {
             color: #fff;
-            background: rgba(255, 255, 255, 0.05);
         }
-        .nav-item a.active {
-            color: var(--primary-light);
-            background: rgba(2, 132, 199, 0.12);
-            font-weight: 600;
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--primary-light);
+            border-radius: 2px;
         }
         .nav-actions {
             display: flex;
@@ -156,35 +186,34 @@ TRUST_CENTRE_HTML_TEMPLATE = """<!DOCTYPE html>
             gap: 12px;
         }
         .btn-pack-nav {
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid var(--border);
-            color: #fff;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(56, 189, 248, 0.12);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            color: var(--primary-light);
             padding: 7px 14px;
-            border-radius: var(--radius-sm);
+            border-radius: 7px;
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.15s ease;
+            transition: all 0.2s;
         }
         .btn-pack-nav:hover {
-            background: rgba(255, 255, 255, 0.12);
-            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(56, 189, 248, 0.22);
+            border-color: var(--primary-light);
+            transform: translateY(-1px);
         }
-        .btn-dashboard-nav {
-            background: var(--primary);
-            color: #fff;
-            padding: 7px 16px;
-            border-radius: var(--radius-sm);
-            font-size: 13px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: background 0.15s ease;
-        }
-        .btn-dashboard-nav:hover { background: #0369a1; }
 
-        /* Hero Header */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Hero Section */
         .hero {
-            padding: 70px 0 40px;
+            padding: 70px 0 35px;
             text-align: center;
         }
         .eyebrow-pill {
@@ -194,13 +223,13 @@ TRUST_CENTRE_HTML_TEMPLATE = """<!DOCTYPE html>
             background: var(--primary-glow);
             color: var(--primary-light);
             border: 1px solid rgba(56, 189, 248, 0.3);
-            padding: 5px 14px;
+            padding: 6px 16px;
             border-radius: 9999px;
-            font-size: 12.5px;
+            font-size: 12px;
             font-weight: 700;
-            letter-spacing: 0.06em;
+            letter-spacing: 0.08em;
             text-transform: uppercase;
-            margin-bottom: 22px;
+            margin-bottom: 24px;
         }
         .eyebrow-dot {
             width: 7px;
@@ -210,20 +239,23 @@ TRUST_CENTRE_HTML_TEMPLATE = """<!DOCTYPE html>
             box-shadow: 0 0 8px #10b981;
         }
         .hero h1 {
-            font-size: 48px;
+            font-size: clamp(34px, 5.5vw, 56px);
             font-weight: 800;
-            letter-spacing: -0.03em;
             line-height: 1.15;
-            margin: 0 0 18px;
-            background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+            letter-spacing: -0.03em;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+        .hero h1 span.gradient-text {
+            background: linear-gradient(135deg, #38bdf8 20%, #818cf8 60%, #c084fc 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         .hero p.subtitle {
-            font-size: 18px;
+            max-width: 780px;
+            margin: 0 auto 34px;
             color: var(--text-muted);
-            max-width: 800px;
-            margin: 0 auto 30px;
+            font-size: 17px;
             line-height: 1.6;
         }
         .hero-ctas {
@@ -231,754 +263,874 @@ TRUST_CENTRE_HTML_TEMPLATE = """<!DOCTYPE html>
             align-items: center;
             justify-content: center;
             gap: 16px;
-            margin-bottom: 34px;
             flex-wrap: wrap;
+            margin-bottom: 45px;
         }
         .btn-primary-lg {
             background: linear-gradient(135deg, #0284c7, #2563eb);
             color: #fff;
             padding: 12px 24px;
-            border-radius: var(--radius-md);
-            font-size: 15px;
+            border-radius: 8px;
             font-weight: 600;
+            font-size: 14.5px;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            box-shadow: 0 4px 18px rgba(2, 132, 199, 0.25);
-            transition: transform 0.15s, box-shadow 0.15s;
+            transition: all 0.2s;
+            box-shadow: 0 4px 18px rgba(2, 132, 199, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         .btn-primary-lg:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 24px rgba(2, 132, 199, 0.35);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(2, 132, 199, 0.45);
         }
         .btn-secondary-lg {
-            background: var(--bg-surface);
-            border: 1px solid var(--border);
+            background: var(--bg-elevated);
             color: #fff;
             padding: 12px 24px;
-            border-radius: var(--radius-md);
-            font-size: 15px;
+            border-radius: 8px;
             font-weight: 600;
-            cursor: pointer;
+            font-size: 14.5px;
+            text-decoration: none;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            transition: border-color 0.15s, background 0.15s;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.2s;
         }
         .btn-secondary-lg:hover {
-            border-color: rgba(255, 255, 255, 0.25);
-            background: var(--bg-elevated);
+            border-color: rgba(56, 189, 248, 0.4);
+            transform: translateY(-2px);
         }
 
-        /* Compact Verification Row */
-        .verification-bar {
+        /* Status Strip */
+        .status-strip {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
             background: var(--bg-surface);
             border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 14px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 13px;
-            color: var(--text-dim);
-            flex-wrap: wrap;
-            gap: 16px;
+            border-radius: 12px;
+            padding: 16px 24px;
+            margin-bottom: 60px;
         }
-        .vbar-item {
+        .status-item {
             display: flex;
-            align-items: center;
-            gap: 8px;
+            flex-direction: column;
+            gap: 4px;
+            text-align: left;
         }
-        .vbar-item strong { color: var(--text-main); font-weight: 600; }
-        .vbar-tag {
-            background: rgba(16, 185, 129, 0.12);
-            color: #34d399;
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            padding: 2px 8px;
-            border-radius: 4px;
+        .status-item-label {
+            font-size: 11.5px;
             font-weight: 600;
-            font-size: 11px;
-            font-family: 'JetBrains Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-dim);
+        }
+        .status-item-val {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: #fff;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .status-indicator-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 6px var(--success);
         }
 
-        /* Section Titles */
+        /* Section Headers */
         .section-header {
-            margin: 70px 0 26px;
+            text-align: center;
+            max-width: 740px;
+            margin: 0 auto 40px;
         }
-        .section-header .section-tag {
-            font-size: 12px;
-            text-transform: uppercase;
+        .section-tag {
+            display: inline-block;
+            font-size: 11.5px;
             font-weight: 700;
-            color: var(--primary-light);
             letter-spacing: 0.08em;
-            margin-bottom: 6px;
-            display: block;
+            text-transform: uppercase;
+            color: var(--primary-light);
+            margin-bottom: 10px;
         }
         .section-header h2 {
             font-size: 30px;
-            font-weight: 700;
+            font-weight: 800;
             letter-spacing: -0.02em;
-            margin: 0 0 10px;
             color: #fff;
+            margin-bottom: 12px;
         }
         .section-header p {
             color: var(--text-muted);
             font-size: 15px;
-            max-width: 820px;
-            margin: 0;
         }
 
         /* Bento Grid */
         .bento-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
+            gap: 18px;
+            margin-bottom: 80px;
+            position: relative;
         }
         .bento-card {
             background: var(--bg-surface);
             border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
+            border-radius: 14px;
             padding: 24px;
             position: relative;
             overflow: hidden;
+            transition: border-color 0.25s, transform 0.2s;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            transition: border-color 0.2s, transform 0.2s;
         }
         .bento-card:hover {
             border-color: var(--border-hover);
+            transform: translateY(-3px);
         }
-        .bento-col-2 { grid-column: span 2; }
+        .bento-card.col-span-2 { grid-column: span 2; }
         .bento-card h3 {
             font-size: 17px;
             font-weight: 700;
-            margin: 12px 0 6px;
             color: #fff;
+            margin-bottom: 8px;
         }
         .bento-card p {
-            font-size: 13.5px;
             color: var(--text-muted);
+            font-size: 13.5px;
             line-height: 1.55;
-            margin-bottom: 18px;
+            margin-bottom: 16px;
         }
-        .bento-icon {
-            width: 38px;
-            height: 38px;
-            border-radius: var(--radius-md);
-            background: var(--bg-elevated);
-            border: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-        }
-        .bento-footer {
+        .card-footer-meta {
             display: flex;
             align-items: center;
             justify-content: space-between;
+            font-size: 11.5px;
+            color: var(--text-dim);
             padding-top: 14px;
             border-top: 1px solid rgba(255, 255, 255, 0.05);
-            font-size: 12px;
+            margin-top: auto;
         }
 
-        /* Status Badge Styles */
+        /* Status Pills */
         .status-pill {
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
             padding: 3px 9px;
-            border-radius: 6px;
-            font-size: 11.5px;
-            font-weight: 600;
-            font-family: 'JetBrains Mono', monospace;
-            white-space: nowrap;
+            border-radius: 9999px;
+            width: fit-content;
         }
         .status-verified {
             background: rgba(16, 185, 129, 0.12);
             color: #34d399;
-            border: 1px solid rgba(16, 185, 129, 0.3);
+            border: 1px solid rgba(16, 185, 129, 0.25);
         }
         .status-provider {
             background: rgba(56, 189, 248, 0.12);
             color: #38bdf8;
-            border: 1px solid rgba(56, 189, 248, 0.3);
+            border: 1px solid rgba(56, 189, 248, 0.25);
         }
-        .status-evidence {
-            background: rgba(129, 140, 248, 0.12);
-            color: #a5b4fc;
-            border: 1px solid rgba(129, 140, 248, 0.3);
-        }
-        .status-self {
-            background: rgba(245, 158, 11, 0.12);
-            color: #fbbf24;
-            border: 1px solid rgba(245, 158, 11, 0.3);
-        }
-        .status-readiness {
-            background: rgba(96, 165, 250, 0.12);
-            color: #93c5fd;
-            border: 1px solid rgba(96, 165, 250, 0.3);
+        .status-operational {
+            background: rgba(99, 102, 241, 0.12);
+            color: #818cf8;
+            border: 1px solid rgba(99, 102, 241, 0.25);
         }
         .status-roadmap {
-            background: rgba(148, 163, 184, 0.12);
-            color: #cbd5e1;
-            border: 1px solid rgba(148, 163, 184, 0.3);
+            background: rgba(245, 158, 11, 0.12);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.25);
         }
 
-        /* Live Control Explorer */
+        /* Framework Segmented Toggle */
+        .framework-segment-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        .segment-container {
+            display: inline-flex;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            padding: 4px;
+            border-radius: 10px;
+            gap: 4px;
+        }
+        .segment-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 8px 20px;
+            font-size: 13.5px;
+            font-weight: 600;
+            border-radius: 7px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .segment-btn.active {
+            background: var(--bg-elevated);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+
+        /* Framework Controls */
         .explorer-controls {
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 16px;
-            margin-bottom: 22px;
+            margin-bottom: 24px;
             flex-wrap: wrap;
         }
         .filter-group {
             display: flex;
-            align-items: center;
-            gap: 6px;
-            background: var(--bg-surface);
-            border: 1px solid var(--border);
-            padding: 4px;
-            border-radius: var(--radius-md);
+            gap: 8px;
             flex-wrap: wrap;
         }
         .filter-btn {
-            background: transparent;
-            border: none;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
             color: var(--text-muted);
             padding: 6px 14px;
-            border-radius: var(--radius-sm);
+            border-radius: 7px;
             font-size: 13px;
-            font-weight: 600;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.15s ease;
+            transition: all 0.2s;
         }
-        .filter-btn:hover { color: #fff; }
-        .filter-btn.active {
-            background: var(--primary);
+        .filter-btn:hover {
             color: #fff;
-            box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3);
+            border-color: rgba(56, 189, 248, 0.3);
+        }
+        .filter-btn.active {
+            background: var(--primary-glow);
+            color: var(--primary-light);
+            border-color: rgba(56, 189, 248, 0.4);
+            font-weight: 600;
         }
         .search-box {
+            position: relative;
+            min-width: 260px;
+        }
+        .search-input {
+            width: 100%;
             background: var(--bg-surface);
             border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 8px 14px;
+            border-radius: 7px;
+            padding: 8px 14px 8px 36px;
             color: #fff;
-            font-size: 13.5px;
-            width: 260px;
+            font-size: 13px;
             outline: none;
-            transition: border-color 0.15s;
+            transition: border-color 0.2s;
         }
-        .search-box:focus { border-color: var(--primary-light); }
+        .search-input:focus {
+            border-color: var(--primary-light);
+        }
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-dim);
+            pointer-events: none;
+        }
 
-        /* Control Accordion Card */
-        .control-accordion {
+        /* Accordion Cards */
+        .controls-list {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 14px;
+            margin-bottom: 80px;
         }
-        .accordion-item {
+        .ctrl-card {
             background: var(--bg-surface);
             border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
+            border-radius: 12px;
             overflow: hidden;
-            transition: border-color 0.15s;
+            transition: border-color 0.2s;
         }
-        .accordion-item:hover { border-color: rgba(255, 255, 255, 0.18); }
-        .accordion-header {
-            padding: 18px 22px;
+        .ctrl-card:hover {
+            border-color: rgba(56, 189, 248, 0.25);
+        }
+        .ctrl-header {
+            padding: 18px 24px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             cursor: pointer;
-            user-select: none;
             gap: 16px;
+            user-select: none;
         }
-        .accordion-title-wrap {
+        .ctrl-header-left {
             display: flex;
             align-items: center;
             gap: 14px;
-            flex-wrap: wrap;
         }
         .ctrl-id-badge {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
+            font-family: var(--font-mono);
+            font-size: 11.5px;
             font-weight: 700;
+            background: var(--bg-elevated);
             color: var(--primary-light);
-            background: rgba(2, 132, 199, 0.12);
+            border: 1px solid rgba(56, 189, 248, 0.2);
             padding: 3px 8px;
-            border-radius: 4px;
-            border: 1px solid rgba(56, 189, 248, 0.25);
+            border-radius: 6px;
         }
-        .ctrl-name {
+        .ctrl-title {
             font-size: 15px;
-            font-weight: 700;
+            font-weight: 600;
             color: #fff;
         }
         .ctrl-chevron {
-            font-size: 14px;
             color: var(--text-dim);
-            transition: transform 0.2s ease;
+            transition: transform 0.25s;
         }
-        .accordion-item.open .ctrl-chevron {
+        .ctrl-card.open .ctrl-chevron {
             transform: rotate(180deg);
         }
-        .accordion-content {
+        .ctrl-body {
             display: none;
-            padding: 0 22px 22px;
+            padding: 0 24px 24px;
             border-top: 1px solid rgba(255, 255, 255, 0.05);
-            background: var(--bg-elevated);
+            background: rgba(15, 23, 42, 0.4);
         }
-        .accordion-item.open .accordion-content {
+        .ctrl-card.open .ctrl-body {
             display: block;
         }
-        .ctrl-details-grid {
+        .ctrl-grid-details {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 18px;
-            margin: 18px 0;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
         }
         .detail-block h4 {
-            font-size: 12.5px;
-            text-transform: uppercase;
+            font-size: 12px;
             font-weight: 700;
-            color: var(--text-dim);
+            text-transform: uppercase;
             letter-spacing: 0.05em;
+            color: var(--text-dim);
             margin-bottom: 6px;
         }
         .detail-block p {
             font-size: 13.5px;
             color: var(--text-muted);
-            margin: 0;
-            line-height: 1.55;
+            line-height: 1.5;
+        }
+        .ctrl-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .btn-action-sm {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 12.5px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .btn-action-sm:hover {
+            border-color: var(--primary-light);
+            color: var(--primary-light);
         }
 
-        /* JSON Sample Box */
-        .code-box-header {
+        /* SVG Architecture Pipeline */
+        .pipeline-wrapper {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 30px 24px;
+            margin-bottom: 80px;
+            position: relative;
+        }
+        .pipeline-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: #090e17;
-            padding: 8px 14px;
-            border-radius: var(--radius-sm) var(--radius-sm) 0 0;
-            font-size: 12px;
-            font-family: 'JetBrains Mono', monospace;
-            color: var(--text-dim);
-            border: 1px solid var(--border);
-            border-bottom: none;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
         }
-        .code-pre {
-            background: #070a10;
-            border: 1px solid var(--border);
-            border-radius: 0 0 var(--radius-sm) var(--radius-sm);
-            padding: 14px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12.5px;
-            color: #e2e8f0;
+        .pipeline-nodes-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
             overflow-x: auto;
-            margin: 0 0 16px;
-            line-height: 1.5;
+            padding: 20px 0;
+            position: relative;
         }
-        .btn-copy-code {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #cbd5e1;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 11px;
+        .pipeline-node {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px 18px;
+            min-width: 130px;
+            text-align: center;
             cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            flex-shrink: 0;
         }
-        .btn-copy-code:hover { background: rgba(255, 255, 255, 0.16); }
+        .pipeline-node:hover, .pipeline-node.active {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 16px rgba(56, 189, 248, 0.2);
+            transform: translateY(-2px);
+        }
+        .pipeline-node.node-cleanup {
+            border-color: rgba(245, 158, 11, 0.3);
+            background: rgba(245, 158, 11, 0.05);
+        }
+        .pipeline-node.node-cleanup:hover, .pipeline-node.node-cleanup.active {
+            border-color: var(--warning);
+            box-shadow: 0 0 16px rgba(245, 158, 11, 0.25);
+        }
+        .pipeline-node-name {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #fff;
+            margin-top: 6px;
+        }
+        .pipeline-node-sub {
+            font-size: 11px;
+            color: var(--text-dim);
+            margin-top: 2px;
+        }
+        .pipeline-arrow {
+            color: var(--text-dim);
+            flex-shrink: 0;
+        }
+        .node-inspector-panel {
+            margin-top: 24px;
+            background: var(--bg-base);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+        }
 
-        /* Interactive Remediation Drawer / Modal */
-        .drawer-overlay {
+        /* Demonstrations Box */
+        .demos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 24px;
+            margin-bottom: 80px;
+        }
+        @media (max-width: 768px) {
+            .demos-grid { grid-template-columns: 1fr; }
+        }
+        .demo-box {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 26px;
+            display: flex;
+            flex-direction: column;
+        }
+        .demo-box h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 6px;
+        }
+        .demo-box p.desc {
+            color: var(--text-muted);
+            font-size: 13.5px;
+            margin-bottom: 20px;
+        }
+        .sandbox-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .sandbox-input {
+            flex: 1;
+            background: var(--bg-base);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: #fff;
+            font-family: var(--font-mono);
+            font-size: 13px;
+            outline: none;
+        }
+        .sandbox-input:focus {
+            border-color: var(--primary-light);
+        }
+        .btn-test-action {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 18px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .btn-test-action:hover {
+            background: #0284c7;
+            transform: translateY(-1px);
+        }
+        .sandbox-result {
+            background: var(--bg-base);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            font-family: var(--font-mono);
+            font-size: 12.5px;
+            margin-top: 10px;
+            min-height: 80px;
+        }
+
+        /* Questionnaire Simulator Rows */
+        .q-simulator-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .q-row {
+            background: var(--bg-base);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px 18px;
+            transition: all 0.2s;
+        }
+        .q-row-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 600;
+            font-size: 13.5px;
+            color: #fff;
+        }
+        .q-row-body {
+            margin-top: 8px;
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            display: none;
+        }
+        .q-row.active .q-row-body {
+            display: block;
+        }
+        .q-badge {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            padding: 2px 7px;
+            border-radius: 4px;
+            background: rgba(56, 189, 248, 0.1);
+            color: var(--primary-light);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+
+        /* Quick Perimeter Check Widget */
+        .perimeter-box {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(22, 32, 50, 0.9));
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            border-radius: 14px;
+            padding: 30px;
+            margin-bottom: 80px;
+            position: relative;
+        }
+        .perimeter-form {
+            display: flex;
+            gap: 12px;
+            max-width: 650px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .perimeter-input {
+            flex: 1;
+            min-width: 280px;
+            background: var(--bg-base);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+        }
+        .perimeter-input:focus {
+            border-color: var(--primary-light);
+        }
+        .perimeter-results-card {
+            background: var(--bg-base);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+        .perimeter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px;
+            margin-top: 14px;
+        }
+        .perimeter-item {
+            background: var(--bg-elevated);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 12px 16px;
+        }
+        .perimeter-item-label {
+            font-size: 11px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+        .perimeter-item-val {
+            font-family: var(--font-mono);
+            font-size: 13.5px;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+
+        /* Governance & India Region */
+        .governance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            margin-bottom: 80px;
+        }
+        .gov-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+        }
+        .gov-card h3 {
+            font-size: 17px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .gov-card p {
+            color: var(--text-muted);
+            font-size: 13.5px;
+            line-height: 1.55;
+            margin-bottom: 16px;
+        }
+
+        /* Modals */
+        .modal-overlay {
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
             backdrop-filter: blur(8px);
-            z-index: 200;
+            z-index: 2000;
             display: none;
             align-items: center;
             justify-content: center;
             padding: 20px;
         }
-        .drawer-overlay.open { display: flex; }
-        .drawer-modal {
+        .modal-card {
             background: var(--bg-surface);
-            border: 1px solid var(--border-hover);
-            border-radius: var(--radius-xl);
-            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 14px;
             max-width: 680px;
-            max-height: 85vh;
+            width: 100%;
+            max-height: 90vh;
             overflow-y: auto;
-            padding: 30px;
+            padding: 28px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
             position: relative;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
         }
-        .drawer-close {
-            position: absolute;
-            top: 20px; right: 20px;
-            background: rgba(255, 255, 255, 0.08);
-            border: none;
-            color: #fff;
-            width: 32px; height: 32px;
-            border-radius: 50%;
-            cursor: pointer;
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 14px;
+        }
+        .modal-header h3 {
             font-size: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Secret Redaction Sandbox */
-        .sandbox-box {
-            background: var(--bg-surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 28px;
-            margin-top: 20px;
-        }
-        .sandbox-input-row {
-            display: flex;
-            gap: 12px;
-            margin: 18px 0;
-        }
-        .sandbox-input {
-            flex: 1;
-            background: #090e17;
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 12px 16px;
+            font-weight: 700;
             color: #fff;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 14px;
-            outline: none;
         }
-        .sandbox-input:focus { border-color: var(--primary-light); }
-        .btn-test-mask {
-            background: var(--primary);
-            color: #fff;
+        .modal-close-btn {
+            background: transparent;
             border: none;
-            padding: 12px 20px;
-            border-radius: var(--radius-md);
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: background 0.15s;
-        }
-        .btn-test-mask:hover { background: #0369a1; }
-        .sandbox-pipeline {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: var(--bg-elevated);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 16px 20px;
-            margin: 18px 0;
-            gap: 12px;
-        }
-        .pipe-step {
-            text-align: center;
-            flex: 1;
-        }
-        .pipe-step-num {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            color: var(--primary-light);
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-        .pipe-step-name {
-            font-size: 13.5px;
-            font-weight: 600;
-            color: #fff;
-            margin-top: 2px;
-        }
-        .pipe-arrow {
             color: var(--text-dim);
-            font-size: 16px;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 6px;
+            transition: color 0.2s;
         }
-        .sandbox-result-box {
-            background: #090e17;
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            border-radius: var(--radius-md);
+        .modal-close-btn:hover {
+            color: #fff;
+        }
+        .code-box-pre {
+            background: var(--bg-base);
+            border: 1px solid var(--border);
+            border-radius: 8px;
             padding: 16px;
-            display: none;
-        }
-        .sandbox-result-box.active { display: block; }
-
-        /* Questionnaire Simulator */
-        .simulator-box {
-            background: var(--bg-surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 28px;
-            margin-top: 20px;
-        }
-        .sim-question-card {
-            background: var(--bg-elevated);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 18px;
-            margin-bottom: 14px;
-        }
-        .sim-q-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 8px;
-        }
-        .sim-q-title {
-            font-size: 14.5px;
-            font-weight: 700;
-            color: #fff;
-        }
-        .sim-answer-text {
-            font-size: 13.5px;
-            color: var(--text-muted);
-            line-height: 1.5;
-            min-height: 22px;
-        }
-        .sim-evidence-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 10px;
-            flex-wrap: wrap;
-        }
-        .sim-evidence-badge {
-            background: rgba(99, 102, 241, 0.15);
-            color: #a5b4fc;
-            border: 1px solid rgba(99, 102, 241, 0.3);
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 11.5px;
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        /* Interactive Data Flow Diagram */
-        .diagram-container {
-            background: var(--bg-surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-xl);
-            padding: 30px;
-            margin-top: 20px;
-        }
-        .flow-nodes-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            overflow-x: auto;
-            padding: 16px 0 24px;
-        }
-        .flow-node {
-            background: var(--bg-elevated);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 14px 18px;
-            min-width: 150px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            user-select: none;
-            position: relative;
-        }
-        .flow-node:hover {
-            border-color: var(--primary-light);
-            transform: translateY(-2px);
-        }
-        .flow-node.active {
-            border-color: var(--primary-light);
-            background: rgba(2, 132, 199, 0.15);
-            box-shadow: 0 0 16px rgba(2, 132, 199, 0.25);
-        }
-        .flow-node-icon { font-size: 20px; margin-bottom: 6px; }
-        .flow-node-title {
+            font-family: var(--font-mono);
             font-size: 12.5px;
-            font-weight: 700;
-            color: #fff;
-            letter-spacing: -0.01em;
+            line-height: 1.5;
+            color: #e2e8f0;
+            overflow-x: auto;
+            margin: 14px 0;
         }
-        .flow-node-sub {
-            font-size: 10.5px;
-            color: var(--text-dim);
-            font-family: 'JetBrains Mono', monospace;
-            margin-top: 2px;
-        }
-        .flow-arrow-conn {
-            color: var(--text-dim);
-            font-size: 16px;
-            font-weight: 700;
-        }
-        .node-inspector {
-            background: var(--bg-elevated);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 22px;
-            margin-top: 14px;
-        }
-        .node-inspector h4 {
-            font-size: 16px;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 8px;
+
+        /* Custom Checkbox/Radio Styling */
+        .form-check-group {
             display: flex;
-            align-items: center;
+            flex-direction: column;
             gap: 10px;
+            margin: 16px 0;
         }
-        .inspector-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            margin-top: 14px;
-        }
-
-        /* Live CISA Telemetry Card */
-        .telemetry-card {
-            background: var(--bg-surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-xl);
-            padding: 30px;
-            margin-top: 20px;
-        }
-        .telemetry-stats-row {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin: 24px 0;
-        }
-        .tstat-box {
-            background: var(--bg-elevated);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 18px;
-        }
-        .tstat-num {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 28px;
-            font-weight: 800;
-            color: #fff;
-            line-height: 1.1;
-        }
-        .tstat-lbl {
-            font-size: 12px;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            font-weight: 600;
-            letter-spacing: 0.05em;
-            margin-top: 6px;
-        }
-
-        /* Trust Pack Download Modal */
-        .pack-item-row {
+        .custom-checkbox-label {
             display: flex;
             align-items: flex-start;
-            gap: 12px;
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .pack-item-row:last-child { border-bottom: none; }
-        .pack-check {
-            width: 18px;
-            height: 18px;
-            accent-color: var(--primary);
+            gap: 10px;
+            padding: 10px 14px;
+            background: var(--bg-base);
+            border: 1px solid var(--border);
+            border-radius: 8px;
             cursor: pointer;
+            transition: all 0.2s;
+        }
+        .custom-checkbox-label:hover {
+            border-color: rgba(56, 189, 248, 0.3);
+        }
+        .custom-checkbox-label input[type="checkbox"],
+        .custom-checkbox-label input[type="radio"] {
+            margin-top: 3px;
+            accent-color: var(--primary-light);
+            cursor: pointer;
+        }
+        .check-text-title {
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #fff;
+        }
+        .check-text-desc {
+            font-size: 12px;
+            color: var(--text-muted);
             margin-top: 2px;
         }
 
         /* Footer */
         .footer {
-            margin-top: 90px;
-            padding: 50px 0 60px;
             border-top: 1px solid var(--border);
-            font-size: 13.5px;
+            padding: 50px 0 30px;
+            background: #04070d;
+            font-size: 13px;
             color: var(--text-dim);
         }
-        .footer-inner {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 30px;
-            flex-wrap: wrap;
+        .footer-disclaimer-box {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 8px;
+            padding: 18px;
+            margin-bottom: 24px;
+            line-height: 1.6;
+            color: var(--text-muted);
+            font-size: 12.5px;
         }
-        .footer-left { max-width: 700px; }
-        .footer-left p { margin-bottom: 12px; line-height: 1.6; }
+        .footer-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
         .footer-links {
             display: flex;
-            gap: 22px;
-            flex-wrap: wrap;
+            gap: 18px;
+            list-style: none;
         }
         .footer-links a {
-            color: var(--text-muted);
+            color: var(--text-dim);
             text-decoration: none;
-            transition: color 0.15s;
+            transition: color 0.2s;
         }
-        .footer-links a:hover { color: #fff; }
+        .footer-links a:hover {
+            color: #fff;
+        }
 
-        /* Responsive Breakpoints */
-        @media (max-width: 1024px) {
-            .bento-grid { grid-template-columns: repeat(2, 1fr); }
-            .telemetry-stats-row { grid-template-columns: repeat(2, 1fr); }
-            .inspector-grid { grid-template-columns: 1fr; }
-            .ctrl-details-grid { grid-template-columns: 1fr; }
-        }
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 34px; }
+        @media (max-width: 900px) {
             .bento-grid { grid-template-columns: 1fr; }
-            .bento-col-2 { grid-column: span 1; }
-            .telemetry-stats-row { grid-template-columns: 1fr; }
+            .bento-card.col-span-2 { grid-column: span 1; }
             .nav-menu { display: none; }
-            .sandbox-pipeline { flex-direction: column; }
-            .pipe-arrow { transform: rotate(90deg); }
-        }
-
-        /* Accessibility: Reduced Motion */
-        @media (prefers-reduced-motion: reduce) {
-            * {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-                scroll-behavior: auto !important;
-            }
         }
     </style>
 </head>
 <body>
 
-    <div class="ambient-bg"></div>
+    <!-- Scroll Progress Indicator -->
     <div id="scroll-progress"></div>
 
     <!-- Navigation -->
     <nav class="navbar" id="top-navbar">
         <div class="container nav-inner">
             <a href="/trust" class="brand">
-                <div class="brand-icon">🛡️</div>
+                <div class="brand-logo-shield">
+                    <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
                 TrustAudit
             </a>
             <ul class="nav-menu">
-                <li class="nav-item"><a href="#overview" class="active">Overview</a></li>
-                <li class="nav-item"><a href="#frameworks">Framework Explorer</a></li>
-                <li class="nav-item"><a href="#threat-intel">Threat Intel</a></li>
-                <li class="nav-item"><a href="#security-architecture">Security Architecture</a></li>
-                <li class="nav-item"><a href="#data-transparency">Data Transparency</a></li>
-                <li class="nav-item"><a href="#demos">Interactive Demos</a></li>
-                <li class="nav-item"><a href="#contact">Disclosure</a></li>
+                <li><a href="#overview" class="nav-link active">Overview</a></li>
+                <li><a href="#control-explorer" class="nav-link">Framework Explorer</a></li>
+                <li><a href="#cisa-telemetry" class="nav-link">Threat Intelligence</a></li>
+                <li><a href="#security-posture" class="nav-link">Security Architecture</a></li>
+                <li><a href="#data-flow" class="nav-link">Data Transparency</a></li>
+                <li><a href="#interactive-demos" class="nav-link">Interactive Demos</a></li>
+                <li><a href="#perimeter-check" class="nav-link">Perimeter Check</a></li>
+                <li><a href="#disclosure" class="nav-link">Vulnerability Disclosure</a></li>
             </ul>
             <div class="nav-actions">
-                <button class="btn-pack-nav" onclick="openTrustPackModal()">📦 Trust Pack</button>
-                <a href="/dashboard" class="btn-dashboard-nav">Console &rarr;</a>
+                <a href="/dashboard" class="nav-link" style="font-weight: 600;">Dashboard &rarr;</a>
+                <button class="btn-pack-nav" onclick="openTrustPackModal()">
+                    <svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Trust Pack
+                </button>
             </div>
         </div>
     </nav>
 
-    <div class="container">
+    <main class="container">
 
         <!-- HERO SECTION -->
         <header class="hero" id="overview">
@@ -986,999 +1138,954 @@ TRUST_CENTRE_HTML_TEMPLATE = """<!DOCTYPE html>
                 <span class="eyebrow-dot"></span>
                 TRUSTAUDIT SECURITY & COMPLIANCE
             </div>
-            <h1>Security You Can Inspect.<br>Compliance You Can Understand.</h1>
+            <h1>Security You Can Inspect.<br><span class="gradient-text">Trust You Can Verify.</span></h1>
             <p class="subtitle">
-                Explore how TrustAudit handles source code, detects security risks, maps compliance requirements 
-                and protects customer information.
+                Explore how TrustAudit protects source-code information, identifies security weaknesses, maps compliance requirements and tracks remediation.
             </p>
             <div class="hero-ctas">
-                <a href="#security-architecture" class="btn-primary-lg">
-                    <span>Explore Security Architecture</span> &darr;
+                <a href="#security-posture" class="btn-primary-lg">
+                    <span>Explore Security Architecture</span>
+                    <svg class="icon-svg" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
                 </a>
                 <button class="btn-secondary-lg" onclick="openTrustPackModal()">
-                    <span>Download Trust Pack</span> 📥
+                    <svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    <span>Download Enterprise Trust Pack</span>
                 </button>
             </div>
 
-            <!-- Compact Information Row -->
-            <div class="verification-bar">
-                <div class="vbar-item">
-                    <span>📅 Last Reviewed:</span>
-                    <strong>18 November 2026</strong>
+            <!-- Honest Current-Status Bar -->
+            <div class="status-strip">
+                <div class="status-item">
+                    <span class="status-item-label">Platform Status</span>
+                    <span class="status-item-val">
+                        <span class="status-indicator-dot"></span>
+                        OPERATIONAL
+                    </span>
                 </div>
-                <div class="vbar-item">
-                    <span>🏛️ Frameworks & Mappings:</span>
-                    <strong>DPDP 2023, SOC 2, ISO 27001, GDPR</strong>
+                <div class="status-item">
+                    <span class="status-item-label">CISA KEV Sync</span>
+                    <span class="status-item-val" id="strip-cisa-sync">Healthy (1,782 CVEs)</span>
                 </div>
-                <div class="vbar-item">
-                    <span>🛡️ Latest Negative Isolation Test:</span>
-                    <span class="vbar-tag">PASSED (Suite v2.4)</span>
+                <div class="status-item">
+                    <span class="status-item-label">Tenant Isolation Test</span>
+                    <span class="status-item-val" style="color: #34d399;">v2.4 (18/18 Passed)</span>
                 </div>
-                <div class="vbar-item">
-                    <span>📧 Disclosure Contact:</span>
-                    <a href="mailto:security@trustaudit.io" style="color: var(--primary-light); text-decoration: none; font-weight: 600;">security@trustaudit.io</a>
+                <div class="status-item">
+                    <span class="status-item-label">Password & SSRF Standard</span>
+                    <span class="status-item-val">OWASP 600k & SSRF Safe</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-item-label">Framework Review Date</span>
+                    <span class="status-item-val">18 November 2026</span>
                 </div>
             </div>
         </header>
 
-        <!-- PHASE 4: SECURITY POSTURE BENTO GRID -->
-        <section id="security-architecture">
+        <!-- SECURITY POSTURE BENTO GRID -->
+        <section id="security-posture" style="padding-top: 40px;">
             <div class="section-header">
-                <span class="section-tag">Platform Posture</span>
+                <span class="section-tag">High-Assurance Architecture</span>
                 <h2>Verified Security Architecture</h2>
                 <p>
-                    Evidence-based breakdown of TrustAudit technical security controls. Every claim is supported by actual 
-                    code implementations, provider attestations, or automated regression tests.
+                    Every card reflects verified source-code implementations, official provider guarantees, or automated test assertions.
                 </p>
             </div>
 
             <div class="bento-grid">
-                <!-- Card 1 -->
+                <!-- 1. Encryption in Transit -->
                 <div class="bento-card">
                     <div>
-                        <div class="bento-icon">🔐</div>
+                        <div class="icon-box">
+                            <svg class="icon-svg" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        </div>
                         <h3>Encryption in Transit</h3>
-                        <p>All incoming and egress web traffic is strictly redirected to HTTPS with TLS 1.3/1.2 enforced across public API and dashboard endpoints.</p>
+                        <p>TLS 1.3 and TLS 1.2 enforced across all public endpoints with HSTS. Plaintext HTTP traffic automatically redirected to HTTPS.</p>
                     </div>
-                    <div class="bento-footer">
-                        <span class="status-pill status-verified">VERIFIED BY TEST</span>
-                        <span style="color: var(--text-dim); font-size: 11px;">TLS 1.3 / HSTS</span>
-                    </div>
-                </div>
-
-                <!-- Card 2 -->
-                <div class="bento-card">
-                    <div>
-                        <div class="bento-icon">🗄️</div>
-                        <h3>Encryption at Rest</h3>
-                        <p>Persistent storage volumes are encrypted with AES-256 at the hosting provider storage-volume layer (Render / AWS). Evidence Vault files are fingerprinted with SHA-256 hashes.</p>
-                    </div>
-                    <div class="bento-footer">
+                    <div class="card-footer-meta">
                         <span class="status-pill status-provider">PROVIDER-REPORTED</span>
-                        <span style="color: var(--text-dim); font-size: 11px;">AES-256 Volume</span>
+                        <span>Render / AWS TLS</span>
                     </div>
                 </div>
 
-                <!-- Card 3 -->
-                <div class="bento-card bento-col-2">
-                    <div>
-                        <div class="bento-icon">⚡</div>
-                        <h3>Ephemeral Repository Processing</h3>
-                        <p>Git repositories are cloned into isolated, sandboxed temporary directories. Code is parsed for AST structures and security heuristics, and is <strong>immediately wiped from disk upon scan completion</strong> via <code>shutil.rmtree</code>. Full source code repositories are never permanently retained.</p>
-                    </div>
-                    <div class="bento-footer">
-                        <span class="status-pill status-verified">VERIFIED BY TEST</span>
-                        <span style="color: var(--text-dim); font-size: 11px;">0-Day Code Retention</span>
-                    </div>
-                </div>
-
-                <!-- Card 4 -->
-                <div class="bento-card bento-col-2">
-                    <div>
-                        <div class="bento-icon">👁️</div>
-                        <h3>Secret Redaction & Preview Masking</h3>
-                        <p>Multi-layered regex and Shannon entropy credential scanning inspects code for exposed tokens. Detected credentials are automatically masked (e.g. <code>prefix...[REDACTED]...suffix</code>) before rendering in findings, database stores, or reports. Gitleaks CLI outputs are sanitized prior to memory persistence.</p>
-                    </div>
-                    <div class="bento-footer">
-                        <span class="status-pill status-verified">VERIFIED BY TEST</span>
-                        <span style="color: var(--text-dim); font-size: 11px;">Regex + Shannon Entropy</span>
-                    </div>
-                </div>
-
-                <!-- Card 5 -->
+                <!-- 2. Password Security & Hardening -->
                 <div class="bento-card">
                     <div>
-                        <div class="bento-icon">🏢</div>
+                        <div class="icon-box green">
+                            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 2l-2 2m-1.5 1.5L16 7l-4 4-2-2-4 4 2 2 4-4 1.5 1.5 2-2 2-2z"/></svg>
+                        </div>
+                        <h3>Password Security</h3>
+                        <p>OWASP-recommended PBKDF2-HMAC-SHA256 with 600,000 iterations, unique 16-byte random salts, rate limiting, and seamless rehash-on-login.</p>
+                    </div>
+                    <div class="card-footer-meta">
+                        <span class="status-pill status-verified">VERIFIED BY TEST</span>
+                        <span>OWASP 2024/2026</span>
+                    </div>
+                </div>
+
+                <!-- 3. Secret Redaction Pipeline -->
+                <div class="bento-card">
+                    <div>
+                        <div class="icon-box">
+                            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                        </div>
+                        <h3>Secret Redaction</h3>
+                        <p>Pre-persistence credential masking via Shannon entropy analysis and regex pattern matching. Tokens masked to safe preview strings.</p>
+                    </div>
+                    <div class="card-footer-meta">
+                        <span class="status-pill status-verified">VERIFIED BY TEST</span>
+                        <span>secret_detector.py</span>
+                    </div>
+                </div>
+
+                <!-- 4. Tenant Access Boundaries -->
+                <div class="bento-card">
+                    <div>
+                        <div class="icon-box green">
+                            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        </div>
                         <h3>Tenant Access Isolation</h3>
-                        <p>Customer data, scan results, evidence documents, and projects are strictly partitioned by organization IDs and authorized via server-side session bearer tokens.</p>
+                        <p>Strict organization-scoped database queries and authorization checks. Cross-tenant access attempts return HTTP 404.</p>
                     </div>
-                    <div class="bento-footer">
+                    <div class="card-footer-meta">
                         <span class="status-pill status-verified">VERIFIED BY TEST</span>
-                        <span style="color: var(--text-dim); font-size: 11px;">Negative Suite Passed</span>
+                        <span>18/18 Tests Passed</span>
                     </div>
                 </div>
 
-                <!-- Card 6 -->
+                <!-- 5. Ephemeral Repository Processing -->
+                <div class="bento-card col-span-2">
+                    <div>
+                        <div class="icon-box amber">
+                            <svg class="icon-svg" viewBox="0 0 24 24"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+                        </div>
+                        <h3>Ephemeral Repository Processing</h3>
+                        <p>Source code repositories are cloned into isolated temporary working directories created with <code>tempfile.mkdtemp</code>. Upon completion of AST/SAST analysis, the temporary directory is deleted via <code>shutil.rmtree</code>, ensuring 0-day disk retention for source code.</p>
+                    </div>
+                    <div class="card-footer-meta">
+                        <span class="status-pill status-verified">VERIFIED BY TEST</span>
+                        <span>0-Day Source Retention</span>
+                    </div>
+                </div>
+
+                <!-- 6. Vulnerability Intelligence -->
                 <div class="bento-card">
                     <div>
-                        <div class="bento-icon">🚨</div>
+                        <div class="icon-box purple">
+                            <svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        </div>
                         <h3>Vulnerability Intelligence</h3>
-                        <p>Continuous synchronization with CISA Known Exploited Vulnerabilities (KEV) and Google OSV.dev catalogs to correlate third-party dependencies against in-the-wild exploitation.</p>
+                        <p>Continuous background synchronization with the official CISA Known Exploited Vulnerabilities catalog for prioritization.</p>
                     </div>
-                    <div class="bento-footer">
-                        <span class="status-pill status-provider">OPERATIONAL</span>
-                        <span style="color: var(--text-dim); font-size: 11px;">CISA KEV / OSV.dev</span>
-                    </div>
-                </div>
-
-                <!-- Card 7 -->
-                <div class="bento-card">
-                    <div>
-                        <div class="bento-icon">🔑</div>
-                        <h3>Authentication & Hashing</h3>
-                        <p>User passwords are protected using PBKDF2-HMAC-SHA256 with 100,000 iterations and per-user 16-byte random salts. Multi-factor authentication (MFA) is on our product roadmap.</p>
-                    </div>
-                    <div class="bento-footer">
-                        <span class="status-pill status-verified">VERIFIED BY TEST</span>
-                        <span style="color: var(--text-dim); font-size: 11px;">PBKDF2-HMAC-SHA256</span>
+                    <div class="card-footer-meta">
+                        <span class="status-pill status-operational">OPERATIONAL</span>
+                        <span>1,782 KEV Entries</span>
                     </div>
                 </div>
 
-                <!-- Card 8 -->
+                <!-- 7. Multi-Factor Authentication -->
                 <div class="bento-card">
                     <div>
-                        <div class="bento-icon">📁</div>
-                        <h3>Evidence Vault Integrity</h3>
-                        <p>Customer audit documents are stored in tenant-isolated directories with immutable SHA-256 cryptographic fingerprints, control linkages, and annual review cycle tracking.</p>
+                        <div class="icon-box green">
+                            <svg class="icon-svg" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                        </div>
+                        <h3>Multi-Factor Auth (MFA)</h3>
+                        <p>RFC 6238 standard TOTP multi-factor authentication for organization administrators and security leads, compatible with Google Authenticator.</p>
                     </div>
-                    <div class="bento-footer">
+                    <div class="card-footer-meta">
                         <span class="status-pill status-verified">VERIFIED BY TEST</span>
-                        <span style="color: var(--text-dim); font-size: 11px;">SHA-256 Hashing</span>
+                        <span>RFC 6238 TOTP</span>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- PHASE 5 & 6: INTERACTIVE LIVE CONTROL EXPLORER -->
-        <section id="frameworks">
+        <!-- FRAMEWORK EXPLORER & CONTROL MAPPINGS -->
+        <section id="control-explorer" style="padding-top: 40px;">
             <div class="section-header">
                 <span class="section-tag">Interactive GRC Explorer</span>
                 <h2>Framework Explorer & Control Mappings</h2>
                 <p>
-                    Inspect how TrustAudit checks technical security controls against statutory regulations (including India's Digital Personal Data Protection Act, 2023 and Digital Personal Data Protection Rules, 2025) and international standards (SOC 2, ISO/IEC 27001:2022, GDPR). 
-                    Filter by framework, view evidence previews, and inspect remediation guidance.
+                    Inspect how TrustAudit checks technical security controls against statutory regulations (including India's Digital Personal Data Protection Act, 2023 and Digital Personal Data Protection Rules, 2025) and international standards (SOC 2, ISO/IEC 27001:2022, GDPR).
                 </p>
             </div>
 
+            <!-- Pre-Launch vs Post-Launch Segmented Toggle -->
+            <div class="framework-segment-wrapper">
+                <div class="segment-container">
+                    <button class="segment-btn active" id="btn-prelaunch" onclick="switchLaunchPhase('prelaunch')">
+                        <svg class="icon-svg" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                        Pre-Launch Security Gates
+                    </button>
+                    <button class="segment-btn" id="btn-postlaunch" onclick="switchLaunchPhase('postlaunch')">
+                        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                        Post-Launch Continuous Monitoring
+                    </button>
+                </div>
+            </div>
+
+            <!-- Phase Description Banner -->
+            <div id="phase-banner" style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; margin-bottom: 24px; font-size: 13.5px; color: var(--text-muted);">
+                <strong style="color: #fff;">Pre-Launch Shift-Left Security:</strong> Automated code scanning, SAST, secret detection, dependency CVE lookups, infrastructure-as-code checks, and statutory compliance gap analysis executed prior to merging code or deploying to production.
+            </div>
+
+            <!-- Explorer Filters -->
             <div class="explorer-controls">
                 <div class="filter-group">
                     <button class="filter-btn active" onclick="filterFramework('ALL', this)">All Frameworks</button>
                     <button class="filter-btn" onclick="filterFramework('DPDP', this)">DPDP Act 2023</button>
                     <button class="filter-btn" onclick="filterFramework('SOC2', this)">SOC 2 Criteria</button>
-                    <button class="filter-btn" onclick="filterFramework('ISO27001', this)">ISO/IEC 27001:2022</button>
+                    <button class="filter-btn" onclick="filterFramework('ISO27001', this)">ISO/IEC 27001</button>
                     <button class="filter-btn" onclick="filterFramework('GDPR', this)">EU GDPR</button>
                 </div>
-                <input type="text" class="search-box" id="ctrl-search" placeholder="Search controls (e.g. CC6.1, A.8.8)..." onkeyup="searchControls(this.value)">
+                <div class="search-box">
+                    <svg class="icon-svg search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <input type="text" class="search-input" id="control-search-input" placeholder="Search controls, IDs, clauses..." onkeyup="searchControls()">
+                </div>
             </div>
 
-            <!-- Expandable Control Cards Container -->
-            <div class="control-accordion" id="control-accordion-list">
-                <!-- DPDP Control 1: Sec 6(9) -->
-                <div class="accordion-item" data-framework="DPDP" data-id="DPDP-SEC-06">
-                    <div class="accordion-header" onclick="toggleAccordion(this)">
-                        <div class="accordion-title-wrap">
-                            <span class="ctrl-id-badge">DPDP Section 6(9) & Rule 4</span>
-                            <span class="ctrl-name">Consent Architecture & Statutory Consent Manager Integration</span>
-                            <span class="status-pill status-provider">Already in force (13 Nov 2026)</span>
+            <!-- Accordion Controls List -->
+            <div class="controls-list" id="controls-accordion-list">
+                
+                <!-- 1. DPDP Section 6(9) -->
+                <div class="ctrl-card" data-framework="DPDP" data-id="DPDP-SEC-06">
+                    <div class="ctrl-header" onclick="toggleCtrl(this)">
+                        <div class="ctrl-header-left">
+                            <span class="ctrl-id-badge">DPDP-SEC-06(9)</span>
+                            <span class="ctrl-title">Consent Architecture & Statutory Consent Manager Integration</span>
                         </div>
-                        <span class="ctrl-chevron">&#9660;</span>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span class="status-pill status-provider">In Force (13 November 2026)</span>
+                            <svg class="icon-svg ctrl-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                        </div>
                     </div>
-                    <div class="accordion-content">
-                        <div class="ctrl-details-grid">
+                    <div class="ctrl-body">
+                        <div class="ctrl-grid-details">
                             <div class="detail-block">
-                                <h4>Statutory Requirement & Official Source</h4>
-                                <p>DPDP Act 2023 Section 6(9) read with DPDP Rules 2025 Rule 4. Data Principals may give, manage, review, or withdraw consent through registered Consent Managers accountable to the DPBI.</p>
+                                <h4>Statutory Requirement & Legal Source</h4>
+                                <p>Digital Personal Data Protection Act, 2023 Section 6(9) read with Digital Personal Data Protection Rules, 2025 Rule 4. Data Principals may manage or withdraw consent through registered Consent Managers accountable to the DPBI.</p>
                             </div>
                             <div class="detail-block">
                                 <h4>What TrustAudit Checks</h4>
-                                <p>Evaluates application consent token schemas and self-service consent withdrawal workflows. TrustAudit does <em>not</em> self-attest as a registered statutory Consent Manager.</p>
+                                <p>Scans codebase for consent revocation API routes (e.g. <code>DELETE /api/consent</code>), webhooks, and instruction propagation to downstream processors.</p>
                             </div>
                             <div class="detail-block">
                                 <h4>Coverage & Limitations</h4>
-                                <p>Automated checks verify API consent withdrawal endpoints. Formal Consent Manager interoperability certification requires DPBI registration.</p>
-                            </div>
-                            <div class="detail-block">
-                                <h4>Assessment Classification</h4>
-                                <p><span class="status-pill status-provider">Operational Readiness</span> &bull; Commenced 13 November 2026</p>
+                                <p>Static checks verify consent API wiring. TrustAudit does <em>not</em> self-attest as a registered statutory Consent Manager.</p>
                             </div>
                         </div>
-
-                        <!-- JSON Sample Box -->
-                        <div class="code-box-header">
-                            <span>ILLUSTRATIVE SAMPLE &mdash; NOT A LIVE CUSTOMER RECORD</span>
-                            <button class="btn-copy-code" onclick="copySnippet(this)">Copy JSON</button>
+                        <div class="ctrl-actions">
+                            <button class="btn-action-sm" onclick="openRemediationModal('dpdp')">
+                                <svg class="icon-svg" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                                View Remediation Example
+                            </button>
+                            <button class="btn-action-sm" onclick="openEvidenceModal('DPDP-SEC-06')">
+                                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                View Sample Evidence JSON
+                            </button>
                         </div>
-                        <pre class="code-pre"><code>{
-  "framework": "DPDP:2023",
-  "control": "Section 6(9) & Rule 4",
-  "assessment": "Consent withdrawal endpoint responds with HTTP 200 and revokes token",
-  "source": "TrustAudit API Analyzer",
-  "status": "Readiness evaluated",
-  "evidence_type": "Consent revocation audit log schema",
-  "verified_at": "2026-11-18T23:55:00Z"
-}</code></pre>
-
-                        <button class="btn-pack-nav" onclick="openRemediationModal('dpdp-sec-6')">View Remediation Example &rarr;</button>
                     </div>
                 </div>
 
-                <!-- DPDP Control 2: Sec 8(5) -->
-                <div class="accordion-item" data-framework="DPDP" data-id="DPDP-SEC-08-5">
-                    <div class="accordion-header" onclick="toggleAccordion(this)">
-                        <div class="accordion-title-wrap">
-                            <span class="ctrl-id-badge">DPDP Section 8(5) & Rule 6</span>
-                            <span class="ctrl-name">Reasonable Security Safeguards to Prevent Personal Data Breach</span>
-                            <span class="status-pill status-readiness">Scheduled (13 May 2027)</span>
+                <!-- 2. DPDP Section 8(5) -->
+                <div class="ctrl-card" data-framework="DPDP" data-id="DPDP-SEC-08-5">
+                    <div class="ctrl-header" onclick="toggleCtrl(this)">
+                        <div class="ctrl-header-left">
+                            <span class="ctrl-id-badge">DPDP-SEC-08(5)</span>
+                            <span class="ctrl-title">Reasonable Security Safeguards & Credential Protection</span>
                         </div>
-                        <span class="ctrl-chevron">&#9660;</span>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span class="status-pill status-roadmap">Commencing 13 May 2027</span>
+                            <svg class="icon-svg ctrl-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                        </div>
                     </div>
-                    <div class="accordion-content">
-                        <div class="ctrl-details-grid">
+                    <div class="ctrl-body">
+                        <div class="ctrl-grid-details">
                             <div class="detail-block">
-                                <h4>Statutory Requirement & Official Source</h4>
-                                <p>DPDP Act 2023 Section 8(5) read with DPDP Rules 2025 Rule 6. A Data Fiduciary must protect personal data in its possession or control by taking reasonable security safeguards to prevent personal data breach.</p>
+                                <h4>Statutory Requirement & Legal Source</h4>
+                                <p>Digital Personal Data Protection Act, 2023 Section 8(5) read with Digital Personal Data Protection Rules, 2025 Rule 6. Data Fiduciaries must take reasonable security safeguards to prevent personal data breaches.</p>
                             </div>
                             <div class="detail-block">
                                 <h4>What TrustAudit Checks</h4>
-                                <p>Automated secret scanning across repositories, TLS 1.3/1.2 transit encryption checks, HSTS validation, and OWASP Top 10 code security analysis.</p>
+                                <p>Detects hardcoded secrets, unprotected database connections, missing encryption in transit, and insecure storage configurations before deployment.</p>
                             </div>
                             <div class="detail-block">
                                 <h4>Coverage & Limitations</h4>
-                                <p>Identifies technical vulnerabilities. Does not evaluate physical data center access security or third-party processor on-premise safeguards.</p>
-                            </div>
-                            <div class="detail-block">
-                                <h4>Assessment Classification</h4>
-                                <p><span class="status-pill status-readiness">Readiness Assessment</span> (IT Act Section 43A baseline in force)</p>
+                                <p>Identifies automated technical code flaws. Physical premises security, organizational background checks, and vendor contracts require human administrative audit.</p>
                             </div>
                         </div>
-
-                        <div class="code-box-header">
-                            <span>ILLUSTRATIVE SAMPLE &mdash; NOT A LIVE CUSTOMER RECORD</span>
-                            <button class="btn-copy-code" onclick="copySnippet(this)">Copy JSON</button>
+                        <div class="ctrl-actions">
+                            <button class="btn-action-sm" onclick="openRemediationModal('dpdp')">
+                                <svg class="icon-svg" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                                View Remediation Example
+                            </button>
+                            <button class="btn-action-sm" onclick="openEvidenceModal('DPDP-SEC-08-5')">
+                                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                View Sample Evidence JSON
+                            </button>
                         </div>
-                        <pre class="code-pre"><code>{
-  "framework": "DPDP:2023",
-  "control": "Section 8(5) & Rule 6",
-  "assessment": "Zero active production credentials detected in git source code",
-  "source": "TrustAudit Secret Detector",
-  "status": "PASS",
-  "evidence_type": "Static analysis secret scan report",
-  "verified_at": "2026-11-18T23:55:00Z"
-}</code></pre>
-
-                        <button class="btn-pack-nav" onclick="openRemediationModal('dpdp-sec-8-5')">View Remediation Example &rarr;</button>
                     </div>
                 </div>
 
-                <!-- SOC 2: CC6.1 -->
-                <div class="accordion-item" data-framework="SOC2" data-id="SOC2-CC6.1">
-                    <div class="accordion-header" onclick="toggleAccordion(this)">
-                        <div class="accordion-title-wrap">
-                            <span class="ctrl-id-badge">SOC 2 CC6.1</span>
-                            <span class="ctrl-name">Logical Access Security & Credential Management</span>
-                            <span class="status-pill status-verified">Verified by Test</span>
+                <!-- 3. SOC 2 CC8.1 / CC6.1 -->
+                <div class="ctrl-card" data-framework="SOC2" data-id="SOC2-CC8.1">
+                    <div class="ctrl-header" onclick="toggleCtrl(this)">
+                        <div class="ctrl-header-left">
+                            <span class="ctrl-id-badge">SOC2-CC8.1</span>
+                            <span class="ctrl-title">Change Management & Branch Protection Security Gates</span>
                         </div>
-                        <span class="ctrl-chevron">&#9660;</span>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span class="status-pill status-verified">Technical Mapping</span>
+                            <svg class="icon-svg ctrl-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                        </div>
                     </div>
-                    <div class="accordion-content">
-                        <div class="ctrl-details-grid">
+                    <div class="ctrl-body">
+                        <div class="ctrl-grid-details">
                             <div class="detail-block">
                                 <h4>AICPA TSC Published Scope</h4>
-                                <p>AICPA 2017 TSC with 2022 Points of Focus CC6.1. The entity implements logical access security software, infrastructure, and architectures over protected information assets to protect them from security events.</p>
+                                <p>AICPA 2017 TSC with 2022 Points of Focus CC8.1 (Change Management) & CC6.1 (Logical Access). Enforces authorized changes, peer code review, and automated testing prior to production release.</p>
                             </div>
                             <div class="detail-block">
                                 <h4>What TrustAudit Checks</h4>
-                                <p>Automated secret scanning detects committed private keys, AWS tokens, and Stripe keys in repositories. Evidence Vault stores MFA configuration screenshots and quarterly access reviews.</p>
+                                <p>Inspects GitHub repository branch protection rules, required PR approvals, CI security action status checks, and linear commit histories.</p>
                             </div>
                             <div class="detail-block">
                                 <h4>Coverage & Limitations</h4>
-                                <p>Automated detection covers source code and git histories. Employee onboarding/offboarding workflows require customer-uploaded HR evidence.</p>
-                            </div>
-                            <div class="detail-block">
-                                <h4>Auditing Status</h4>
-                                <p><span class="status-pill status-evidence">Readiness Evaluation</span> &bull; Formal report requires CPA examination</p>
+                                <p>Branch protection provides technical change gate evidence. Complete SOC 2 compliance also requires identity provisioning, access reviews, and formal CPA audit.</p>
                             </div>
                         </div>
-
-                        <div class="code-box-header">
-                            <span>ILLUSTRATIVE SAMPLE &mdash; NOT A LIVE CUSTOMER RECORD</span>
-                            <button class="btn-copy-code" onclick="copySnippet(this)">Copy JSON</button>
+                        <div class="ctrl-actions">
+                            <button class="btn-action-sm" onclick="openRemediationModal('soc2')">
+                                <svg class="icon-svg" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                                View Remediation Example
+                            </button>
+                            <button class="btn-action-sm" onclick="openEvidenceModal('SOC2-CC8.1')">
+                                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                View Sample Evidence JSON
+                            </button>
                         </div>
-                        <pre class="code-pre"><code>{
-  "framework": "SOC2:2017",
-  "control": "CC6.1",
-  "assessment": "Hardcoded credential detection across 12 source files",
-  "source": "TrustAudit Secret Scanner",
-  "status": "0_CRITICAL_SECRETS_FOUND",
-  "evidence_type": "Repository secret audit snapshot",
-  "verified_at": "2026-11-18T23:55:00Z"
-}</code></pre>
-
-                        <button class="btn-pack-nav" onclick="openRemediationModal('soc2-cc6-1')">View Remediation Example &rarr;</button>
                     </div>
                 </div>
 
-                <!-- SOC 2: CC7.1 -->
-                <div class="accordion-item" data-framework="SOC2" data-id="SOC2-CC7.1">
-                    <div class="accordion-header" onclick="toggleAccordion(this)">
-                        <div class="accordion-title-wrap">
-                            <span class="ctrl-id-badge">SOC 2 CC7.1</span>
-                            <span class="ctrl-name">Monitoring Configuration Changes & Vulnerability Susceptibility</span>
-                            <span class="status-pill status-verified">Verified by Test</span>
+                <!-- 4. ISO/IEC 27001 A.8.28 / A.8.8 -->
+                <div class="ctrl-card" data-framework="ISO27001" data-id="ISO-A.8.28">
+                    <div class="ctrl-header" onclick="toggleCtrl(this)">
+                        <div class="ctrl-header-left">
+                            <span class="ctrl-id-badge">ISO-A.8.28</span>
+                            <span class="ctrl-title">Secure Coding Standards & Technical Vulnerability Management</span>
                         </div>
-                        <span class="ctrl-chevron">&#9660;</span>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span class="status-pill status-verified">Technical Mapping</span>
+                            <svg class="icon-svg ctrl-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                        </div>
                     </div>
-                    <div class="accordion-content">
-                        <div class="ctrl-details-grid">
+                    <div class="ctrl-body">
+                        <div class="ctrl-grid-details">
                             <div class="detail-block">
-                                <h4>AICPA TSC Published Scope</h4>
-                                <p>AICPA 2017 TSC with 2022 Points of Focus CC7.1. Procedures to identify (1) changes to configurations that result in new vulnerabilities, and (2) susceptibilities to newly discovered vulnerabilities. (Not simply patch SLAs).</p>
+                                <h4>ISO/IEC 27001:2022 Standard Scope</h4>
+                                <p>Annex A Technological Controls: A.8.28 (Secure Coding) and A.8.8 (Management of Technical Vulnerabilities). Requires secure coding principles applied to development and systematic vulnerability identification.</p>
                             </div>
                             <div class="detail-block">
                                 <h4>What TrustAudit Checks</h4>
-                                <p>Automated dependency SBOM scanning against CISA KEV and OSV.dev feeds. Tracks configuration changes in Dockerfiles and Terraform IaC.</p>
+                                <p>Executes Semgrep semantic SAST rules, AST taint tracking, dependency CVE matching via OSV/NVD, and AI-coded pattern flaw detection.</p>
                             </div>
                             <div class="detail-block">
                                 <h4>Coverage & Limitations</h4>
-                                <p>Scans software packages and infrastructure manifests. Cloud runtime configuration drift (AWS IAM/EC2) requires cloud provider connector evidence.</p>
-                            </div>
-                            <div class="detail-block">
-                                <h4>Auditing Status</h4>
-                                <p><span class="status-pill status-evidence">Readiness Evaluation</span></p>
+                                <p>Automated scanning detects software flaws. Complete ISO 27001 certification requires an accredited certification body examination of an enterprise ISMS.</p>
                             </div>
                         </div>
-
-                        <div class="code-box-header">
-                            <span>ILLUSTRATIVE SAMPLE &mdash; NOT A LIVE CUSTOMER RECORD</span>
-                            <button class="btn-copy-code" onclick="copySnippet(this)">Copy JSON</button>
+                        <div class="ctrl-actions">
+                            <button class="btn-action-sm" onclick="openRemediationModal('iso27001')">
+                                <svg class="icon-svg" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                                View Remediation Example
+                            </button>
+                            <button class="btn-action-sm" onclick="openEvidenceModal('ISO-A.8.28')">
+                                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                View Sample Evidence JSON
+                            </button>
                         </div>
-                        <pre class="code-pre"><code>{
-  "framework": "SOC2:2017",
-  "control": "CC7.1",
-  "assessment": "Third-party component vulnerability tracking with CISA KEV correlation",
-  "source": "TrustAudit Vulnerability Intelligence",
-  "status": "PASS",
-  "evidence_type": "Dependency scan result & KEV correlation",
-  "verified_at": "2026-11-18T23:55:00Z"
-}</code></pre>
-
-                        <button class="btn-pack-nav" onclick="openRemediationModal('soc2-cc7-1')">View Remediation Example &rarr;</button>
                     </div>
                 </div>
 
-                <!-- ISO 27001: A.8.8 -->
-                <div class="accordion-item" data-framework="ISO27001" data-id="ISO-A.8.8">
-                    <div class="accordion-header" onclick="toggleAccordion(this)">
-                        <div class="accordion-title-wrap">
-                            <span class="ctrl-id-badge">ISO/IEC 27001:2022 A.8.8</span>
-                            <span class="ctrl-name">Management of Technical Vulnerabilities</span>
-                            <span class="status-pill status-verified">Verified by Test</span>
+                <!-- 5. EU GDPR Article 32 / 33 -->
+                <div class="ctrl-card" data-framework="GDPR" data-id="GDPR-ART-32">
+                    <div class="ctrl-header" onclick="toggleCtrl(this)">
+                        <div class="ctrl-header-left">
+                            <span class="ctrl-id-badge">GDPR-ART-32</span>
+                            <span class="ctrl-title">Security of Processing & Documented Breach Assessment</span>
                         </div>
-                        <span class="ctrl-chevron">&#9660;</span>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span class="status-pill status-provider">Technical Mapping</span>
+                            <svg class="icon-svg ctrl-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                        </div>
                     </div>
-                    <div class="accordion-content">
-                        <div class="ctrl-details-grid">
+                    <div class="ctrl-body">
+                        <div class="ctrl-grid-details">
                             <div class="detail-block">
-                                <h4>Official ISO/IEC 27001:2022 Scope</h4>
-                                <p>ISO/IEC 27001:2022 Annex A.8.8. Information about technical vulnerabilities of systems in use shall be obtained, exposure evaluated, and appropriate measures taken to address associated risk.</p>
+                                <h4>EU GDPR Regulatory Scope</h4>
+                                <p>Article 32 (Security of processing), Article 33 (Notification of breach to supervisory authority within 72 hours), and Article 34 (Communication to data subject when high risk).</p>
                             </div>
                             <div class="detail-block">
                                 <h4>What TrustAudit Checks</h4>
-                                <p>Executes static code analysis (SAST) and dynamic dependency checks. Prioritizes findings using CISA KEV exploitability metrics and assigns SLA remediation tasks.</p>
+                                <p>Evaluates transport encryption, secret redaction, vulnerability exposure, and logs incident resolution timelines in the Remediation Centre.</p>
                             </div>
                             <div class="detail-block">
                                 <h4>Coverage & Limitations</h4>
-                                <p>Evaluates repository dependencies and web perimeters. Does not evaluate physical server firmware or legacy OT devices.</p>
-                            </div>
-                            <div class="detail-block">
-                                <h4>Certification Status</h4>
-                                <p><span class="status-pill status-readiness">Implementation Posture Evaluation</span> &bull; Accredited certificate requires Stage 1/2 CB audits</p>
+                                <p>Automated checks support technical posture evidence. Legal assessments regarding supervisory notification thresholds require legal counsel.</p>
                             </div>
                         </div>
-
-                        <div class="code-box-header">
-                            <span>ILLUSTRATIVE SAMPLE &mdash; NOT A LIVE CUSTOMER RECORD</span>
-                            <button class="btn-copy-code" onclick="copySnippet(this)">Copy JSON</button>
+                        <div class="ctrl-actions">
+                            <button class="btn-action-sm" onclick="openRemediationModal('gdpr')">
+                                <svg class="icon-svg" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                                View Remediation Example
+                            </button>
+                            <button class="btn-action-sm" onclick="openEvidenceModal('GDPR-ART-32')">
+                                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                View Sample Evidence JSON
+                            </button>
                         </div>
-                        <pre class="code-pre"><code>{
-  "framework": "ISO27001:2022",
-  "control": "A.8.8",
-  "assessment": "Technical vulnerability management across production repos",
-  "source": "TrustAudit SAST Engine",
-  "status": "PASS",
-  "evidence_type": "Static application security testing report",
-  "verified_at": "2026-11-18T23:55:00Z"
-}</code></pre>
-
-                        <button class="btn-pack-nav" onclick="openRemediationModal('iso-a-8-8')">View Remediation Example &rarr;</button>
                     </div>
                 </div>
 
-                <!-- ISO 27001: A.8.20 -->
-                <div class="accordion-item" data-framework="ISO27001" data-id="ISO-A.8.20">
-                    <div class="accordion-header" onclick="toggleAccordion(this)">
-                        <div class="accordion-title-wrap">
-                            <span class="ctrl-id-badge">ISO/IEC 27001:2022 A.8.20</span>
-                            <span class="ctrl-name">Network Security</span>
-                            <span class="status-pill status-verified">Verified by Test</span>
-                        </div>
-                        <span class="ctrl-chevron">&#9660;</span>
+            </div>
+        </section>
+
+        <!-- DATA FLOW & EPHEMERAL PIPELINE DIAGRAM -->
+        <section id="data-flow" style="padding-top: 40px;">
+            <div class="section-header">
+                <span class="section-tag">Zero-Day Disk Retention</span>
+                <h2>Interactive Repository Processing Pipeline</h2>
+                <p>
+                    Follow the verified lifecycle of customer code. Click any stage to inspect what data is processed, stored, and deleted.
+                </p>
+            </div>
+
+            <div class="pipeline-wrapper">
+                <div class="pipeline-header">
+                    <span style="font-weight: 700; color: #fff;">SANDBOX PROCESSING LIFECYCLE</span>
+                    <span class="status-pill status-verified">Verified 0-Day Disk Retention</span>
+                </div>
+
+                <div class="pipeline-nodes-container">
+                    <div class="pipeline-node active" onclick="inspectNode('repo', this)">
+                        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                        <div class="pipeline-node-name">GitHub Repo</div>
+                        <div class="pipeline-node-sub">Source Repository</div>
                     </div>
-                    <div class="accordion-content">
-                        <div class="ctrl-details-grid">
-                            <div class="detail-block">
-                                <h4>Official ISO/IEC 27001:2022 Scope</h4>
-                                <p>ISO/IEC 27001:2022 Annex A.8.20 Network security. Networks and network devices shall be secured, managed, and controlled to protect information in systems and applications.</p>
-                            </div>
-                            <div class="detail-block">
-                                <h4>What TrustAudit Checks</h4>
-                                <p>Perimeter network security scanner verifies CORS policies, security headers (CSP, HSTS), open debug ports, and network-exposed unauthenticated RPC interfaces.</p>
-                            </div>
-                            <div class="detail-block">
-                                <h4>Coverage & Limitations</h4>
-                                <p>Tests public web endpoints and DNS configurations. Internal private VPC subnet routing requires customer firewall architecture evidence.</p>
-                            </div>
-                            <div class="detail-block">
-                                <h4>Certification Status</h4>
-                                <p><span class="status-pill status-readiness">Implementation Posture Evaluation</span></p>
-                            </div>
-                        </div>
-
-                        <div class="code-box-header">
-                            <span>ILLUSTRATIVE SAMPLE &mdash; NOT A LIVE CUSTOMER RECORD</span>
-                            <button class="btn-copy-code" onclick="copySnippet(this)">Copy JSON</button>
-                        </div>
-                        <pre class="code-pre"><code>{
-  "framework": "ISO27001:2022",
-  "control": "A.8.20",
-  "assessment": "Network perimeter inspection: HSTS verified, CORS allowlist enforced",
-  "source": "TrustAudit Perimeter Scanner",
-  "status": "PASS",
-  "evidence_type": "TLS & Network Header Analysis",
-  "verified_at": "2026-11-18T23:55:00Z"
-}</code></pre>
-
-                        <button class="btn-pack-nav" onclick="openRemediationModal('iso-a-8-20')">View Remediation Example &rarr;</button>
+                    <div class="pipeline-arrow">&rarr;</div>
+                    <div class="pipeline-node" onclick="inspectNode('clone', this)">
+                        <svg class="icon-svg" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+                        <div class="pipeline-node-name">Ephemeral Clone</div>
+                        <div class="pipeline-node-sub">tempfile.mkdtemp</div>
+                    </div>
+                    <div class="pipeline-arrow">&rarr;</div>
+                    <div class="pipeline-node" onclick="inspectNode('ast', this)">
+                        <svg class="icon-svg" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                        <div class="pipeline-node-name">AST / SAST Analysis</div>
+                        <div class="pipeline-node-sub">In-Memory Engine</div>
+                    </div>
+                    <div class="pipeline-arrow">&rarr;</div>
+                    <div class="pipeline-node" onclick="inspectNode('redact', this)">
+                        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                        <div class="pipeline-node-name">Secret Redaction</div>
+                        <div class="pipeline-node-sub">Entropy Masking</div>
+                    </div>
+                    <div class="pipeline-arrow">&rarr;</div>
+                    <div class="pipeline-node node-cleanup" onclick="inspectNode('cleanup', this)">
+                        <svg class="icon-svg" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                        <div class="pipeline-node-name" style="color: #f59e0b;">Workspace Scrub</div>
+                        <div class="pipeline-node-sub">shutil.rmtree</div>
+                    </div>
+                    <div class="pipeline-arrow">&rarr;</div>
+                    <div class="pipeline-node" onclick="inspectNode('store', this)">
+                        <svg class="icon-svg" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+                        <div class="pipeline-node-name">Tenant Store</div>
+                        <div class="pipeline-node-sub">Metadata & Fixes</div>
                     </div>
                 </div>
 
-                <!-- GDPR: Art 25 & 32 -->
-                <div class="accordion-item" data-framework="GDPR" data-id="GDPR-ART-32">
-                    <div class="accordion-header" onclick="toggleAccordion(this)">
-                        <div class="accordion-title-wrap">
-                            <span class="ctrl-id-badge">EU GDPR Article 32</span>
-                            <span class="ctrl-name">Security of Processing & Technical Safeguards</span>
-                            <span class="status-pill status-verified">Verified by Test</span>
-                        </div>
-                        <span class="ctrl-chevron">&#9660;</span>
+                <!-- Stage Inspector Panel -->
+                <div class="node-inspector-panel" id="node-inspector-panel">
+                    <div>
+                        <div style="font-size: 11px; text-transform: uppercase; color: var(--text-dim); font-weight: 700;">STAGE NAME</div>
+                        <div id="insp-title" style="font-size: 14.5px; font-weight: 700; color: #fff; margin-top: 2px;">GitHub Repository Connection</div>
                     </div>
-                    <div class="accordion-content">
-                        <div class="ctrl-details-grid">
-                            <div class="detail-block">
-                                <h4>EU GDPR Statutory Scope</h4>
-                                <p>Regulation (EU) 2016/679 Article 32. The controller and processor shall implement technical and organisational measures to ensure a level of security appropriate to the risk, including encryption and ongoing confidentiality.</p>
-                            </div>
-                            <div class="detail-block">
-                                <h4>What TrustAudit Checks</h4>
-                                <p>Verifies transport encryption, access boundary configurations, tenant isolation enforcement, and hardcoded credential absence.</p>
-                            </div>
-                            <div class="detail-block">
-                                <h4>Coverage & Limitations</h4>
-                                <p>Verifies technological security baseline. Legal basis for processing, Article 30 records, and DPA agreements require organizational compliance review.</p>
-                            </div>
-                            <div class="detail-block">
-                                <h4>Statutory Status</h4>
-                                <p><span class="status-pill status-provider">Enacted & Enforceable</span></p>
-                            </div>
-                        </div>
-
-                        <div class="code-box-header">
-                            <span>ILLUSTRATIVE SAMPLE &mdash; NOT A LIVE CUSTOMER RECORD</span>
-                            <button class="btn-copy-code" onclick="copySnippet(this)">Copy JSON</button>
-                        </div>
-                        <pre class="code-pre"><code>{
-  "framework": "GDPR:2016/679",
-  "control": "Article 32(1)(a)",
-  "assessment": "Cryptographic transport security verified across personal data ingestion points",
-  "source": "TrustAudit TLS Inspector",
-  "status": "PASS",
-  "evidence_type": "Perimeter encryption verification report",
-  "verified_at": "2026-11-18T23:55:00Z"
-}</code></pre>
-
-                        <button class="btn-pack-nav" onclick="openRemediationModal('gdpr-art-32')">View Remediation Example &rarr;</button>
+                    <div>
+                        <div style="font-size: 11px; text-transform: uppercase; color: var(--text-dim); font-weight: 700;">DATA INGESTED</div>
+                        <div id="insp-ingest" style="font-size: 13.5px; color: var(--text-muted); margin-top: 2px;">Target repository URL and fine-grained PAT</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 11px; text-transform: uppercase; color: var(--text-dim); font-weight: 700;">STORAGE / DELETION ACTION</div>
+                        <div id="insp-retention" style="font-size: 13.5px; color: #34d399; margin-top: 2px;">No source code stored; cloned to RAM/ephemeral disk</div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- PHASE 7, 8, 9: INTERACTIVE DEMOS & SANDBOX -->
-        <section id="demos">
+        <!-- INTERACTIVE DEMONSTRATIONS -->
+        <section id="interactive-demos" style="padding-top: 40px;">
             <div class="section-header">
-                <span class="section-tag">Interactive Demos</span>
+                <span class="section-tag">Interactive Verification</span>
                 <h2>Interactive Security Command Demos</h2>
                 <p>
-                    Experience TrustAudit's core capabilities in action: test client-side secret masking, watch sample enterprise questionnaires populate, and inspect our ephemeral repository processing pipeline.
+                    Test client-side credential masking, simulate enterprise security questionnaire population, and inspect live vulnerability intelligence.
                 </p>
             </div>
 
-            <!-- Demo 1: Secret Redaction Sandbox -->
-            <div class="sandbox-box">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
+            <div class="demos-grid">
+                <!-- Demo 1: Secret Redaction Sandbox -->
+                <div class="demo-box">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                        <h3>Test Secret Redaction Sandbox</h3>
+                        <span class="status-pill status-provider" style="font-size: 10.5px;">CLIENT-SIDE DEMO — SYNTHETIC ONLY</span>
+                    </div>
+                    <p class="desc">
+                        Type or paste a synthetic example credential below. Processing is 100% in-browser with zero network transmission, protected from XSS.
+                    </p>
+
+                    <div class="sandbox-input-group">
+                        <input type="text" class="sandbox-input" id="sandbox-input-val" placeholder="sk-test-example-123456789" value="sk-test-example-123456789">
+                        <button class="btn-test-action" id="btn-run-mask" onclick="runMaskingDemo()">Test Masking</button>
+                        <button class="btn-action-sm" onclick="resetMaskingDemo()">Reset</button>
+                    </div>
+
+                    <div class="sandbox-result" id="sandbox-output-box">
+                        <div style="color: var(--text-dim); font-size: 12px; margin-bottom: 4px;">DETECTION &rarr; MASKING &rarr; SAFE PREVIEW</div>
+                        <div id="sandbox-result-text" style="color: #38bdf8; font-weight: 600;">sk-t...[REDACTED]...6789</div>
+                        <div id="sandbox-entropy-text" style="color: var(--text-dim); font-size: 11px; margin-top: 6px;">Shannon Entropy: 3.42 bits/char &bull; Classification: API Key Pattern</div>
+                    </div>
+                </div>
+
+                <!-- Demo 2: Questionnaire Simulator -->
+                <div class="demo-box">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                        <h3>Enterprise Security Questionnaire Simulator</h3>
+                        <span class="status-pill status-verified" style="font-size: 10.5px;">DEMO SIMULATION</span>
+                    </div>
+                    <p class="desc">
+                        Watch how TrustAudit maps verified technical checks into answers for customer vendor risk questionnaires.
+                    </p>
+
+                    <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+                        <button class="btn-test-action" onclick="runQuestionnaireSimulator()">Auto-Fill Demo Evidence</button>
+                        <button class="btn-action-sm" onclick="resetQuestionnaireSimulator()">Reset</button>
+                    </div>
+
+                    <div class="q-simulator-list">
+                        <div class="q-row active" id="q-row-1">
+                            <div class="q-row-header">
+                                <span>1. How do you manage access to source code?</span>
+                                <span class="q-badge" id="q-badge-1">SAMPLE EVIDENCE LINKED</span>
+                            </div>
+                            <div class="q-row-body" id="q-body-1">
+                                <strong>DEMO ANSWER:</strong> Source code is processed strictly inside ephemeral sandboxes created with <code>tempfile.mkdtemp</code> and immediately wiped via <code>shutil.rmtree</code>. Scanners operate read-only without storing code on persistent media.
+                            </div>
+                        </div>
+
+                        <div class="q-row" id="q-row-2">
+                            <div class="q-row-header">
+                                <span>2. How do you identify and remediate vulnerable dependencies?</span>
+                                <span class="q-badge" id="q-badge-2">SAMPLE EVIDENCE LINKED</span>
+                            </div>
+                            <div class="q-row-body" id="q-body-2">
+                                <strong>DEMO ANSWER:</strong> Continuous cross-referencing against Google OSV and the official CISA KEV catalog. Vulnerabilities are correlated to direct vs transitive dependencies with automated fix suggestions and SLA tracking.
+                            </div>
+                        </div>
+
+                        <div class="q-row" id="q-row-3">
+                            <div class="q-row-header">
+                                <span>3. How do you manage security incidents and remediation?</span>
+                                <span class="q-badge" id="q-badge-3">ILLUSTRATIVE CONTROL MAPPING</span>
+                            </div>
+                            <div class="q-row-body" id="q-body-3">
+                                <strong>DEMO ANSWER:</strong> High and Critical vulnerabilities trigger automated remediation tasks with SLA clocks. Findings link directly to code files, severity classifications, and fix verification procedures.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- QUICK PERIMETER & PRIVACY CHECK WIDGET -->
+        <section id="perimeter-check" style="padding-top: 40px;">
+            <div class="perimeter-box">
+                <div class="section-tag">Instant Technical Check</div>
+                <h3 style="font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 6px;">Quick Perimeter & Privacy Check</h3>
+                <p style="color: var(--text-muted); font-size: 14px; max-width: 750px;">
+                    Check basic publicly observable website security and privacy indicators. This is an initial technical check protected against SSRF, not a complete security assessment or legal compliance determination.
+                </p>
+
+                <div class="perimeter-form">
+                    <input type="text" class="perimeter-input" id="perimeter-url-input" placeholder="https://example.com" value="https://example.com">
+                    <button class="btn-primary-lg" id="btn-run-perimeter" onclick="runQuickPerimeterCheck()">
+                        <svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
+                        Run Quick Check
+                    </button>
+                </div>
+
+                <div class="perimeter-results-card" id="perimeter-results-card">
+                    <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+                        <span style="font-weight: 700; color: #fff;" id="perimeter-target-title">WEBSITE CHECK RESULTS</span>
+                        <span class="status-pill status-verified" id="perimeter-status-pill">CHECK COMPLETE</span>
+                    </div>
+
+                    <div class="perimeter-grid">
+                        <div class="perimeter-item">
+                            <div class="perimeter-item-label">HTTPS Transport</div>
+                            <div class="perimeter-item-val" id="res-https" style="color: #34d399;">PASS</div>
+                        </div>
+                        <div class="perimeter-item">
+                            <div class="perimeter-item-label">TLS Certificate</div>
+                            <div class="perimeter-item-val" id="res-tls" style="color: #38bdf8;">CHECKED</div>
+                        </div>
+                        <div class="perimeter-item">
+                            <div class="perimeter-item-label">HSTS Header</div>
+                            <div class="perimeter-item-val" id="res-hsts">PASS</div>
+                        </div>
+                        <div class="perimeter-item">
+                            <div class="perimeter-item-label">Privacy Policy Link</div>
+                            <div class="perimeter-item-val" id="res-policy">FOUND</div>
+                        </div>
+                        <div class="perimeter-item">
+                            <div class="perimeter-item-label">Privacy / Grievance Contact</div>
+                            <div class="perimeter-item-val" id="res-contact">FOUND</div>
+                        </div>
+                    </div>
+
+                    <div style="font-size: 12px; color: var(--text-dim); margin-top: 14px; line-height: 1.5;" id="perimeter-disclaimer-text">
+                        <strong>Notice:</strong> This check evaluates basic observable network transport and privacy links. It does not prove complete DPDP compliance or formal DPO appointment.
+                    </div>
+
+                    <div style="margin-top: 18px; text-align: right;">
+                        <a href="/dashboard" class="btn-primary-lg" style="font-size: 13.5px; padding: 8px 16px;">
+                            Run Full Pre-Launch Code + Compliance Scan &rarr;
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- LIVE CISA KEV TELEMETRY -->
+        <section id="cisa-telemetry" style="padding-top: 40px; margin-bottom: 80px;">
+            <div class="bento-card" style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 14px; padding: 30px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 20px;">
                     <div>
-                        <h3 style="color: #fff; font-size: 18px; margin-bottom: 4px;">Test Secret Redaction Sandbox</h3>
-                        <p style="color: var(--text-muted); font-size: 13.5px; margin: 0;">
-                            Paste a synthetic example credential and see how a masking rule transforms sensitive-looking text before it is displayed in findings.
-                        </p>
+                        <div class="section-tag">Exploitation Intelligence</div>
+                        <h3 style="font-size: 22px; font-weight: 800; color: #fff;">CISA Known Exploited Vulnerabilities (KEV) Live Telemetry</h3>
                     </div>
-                    <span class="status-pill status-provider">100% Client-Side &bull; Zero Network Transmission</span>
+                    <button class="btn-action-sm" id="btn-tele-refresh" onclick="refreshTelemetry()">
+                        <svg class="icon-svg" id="tele-spinner" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                        Refresh Telemetry
+                    </button>
                 </div>
 
-                <div class="sandbox-input-row">
-                    <input type="text" class="sandbox-input" id="sandbox-input-val" placeholder="sk-test-example-123456789" value="sk-test-example-123456789">
-                    <button class="btn-test-mask" id="btn-run-mask" onclick="runMaskingDemo()">Test Masking</button>
-                    <button class="btn-pack-nav" onclick="resetMaskingDemo()">Reset</button>
-                </div>
-
-                <div class="sandbox-pipeline">
-                    <div class="pipe-step">
-                        <div class="pipe-step-num">Step 1</div>
-                        <div class="pipe-step-name">Pattern Detection</div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px;">
+                    <div style="background: var(--bg-elevated); padding: 18px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.05);">
+                        <div style="font-size: 11px; text-transform: uppercase; color: var(--text-dim); font-weight: 700;">CATALOGUE COUNT</div>
+                        <div id="tele-records" style="font-size: 26px; font-weight: 800; color: #38bdf8; font-family: var(--font-mono); margin-top: 4px;">1,782 CVEs</div>
                     </div>
-                    <div class="pipe-arrow">&rarr;</div>
-                    <div class="pipe-step">
-                        <div class="pipe-step-num">Step 2</div>
-                        <div class="pipe-step-name">Entropy & Masking</div>
+                    <div style="background: var(--bg-elevated); padding: 18px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.05);">
+                        <div style="font-size: 11px; text-transform: uppercase; color: var(--text-dim); font-weight: 700;">SYNC HEALTH STATUS</div>
+                        <div id="tele-status" style="font-size: 26px; font-weight: 800; color: #34d399; font-family: var(--font-mono); margin-top: 4px;">Healthy</div>
                     </div>
-                    <div class="pipe-arrow">&rarr;</div>
-                    <div class="pipe-step">
-                        <div class="pipe-step-num">Step 3</div>
-                        <div class="pipe-step-name">Safe Preview Output</div>
+                    <div style="background: var(--bg-elevated); padding: 18px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.05);">
+                        <div style="font-size: 11px; text-transform: uppercase; color: var(--text-dim); font-weight: 700;">LAST SYNCHRONISATION</div>
+                        <div id="tele-sync" style="font-size: 14px; font-weight: 600; color: #fff; font-family: var(--font-mono); margin-top: 8px;">2026-11-19 UTC</div>
                     </div>
                 </div>
+            </div>
+        </section>
 
-                <div class="sandbox-result-box active" id="sandbox-result">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; color: var(--text-dim);">
-                        <span>OUTPUT COMPARISON (PROCESSED IN YOUR BROWSER)</span>
-                        <span style="color: #34d399; font-weight: 600;">✓ MASKING SUCCESSFUL</span>
-                    </div>
-                    <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.6;">
-                        <div style="color: #94a3b8;">Original: <span id="res-orig" style="color: #fca5a5;">sk-test-example-123456789</span></div>
-                        <div style="color: #94a3b8;">Masked:   <strong id="res-masked" style="color: #34d399;">sk-t...[REDACTED]...6789</strong></div>
+        <!-- GOVERNANCE & PRIVACY SECTION -->
+        <section id="disclosure" style="padding-top: 40px; margin-bottom: 80px;">
+            <div class="section-header">
+                <span class="section-tag">Governance & Transparency</span>
+                <h2>Data Governance & Verified Contacts</h2>
+                <p>
+                    Clear infrastructure disclosures, official contacts, and grievance redressal workflows.
+                </p>
+            </div>
+
+            <div class="governance-grid">
+                <!-- India Region Card -->
+                <div class="gov-card">
+                    <h3>
+                        <svg class="icon-svg" viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+                        India Hosting Region
+                    </h3>
+                    <p>
+                        <strong>AWS Asia Pacific (Mumbai) — ap-south-1:</strong> TrustAudit evaluates dedicated India-region hosting for enterprise tenants. Shared SaaS is currently hosted on Render (US/EU).
+                    </p>
+                    <div style="margin-top: 10px;">
+                        <span class="status-pill status-roadmap">INDIA REGION — PLANNED / ENTERPRISE ONLY</span>
                     </div>
                     <p style="font-size: 12px; color: var(--text-dim); margin-top: 10px;">
-                        <strong>Explanation:</strong> Strings matching known API key patterns or exceeding Shannon entropy thresholds are masked retaining only 4 prefix and 4 suffix characters for developer reference. Raw tokens are never logged or exposed in UI views.
+                        Note: DPDP Section 16 permits cross-border data transfer to countries not restricted by the Central Government. Data residency alone does not equate to complete compliance.
                     </p>
                 </div>
 
-                <div style="font-size: 12px; color: var(--text-dim); margin-top: 14px;">
-                    🔒 <strong>CLIENT-SIDE DEMONSTRATION &mdash; USE SYNTHETIC CREDENTIALS ONLY.</strong> Input is executed locally via browser JavaScript and never transmitted to our backend or any external API.
-                </div>
-            </div>
-
-            <!-- Demo 2: Enterprise Questionnaire Simulator -->
-            <div class="simulator-box">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px; margin-bottom: 18px;">
-                    <div>
-                        <h3 style="color: #fff; font-size: 18px; margin-bottom: 4px;">Enterprise Security Questionnaire Simulator</h3>
-                        <p style="color: var(--text-muted); font-size: 13.5px; margin: 0;">
-                            See how TrustAudit organizes verified technical evidence for customer vendor risk questionnaires.
-                        </p>
-                    </div>
-                    <div style="display: flex; gap: 8px;">
-                        <button class="btn-test-mask" onclick="runQuestionnaireSimulator()">Auto-Fill Demo Evidence</button>
-                        <button class="btn-pack-nav" onclick="resetQuestionnaireSimulator()">Reset</button>
-                    </div>
-                </div>
-
-                <div id="sim-questions-container">
-                    <!-- Q1 -->
-                    <div class="sim-question-card" id="sim-q-1">
-                        <div class="sim-q-header">
-                            <span class="sim-q-title">1. How do you manage access to source code and developer permissions?</span>
-                            <span class="status-pill status-roadmap" id="sim-status-1">Not Filled</span>
-                        </div>
-                        <div class="sim-answer-text" id="sim-ans-1">Click 'Auto-Fill Demo Evidence' to populate verified response.</div>
-                        <div class="sim-evidence-row" id="sim-ev-1" style="display: none;">
-                            <span class="sim-evidence-badge">SAMPLE EVIDENCE: GitHub_Branch_Protection_Rules.json</span>
-                            <span class="sim-evidence-badge">CONTROL: SOC2-CC6.1</span>
-                        </div>
-                    </div>
-
-                    <!-- Q2 -->
-                    <div class="sim-question-card" id="sim-q-2">
-                        <div class="sim-q-header">
-                            <span class="sim-q-title">2. How do you identify and remediate vulnerable third-party dependencies?</span>
-                            <span class="status-pill status-roadmap" id="sim-status-2">Not Filled</span>
-                        </div>
-                        <div class="sim-answer-text" id="sim-ans-2">Click 'Auto-Fill Demo Evidence' to populate verified response.</div>
-                        <div class="sim-evidence-row" id="sim-ev-2" style="display: none;">
-                            <span class="sim-evidence-badge">SAMPLE EVIDENCE: OSV_SBOM_Scan_Report.json</span>
-                            <span class="sim-evidence-badge">CONTROL: ISO-A.8.8</span>
-                        </div>
-                    </div>
-
-                    <!-- Q3 -->
-                    <div class="sim-question-card" id="sim-q-3">
-                        <div class="sim-q-header">
-                            <span class="sim-q-title">3. How do you handle security findings and track remediation SLAs?</span>
-                            <span class="status-pill status-roadmap" id="sim-status-3">Not Filled</span>
-                        </div>
-                        <div class="sim-answer-text" id="sim-ans-3">Click 'Auto-Fill Demo Evidence' to populate verified response.</div>
-                        <div class="sim-evidence-row" id="sim-ev-3" style="display: none;">
-                            <span class="sim-evidence-badge">SAMPLE EVIDENCE: SLA_Remediation_Log.pdf</span>
-                            <span class="sim-evidence-badge">CONTROL: DPDP-SEC-08-5</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div style="font-size: 12px; color: var(--text-dim); margin-top: 14px;">
-                    ℹ️ <strong>ILLUSTRATIVE CONTROL MAPPING &mdash; SAMPLE DATA ONLY.</strong> Inside customer dashboards, real evidence is scoped to authenticated organizations.
-                </div>
-            </div>
-
-            <!-- Demo 3: Interactive Data Flow Architecture Diagram -->
-            <div class="diagram-container">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
-                    <div>
-                        <h3 style="color: #fff; font-size: 18px; margin-bottom: 4px;">Interactive Repository Processing Pipeline</h3>
-                        <p style="color: var(--text-muted); font-size: 13.5px; margin: 0;">
-                            Click any node in the architecture flow to inspect what happens, what data is processed, and how cleanup is verified.
-                        </p>
-                    </div>
-                    <span class="status-pill status-verified">Verified Ephemeral Processing</span>
-                </div>
-
-                <div class="flow-nodes-wrapper">
-                    <div class="flow-node active" onclick="inspectNode('repo', this)">
-                        <div class="flow-node-icon">📦</div>
-                        <div class="flow-node-title">GitHub Repo</div>
-                        <div class="flow-node-sub">Source Ingress</div>
-                    </div>
-                    <div class="flow-arrow-conn">&rarr;</div>
-                    <div class="flow-node" onclick="inspectNode('auth', this)">
-                        <div class="flow-node-icon">🔑</div>
-                        <div class="flow-node-title">Fine-Grained PAT</div>
-                        <div class="flow-node-sub">Read-Only Auth</div>
-                    </div>
-                    <div class="flow-arrow-conn">&rarr;</div>
-                    <div class="flow-node" onclick="inspectNode('sandbox', this)">
-                        <div class="flow-node-icon">🛡️</div>
-                        <div class="flow-node-title">Temp Sandbox</div>
-                        <div class="flow-node-sub">mkdtemp()</div>
-                    </div>
-                    <div class="flow-arrow-conn">&rarr;</div>
-                    <div class="flow-node" onclick="inspectNode('ast', this)">
-                        <div class="flow-node-icon">🔍</div>
-                        <div class="flow-node-title">AST / SAST Pass</div>
-                        <div class="flow-node-sub">Static Scan</div>
-                    </div>
-                    <div class="flow-arrow-conn">&rarr;</div>
-                    <div class="flow-node" onclick="inspectNode('redaction', this)">
-                        <div class="flow-node-icon">✂️</div>
-                        <div class="flow-node-title">Redaction Pass</div>
-                        <div class="flow-node-sub">Mask Findings</div>
-                    </div>
-                    <div class="flow-arrow-conn">&rarr;</div>
-                    <div class="flow-node" onclick="inspectNode('cleanup', this)">
-                        <div class="flow-node-icon">🧹</div>
-                        <div class="flow-node-title">Zero-Day Wipe</div>
-                        <div class="flow-node-sub">shutil.rmtree()</div>
-                    </div>
-                    <div class="flow-arrow-conn">&rarr;</div>
-                    <div class="flow-node" onclick="inspectNode('tenant', this)">
-                        <div class="flow-node-icon">🗄️</div>
-                        <div class="flow-node-title">Tenant Store</div>
-                        <div class="flow-node-sub">Findings Only</div>
-                    </div>
-                </div>
-
-                <!-- Inspector Box -->
-                <div class="node-inspector" id="node-inspector-box">
-                    <h4 id="inspector-title"><span>📦</span> GitHub Repository Ingress</h4>
-                    <p id="inspector-desc" style="color: var(--text-muted); font-size: 13.5px; line-height: 1.55;">
-                        Customer provides repository URL and fine-grained read-only Personal Access Token (PAT) with <code>contents:read</code> permission. No write or administrative permissions are requested.
-                    </p>
-                    <div class="inspector-grid">
-                        <div class="detail-block">
-                            <h4>What is Processed</h4>
-                            <p id="inspector-proc">Git commit ref, branch tree, manifest files, and source code files.</p>
-                        </div>
-                        <div class="detail-block">
-                            <h4>What is Stored</h4>
-                            <p id="inspector-stored">Repository name, scan initiation timestamp, and commit SHA.</p>
-                        </div>
-                        <div class="detail-block">
-                            <h4>Security Controls</h4>
-                            <p id="inspector-ctrl">TLS 1.3 transit encryption, token memory isolation, least privilege.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- PHASE 10: LIVE CISA KEV TELEMETRY -->
-        <section id="threat-intel">
-            <div class="section-header">
-                <span class="section-tag">Vulnerability Intelligence</span>
-                <h2>CISA Known Exploited Vulnerabilities (KEV) Live Telemetry</h2>
-                <p>
-                    TrustAudit enriches identified software vulnerabilities with entries from CISA's Known Exploited 
-                    Vulnerabilities catalogue, helping organisations prioritise vulnerabilities known to have been exploited in the wild.
-                </p>
-            </div>
-
-            <div class="telemetry-card">
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-                    <div>
-                        <h3 style="color: #fff; font-size: 18px; margin-bottom: 4px;">Live Synchronization Status</h3>
-                        <p style="color: var(--text-muted); font-size: 13px; margin: 0;">Automated hourly background worker synchronizing official CISA KEV feed</p>
-                    </div>
-                    <button class="btn-pack-nav" onclick="refreshTelemetry()">🔄 Re-check Telemetry</button>
-                </div>
-
-                <div class="telemetry-stats-row">
-                    <div class="tstat-box">
-                        <div class="tstat-num" id="tele-records">{{ cisa_records_count }}</div>
-                        <div class="tstat-lbl">Active KEV Catalog CVEs</div>
-                    </div>
-                    <div class="tstat-box">
-                        <div class="tstat-num" id="tele-status" style="color: #34d399; font-size: 20px;">{{ cisa_status }}</div>
-                        <div class="tstat-lbl">Sync Engine Health</div>
-                    </div>
-                    <div class="tstat-box">
-                        <div class="tstat-num" id="tele-sync" style="font-size: 14px; color: #cbd5e1;">{{ cisa_last_sync[:19] }} UTC</div>
-                        <div class="tstat-lbl">Last Successful Sync</div>
-                    </div>
-                    <div class="tstat-box">
-                        <div class="tstat-num" style="font-size: 14px; color: #38bdf8;">Hourly Cron</div>
-                        <div class="tstat-lbl">Sync Cadence</div>
-                    </div>
-                </div>
-
-                <div class="callout" style="margin-bottom: 0;">
-                    <strong>Catalog Clarification:</strong> CISA KEV catalog is maintained by the U.S. Cybersecurity and Infrastructure Security Agency. 
-                    It lists publicly disclosed vulnerabilities with documented active exploitation in the wild. Most have formal CVE IDs and vendor-issued patches; 
-                    it is not restricted to zero-days.
-                </div>
-            </div>
-        </section>
-
-        <!-- SECTION: DATA TRANSPARENCY & SUBPROCESSORS -->
-        <section id="data-transparency">
-            <div class="section-header">
-                <span class="section-tag">Governance & Privacy</span>
-                <h2>Customer Data Transparency Disclosures</h2>
-                <p>
-                    Exhaustive disclosures regarding how customer data is processed, stored, and protected throughout its lifecycle.
-                </p>
-            </div>
-
-            <div class="bento-grid" style="grid-template-columns: repeat(2, 1fr);">
-                <div class="bento-card">
-                    <div>
-                        <span class="status-pill status-verified" style="margin-bottom: 8px;">Disclosure 1 & 2</span>
-                        <h3>Source Code & Ephemeral Processing</h3>
-                        <p>When executing repository scans, TrustAudit downloads a shallow clone into a temporary sandboxed directory. The code is parsed for AST structures and secret patterns, and is <strong>immediately deleted upon scan completion</strong> via <code>shutil.rmtree</code>. Full source code repositories are never permanently stored.</p>
-                    </div>
-                </div>
-
-                <div class="bento-card">
-                    <div>
-                        <span class="status-pill status-verified" style="margin-bottom: 8px;">Disclosure 3 & 4</span>
-                        <h3>Scan Results & Registration Data</h3>
-                        <p>Normalized finding summaries (CWE IDs, category, severity, masked snippet, line numbers) are retained for 12 months for drift tracking. User passwords are encrypted using PBKDF2-HMAC-SHA256 with 100,000 iterations and 16-byte random salts.</p>
-                    </div>
-                </div>
-
-                <div class="bento-card">
-                    <div>
-                        <span class="status-pill status-provider" style="margin-bottom: 8px;">Disclosure 5 & 6</span>
-                        <h3>Subprocessors & Cloud Hosting</h3>
-                        <p>Core infrastructure is hosted on Render and Amazon Web Services (AWS) data centers located in the United States. Vulnerability feeds are pulled directly from public feeds (CISA KEV, NIST NVD, OSV.dev). No customer code is shared with third parties.</p>
-                    </div>
-                </div>
-
-                <div class="bento-card">
-                    <div>
-                        <span class="status-pill status-verified" style="margin-bottom: 8px;">Disclosure 7 & 8</span>
-                        <h3>AI Processing & Data Sharing Policy</h3>
-                        <p>Core vulnerability scanning runs deterministic local analyzers and AST parsers. Fix prompts generated for coding assistants rely on static templates. <strong>Zero customer source code or findings are sent to OpenAI, Anthropic, or any public AI model training pool.</strong></p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECTION: VULNERABILITY DISCLOSURE & CONTACT -->
-        <section id="contact">
-            <div class="section-header">
-                <span class="section-tag">Security Response</span>
-                <h2>Vulnerability Disclosure & Security Contact</h2>
-                <p>
-                    We welcome responsible reports from security researchers and customers. We operate a coordinated disclosure process with a 24-hour response SLA.
-                </p>
-            </div>
-
-            <div class="bento-card" style="margin-top: 20px;">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
-                    <div>
-                        <h3 style="font-size: 19px; margin-top: 0;">Coordinated Vulnerability Disclosure Policy</h3>
-                        <p style="max-width: 750px;">
-                            If you believe you have found a security vulnerability in TrustAudit, please email our dedicated security response team:
-                        </p>
-                        <div style="display: flex; gap: 20px; align-items: center; font-size: 14px; margin: 14px 0; flex-wrap: wrap;">
-                            <span>📧 <strong>Security Contact:</strong> <a href="mailto:security@trustaudit.io" style="color: var(--primary-light); text-decoration: none;">security@trustaudit.io</a></span>
-                            <span>⏱️ <strong>Response SLA:</strong> Within 24 business hours</span>
-                            <span>🛡️ <strong>Safe Harbor:</strong> Guaranteed for good-faith testing</span>
-                        </div>
-                    </div>
-                    <span class="status-pill status-verified">Safe Harbor Active</span>
-                </div>
-                <div style="border-top: 1px solid var(--border); padding-top: 16px; margin-top: 10px; font-size: 13px; color: var(--text-dim); line-height: 1.6;">
-                    <strong>Safe Harbor Terms:</strong> We will not pursue legal action against researchers who test in good faith, avoid compromising customer data, refrain from denial-of-service attacks, and provide reasonable remediation time before public disclosure.
-                </div>
-            </div>
-        </section>
-
-        <!-- FOOTER -->
-        <footer class="footer">
-            <div class="footer-inner">
-                <div class="footer-left">
+                <!-- Grievance & Privacy Contact -->
+                <div class="gov-card">
+                    <h3>
+                        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                        Privacy & Grievance Contact
+                    </h3>
                     <p>
-                        <strong>Regulatory & Legal Notice:</strong> TrustAudit provides automated technical gap analysis, security scanning, 
-                        and compliance evidence management. TrustAudit does not issue formal regulatory certifications, accredited ISO 27001 certificates, 
-                        or certified SOC 2 Type II reports, which require independent examination by accredited third-party certification bodies and CPA firms. 
-                        Compliance with applicable laws (including DPDP Act 2023, GDPR, and sectoral regulations) remains the statutory responsibility of the customer organization.
+                        Designated contact under DPDP Section 13 & Rule 14 for privacy enquiries and Data Principal rights requests:
                     </p>
-                    <p>&copy; 2026 TrustAudit Security Platform. All rights reserved.</p>
+                    <div style="font-family: var(--font-mono); font-size: 14px; color: #38bdf8; margin: 8px 0;">
+                        grievance@trustaudit.io
+                    </div>
+                    <button class="btn-action-sm" style="margin-top: 8px;" onclick="openGrievanceModal()">
+                        Submit Grievance / Data Request &rarr;
+                    </button>
                 </div>
-                <div class="footer-links">
-                    <a href="/dashboard">App Console</a>
-                    <a href="#frameworks">Framework Explorer</a>
-                    <a href="#data-transparency">Subprocessor Register</a>
-                    <a href="mailto:security@trustaudit.io">Security Contact</a>
+
+                <!-- Security Contact & RFC 9116 -->
+                <div class="gov-card">
+                    <h3>
+                        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        Security & Disclosure Policy
+                    </h3>
+                    <p>
+                        For vulnerability reports and security inquiries: <strong>security@trustaudit.io</strong>. We support safe harbor for independent security researchers acting in good faith.
+                    </p>
+                    <div style="margin-top: 12px;">
+                        <a href="/.well-known/security.txt" target="_blank" class="nav-link" style="color: var(--primary-light); font-size: 13px;">
+                            View RFC 9116 security.txt &rarr;
+                        </a>
+                    </div>
                 </div>
             </div>
-        </footer>
+        </section>
 
-    </div>
+    </main>
 
-    <!-- REMEDIATION EXAMPLE MODAL -->
-    <div class="drawer-overlay" id="remediation-modal">
-        <div class="drawer-modal">
-            <button class="drawer-close" onclick="closeRemediationModal()">&times;</button>
-            <div id="modal-content">
-                <h3 style="color: #fff; margin-bottom: 8px;" id="modal-title">Remediation Guidance</h3>
-                <p style="color: var(--text-muted); font-size: 14px;" id="modal-desc">Technical step-by-step guidance.</p>
-                <div style="background: #090e17; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px; margin: 16px 0;">
-                    <div style="font-size: 12px; color: var(--primary-light); font-weight: 700; margin-bottom: 4px;">SAFE FIX EXAMPLE</div>
-                    <pre style="font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: #e2e8f0; margin: 0; overflow-x: auto;"><code id="modal-code"># Safe configuration example</code></pre>
-                </div>
-                <div style="font-size: 12px; color: var(--text-dim);">
-                    ℹ️ <strong>SAFE CODE GUIDANCE &mdash; NON-EXECUTABLE PREVIEW.</strong> Does not alter customer repositories from public Trust Centre.
-                </div>
+    <!-- FOOTER & LEGAL DISCLAIMER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-disclaimer-box">
+                <strong>Legal & Regulatory Notice:</strong> TrustAudit provides automated technical gap analysis, security scanning, and compliance evidence management. 
+                TrustAudit does not issue formal regulatory certifications, accredited ISO 27001 certificates, or certified SOC 2 Type II reports, which require independent examination by accredited third-party certification bodies and CPA firms. 
+                Compliance with applicable laws (including Digital Personal Data Protection Act, 2023, GDPR, and sectoral regulations) remains the statutory responsibility of the customer organization. 
+                TrustAudit does not send customer source code or vulnerability findings to third-party AI models.
+            </div>
+
+            <div class="footer-bottom">
+                <div>&copy; 2026 TrustAudit Security Platform. All rights reserved.</div>
+                <ul class="footer-links">
+                    <li><a href="/trust">Trust Center</a></li>
+                    <li><a href="/dashboard">Dashboard</a></li>
+                    <li><a href="/.well-known/security.txt">security.txt</a></li>
+                    <li><a href="mailto:security@trustaudit.io">Security</a></li>
+                    <li><a href="mailto:grievance@trustaudit.io">Grievances</a></li>
+                </ul>
             </div>
         </div>
-    </div>
+    </footer>
 
-    <!-- TRUST PACK DOWNLOAD MODAL -->
-    <div class="drawer-overlay" id="trust-pack-modal">
-        <div class="drawer-modal" style="max-width: 600px;">
-            <button class="drawer-close" onclick="closeTrustPackModal()">&times;</button>
-            <h3 style="color: #fff; margin-bottom: 6px;">Download Enterprise Trust Pack</h3>
-            <p style="color: var(--text-muted); font-size: 13.5px; margin-bottom: 18px;">
-                Select approved security and compliance disclosures to download as an audit-ready bundle:
-            </p>
+    <!-- MODAL 1: ENTERPRISE TRUST PACK BUILDER -->
+    <div class="modal-overlay" id="trust-pack-modal" onclick="closeModalOnOverlay(event, 'trust-pack-modal')">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div>
+                    <h3 style="color: #fff; margin-bottom: 4px;">Download Enterprise Trust Pack</h3>
+                    <p style="color: var(--text-muted); font-size: 13px;">Select approved security dossiers to bundle for vendor assessment.</p>
+                </div>
+                <button class="modal-close-btn" onclick="closeTrustPackModal()">
+                    <svg class="icon-svg" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
 
             <form id="pack-download-form" onsubmit="handleTrustPackDownload(event)">
-                <div style="margin-bottom: 18px;">
-                    <div class="pack-item-row">
-                        <input type="checkbox" class="pack-check" name="doc" value="overview" checked>
+                <div class="form-check-group">
+                    <label class="custom-checkbox-label">
+                        <input type="checkbox" name="doc" value="overview" checked>
                         <div>
-                            <strong style="color: #fff; font-size: 13.5px;">TrustAudit Security Overview & Posture Statement</strong>
-                            <div style="font-size: 12px; color: var(--text-dim);">Executive summary of architecture and threat models</div>
+                            <div class="check-text-title">TrustAudit Security Overview & Posture Statement</div>
+                            <div class="check-text-desc">High-level threat modeling, architecture, and security principles.</div>
                         </div>
-                    </div>
-                    <div class="pack-item-row">
-                        <input type="checkbox" class="pack-check" name="doc" value="dpdp" checked>
+                    </label>
+
+                    <label class="custom-checkbox-label">
+                        <input type="checkbox" name="doc" value="dpdp" checked>
                         <div>
-                            <strong style="color: #fff; font-size: 13.5px;">DPDP Act 2023 & DPDP Rules 2025 Readiness Mapping</strong>
-                            <div style="font-size: 12px; color: var(--text-dim);">Statutory sections, Rule 6/7 mappings, and commencement timeline</div>
+                            <div class="check-text-title">DPDP Act 2023 & Rules 2025 Readiness Mapping</div>
+                            <div class="check-text-desc">Statutory timeline mapping (Nov 2026 vs May 2027) and technical safeguards.</div>
                         </div>
-                    </div>
-                    <div class="pack-item-row">
-                        <input type="checkbox" class="pack-check" name="doc" value="soc2" checked>
+                    </label>
+
+                    <label class="custom-checkbox-label">
+                        <input type="checkbox" name="doc" value="soc2" checked>
                         <div>
-                            <strong style="color: #fff; font-size: 13.5px;">SOC 2 Trust Services Criteria Control Mapping</strong>
-                            <div style="font-size: 12px; color: var(--text-dim);">CC6.1, CC6.6, CC6.8, CC7.1, CC8.1 technical mapping</div>
+                            <div class="check-text-title">SOC 2 Control Mapping (2017 TSC / 2022 Focus)</div>
+                            <div class="check-text-desc">Technical mappings across CC6.1, CC6.6, CC6.8, CC7.1, and CC8.1.</div>
                         </div>
-                    </div>
-                    <div class="pack-item-row">
-                        <input type="checkbox" class="pack-check" name="doc" value="iso27001" checked>
+                    </label>
+
+                    <label class="custom-checkbox-label">
+                        <input type="checkbox" name="doc" value="iso27001" checked>
                         <div>
-                            <strong style="color: #fff; font-size: 13.5px;">ISO/IEC 27001:2022 Technical Controls Mapping</strong>
-                            <div style="font-size: 12px; color: var(--text-dim);">Annex A technological controls (A.8.8, A.8.20, A.8.24, A.8.25, A.8.28)</div>
+                            <div class="check-text-title">ISO/IEC 27001:2022 Technological Controls Mapping</div>
+                            <div class="check-text-desc">Annex A mappings (A.8.8, A.8.20, A.8.24, A.8.25, A.8.28).</div>
                         </div>
-                    </div>
-                    <div class="pack-item-row">
-                        <input type="checkbox" class="pack-check" name="doc" value="retention" checked>
+                    </label>
+
+                    <label class="custom-checkbox-label">
+                        <input type="checkbox" name="doc" value="retention" checked>
                         <div>
-                            <strong style="color: #fff; font-size: 13.5px;">Data Processing & Retention Schedule</strong>
-                            <div style="font-size: 12px; color: var(--text-dim);">0-day repository retention, 12-month finding drift lifecycle</div>
+                            <div class="check-text-title">Data Retention & Ephemeral Scrubbing Schedule</div>
+                            <div class="check-text-desc">Verified 0-day disk retention disclosures and customer deletion procedures.</div>
                         </div>
-                    </div>
-                    <div class="pack-item-row">
-                        <input type="checkbox" class="pack-check" name="doc" value="subprocessors" checked>
+                    </label>
+
+                    <label class="custom-checkbox-label">
+                        <input type="checkbox" name="doc" value="subprocessors" checked>
                         <div>
-                            <strong style="color: #fff; font-size: 13.5px;">Official Third-Party Subprocessor Register</strong>
-                            <div style="font-size: 12px; color: var(--text-dim);">Infrastructure providers, processing locations, and certifications</div>
+                            <div class="check-text-title">Official Subprocessor Register</div>
+                            <div class="check-text-desc">Exhaustive list of hosting, compute, and database infrastructure providers.</div>
                         </div>
-                    </div>
-                    <div class="pack-item-row">
-                        <input type="checkbox" class="pack-check" name="doc" value="disclosure" checked>
+                    </label>
+
+                    <label class="custom-checkbox-label">
+                        <input type="checkbox" name="doc" value="disclosure">
                         <div>
-                            <strong style="color: #fff; font-size: 13.5px;">Coordinated Vulnerability Disclosure Policy</strong>
-                            <div style="font-size: 12px; color: var(--text-dim);">Safe harbor terms and 24h response SLA</div>
+                            <div class="check-text-title">Vulnerability Disclosure & Safe Harbor Policy</div>
+                            <div class="check-text-desc">Reporting channels, SLA commitments, and researcher guidelines.</div>
                         </div>
-                    </div>
-                    <div class="pack-item-row">
-                        <input type="checkbox" class="pack-check" name="doc" value="architecture" checked>
+                    </label>
+
+                    <label class="custom-checkbox-label">
+                        <input type="checkbox" name="doc" value="architecture">
                         <div>
-                            <strong style="color: #fff; font-size: 13.5px;">Technical Security Architecture & Isolation Model</strong>
-                            <div style="font-size: 12px; color: var(--text-dim);">Multi-tenant boundaries and secret masking pipeline</div>
+                            <div class="check-text-title">Technical Security Architecture Overview</div>
+                            <div class="check-text-desc">Detailed multi-tenant isolation, PBKDF2 hashing, and AST taint engine.</div>
                         </div>
+                    </label>
+                </div>
+
+                <div style="border-top: 1px solid var(--border); padding-top: 16px; margin-top: 16px;">
+                    <div style="font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 8px;">Select Output Format:</div>
+                    <div style="display: flex; gap: 20px;">
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--text-muted); cursor: pointer;">
+                            <input type="radio" name="format" value="zip" checked style="accent-color: var(--primary-light);">
+                            Structured ZIP Bundle (.zip)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--text-muted); cursor: pointer;">
+                            <input type="radio" name="format" value="markdown" style="accent-color: var(--primary-light);">
+                            Consolidated Markdown (.md)
+                        </label>
                     </div>
                 </div>
 
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
-                    <div style="display: flex; gap: 12px; font-size: 13px;">
-                        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
-                            <input type="radio" name="format" value="zip" checked> ZIP Archive (.zip)
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
-                            <input type="radio" name="format" value="markdown"> Markdown Bundle (.md)
-                        </label>
-                    </div>
-                    <button type="submit" class="btn-primary-lg" style="padding: 10px 20px; font-size: 14px;">
-                        Download Bundle &darr;
-                    </button>
+                <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+                    <button type="button" class="btn-action-sm" onclick="closeTrustPackModal()">Cancel</button>
+                    <button type="submit" class="btn-primary-lg" style="font-size: 13.5px; padding: 9px 20px;">Download Trust Pack</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- JAVASCRIPT: INTERACTIVE ENGINE & TELEMETRY -->
+    <!-- MODAL 2: SAFE REMEDIATION EXAMPLE MODAL -->
+    <div class="modal-overlay" id="remediation-modal" onclick="closeModalOnOverlay(event, 'remediation-modal')">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 id="rem-modal-title">Illustrative Remediation Guidance</h3>
+                <button class="modal-close-btn" onclick="closeRemediationModal()">
+                    <svg class="icon-svg" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div style="font-size: 13px; color: var(--text-dim); margin-bottom: 10px;" id="rem-modal-meta">
+                STATUTORY MAPPING & TESTING GUIDELINES
+            </div>
+            <div id="rem-modal-desc" style="color: var(--text-muted); font-size: 13.5px; margin-bottom: 12px;"></div>
+            <pre class="code-box-pre"><code id="rem-modal-code"></code></pre>
+            <div id="rem-modal-notes" style="font-size: 12.5px; color: var(--text-dim); line-height: 1.5;"></div>
+            <div style="margin-top: 20px; text-align: right;">
+                <button class="btn-primary-lg" style="font-size: 13px; padding: 7px 16px;" onclick="closeRemediationModal()">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: EVIDENCE JSON SAMPLE PREVIEW -->
+    <div class="modal-overlay" id="evidence-modal" onclick="closeModalOnOverlay(event, 'evidence-modal')">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div>
+                    <h3 style="color: #fff;">Sample Evidence Artifact</h3>
+                    <div style="font-size: 12px; color: var(--warning); font-weight: 600;">ILLUSTRATIVE SAMPLE — NOT A LIVE CUSTOMER RECORD</div>
+                </div>
+                <button class="modal-close-btn" onclick="closeEvidenceModal()">
+                    <svg class="icon-svg" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <pre class="code-box-pre"><code id="evidence-modal-code"></code></pre>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px;">
+                <span id="evidence-copy-feedback" style="font-size: 12px; color: #34d399;"></span>
+                <button class="btn-primary-lg" style="font-size: 13px; padding: 7px 16px;" onclick="copyEvidenceJson()">Copy Sample JSON</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 4: GRIEVANCE REDRESSAL SUBMISSION -->
+    <div class="modal-overlay" id="grievance-modal" onclick="closeModalOnOverlay(event, 'grievance-modal')">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div>
+                    <h3 style="color: #fff;">Submit Grievance / Privacy Request</h3>
+                    <p style="color: var(--text-muted); font-size: 12.5px;">DPDP Act 2023 Section 13 & Rule 14 Grievance Redressal</p>
+                </div>
+                <button class="modal-close-btn" onclick="closeGrievanceModal()">
+                    <svg class="icon-svg" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <form onsubmit="handleGrievanceSubmit(event)">
+                <div style="margin-bottom: 12px;">
+                    <label style="font-size: 12.5px; font-weight: 600; color: #fff;">Your Full Name *</label>
+                    <input type="text" id="grv-name" required class="sandbox-input" style="width: 100%; margin-top: 4px;" placeholder="Full Name">
+                </div>
+                <div style="margin-bottom: 12px;">
+                    <label style="font-size: 12.5px; font-weight: 600; color: #fff;">Email Address *</label>
+                    <input type="email" id="grv-email" required class="sandbox-input" style="width: 100%; margin-top: 4px;" placeholder="name@example.com">
+                </div>
+                <div style="margin-bottom: 12px;">
+                    <label style="font-size: 12.5px; font-weight: 600; color: #fff;">Category *</label>
+                    <select id="grv-category" class="sandbox-input" style="width: 100%; margin-top: 4px;">
+                        <option value="Personal Data Erasure">Personal Data Erasure Request</option>
+                        <option value="Consent Withdrawal Inquiry">Consent Withdrawal Inquiry</option>
+                        <option value="Data Processing Question">Data Processing Question</option>
+                        <option value="Security Finding Inquiry">Security Finding Inquiry</option>
+                        <option value="Other Grievance">Other Grievance</option>
+                    </select>
+                </div>
+                <div style="margin-bottom: 16px;">
+                    <label style="font-size: 12.5px; font-weight: 600; color: #fff;">Description of Request *</label>
+                    <textarea id="grv-desc" required class="sandbox-input" style="width: 100%; height: 90px; margin-top: 4px;" placeholder="Please describe your enquiry or request..."></textarea>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" class="btn-action-sm" onclick="closeGrievanceModal()">Cancel</button>
+                    <button type="submit" class="btn-primary-lg" style="font-size: 13px; padding: 8px 18px;">Submit Request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- CLIENT INTERACTIVE JAVASCRIPT LOGIC -->
     <script>
-        // 1. Scroll Progress & Sticky Navbar Scrollspy
+        // 1. Scroll Progress & Scroll Spy
         window.addEventListener('scroll', () => {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
-            document.getElementById('scroll-progress').style.width = scrolled + '%';
+            const docH = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = (window.scrollY / docH) * 100;
+            document.getElementById('scroll-progress').style.width = progress + '%';
 
-            // Active section highlighting
-            const sections = document.querySelectorAll('section, header');
-            const navLinks = document.querySelectorAll('.nav-menu a');
-            let current = 'overview';
-
-            sections.forEach(sec => {
-                const top = sec.offsetTop - 120;
-                if (winScroll >= top) {
-                    current = sec.getAttribute('id') || 'overview';
+            const sections = ['overview', 'control-explorer', 'cisa-telemetry', 'security-posture', 'data-flow', 'interactive-demos', 'perimeter-check', 'disclosure'];
+            let current = '';
+            sections.forEach(id => {
+                const el = document.getElementById(id);
+                if (el && window.scrollY >= (el.offsetTop - 120)) {
+                    current = id;
                 }
             });
-
-            navLinks.forEach(link => {
+            document.querySelectorAll('.nav-link').forEach(link => {
                 link.classList.remove('active');
                 if (link.getAttribute('href') === '#' + current) {
                     link.classList.add('active');
@@ -1986,272 +2093,483 @@ TRUST_CENTRE_HTML_TEMPLATE = """<!DOCTYPE html>
             });
         });
 
-        // 2. Control Explorer Accordion & Filters
-        function toggleAccordion(header) {
-            const item = header.parentElement;
-            item.classList.toggle('open');
+        // 2. Pre-Launch vs Post-Launch Switcher
+        function switchLaunchPhase(phase) {
+            const btnPre = document.getElementById('btn-prelaunch');
+            const btnPost = document.getElementById('btn-postlaunch');
+            const banner = document.getElementById('phase-banner');
+
+            if (phase === 'prelaunch') {
+                btnPre.classList.add('active');
+                btnPost.classList.remove('active');
+                banner.innerHTML = '<strong style="color: #fff;">Pre-Launch Shift-Left Security:</strong> Automated code scanning, SAST, secret detection, dependency CVE lookups, infrastructure-as-code checks, and statutory compliance gap analysis executed prior to merging code or deploying to production.';
+            } else {
+                btnPost.classList.add('active');
+                btnPre.classList.remove('active');
+                banner.innerHTML = '<strong style="color: #fff;">Post-Launch Continuous Monitoring:</strong> TLS & certificate tracking, vulnerable dependency alerts from CISA KEV, security posture drift detection, continuous compliance tasks, and fresh evidence collection on running applications.';
+            }
         }
 
-        function filterFramework(fw, btn) {
+        // 3. Framework Filter
+        function filterFramework(framework, btn) {
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
 
-            const items = document.querySelectorAll('.accordion-item');
-            items.forEach(item => {
-                const itemFw = item.getAttribute('data-framework');
-                if (fw === 'ALL' || itemFw === fw) {
-                    item.style.display = 'block';
+            const cards = document.querySelectorAll('.ctrl-card');
+            cards.forEach(c => {
+                if (framework === 'ALL' || c.getAttribute('data-framework') === framework) {
+                    c.style.display = 'block';
                 } else {
-                    item.style.display = 'none';
+                    c.style.display = 'none';
                 }
             });
         }
 
-        function searchControls(query) {
-            const clean = query.toLowerCase().trim();
-            const items = document.querySelectorAll('.accordion-item');
-            items.forEach(item => {
-                const text = item.innerText.toLowerCase();
-                if (!clean || text.includes(clean)) {
-                    item.style.display = 'block';
-                } else {
-                    item.style.display = 'none';
-                }
+        // 4. Keyword Search across Controls
+        function searchControls() {
+            const q = document.getElementById('control-search-input').value.toLowerCase();
+            const cards = document.querySelectorAll('.ctrl-card');
+            cards.forEach(c => {
+                const text = c.innerText.toLowerCase();
+                c.style.display = text.includes(q) ? 'block' : 'none';
             });
         }
 
-        function copySnippet(btn) {
-            const pre = btn.parentElement.nextElementSibling;
-            navigator.clipboard.writeText(pre.innerText).then(() => {
-                const old = btn.innerText;
-                btn.innerText = 'Copied!';
-                setTimeout(() => btn.innerText = old, 1500);
-            });
+        // 5. Accordion Toggle
+        function toggleCtrl(headerEl) {
+            const card = headerEl.parentElement;
+            card.classList.toggle('open');
         }
 
-        // 3. Remediation Modal Logic
-        const REMEDIATION_SAMPLES = {
-            'dpdp-sec-6': {
-                title: 'DPDP Section 6(9) Consent Revocation Workflow',
-                desc: 'Provide an authenticated self-service API endpoint that immediately halts personal data processing and cascades revocation to downstream processors.',
-                code: 'POST /api/user/consent/revoke\nHeaders: Authorization: Bearer <user_token>\nPayload: {"consent_categories": ["marketing", "analytics"]}\n\nResponse 200 OK:\n{\n  "status": "revoked",\n  "effective_at": "2026-11-18T23:55:00Z",\n  "cascade_notice_sent_to_processors": true\n}'
+        // 6. Architecture Node Inspector
+        const ARCH_NODES = {
+            repo: {
+                title: "GitHub Repository Connection",
+                ingest: "Target repository URL, branch metadata, fine-grained personal access token.",
+                retention: "No source code stored. Connected via read-only GitHub API integration."
             },
-            'dpdp-sec-8-5': {
-                title: 'DPDP Section 8(5) Hardcoded Credential Remediation',
-                desc: 'Move hardcoded database credentials to secure environment variables and add .env to .gitignore.',
-                code: '# Step 1: Remove secret from source file\n- db_password = "super_secret_db_password"\n+ db_password = os.environ.get("DATABASE_PASSWORD")\n\n# Step 2: Add to .gitignore\necho ".env" >> .gitignore\n\n# Step 3: Rotate compromised credential in database'
+            clone: {
+                title: "Ephemeral Sandbox Workspace",
+                ingest: "Temporary shallow git clone executed into tempfile.mkdtemp.",
+                retention: "Ephemeral directory strictly sandboxed with restricted OS worker permissions."
             },
-            'soc2-cc6-1': {
-                title: 'SOC 2 CC6.1 Logical Access Isolation',
-                desc: 'Enforce server-side tenant isolation checking session tokens before returning customer resources.',
-                code: 'def get_customer_project(project_id, user_session):\n    tenant_org_id = user_session.get("org_id")\n    project = db.query(Project).filter_by(id=project_id, org_id=tenant_org_id).first()\n    if not project:\n        raise Unauthorized("Project not found or cross-tenant access prohibited")\n    return project'
+            ast: {
+                title: "AST & Semantic SAST Analysis",
+                ingest: "In-memory AST parsing, Semgrep semantic rules, taint analysis.",
+                retention: "Analyzed completely in RAM. No source code persisted beyond worker execution."
             },
-            'soc2-cc7-1': {
-                title: 'SOC 2 CC7.1 CISA KEV Vulnerability Patch SLA',
-                desc: 'Automate build-breaking CI gate for dependencies listed on the CISA KEV active exploitation catalog.',
-                code: '# In CI security check (ci_scan.py):\nfor package in manifest.dependencies:\n    if lookup_cisa_kev(package.cve_id):\n        print(f"CRITICAL: {package.cve_id} is in CISA KEV!")\n        sys.exit(1) # Break build to enforce 7-day patch SLA'
+            redact: {
+                title: "Secret Detection & Redaction Pipeline",
+                ingest: "Raw findings with candidate API tokens, private keys, or credentials.",
+                retention: "High-entropy and regex matching secrets masked to safe previews before persistence."
             },
-            'iso-a-8-8': {
-                title: 'ISO 27001 Control A.8.8 SAST Vulnerability Remediation',
-                desc: 'Replace unsafe raw SQL string concatenation with parameterized prepared statements.',
-                code: '# Unsafe command injection vector:\n- subprocess.run(f"cat {user_file}", shell=True)\n# Safe parameterized execution:\n+ subprocess.run(["cat", os.path.basename(user_file)], shell=False)'
+            cleanup: {
+                title: "Temporary Workspace Scrubbing",
+                ingest: "Temporary workspace path targeted upon scan completion.",
+                retention: "Deleted immediately using shutil.rmtree. Verified 0-day disk retention."
             },
-            'iso-a-8-20': {
-                title: 'ISO 27001 Control A.8.20 Network Boundary & CORS',
-                desc: 'Replace wildcard CORS allowlists with trusted origin verification.',
-                code: '- response.headers["Access-Control-Allow-Origin"] = "*"\n+ allowed_origins = ["https://app.trustaudit.io"]\n+ if origin in allowed_origins:\n+     response.headers["Access-Control-Allow-Origin"] = origin'
-            },
-            'gdpr-art-32': {
-                title: 'GDPR Article 32 Transport Encryption Enforcement',
-                desc: 'Enforce strict HTTPS with HTTP Strict Transport Security (HSTS) headers.',
-                code: 'response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains; preload"\nresponse.headers["X-Content-Type-Options"] = "nosniff"\nresponse.headers["X-Frame-Options"] = "DENY"'
-            }
-        };
-
-        function openRemediationModal(key) {
-            const data = REMEDIATION_SAMPLES[key] || {
-                title: 'Remediation Guidance',
-                desc: 'Implement secure configuration and verify via automated re-scan.',
-                code: '# Review finding details and apply recommended fix'
-            };
-            document.getElementById('modal-title').innerText = data.title;
-            document.getElementById('modal-desc').innerText = data.desc;
-            document.getElementById('modal-code').innerText = data.code;
-            document.getElementById('remediation-modal').classList.add('open');
-        }
-
-        function closeRemediationModal() {
-            document.getElementById('remediation-modal').classList.remove('open');
-        }
-
-        // 4. Client-Side Secret Redaction Sandbox
-        function runMaskingDemo() {
-            const input = document.getElementById('sandbox-input-val').value.trim();
-            const btn = document.getElementById('btn-run-mask');
-            btn.innerText = 'Analyzing...';
-
-            setTimeout(() => {
-                let masked = '[REDACTED]';
-                if (!input) {
-                    masked = '[EMPTY INPUT]';
-                } else if (input.length <= 8) {
-                    masked = '[REDACTED]';
-                } else {
-                    const prefix = input.substring(0, 4);
-                    const suffix = input.substring(input.length - 4);
-                    masked = `${prefix}...[REDACTED]...${suffix}`;
-                }
-
-                document.getElementById('res-orig').innerText = input || '(empty)';
-                document.getElementById('res-masked').innerText = masked;
-                document.getElementById('sandbox-result').classList.add('active');
-                btn.innerText = 'Test Masking';
-            }, 250);
-        }
-
-        function resetMaskingDemo() {
-            document.getElementById('sandbox-input-val').value = 'sk-test-example-123456789';
-            runMaskingDemo();
-        }
-
-        // 5. Enterprise Questionnaire Simulator
-        const SIM_DATA = [
-            {
-                qId: 1,
-                answer: 'Source code access is restricted via organization-wide GitHub fine-grained permissions requiring hardware security keys and branch protection rules. Direct commits to production branches are blocked.',
-                badge: 'SAMPLE EVIDENCE: GitHub_Branch_Protection_Rules.json'
-            },
-            {
-                qId: 2,
-                answer: 'Third-party dependencies are continuously scanned across pull requests using automated SBOM analyzers. Any dependency flagged in the CISA KEV catalog triggers a high-priority 7-day patch SLA.',
-                badge: 'SAMPLE EVIDENCE: OSV_SBOM_Scan_Report.json'
-            },
-            {
-                qId: 3,
-                answer: 'Security findings are automatically categorized into remediation tasks with enforced SLAs (7 days for Critical, 14 days for High). Each finding links directly to required auditor verification proof.',
-                badge: 'SAMPLE EVIDENCE: SLA_Remediation_Log.pdf'
-            }
-        ];
-
-        function runQuestionnaireSimulator() {
-            SIM_DATA.forEach((item, idx) => {
-                setTimeout(() => {
-                    document.getElementById(`sim-ans-${item.qId}`).innerText = item.answer;
-                    const st = document.getElementById(`sim-status-${item.qId}`);
-                    st.innerText = 'DEMO ANSWER POPULATED';
-                    st.className = 'status-pill status-verified';
-                    document.getElementById(`sim-ev-${item.qId}`).style.display = 'flex';
-                }, (idx + 1) * 350);
-            });
-        }
-
-        function resetQuestionnaireSimulator() {
-            [1, 2, 3].forEach(id => {
-                document.getElementById(`sim-ans-${id}`).innerText = "Click 'Auto-Fill Demo Evidence' to populate verified response.";
-                const st = document.getElementById(`sim-status-${id}`);
-                st.innerText = 'Not Filled';
-                st.className = 'status-pill status-roadmap';
-                document.getElementById(`sim-ev-${id}`).style.display = 'none';
-            });
-        }
-
-        // 6. Interactive Data Flow Node Inspector
-        const NODE_DATA = {
-            'repo': {
-                icon: '📦',
-                title: 'GitHub Repository Ingress',
-                desc: 'Customer provides repository URL and fine-grained read-only Personal Access Token (PAT) with contents:read permission. No write or administrative permissions are requested.',
-                proc: 'Git commit ref, branch tree, manifest files, and source code files.',
-                stored: 'Repository name, scan initiation timestamp, and commit SHA.',
-                ctrl: 'TLS 1.3 transit encryption, token memory isolation, least privilege.'
-            },
-            'auth': {
-                icon: '🔑',
-                title: 'Authorised Connection & Scoping',
-                desc: 'Fine-grained PAT or GitHub App connection validated. Scopes strictly enforced; token is kept in ephemeral execution memory only.',
-                proc: 'GitHub API authentication tokens and webhook signatures.',
-                stored: 'Encrypted token handle with tenant organization scoping.',
-                ctrl: 'HMAC signature verification, token rotation support.'
-            },
-            'sandbox': {
-                icon: '🛡️',
-                title: 'Sandboxed Scan Environment',
-                desc: 'Repository is cloned into a unique sandboxed temporary folder (tempfile.mkdtemp) isolated from other tenants.',
-                proc: 'Shallow git clone of target repository.',
-                stored: 'Zero permanent storage (stored exclusively in ephemeral temporary filesystem).',
-                ctrl: 'Filesystem permission isolation, subprocess timeouts.'
-            },
-            'ast': {
-                icon: '🔍',
-                title: 'AST & Static Security Analysis',
-                desc: 'Parses source code into Abstract Syntax Trees (AST). Checks MCP tool definitions for capability creep, prompt injection vectors, and hardcoded secrets.',
-                proc: 'Python, TypeScript, JavaScript AST nodes and package manifests.',
-                stored: 'Vulnerability pattern match locations and AST telemetry.',
-                ctrl: 'Deterministic local execution; no code sent to external LLMs.'
-            },
-            'redaction': {
-                icon: '✂️',
-                title: 'Finding Normalisation & Preview Redaction',
-                desc: 'Every finding is normalized to a 12-field schema. Credential values are masked (prefix...[REDACTED]...suffix) before reaching database storage.',
-                proc: 'Raw scanner finding dictionaries and line snippets.',
-                stored: 'Redacted code preview snippets only; raw credentials discarded.',
-                ctrl: 'Regex & Shannon entropy preview masking engine.'
-            },
-            'cleanup': {
-                icon: '🧹',
-                title: 'Measured Zero-Day Cleanup',
-                desc: 'Upon scan completion, temporary working directories are wiped immediately using shutil.rmtree(temp_dir). Complete source code is never permanently stored.',
-                proc: 'Temporary filesystem directories and downloaded files.',
-                stored: 'Zero source code retained (0-day retention verified).',
-                ctrl: 'Automated post-scan cleanup hook in scan manager.'
-            },
-            'tenant': {
-                icon: '🗄️',
-                title: 'Tenant-Scoped Storage & Reporting',
-                desc: 'Normalized findings and compliance mappings are persisted in tenant-isolated stores guarded by server-side session token authorization.',
-                proc: 'Aggregated findings, SLA deadlines, and audit evidence hashes.',
-                stored: 'Finding summaries, CWE IDs, and remediation lifecycle states.',
-                ctrl: 'Multi-tenant database partitioning, SHA-256 evidence hashing.'
+            store: {
+                title: "Tenant-Isolated Findings Store",
+                ingest: "Normalized finding titles, CWE/CVE mappings, line numbers, remediation tasks.",
+                retention: "Retained under organization context with cryptographic isolation test coverage."
             }
         };
 
         function inspectNode(key, element) {
-            document.querySelectorAll('.flow-node').forEach(n => n.classList.remove('active'));
+            document.querySelectorAll('.pipeline-node').forEach(n => n.classList.remove('active'));
             element.classList.add('active');
-
-            const info = NODE_DATA[key];
-            if (!info) return;
-
-            document.getElementById('inspector-title').innerHTML = `<span>${info.icon}</span> ${info.title}`;
-            document.getElementById('inspector-desc').innerText = info.desc;
-            document.getElementById('inspector-proc').innerText = info.proc;
-            document.getElementById('inspector-stored').innerText = info.stored;
-            document.getElementById('inspector-ctrl').innerText = info.ctrl;
+            const data = ARCH_NODES[key] || ARCH_NODES.repo;
+            document.getElementById('insp-title').innerText = data.title;
+            document.getElementById('insp-ingest').innerText = data.ingest;
+            document.getElementById('insp-retention').innerText = data.retention;
         }
 
-        // 7. Live Telemetry Fetcher
+        // 7. Client-Side Secret Redaction Sandbox (100% In-Browser, XSS Protected via textContent)
+        function calculateEntropy(str) {
+            if (!str) return 0;
+            const len = str.length;
+            const freqs = {};
+            for (let i = 0; i < len; i++) {
+                freqs[str[i]] = (freqs[str[i]] || 0) + 1;
+            }
+            let entropy = 0;
+            for (const char in freqs) {
+                const p = freqs[char] / len;
+                entropy -= p * Math.log2(p);
+            }
+            return entropy.toFixed(2);
+        }
+
+        function runMaskingDemo() {
+            const rawVal = document.getElementById('sandbox-input-val').value.trim();
+            const resEl = document.getElementById('sandbox-result-text');
+            const entEl = document.getElementById('sandbox-entropy-text');
+
+            if (!rawVal) {
+                resEl.textContent = "[Empty Input - Enter a synthetic token]";
+                entEl.textContent = "Shannon Entropy: 0 bits/char";
+                return;
+            }
+
+            // Masking rule: keep first 4 chars, mask middle with [REDACTED], keep last 4 chars
+            let masked = "";
+            if (rawVal.length <= 8) {
+                masked = rawVal.substring(0, 2) + "...[REDACTED]";
+            } else {
+                masked = rawVal.substring(0, 4) + "...[REDACTED]..." + rawVal.substring(rawVal.length - 4);
+            }
+
+            // Safe textContent assignment (strictly prevents XSS)
+            resEl.textContent = masked;
+            const entropy = calculateEntropy(rawVal);
+            entEl.textContent = `Shannon Entropy: ${entropy} bits/char • Pattern Detected: Candidate Credential • Zero Network Transmission`;
+        }
+
+        function resetMaskingDemo() {
+            document.getElementById('sandbox-input-val').value = "sk-test-example-123456789";
+            runMaskingDemo();
+        }
+
+        // 8. Questionnaire Simulator with 150ms Staggered Typewriter Animation
+        function runQuestionnaireSimulator() {
+            const rows = [1, 2, 3];
+            rows.forEach((num, index) => {
+                setTimeout(() => {
+                    const row = document.getElementById('q-row-' + num);
+                    if (row) row.classList.add('active');
+                }, (index + 1) * 150);
+            });
+        }
+
+        function resetQuestionnaireSimulator() {
+            [2, 3].forEach(num => {
+                const row = document.getElementById('q-row-' + num);
+                if (row) row.classList.remove('active');
+            });
+        }
+
+        // 9. Quick Perimeter Check (SSRF-Protected)
+        function runQuickPerimeterCheck() {
+            const urlInput = document.getElementById('perimeter-url-input');
+            const btn = document.getElementById('btn-run-perimeter');
+            const resultsCard = document.getElementById('perimeter-results-card');
+
+            const targetUrl = urlInput.value.trim();
+            if (!targetUrl) {
+                alert("Please enter a valid URL.");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = 'Scanning Perimeter...';
+
+            fetch('/api/public/quick-check', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: targetUrl })
+            })
+            .then(res => res.json())
+            .then(data => {
+                resultsCard.style.display = 'block';
+                document.getElementById('perimeter-target-title').innerText = 'PERIMETER RESULTS: ' + (data.url || targetUrl);
+
+                const checks = data.checks || {};
+                document.getElementById('res-https').innerText = checks.https || 'UNKNOWN';
+                document.getElementById('res-tls').innerText = checks.tls || 'UNKNOWN';
+                document.getElementById('res-hsts').innerText = checks.hsts || 'UNKNOWN';
+                document.getElementById('res-policy').innerText = checks.privacy_policy || 'NOT DETECTED';
+                document.getElementById('res-contact').innerText = checks.privacy_contact || 'NOT DETECTED';
+
+                // Style based on results
+                document.getElementById('res-https').style.color = (checks.https === 'PASS') ? '#34d399' : '#f59e0b';
+                document.getElementById('res-hsts').style.color = (checks.hsts === 'PASS') ? '#34d399' : '#f59e0b';
+
+                if (data.status === 'blocked') {
+                    document.getElementById('perimeter-status-pill').className = 'status-pill status-roadmap';
+                    document.getElementById('perimeter-status-pill').innerText = 'SSRF BLOCKED';
+                    document.getElementById('perimeter-disclaimer-text').innerText = data.message;
+                } else {
+                    document.getElementById('perimeter-status-pill').className = 'status-pill status-verified';
+                    document.getElementById('perimeter-status-pill').innerText = 'CHECK COMPLETE';
+                }
+            })
+            .catch(err => {
+                resultsCard.style.display = 'block';
+                document.getElementById('perimeter-status-pill').innerText = 'CHECK FAILED';
+                document.getElementById('perimeter-disclaimer-text').innerText = 'Unable to complete perimeter check: ' + err;
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerHTML = '<svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg> Run Quick Check';
+            });
+        }
+
+        // 10. Live Telemetry Polling
         function refreshTelemetry() {
+            const spinner = document.getElementById('tele-spinner');
+            if (spinner) spinner.style.animation = 'spin 0.8s linear infinite';
+
             fetch('/api/public/trust-status')
                 .then(res => res.json())
                 .then(data => {
                     if (data && data.kev_sync) {
                         document.getElementById('tele-records').innerText = data.kev_sync.catalog_entries + ' CVEs';
                         document.getElementById('tele-status').innerText = data.kev_sync.status;
-                        document.getElementById('tele-sync').innerText = data.kev_sync.last_successful_sync.substring(0, 19) + ' UTC';
+                        document.getElementById('tele-sync').innerText = (data.kev_sync.last_successful_sync || '').substring(0, 19) + ' UTC';
                     }
                 })
-                .catch(() => {
-                    // Retain server-rendered baseline if network fails
+                .catch(() => {})
+                .finally(() => {
+                    if (spinner) spinner.style.animation = 'none';
                 });
         }
 
-        // 8. Trust Pack Modal
+        // 11. Remediation Modals Data & Handlers
+        const REMEDIATION_PLAYBOOKS = {
+            dpdp: {
+                title: "DPDP Act 2023 Consent Withdrawal Workflow",
+                meta: "DPDP ACT 2023 SECTION 6(4)-(6) READ WITH DPDP RULES 2025",
+                desc: "Illustrative backend endpoint implementing authenticated consent revocation, stop-processing instruction dispatch to processors, and audit trail preservation. Prior lawful processing is not rendered unlawful.",
+                code: `@app.route("/api/v1/consent/withdraw", methods=["POST"])
+def withdraw_consent():
+    # DPDP Section 6(4)-(6) Compliant Consent Withdrawal Handler:
+    # 1. Authenticate Data Principal.
+    # 2. Identify purpose-specific consent record.
+    # 3. Update consent status to WITHDRAWN with UTC timestamp.
+    # 4. Cause downstream processors to cease processing (Section 6(6)).
+    # 5. Retain audit record of withdrawal.
+    user_id = request.user.id
+    data = request.get_json()
+    purpose_id = data.get("purpose_id")
+
+    # Update Data Fiduciary store
+    record = consent_store.update_consent_status(
+        user_id=user_id,
+        purpose_id=purpose_id,
+        status="WITHDRAWN",
+        timestamp=time.time()
+    )
+
+    # Dispatch stop-processing instruction to third-party processors
+    dispatch_processor_instruction(
+        instruction="CEASE_PROCESSING",
+        data_principal_id=user_id,
+        purpose_id=purpose_id
+    )
+
+    audit_log.record(
+        action="CONSENT_WITHDRAWAL",
+        data_principal=user_id,
+        purpose=purpose_id,
+        statutory_basis="DPDP_SECTION_6_4"
+    )
+
+    return jsonify({
+        "status": "success",
+        "message": "Consent withdrawal processed. Processors instructed to cease processing.",
+        "effective_date": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+    }), 200`,
+                notes: "Limitations: This illustrative snippet demonstrates API wiring. Legally authorized processing exceptions (e.g., statutory compliance under Section 6(6)) require application-specific routing."
+            },
+            soc2: {
+                title: "SOC 2 Change Management (CC8.1) Branch Protection",
+                meta: "AICPA 2017 TSC WITH 2022 FOCUS CC8.1 & CC6.1",
+                desc: "Illustrative GitHub branch protection configuration enforcing peer pull-request review, status check gating, and linear history. Note: Logical access (CC6.1) requires broader identity & provisioning evidence.",
+                code: `// .github/branch-protection-policy.json (Applied via Terraform / GitHub API)
+{
+  "required_status_checks": {
+    "strict": true,
+    "contexts": [
+      "TrustAudit Security Gate",
+      "test / unit-test-suite",
+      "sast / semgrep-security-check"
+    ]
+  },
+  "enforce_admins": true,
+  "required_pull_request_reviews": {
+    "dismiss_stale_reviews": true,
+    "require_code_owner_reviews": true,
+    "required_approving_review_count": 1
+  },
+  "restrictions": null,
+  "allow_force_pushes": false,
+  "allow_deletions": false,
+  "required_linear_history": true
+}`,
+                notes: "What it fixes: Enforces change management controls (CC8.1). What it does not prove: Does not satisfy logical access security (CC6.1), which requires identity provisioning and quarterly access review evidence."
+            },
+            iso27001: {
+                title: "ISO/IEC 27001 Secure Coding (A.8.28) & Vulnerability (A.8.8)",
+                meta: "ISO/IEC 27001:2022 ANNEX A TECHNOLOGICAL CONTROLS",
+                desc: "Illustrative input validation and dependency vulnerability patch script preventing SQL injection and outdated package exploitation.",
+                code: `# Secure Coding Remediation (Python SQLAlchemy Parameterized Query)
+# Bad: db.execute(f"SELECT * FROM accounts WHERE org_id = '{untrusted_org_id}'")
+# Good:
+from sqlalchemy import text
+
+stmt = text("SELECT * FROM accounts WHERE org_id = :org_id AND status = :status")
+results = db.session.execute(stmt, {"org_id": verified_org_id, "status": "ACTIVE"}).fetchall()
+
+# Dependency Vulnerability Remediation (A.8.8)
+# Upgrade vulnerable package identified by OSV/NVD scan:
+# pip install requests>=2.31.0 urllib3>=2.0.7 --upgrade`,
+                notes: "Verification: Run Semgrep SAST check and pip audit to verify zero high-severity findings remain before deployment."
+            },
+            gdpr: {
+                title: "GDPR Documented Breach Assessment & Escalation Workflow",
+                meta: "EU GDPR ARTICLES 32, 33 (72-HOUR NOTIFICATION) & 34",
+                desc: "Illustrative security incident assessment and supervisory authority breach notification workflow with SLA tracking.",
+                code: `def assess_and_escalate_incident(incident_data):
+    # Evaluates personal data breach risk under GDPR Articles 33 & 34:
+    # - Assesses confidentiality, integrity, and availability impact.
+    # - If risk to rights and freedoms of natural persons is likely,
+    #   initiates supervisory authority notification within 72 hours.
+    t_detected = incident_data["detected_at"]
+    risk_level = evaluate_risk_to_data_subjects(incident_data)
+
+    if risk_level in ("MEDIUM", "HIGH"):
+        supervisory_notification_deadline = t_detected + (72 * 3600)
+        task = remediation_center.create_task(
+            title="DPO Supervisory Authority Notification (GDPR Art 33)",
+            severity="CRITICAL",
+            deadline=supervisory_notification_deadline,
+            affected_category=incident_data["categories"]
+        )
+        alert_security_lead(task)
+    return risk_level`,
+                notes: "Limitations: Whether a breach is reportable requires formal assessment by an appointed DPO or external legal counsel."
+            }
+        };
+
+        function openRemediationModal(type) {
+            const data = REMEDIATION_PLAYBOOKS[type] || REMEDIATION_PLAYBOOKS.dpdp;
+            document.getElementById('rem-modal-title').innerText = data.title;
+            document.getElementById('rem-modal-meta').innerText = data.meta;
+            document.getElementById('rem-modal-desc').innerText = data.desc;
+            document.getElementById('rem-modal-code').innerText = data.code;
+            document.getElementById('rem-modal-notes').innerText = data.notes;
+            document.getElementById('remediation-modal').style.display = 'flex';
+        }
+
+        function closeRemediationModal() {
+            document.getElementById('remediation-modal').style.display = 'none';
+        }
+
+        // 12. Evidence Sample JSON Modal
+        const SAMPLE_EVIDENCE = {
+            "DPDP-SEC-06": {
+                "evidence_id": "EV-DPDP-2026-06",
+                "framework": "DPDP:2023",
+                "control_id": "DPDP-SEC-06(9)",
+                "control_name": "Consent Architecture & Revocation Endpoint",
+                "verification_method": "AST_API_ROUTE_INSPECTION",
+                "asset_inspected": "https://github.com/example/saas-backend",
+                "findings_count": 0,
+                "status": "PASS",
+                "evidence_payload": {
+                    "consent_withdrawal_route": "/api/v1/consent/withdraw",
+                    "http_method": "POST",
+                    "processor_notification_webhook": "configured",
+                    "audit_logging_enabled": true
+                },
+                "watermark": "ILLUSTRATIVE SAMPLE — NOT A LIVE CUSTOMER RECORD"
+            },
+            "DPDP-SEC-08-5": {
+                "evidence_id": "EV-DPDP-2026-08-5",
+                "framework": "DPDP:2023",
+                "control_id": "DPDP-SEC-08(5)",
+                "control_name": "Reasonable Security Safeguards & Redaction",
+                "verification_method": "SECRETS_ENTROPY_SCAN",
+                "asset_inspected": "https://github.com/example/saas-backend",
+                "findings_count": 0,
+                "status": "PASS",
+                "evidence_payload": {
+                    "high_entropy_secrets_found": 0,
+                    "masked_tokens_logged": true,
+                    "hardcoded_credentials": "none"
+                },
+                "watermark": "ILLUSTRATIVE SAMPLE — NOT A LIVE CUSTOMER RECORD"
+            },
+            "SOC2-CC8.1": {
+                "evidence_id": "EV-SOC2-2026-CC8.1",
+                "framework": "SOC2:2017/2022",
+                "control_id": "SOC2-CC8.1",
+                "control_name": "Change Management & Branch Protection",
+                "verification_method": "GITHUB_API_CONFIGURATION_AUDIT",
+                "asset_inspected": "repo:default_branch",
+                "findings_count": 0,
+                "status": "PASS",
+                "evidence_payload": {
+                    "branch": "main",
+                    "required_approving_reviews": 1,
+                    "strict_status_checks": ["TrustAudit Security Gate"],
+                    "force_push_blocked": true
+                },
+                "watermark": "ILLUSTRATIVE SAMPLE — NOT A LIVE CUSTOMER RECORD"
+            },
+            "ISO-A.8.28": {
+                "evidence_id": "EV-ISO-2026-A.8.28",
+                "framework": "ISO/IEC 27001:2022",
+                "control_id": "A.8.28",
+                "control_name": "Secure Coding & SAST Verification",
+                "verification_method": "SEMGREP_AST_SCAN",
+                "asset_inspected": "src/app.py",
+                "findings_count": 0,
+                "status": "PASS",
+                "evidence_payload": {
+                    "rules_evaluated": 184,
+                    "sql_injection_flaws": 0,
+                    "xss_patterns": 0,
+                    "insecure_deserialization": 0
+                },
+                "watermark": "ILLUSTRATIVE SAMPLE — NOT A LIVE CUSTOMER RECORD"
+            },
+            "GDPR-ART-32": {
+                "evidence_id": "EV-GDPR-2026-32",
+                "framework": "GDPR:2016",
+                "control_id": "Article 32",
+                "control_name": "Security of Processing",
+                "verification_method": "TLS_CIPHER_AUDIT",
+                "asset_inspected": "https://mcp-scanner.onrender.com",
+                "findings_count": 0,
+                "status": "PASS",
+                "evidence_payload": {
+                    "tls_version": "TLSv1.3",
+                    "hsts_max_age": 31536000,
+                    "encryption_cipher": "TLS_AES_256_GCM_SHA384"
+                },
+                "watermark": "ILLUSTRATIVE SAMPLE — NOT A LIVE CUSTOMER RECORD"
+            }
+        };
+
+        let currentEvidenceJson = "";
+        function openEvidenceModal(controlId) {
+            const data = SAMPLE_EVIDENCE[controlId] || SAMPLE_EVIDENCE["DPDP-SEC-06"];
+            currentEvidenceJson = JSON.stringify(data, null, 2);
+            document.getElementById('evidence-modal-code').innerText = currentEvidenceJson;
+            document.getElementById('evidence-copy-feedback').innerText = "";
+            document.getElementById('evidence-modal').style.display = 'flex';
+        }
+
+        function closeEvidenceModal() {
+            document.getElementById('evidence-modal').style.display = 'none';
+        }
+
+        function copyEvidenceJson() {
+            if (navigator.clipboard && currentEvidenceJson) {
+                navigator.clipboard.writeText(currentEvidenceJson).then(() => {
+                    document.getElementById('evidence-copy-feedback').innerText = "✓ Copied to clipboard!";
+                });
+            }
+        }
+
+        // 13. Trust Pack Modal Handlers
         function openTrustPackModal() {
-            document.getElementById('trust-pack-modal').classList.add('open');
+            document.getElementById('trust-pack-modal').style.display = 'flex';
         }
 
         function closeTrustPackModal() {
-            document.getElementById('trust-pack-modal').classList.remove('open');
+            document.getElementById('trust-pack-modal').style.display = 'none';
         }
 
         function handleTrustPackDownload(e) {
@@ -2273,15 +2591,53 @@ TRUST_CENTRE_HTML_TEMPLATE = """<!DOCTYPE html>
             closeTrustPackModal();
         }
 
+        // 14. Grievance Modal Handlers
+        function openGrievanceModal() {
+            document.getElementById('grievance-modal').style.display = 'flex';
+        }
+
+        function closeGrievanceModal() {
+            document.getElementById('grievance-modal').style.display = 'none';
+        }
+
+        function handleGrievanceSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('grv-name').value;
+            const email = document.getElementById('grv-email').value;
+            const category = document.getElementById('grv-category').value;
+            const description = document.getElementById('grv-desc').value;
+
+            fetch('/api/public/grievance/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, category, description })
+            })
+            .then(res => res.json())
+            .then(data => {
+                alert(data.message || 'Grievance recorded successfully.');
+                closeGrievanceModal();
+            })
+            .catch(err => {
+                alert('Submission error: ' + err);
+            });
+        }
+
+        function closeModalOnOverlay(e, modalId) {
+            if (e.target && e.target.id === modalId) {
+                document.getElementById(modalId).style.display = 'none';
+            }
+        }
+
         // Close modals on Escape key
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 closeRemediationModal();
+                closeEvidenceModal();
                 closeTrustPackModal();
+                closeGrievanceModal();
             }
         });
     </script>
-
 </body>
 </html>
 """
