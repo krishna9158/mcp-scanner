@@ -1352,7 +1352,7 @@ DASHBOARD_HTML = """<!doctype html>
   run: |
     curl -X POST https://mcp-scanner.onrender.com/api/scan \\
       -H "Content-Type: application/json" \\
-      -H "Authorization: Bearer ${{ secrets.TRUSTAUDIT_API_TOKEN }}" \\
+      -H "Authorization: Bearer {% raw %}${{ secrets.TRUSTAUDIT_API_TOKEN }}{% endraw %}" \\
       -d '{"target": "https://github.com/owner/repository"}'</pre>
                 </div>
             </div>

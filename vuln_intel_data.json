@@ -23,8 +23,8 @@
     "cisa_kev": {
       "name": "CISA KEV Catalog",
       "status": "Healthy",
-      "last_successful_sync": "2026-11-18T20:45:05.517303+00:00",
-      "last_attempted_sync": "2026-11-18T20:45:05.517303+00:00",
+      "last_successful_sync": "2026-11-18T20:51:50.688413+00:00",
+      "last_attempted_sync": "2026-11-18T20:51:50.688413+00:00",
       "records_count": 0,
       "records_created": 0,
       "records_updated": 0,
