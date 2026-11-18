@@ -195,24 +195,16 @@ DASHBOARD_HTML = """<!doctype html>
     <!-- Navigation Header (15 Core SaaS Sections) -->
     <div class="nav-bar-container">
         <div class="header-nav">
-            <button class="nav-item active" onclick="switchNav('dash-main')">📊 Dashboard</button>
-            <button class="nav-item" onclick="switchNav('dash-assets')">🌐 Assets ({{ assets|length }})</button>
-            <button class="nav-item" onclick="switchNav('dash-scans')">🚀 Scans</button>
-            <button class="nav-item" onclick="switchNav('dash-findings')">🛡 Findings ({{ (result.get('findings', []) if result else [])|length }})</button>
-            <button class="nav-item" onclick="switchNav('dash-fix-center')">🎯 Fix Center</button>
-            <button class="nav-item" onclick="switchNav('dash-monitoring')">⏱ Monitoring</button>
-            <button class="nav-item" onclick="switchNav('dash-attack-surface')">🔍 Attack Surface</button>
-            <button class="nav-item" onclick="switchNav('dash-score')">📈 Security Score</button>
-            <button class="nav-item" onclick="switchNav('dash-what-changed')">⚖️ What Changed?</button>
-            <button class="nav-item" onclick="switchNav('dash-compliance')">📜 Compliance</button>
-            <button class="nav-item" onclick="switchNav('dash-vuln-intel')">🧠 Vuln Intelligence <span id="intel-affecting-badge" class="badge badge-CRITICAL" style="margin-left: 4px; padding: 1px 6px; font-size: 10px; {% if not affecting_vulnerabilities %}display: none;{% endif %}">{{ affecting_vulnerabilities|length }}</span></button>
-            <button class="nav-item" onclick="switchNav('dash-mcp-intel')">⚡ MCP Intelligence</button>
-            <button class="nav-item" onclick="switchNav('dash-reports')">📄 Reports</button>
-            <button class="nav-item" onclick="switchNav('dash-advisor')">💬 AI Copilot</button>
-            <button class="nav-item" onclick="switchNav('dash-integrations')">🔌 Integrations</button>
-            <button class="nav-item" onclick="switchNav('dash-team')">👥 Team</button>
-            <button class="nav-item" onclick="switchNav('dash-settings')">⚙️ Settings</button>
-            <button class="nav-item" onclick="switchNav('dash-tools')">🩺 Scanner Health</button>
+            <button class="nav-item active" onclick="switchNav('dash-main')">📊 1. Overview</button>
+            <button class="nav-item" onclick="switchNav('dash-security-hub')">🛡️ 2. Security Posture</button>
+            <button class="nav-item" onclick="switchNav('dash-compliance')">📜 3. Compliance Centre</button>
+            <button class="nav-item" onclick="switchNav('dash-fix-center')">🎯 4. Findings &amp; Remediation</button>
+            <button class="nav-item" onclick="switchNav('dash-evidence-vault')">📁 5. Evidence &amp; Reports</button>
+            <div style="margin-left: auto; display: flex; gap: 6px; align-items: center;">
+                <button class="nav-item" onclick="switchNav('dash-tools')" style="font-size: 11.5px; opacity: 0.85;">🩺 Scanner Health</button>
+                <button class="nav-item" onclick="switchNav('dash-integrations')" style="font-size: 11.5px; opacity: 0.85;">🔌 Integrations</button>
+                <button class="nav-item" onclick="switchNav('dash-settings')" style="font-size: 11.5px; opacity: 0.85;">⚙️ Settings</button>
+            </div>
         </div>
     </div>
 
@@ -963,71 +955,221 @@ DASHBOARD_HTML = """<!doctype html>
         <!-- =================================================================== -->
         <!-- SECTION 10: COMPLIANCE & STARTUP HEALTH                             -->
         <!-- =================================================================== -->
+                <!-- =================================================================== -->
+        <!-- SECTION: COMPLIANCE CENTRE (DPDP, SOC 2, ISO 27001, GDPR)           -->
+        <!-- =================================================================== -->
         <div id="dash-compliance" class="section-view">
-            <div class="card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+            <div class="card" style="margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
                     <div>
-                        <h2 style="font-size: 18px; font-weight: 700;">Startup Security Health &amp; Compliance Matrix</h2>
-                        <p style="font-size: 13px; color: var(--text-muted);">Automated mapping against OWASP Top 10, SOC 2, ISO 27001, and the 24-point Startup Checklist.</p>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <h2 style="font-size: 20px; font-weight: 700; margin: 0;">📜 Continuous Compliance Centre</h2>
+                            <span class="badge" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3);">Multi-Framework GRC</span>
+                        </div>
+                        <p style="font-size: 13.5px; color: var(--text-muted); margin-top: 6px;">
+                            Continuous technical gap analysis, policy readiness, and audit evidence collection for startups and software businesses.
+                        </p>
                     </div>
-                    <span class="pulse-badge" style="font-size: 13px;">19 / 24 Controls Healthy (79%)</span>
-                </div>
-
-                <div class="grid-3" style="margin-bottom: 24px;">
-                    <div class="card" style="background: #0b1120; margin-bottom: 0;">
-                        <h4 style="color: #93c5fd; margin-bottom: 8px;">OWASP Top 10 (2021)</h4>
-                        <p style="font-size: 13px; color: var(--text-muted);">8 / 10 Categories Passed Cleanly</p>
-                        <span class="badge badge-pass">Pass Rate: 80%</span>
-                    </div>
-                    <div class="card" style="background: #0b1120; margin-bottom: 0;">
-                        <h4 style="color: #93c5fd; margin-bottom: 8px;">SOC 2 Type II Security</h4>
-                        <p style="font-size: 13px; color: var(--text-muted);">CC6.1, CC6.6, CC6.8, CC7.1 Controls</p>
-                        <span class="badge badge-pass">Audit Ready</span>
-                    </div>
-                    <div class="card" style="background: #0b1120; margin-bottom: 0;">
-                        <h4 style="color: #93c5fd; margin-bottom: 8px;">ISO/IEC 27001:2022</h4>
-                        <p style="font-size: 13px; color: var(--text-muted);">A.8.8 &amp; A.8.28 Secure Coding</p>
-                        <span class="badge badge-pass">Conformant</span>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn btn-sm btn-secondary" onclick="openOnboardingModal()">⚙️ Profile &amp; Applicability</button>
+                        <button class="btn btn-sm btn-primary" onclick="refreshComplianceData()">🔄 Refresh Assessment</button>
                     </div>
                 </div>
 
-                <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px;">24-Point Startup Security Health Checklist</h3>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px;">
-                    <div style="background: #0b1120; border: 1px solid var(--border-subtle); border-radius: 8px; padding: 12px;">
-                        <div style="display: flex; justify-content: space-between;"><b style="font-size: 13px;">HTTPS Enforced</b> <span class="badge badge-pass">PASS</span></div>
-                        <small style="color: var(--text-muted);">Redirects all HTTP to HTTPS</small>
+                <!-- Legal Transparency Notice -->
+                <div style="background: rgba(30, 41, 59, 0.7); border-left: 4px solid var(--brand-blue); padding: 12px 16px; border-radius: 6px; font-size: 12.5px; color: #cbd5e1; margin-bottom: 20px;">
+                    <b>⚖️ Regulatory Transparency:</b> TrustAudit evaluates automated technical controls, repository configurations, and uploaded policy evidence. It does not replace formal legal counsel, statutory audit by the Data Protection Board of India, or an examination report issued by an independent CPA firm for SOC 2.
+                </div>
+
+                <!-- Framework Selection Tabs -->
+                <div style="display: flex; gap: 8px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px; margin-bottom: 20px; overflow-x: auto;">
+                    <button class="btn btn-sm fw-tab-btn active" id="tab-fw-dpdp" onclick="switchComplianceFramework('DPDP')">🇮🇳 India DPDP Act 2023</button>
+                    <button class="btn btn-sm fw-tab-btn btn-secondary" id="tab-fw-soc2" onclick="switchComplianceFramework('SOC2')">🛡️ SOC 2 (Readiness)</button>
+                    <button class="btn btn-sm fw-tab-btn btn-secondary" id="tab-fw-iso27001" onclick="switchComplianceFramework('ISO27001')">🌐 ISO/IEC 27001:2022</button>
+                    <button class="btn btn-sm fw-tab-btn btn-secondary" id="tab-fw-gdpr" onclick="switchComplianceFramework('GDPR')">🇪🇺 EU GDPR</button>
+                </div>
+
+                <!-- Framework Overview Stats Card -->
+                <div id="compliance-framework-summary" class="grid-4" style="margin-bottom: 24px;">
+                    <div class="card" style="background: #0b1120; margin-bottom: 0; padding: 16px;">
+                        <span style="font-size: 11.5px; color: var(--text-muted); text-transform: uppercase;">Readiness Posture</span>
+                        <div style="font-size: 26px; font-weight: 700; color: #38bdf8; margin-top: 4px;" id="fw-readiness-score">--%</div>
+                        <small style="color: #64748b;" id="fw-readiness-grade">Grade: --</small>
                     </div>
-                    <div style="background: #0b1120; border: 1px solid var(--border-subtle); border-radius: 8px; padding: 12px;">
-                        <div style="display: flex; justify-content: space-between;"><b style="font-size: 13px;">HSTS Preload</b> <span class="badge badge-pass">PASS</span></div>
-                        <small style="color: var(--text-muted);">Strict-Transport-Security active</small>
+                    <div class="card" style="background: #0b1120; margin-bottom: 0; padding: 16px;">
+                        <span style="font-size: 11.5px; color: var(--text-muted); text-transform: uppercase;">Implemented &amp; Reviewed</span>
+                        <div style="font-size: 26px; font-weight: 700; color: #34d399; margin-top: 4px;" id="fw-implemented-count">0</div>
+                        <small style="color: #64748b;">Technical + Document verified</small>
                     </div>
-                    <div style="background: #0b1120; border: 1px solid var(--border-subtle); border-radius: 8px; padding: 12px;">
-                        <div style="display: flex; justify-content: space-between;"><b style="font-size: 13px;">Secure Cookies</b> <span class="badge badge-pass">PASS</span></div>
-                        <small style="color: var(--text-muted);">HttpOnly, Secure, SameSite</small>
+                    <div class="card" style="background: #0b1120; margin-bottom: 0; padding: 16px;">
+                        <span style="font-size: 11.5px; color: var(--text-muted); text-transform: uppercase;">Evidence Gaps</span>
+                        <div style="font-size: 26px; font-weight: 700; color: #f59e0b; margin-top: 4px;" id="fw-evidence-missing-count">0</div>
+                        <small style="color: #64748b;">Technical passed, document missing</small>
                     </div>
-                    <div style="background: #0b1120; border: 1px solid var(--border-subtle); border-radius: 8px; padding: 12px;">
-                        <div style="display: flex; justify-content: space-between;"><b style="font-size: 13px;">Secret Hygiene</b> <span class="badge badge-pass">PASS</span></div>
-                        <small style="color: var(--text-muted);">Zero exposed keys or tokens</small>
-                    </div>
-                    <div style="background: #0b1120; border: 1px solid var(--border-subtle); border-radius: 8px; padding: 12px;">
-                        <div style="display: flex; justify-content: space-between;"><b style="font-size: 13px;">Dependency Audit</b> <span class="badge badge-pass">PASS</span></div>
-                        <small style="color: var(--text-muted);">OSV / CVE database verified</small>
-                    </div>
-                    <div style="background: #0b1120; border: 1px solid var(--border-subtle); border-radius: 8px; padding: 12px;">
-                        <div style="display: flex; justify-content: space-between;"><b style="font-size: 13px;">Public File Defense</b> <span class="badge badge-pass">PASS</span></div>
-                        <small style="color: var(--text-muted);">.git and .env blocked</small>
+                    <div class="card" style="background: #0b1120; margin-bottom: 0; padding: 16px;">
+                        <span style="font-size: 11.5px; color: var(--text-muted); text-transform: uppercase;">Active Security Gaps</span>
+                        <div style="font-size: 26px; font-weight: 700; color: #f87171; margin-top: 4px;" id="fw-gap-count">0</div>
+                        <small style="color: #64748b;">Vulnerabilities threaten control</small>
                     </div>
                 </div>
 
-                <div style="margin-top: 20px; font-size: 11.5px; color: var(--text-dim); text-align: center;">
-                    Disclaimer: TrustAudit provides security control visibility and automated posture auditing. It does not certify regulatory compliance.
+                <!-- Framework Detailed Controls Table -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <h3 style="font-size: 16px; font-weight: 700; margin: 0;" id="fw-table-heading">Controls &amp; Statutory Requirements</h3>
+                    <div style="font-size: 12.5px; color: var(--text-muted);">
+                        Showing official statutory controls with verified technical mapping
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid var(--border-subtle); text-align: left; background: #0f172a;">
+                                <th style="padding: 10px 14px;">Control / Section</th>
+                                <th style="padding: 10px 14px;">Requirement &amp; Official Reference</th>
+                                <th style="padding: 10px 14px;">Enforcement Phase</th>
+                                <th style="padding: 10px 14px;">Implementation Status</th>
+                                <th style="padding: 10px 14px; text-align: right;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="compliance-controls-tbody">
+                            <tr><td colspan="5" style="text-align: center; padding: 30px; color: var(--text-muted);">Loading compliance assessment data...</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
 
         <!-- =================================================================== -->
-        <!-- SECTION 16: MCP SPECIFIC DIFFERENTIATION & INTELLIGENCE             -->
+        <!-- SECTION: EVIDENCE VAULT & REPORTS                                   -->
         <!-- =================================================================== -->
+        <div id="dash-evidence-vault" class="section-view">
+            <div class="card" style="margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <div>
+                        <h2 style="font-size: 20px; font-weight: 700; margin: 0;">📁 Evidence Vault &amp; Document Management</h2>
+                        <p style="font-size: 13.5px; color: var(--text-muted); margin-top: 6px;">
+                            Tenant-isolated repository for supporting policies, audit logs, screenshots, and review sign-offs with cryptographic SHA-256 integrity verification.
+                        </p>
+                    </div>
+                    <button class="btn btn-sm btn-primary" onclick="openUploadEvidenceModal()">+ Upload New Evidence</button>
+                </div>
+
+                <!-- Quick Upload Card -->
+                <div style="background: #0f172a; border: 1px dashed #334155; border-radius: 8px; padding: 18px; margin-bottom: 20px;">
+                    <form id="evidence-upload-form" onsubmit="handleEvidenceUpload(event)" enctype="multipart/form-data" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) auto; gap: 12px; align-items: flex-end;">
+                        <div>
+                            <label style="font-size: 12px; font-weight: 600; color: #cbd5e1; display: block; margin-bottom: 4px;">Evidence Title</label>
+                            <input type="text" name="title" required placeholder="e.g. Information Security Policy v2.1" class="form-control" style="background: #1e293b; color: #fff; border: 1px solid #334155; border-radius: 6px; padding: 7px 10px; width: 100%;">
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; font-weight: 600; color: #cbd5e1; display: block; margin-bottom: 4px;">Target Framework</label>
+                            <select name="framework" class="form-control" style="background: #1e293b; color: #fff; border: 1px solid #334155; border-radius: 6px; padding: 7px 10px; width: 100%;">
+                                <option value="DPDP">India DPDP Act 2023</option>
+                                <option value="SOC2" selected>SOC 2 Type II</option>
+                                <option value="ISO27001">ISO/IEC 27001:2022</option>
+                                <option value="GDPR">EU GDPR</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; font-weight: 600; color: #cbd5e1; display: block; margin-bottom: 4px;">Control Identifier</label>
+                            <input type="text" name="control_id" required placeholder="e.g. DPDP-SEC-08-1 or SOC2-CC6.1" class="form-control" style="background: #1e293b; color: #fff; border: 1px solid #334155; border-radius: 6px; padding: 7px 10px; width: 100%;">
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; font-weight: 600; color: #cbd5e1; display: block; margin-bottom: 4px;">Attach File / Screenshot</label>
+                            <input type="file" name="file" class="form-control" style="background: #1e293b; color: #94a3b8; border: 1px solid #334155; border-radius: 6px; padding: 5px 8px; width: 100%;">
+                        </div>
+                        <div>
+                            <button type="submit" class="btn btn-primary" style="height: 38px;">Attach Evidence</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Stored Evidence List Table -->
+                <div class="table-responsive">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid var(--border-subtle); text-align: left; background: #0f172a;">
+                                <th style="padding: 10px 14px;">Evidence ID &amp; Document</th>
+                                <th style="padding: 10px 14px;">Control Mapping</th>
+                                <th style="padding: 10px 14px;">Owner &amp; Upload Date</th>
+                                <th style="padding: 10px 14px;">Integrity (SHA-256)</th>
+                                <th style="padding: 10px 14px;">Status / Expiration</th>
+                                <th style="padding: 10px 14px; text-align: right;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="evidence-vault-tbody">
+                            <tr><td colspan="6" style="text-align: center; padding: 30px; color: var(--text-muted);">Loading tenant evidence documents...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Reports Download Cards -->
+                <div style="margin-top: 30px; border-top: 1px solid var(--border-subtle); padding-top: 20px;">
+                    <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px;">Audit-Ready Compliance &amp; Security Reports</h3>
+                    <div class="grid-3">
+                        <div class="card" style="background: #0b1120; margin-bottom: 0;">
+                            <h4 style="margin-top: 0; color: #fff;">Executive Summary PDF / HTML</h4>
+                            <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 14px;">High-level posture report for executive leadership, board reviews, and enterprise enterprise procurement.</p>
+                            <a href="/report/executive" target="_blank" class="btn btn-sm btn-secondary" style="display: inline-block;">View Executive Report &rarr;</a>
+                        </div>
+                        <div class="card" style="background: #0b1120; margin-bottom: 0;">
+                            <h4 style="margin-top: 0; color: #fff;">Detailed Technical Audit Report</h4>
+                            <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 14px;">Exhaustive vulnerability details with line numbers, code snippets, and scanner execution records.</p>
+                            <a href="/report/technical" target="_blank" class="btn btn-sm btn-secondary" style="display: inline-block;">View Technical Report &rarr;</a>
+                        </div>
+                        <div class="card" style="background: #0b1120; margin-bottom: 0;">
+                            <h4 style="margin-top: 0; color: #fff;">Public Security &amp; Trust Portal</h4>
+                            <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 14px;">Verified public trust page showcasing DPDP, SOC 2, and zero-leakage security protections.</p>
+                            <a href="/trust" target="_blank" class="btn btn-sm btn-primary" style="display: inline-block;">Open Trust Center &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- =================================================================== -->
+        <!-- SECTION: SECURITY POSTURE HUB                                       -->
+        <!-- =================================================================== -->
+        <div id="dash-security-hub" class="section-view">
+            <div class="card" style="margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <div>
+                        <h2 style="font-size: 20px; font-weight: 700; margin: 0;">🛡️ Security Posture &amp; Engine Management</h2>
+                        <p style="font-size: 13.5px; color: var(--text-muted); margin-top: 6px;">
+                            Unified control plane for proprietary AST engines, live perimeter analyzers, and third-party security scanners.
+                        </p>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn btn-sm btn-primary" onclick="switchNav('dash-scans')">+ Launch New Scan</button>
+                    </div>
+                </div>
+
+                <div class="grid-4" style="margin-bottom: 24px;">
+                    <div class="card" style="background: #0b1120; margin-bottom: 0; cursor: pointer;" onclick="switchNav('dash-tools')">
+                        <span style="font-size: 11.5px; color: var(--text-muted); text-transform: uppercase;">Scanner Engines</span>
+                        <div style="font-size: 22px; font-weight: 700; color: #38bdf8; margin-top: 4px;">Health &amp; Telemetry</div>
+                        <small style="color: #64748b;">Inspect binary paths &amp; versions &rarr;</small>
+                    </div>
+                    <div class="card" style="background: #0b1120; margin-bottom: 0; cursor: pointer;" onclick="switchNav('dash-mcp-intel')">
+                        <span style="font-size: 11.5px; color: var(--text-muted); text-transform: uppercase;">MCP Deep Analysis</span>
+                        <div style="font-size: 22px; font-weight: 700; color: #a78bfa; margin-top: 4px;">Tools &amp; Permissions</div>
+                        <small style="color: #64748b;">Blast radius &amp; attack paths &rarr;</small>
+                    </div>
+                    <div class="card" style="background: #0b1120; margin-bottom: 0; cursor: pointer;" onclick="switchNav('dash-vuln-intel')">
+                        <span style="font-size: 11.5px; color: var(--text-muted); text-transform: uppercase;">CISA KEV Intel</span>
+                        <div style="font-size: 22px; font-weight: 700; color: #f59e0b; margin-top: 4px;">Active Exploits</div>
+                        <small style="color: #64748b;">1,782 synchronized CVEs &rarr;</small>
+                    </div>
+                    <div class="card" style="background: #0b1120; margin-bottom: 0; cursor: pointer;" onclick="switchNav('dash-monitoring')">
+                        <span style="font-size: 11.5px; color: var(--text-muted); text-transform: uppercase;">Continuous Watch</span>
+                        <div style="font-size: 22px; font-weight: 700; color: #34d399; margin-top: 4px;">Monitoring Daemon</div>
+                        <small style="color: #64748b;">Schedules &amp; drift tracking &rarr;</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div id="dash-mcp-intel" class="section-view">
             <div class="card" style="margin-bottom: 20px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
@@ -2350,6 +2492,204 @@ DASHBOARD_HTML = """<!doctype html>
                 })
                 .catch(e => alert('Permission diff error: ' + e));
         };
+    
+
+        // =======================================================================
+        // COMPLIANCE CENTRE & EVIDENCE VAULT REACTIVE LOGIC
+        // =======================================================================
+        let currentComplianceData = null;
+        let selectedFrameworkKey = 'DPDP';
+
+        window.refreshComplianceData = function() {
+            fetch('/api/compliance/assessment')
+                .then(r => r.json())
+                .then(data => {
+                    currentComplianceData = data;
+                    renderComplianceFramework(selectedFrameworkKey);
+                })
+                .catch(err => console.error("Error loading compliance assessment:", err));
+
+            loadEvidenceVault();
+        };
+
+        window.switchComplianceFramework = function(fwKey) {
+            selectedFrameworkKey = fwKey;
+            document.querySelectorAll('.fw-tab-btn').forEach(b => {
+                b.classList.remove('active', 'btn-primary');
+                b.classList.add('btn-secondary');
+            });
+            const activeBtn = document.getElementById('tab-fw-' + fwKey.toLowerCase());
+            if (activeBtn) {
+                activeBtn.classList.add('active', 'btn-primary');
+                activeBtn.classList.remove('btn-secondary');
+            }
+            renderComplianceFramework(fwKey);
+        };
+
+        function renderComplianceFramework(fwKey) {
+            if (!currentComplianceData || !currentComplianceData.frameworks) {
+                return;
+            }
+            const fw = currentComplianceData.frameworks[fwKey];
+            if (!fw) return;
+
+            document.getElementById('fw-readiness-score').innerText = (fw.readiness_score || 0) + '%';
+            document.getElementById('fw-readiness-grade').innerText = 'Readiness Grade: ' + (fw.readiness_grade || 'B');
+            document.getElementById('fw-implemented-count').innerText = fw.implemented_count || 0;
+            document.getElementById('fw-evidence-missing-count').innerText = fw.evidence_missing_count || 0;
+            document.getElementById('fw-gap-count').innerText = fw.gap_count || 0;
+
+            const tbody = document.getElementById('compliance-controls-tbody');
+            if (!tbody) return;
+
+            const controls = fw.controls || [];
+            if (controls.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px; color: var(--text-muted);">No controls defined for this framework.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = controls.map(c => {
+                let badgeClass = 'badge-pass';
+                let badgeColor = '#34d399';
+                let badgeBg = 'rgba(52, 211, 153, 0.15)';
+                if (c.status === 'GAP_IDENTIFIED') {
+                    badgeColor = '#f87171';
+                    badgeBg = 'rgba(248, 113, 113, 0.15)';
+                } else if (c.status === 'IMPLEMENTED_EVIDENCE_MISSING') {
+                    badgeColor = '#fbbf24';
+                    badgeBg = 'rgba(251, 191, 36, 0.15)';
+                } else if (c.status === 'REQUIRES_EXPERT_REVIEW') {
+                    badgeColor = '#c084fc';
+                    badgeBg = 'rgba(192, 132, 252, 0.15)';
+                } else if (c.status === 'NOT_APPLICABLE') {
+                    badgeColor = '#94a3b8';
+                    badgeBg = 'rgba(148, 163, 184, 0.15)';
+                }
+
+                return `
+                    <tr style="border-bottom: 1px solid var(--border-subtle);">
+                        <td style="padding: 12px 14px; vertical-align: top;">
+                            <b style="color: #38bdf8; font-family: monospace;">${c.control_id}</b>
+                            <div style="font-size: 11.5px; color: #94a3b8; margin-top: 2px;">${c.section || ''}</div>
+                        </td>
+                        <td style="padding: 12px 14px; vertical-align: top; max-width: 380px;">
+                            <b style="color: #fff; font-size: 13.5px;">${c.title}</b>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">${c.description}</div>
+                            <div style="font-size: 11px; color: #38bdf8; margin-top: 4px;">Ref: ${c.official_ref}</div>
+                        </td>
+                        <td style="padding: 12px 14px; vertical-align: top;">
+                            <span style="font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 4px; background: #1e293b; color: #e2e8f0;">
+                                ${c.enforcement_phase === 'IN_FORCE_SUBSTANTIVE' ? '⚡ In Force' : '⏳ Pending Notification'}
+                            </span>
+                        </td>
+                        <td style="padding: 12px 14px; vertical-align: top;">
+                            <span style="display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 11.5px; font-weight: 600; color: ${badgeColor}; background: ${badgeBg};">
+                                ${c.status_label}
+                            </span>
+                            <div style="font-size: 11px; color: #64748b; margin-top: 4px;">${c.rationale || ''}</div>
+                        </td>
+                        <td style="padding: 12px 14px; vertical-align: top; text-align: right;">
+                            <button class="btn btn-sm btn-secondary" onclick="openAttachEvidenceForControl('${c.control_id}', '${fwKey}')" style="font-size: 11px; padding: 4px 8px;">+ Evidence</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        window.loadEvidenceVault = function() {
+            fetch('/api/evidence')
+                .then(r => r.json())
+                .then(data => {
+                    const tbody = document.getElementById('evidence-vault-tbody');
+                    if (!tbody) return;
+                    const items = data.evidence || [];
+                    if (items.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 24px; color: var(--text-muted);">No evidence uploaded yet. Attach your security policies or compliance screenshots above.</td></tr>';
+                        return;
+                    }
+                    tbody.innerHTML = items.map(ev => {
+                        const isExpired = ev.is_expired;
+                        const fileInfo = ev.file || {};
+                        const shaShort = fileInfo.sha256 ? fileInfo.sha256.substring(0, 12) + '...' : 'N/A';
+                        return `
+                            <tr style="border-bottom: 1px solid var(--border-subtle);">
+                                <td style="padding: 10px 14px;">
+                                    <b style="color: #fff;">${ev.title}</b>
+                                    <div style="font-size: 11px; color: #64748b; font-family: monospace;">${ev.id}</div>
+                                </td>
+                                <td style="padding: 10px 14px;">
+                                    <span class="badge" style="background: #1e293b; color: #38bdf8;">${ev.framework}</span>
+                                    <span style="font-size: 12px; margin-left: 4px; font-family: monospace;">${ev.control_id}</span>
+                                </td>
+                                <td style="padding: 10px 14px; font-size: 12px; color: #cbd5e1;">
+                                    ${ev.owner_name}<br>
+                                    <small style="color: #64748b;">${new Date(ev.created_at * 1000).toLocaleDateString()}</small>
+                                </td>
+                                <td style="padding: 10px 14px; font-family: monospace; font-size: 11.5px; color: #94a3b8;">
+                                    ${shaShort}
+                                </td>
+                                <td style="padding: 10px 14px;">
+                                    <span class="badge" style="${isExpired ? 'background: rgba(239, 68, 68, 0.15); color: #f87171;' : 'background: rgba(52, 211, 153, 0.15); color: #34d399;'}">
+                                        ${isExpired ? 'EXPIRED' : 'ACTIVE'}
+                                    </span>
+                                </td>
+                                <td style="padding: 10px 14px; text-align: right;">
+                                    ${fileInfo.stored_filename ? `<a href="/api/evidence/${ev.id}/download" class="btn btn-sm btn-secondary" style="font-size: 11px; padding: 3px 8px;">Download</a>` : ''}
+                                    <button onclick="deleteEvidenceItem('${ev.id}')" class="btn btn-sm btn-secondary" style="font-size: 11px; padding: 3px 8px; color: #f87171;">Delete</button>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                })
+                .catch(err => console.error("Error loading evidence vault:", err));
+        };
+
+        window.handleEvidenceUpload = function(e) {
+            e.preventDefault();
+            const form = document.getElementById('evidence-upload-form');
+            const formData = new FormData(form);
+
+            fetch('/api/evidence', {
+                method: 'POST',
+                body: formData
+            })
+            .then(r => r.json())
+            .then(res => {
+                if (res.status === 'success') {
+                    alert('Evidence attached successfully!');
+                    form.reset();
+                    refreshComplianceData();
+                } else {
+                    alert('Upload failed: ' + (res.message || 'Unknown error'));
+                }
+            })
+            .catch(err => alert('Upload error: ' + err));
+        };
+
+        window.openAttachEvidenceForControl = function(controlId, framework) {
+            switchNav('dash-evidence-vault');
+            const form = document.getElementById('evidence-upload-form');
+            if (form) {
+                if (form.elements['control_id']) form.elements['control_id'].value = controlId;
+                if (form.elements['framework']) form.elements['framework'].value = framework;
+            }
+        };
+
+        window.deleteEvidenceItem = function(evidenceId) {
+            if (!confirm('Are you sure you want to delete this evidence record?')) return;
+            fetch('/api/evidence/' + encodeURIComponent(evidenceId), { method: 'DELETE' })
+                .then(r => r.json())
+                .then(res => {
+                    refreshComplianceData();
+                })
+                .catch(err => alert('Delete error: ' + err));
+        };
+
+        // Initialize Compliance on DOM load
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(refreshComplianceData, 600);
+        });
+
     </script>
 </body>
 </html>

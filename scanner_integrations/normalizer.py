@@ -159,6 +159,14 @@ def normalize_finding(
     is_url = bool(clean_file and (clean_file.startswith("http://") or clean_file.startswith("https://")))
     has_fix = bool(remediation and any(w in remediation.lower() for w in ("upgrade", "update", "set", "replace", "add", "remove", "use")))
 
+    affected_file_or_url = clean_file if clean_file else ("Web Perimeter" if is_url else "Repository Asset")
+    tech_explanation = description.strip() if description else title.strip()
+    biz_impact = kwargs.get("business_impact") or (
+        "High risk of credential theft, data exposure, or regulatory non-compliance." if sev in ("CRITICAL", "HIGH")
+        else "Potential operational, configuration, or compliance degradation."
+    )
+    rec_remediation = remediation or "Review affected component, apply security patch, or update configuration."
+
     finding = {
         "id": fid,
         "title": title.strip(),
@@ -169,7 +177,7 @@ def normalize_finding(
         "scanners": [scanner],
         "detected_by": [scanner],
         "confidence": conf,
-        "description": description.strip() if description else title.strip(),
+        "description": tech_explanation,
         "evidence": safe_evidence,
         "file": clean_file,
         "line": clean_line,
@@ -183,12 +191,27 @@ def normalize_finding(
         "cves": [cve] if cve else [],
         "cvss": raw_details.get("cvss") if raw_details else None,
         "references": references or [],
-        "remediation": remediation or "Review affected component, apply security patch, or update configuration.",
+        "remediation": rec_remediation,
         "fix_available": has_fix,
         "status": "OPEN",
         "fingerprint": fingerprint,
         "raw_details": raw_details or {},
+        # Standardized Phase 2 finding fields
+        "affected_asset": kwargs.get("affected_asset") or (clean_file if is_url else "Target Repository"),
+        "affected_file_or_url": affected_file_or_url,
+        "scanner_evidence": safe_evidence,
+        "technical_explanation": tech_explanation,
+        "business_impact": biz_impact,
+        "recommended_remediation": rec_remediation,
+        "verification_status": "VERIFIED_LIVE" if conf == "CONFIRMED" else "UNVERIFIED",
+        "framework_mappings": []
     }
+
+    try:
+        from compliance_frameworks import map_finding_to_compliance_frameworks
+        finding["framework_mappings"] = map_finding_to_compliance_frameworks(finding)
+    except Exception:
+        finding["framework_mappings"] = []
 
     try:
         from universal_validator import validate_and_sanitize_finding

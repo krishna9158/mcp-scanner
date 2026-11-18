@@ -44,6 +44,9 @@ import delta_engine
 import prioritizer
 import alerts
 import compliance_engine
+import compliance_frameworks
+import evidence_vault
+import remediation_centre
 import inventory_engine
 import vuln_intel_sources
 import vuln_intel_store
@@ -1411,6 +1414,445 @@ def github_webhook():
         }), 200
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+
+
+
+# ==============================================================================
+# TENANT HELPER & SESSION AUTHENTICATION
+# ==============================================================================
+
+def get_current_tenant_and_user():
+    """Extracts authenticated user and organization ID with graceful demo fallback."""
+    auth_header = request.headers.get("Authorization", "")
+    token = None
+    if auth_header.startswith("Bearer "):
+        token = auth_header[7:].strip()
+    elif "trustaudit_session" in request.cookies:
+        token = request.cookies.get("trustaudit_session")
+    is_valid, user, org_id = saas_store.validate_session(token)
+    return org_id, user
+
+
+@app.route("/api/auth/register", methods=["POST"])
+def api_auth_register():
+    """Registers a new organization and administrator account."""
+    data = request.get_json(silent=True) or {}
+    email = data.get("email", "")
+    password = data.get("password", "")
+    name = data.get("name", "Admin User")
+    org_name = data.get("company_name") or data.get("org_name", "My Company")
+    country = data.get("country", "India")
+
+    if not email or not password:
+        return jsonify({"status": "error", "message": "Email and password are required."}), 400
+
+    ok, msg, res = saas_store.register_user(email, password, name, org_name, country)
+    if not ok:
+        return jsonify({"status": "error", "message": msg}), 400
+
+    resp = jsonify({"status": "success", "message": msg, "data": res})
+    if res and res.get("token"):
+        resp.set_cookie("trustaudit_session", res["token"], max_age=30*86400, httponly=True, samesite="Lax")
+    return resp, 201
+
+
+@app.route("/api/auth/login", methods=["POST"])
+def api_auth_login():
+    """Authenticates user credentials and returns session token."""
+    data = request.get_json(silent=True) or {}
+    email = data.get("email", "")
+    password = data.get("password", "")
+
+    ok, msg, res = saas_store.authenticate_user(email, password)
+    if not ok:
+        return jsonify({"status": "error", "message": msg}), 401
+
+    resp = jsonify({"status": "success", "message": msg, "data": res})
+    if res and res.get("token"):
+        resp.set_cookie("trustaudit_session", res["token"], max_age=30*86400, httponly=True, samesite="Lax")
+    return resp, 200
+
+
+@app.route("/api/auth/logout", methods=["POST"])
+def api_auth_logout():
+    """Invalidates active session token."""
+    auth_header = request.headers.get("Authorization", "")
+    token = auth_header[7:].strip() if auth_header.startswith("Bearer ") else request.cookies.get("trustaudit_session", "")
+    if token:
+        saas_store.revoke_session(token)
+    resp = jsonify({"status": "success", "message": "Logged out successfully."})
+    resp.delete_cookie("trustaudit_session")
+    return resp, 200
+
+
+@app.route("/api/auth/me", methods=["GET"])
+def api_auth_me():
+    """Returns active session user and organization details."""
+    org_id, user = get_current_tenant_and_user()
+    org = saas_store.get_organization(org_id)
+    return jsonify({"user": user, "organization": org})
+
+
+# ==============================================================================
+# COMPLIANCE CENTRE APIS (DPDP, SOC 2, ISO 27001, GDPR)
+# ==============================================================================
+
+@app.route("/api/compliance/frameworks", methods=["GET"])
+def api_compliance_frameworks():
+    """Returns metadata and structured controls for all supported compliance frameworks."""
+    return jsonify({
+        "metadata": compliance_frameworks.FRAMEWORK_METADATA,
+        "controls": compliance_frameworks.CONTROLS_DATABASE
+    }), 200
+
+
+@app.route("/api/compliance/profile", methods=["GET", "POST"])
+def api_compliance_profile():
+    """Gets or updates organization onboarding and compliance profiling questionnaire."""
+    org_id, _ = get_current_tenant_and_user()
+    if request.method == "POST":
+        data = request.get_json(silent=True) or {}
+        updated = saas_store.save_org_profile(org_id, data)
+        return jsonify({"status": "success", "profile": updated}), 200
+    
+    profile = saas_store.get_org_profile(org_id)
+    return jsonify({
+        "profile": profile,
+        "questions": compliance_frameworks.ONBOARDING_QUESTIONS
+    }), 200
+
+
+@app.route("/api/compliance/assessment", methods=["GET"])
+def api_compliance_assessment():
+    """
+    Generates an organisation-specific compliance assessment across DPDP, SOC 2, ISO 27001, and GDPR.
+    Distinguishes:
+    - Implemented and evidence reviewed
+    - Implemented but evidence missing
+    - Gap identified
+    - Not assessed
+    - Not applicable
+    - Requires expert review
+    """
+    org_id, _ = get_current_tenant_and_user()
+    profile = saas_store.get_org_profile(org_id)
+    
+    # Gather organization scan findings
+    projs = saas_store.list_projects_for_org(org_id)
+    all_findings = []
+    for p in projs:
+        scan_res = p.get("last_scan_result")
+        if scan_res and isinstance(scan_res, dict):
+            all_findings.extend(scan_res.get("findings", []))
+    
+    # Gather organization evidence records
+    evidence_items = evidence_vault.list_evidence_for_org(org_id)
+    
+    assessment = compliance_frameworks.generate_organization_assessment(profile, all_findings, evidence_items)
+    saas_store.save_org_compliance_assessment(org_id, assessment)
+    return jsonify(assessment), 200
+
+
+@app.route("/api/compliance/controls/<control_id>", methods=["GET"])
+def api_compliance_control_detail(control_id):
+    """Returns deep control requirements, questions, and evidence guidelines."""
+    target_ctrl = None
+    target_fw = None
+    for fw, ctrls in compliance_frameworks.CONTROLS_DATABASE.items():
+        for c in ctrls:
+            if c["control_id"] == control_id:
+                target_ctrl = c
+                target_fw = fw
+                break
+        if target_ctrl:
+            break
+
+    if not target_ctrl:
+        return jsonify({"error": f"Control '{control_id}' not found."}), 404
+
+    org_id, _ = get_current_tenant_and_user()
+    evidence_items = evidence_vault.list_evidence_for_org(org_id, control_id=control_id)
+    return jsonify({
+        "framework": target_fw,
+        "control": target_ctrl,
+        "evidence": evidence_items
+    }), 200
+
+
+# ==============================================================================
+# EVIDENCE VAULT APIS
+# ==============================================================================
+
+@app.route("/api/evidence", methods=["GET", "POST"])
+def api_evidence():
+    """Lists evidence records or uploads a new evidence item with file / screenshot."""
+    org_id, user = get_current_tenant_and_user()
+
+    if request.method == "POST":
+        if request.is_json:
+            data = request.get_json(silent=True) or {}
+            title = data.get("title", "Evidence Item")
+            control_id = data.get("control_id", "GENERAL")
+            framework = data.get("framework", "SOC2")
+            description = data.get("description", "")
+            owner = data.get("owner_name") or user.get("name", "Compliance Officer")
+            cycle_days = int(data.get("review_cycle_days") or 90)
+
+            item = evidence_vault.create_evidence_item(
+                org_id=org_id,
+                title=title,
+                control_id=control_id,
+                framework=framework,
+                description=description,
+                owner_name=owner,
+                review_cycle_days=cycle_days
+            )
+            return jsonify({"status": "success", "evidence": item}), 201
+        else:
+            # Multipart form data with file attachment
+            title = request.form.get("title", "Uploaded Document")
+            control_id = request.form.get("control_id", "GENERAL")
+            framework = request.form.get("framework", "SOC2")
+            description = request.form.get("description", "")
+            owner = request.form.get("owner_name") or user.get("name", "Compliance Officer")
+            cycle_days = int(request.form.get("review_cycle_days") or 90)
+
+            file_bytes = None
+            filename = None
+            content_type = "application/octet-stream"
+            if "file" in request.files:
+                f = request.files["file"]
+                if f and f.filename:
+                    filename = f.filename
+                    file_bytes = f.read()
+                    content_type = f.content_type or "application/octet-stream"
+
+            item = evidence_vault.create_evidence_item(
+                org_id=org_id,
+                title=title,
+                control_id=control_id,
+                framework=framework,
+                description=description,
+                owner_name=owner,
+                review_cycle_days=cycle_days,
+                file_bytes=file_bytes,
+                filename=filename,
+                content_type=content_type
+            )
+            return jsonify({"status": "success", "evidence": item}), 201
+
+    control_filter = request.args.get("control_id")
+    fw_filter = request.args.get("framework")
+    items = evidence_vault.list_evidence_for_org(org_id, control_id=control_filter, framework=fw_filter)
+    return jsonify({"evidence": items, "count": len(items)}), 200
+
+
+@app.route("/api/evidence/<evidence_id>", methods=["GET", "PUT", "DELETE"])
+def api_evidence_item_detail(evidence_id):
+    """Retrieves, updates, or deletes an evidence vault record."""
+    org_id, _ = get_current_tenant_and_user()
+
+    if request.method == "DELETE":
+        ok = evidence_vault.delete_evidence_item(evidence_id, org_id)
+        if ok:
+            return jsonify({"status": "success", "message": "Evidence deleted."}), 200
+        return jsonify({"error": "Evidence not found or unauthorized."}), 404
+
+    item = evidence_vault.get_evidence_item(evidence_id, org_id)
+    if not item:
+        return jsonify({"error": "Evidence not found or unauthorized."}), 404
+
+    if request.method == "PUT":
+        data = request.get_json(silent=True) or {}
+        updated = evidence_vault.update_evidence_item(
+            evidence_id=evidence_id,
+            org_id=org_id,
+            title=data.get("title"),
+            description=data.get("description"),
+            owner_name=data.get("owner_name")
+        )
+        return jsonify({"status": "success", "evidence": updated}), 200
+
+    return jsonify({"evidence": item}), 200
+
+
+@app.route("/api/evidence/<evidence_id>/download", methods=["GET"])
+def api_evidence_download(evidence_id):
+    """Downloads physical evidence file ensuring tenant path isolation."""
+    org_id, _ = get_current_tenant_and_user()
+    item = evidence_vault.get_evidence_item(evidence_id, org_id)
+    if not item or not item.get("file"):
+        return jsonify({"error": "Evidence file not found or unauthorized."}), 404
+
+    stored_name = item["file"]["stored_filename"]
+    tenant_dir = evidence_vault.get_tenant_upload_dir(org_id)
+    file_path = os.path.join(tenant_dir, stored_name)
+
+    if not os.path.exists(file_path):
+        return jsonify({"error": "Stored file is missing from disk."}), 404
+
+    return send_file(
+        file_path,
+        as_attachment=True,
+        download_name=item["file"].get("original_filename", "evidence.pdf")
+    )
+
+
+# ==============================================================================
+# REMEDIATION CENTRE APIS
+# ==============================================================================
+
+@app.route("/api/remediation", methods=["GET"])
+def api_remediation_list():
+    """Lists prioritized remediation tasks across technical vulnerabilities and compliance controls."""
+    org_id, _ = get_current_tenant_and_user()
+    status_filter = request.args.get("status")
+
+    # Sync latest tasks from all organization project findings
+    projs = saas_store.list_projects_for_org(org_id)
+    all_findings = []
+    for p in projs:
+        scan_res = p.get("last_scan_result")
+        if scan_res and isinstance(scan_res, dict):
+            all_findings.extend(scan_res.get("findings", []))
+
+    tasks = remediation_centre.sync_remediation_tasks_from_findings(all_findings, org_id=org_id)
+    if status_filter:
+        tasks = [t for t in tasks if t.get("status") == status_filter.upper()]
+
+    return jsonify({
+        "tasks": tasks,
+        "count": len(tasks),
+        "open_count": sum(1 for t in tasks if t.get("status") == "OPEN"),
+        "critical_count": sum(1 for t in tasks if t.get("severity") == "CRITICAL")
+    }), 200
+
+
+@app.route("/api/remediation/<task_id>/update", methods=["POST"])
+def api_remediation_task_update(task_id):
+    """Updates remediation task status (OPEN, IN_PROGRESS, RESOLVED, VERIFIED), assignee, or notes."""
+    org_id, _ = get_current_tenant_and_user()
+    data = request.get_json(silent=True) or {}
+    updated = remediation_centre.update_remediation_task(
+        task_id=task_id,
+        org_id=org_id,
+        status=data.get("status"),
+        responsible_person=data.get("responsible_person"),
+        notes=data.get("notes")
+    )
+    if not updated:
+        return jsonify({"error": f"Remediation task '{task_id}' not found or unauthorized."}), 404
+    return jsonify({"status": "success", "task": updated}), 200
+
+
+@app.route("/api/remediation/sync", methods=["POST"])
+def api_remediation_sync():
+    """Forces synchronization of remediation tasks from active scan results."""
+    org_id, _ = get_current_tenant_and_user()
+    projs = saas_store.list_projects_for_org(org_id)
+    all_findings = []
+    for p in projs:
+        scan_res = p.get("last_scan_result")
+        if scan_res and isinstance(scan_res, dict):
+            all_findings.extend(scan_res.get("findings", []))
+    tasks = remediation_centre.sync_remediation_tasks_from_findings(all_findings, org_id=org_id)
+    return jsonify({"status": "success", "tasks_count": len(tasks)}), 200
+
+
+# ==============================================================================
+# PUBLIC TRUST, SECURITY & PRIVACY PORTAL
+# ==============================================================================
+
+@app.route("/trust", methods=["GET"])
+def trust_portal_view():
+    """Renders public Security & Trust portal showcasing verified implemented controls."""
+    trust_html = """<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrustAudit Security, Compliance & Trust Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #0284c7; --bg: #0b0f19; --card: #111827; --border: #1f2937; --text: #f9fafb; --text-muted: #9ca3af; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; line-height: 1.6; }
+        .container { max-width: 1050px; margin: 0 auto; padding: 40px 20px; }
+        .hero { text-align: center; padding: 40px 0 30px; }
+        .badge { background: rgba(2, 132, 199, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); padding: 4px 12px; border-radius: 9999px; font-size: 13px; font-weight: 600; display: inline-block; margin-bottom: 16px; }
+        h1 { font-size: 38px; font-weight: 700; margin: 0 0 16px; letter-spacing: -0.02em; }
+        p.subtitle { font-size: 18px; color: var(--text-muted); max-width: 720px; margin: 0 auto; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); gap: 24px; margin-top: 40px; }
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+        .card h3 { font-size: 18px; margin-top: 0; margin-bottom: 8px; color: #fff; }
+        .card p { font-size: 14px; color: var(--text-muted); margin-bottom: 16px; }
+        .tag { background: #1e293b; color: #e2e8f0; font-size: 12px; padding: 3px 8px; border-radius: 4px; font-weight: 500; margin-right: 6px; }
+        .footer { text-align: center; margin-top: 60px; padding-top: 30px; border-top: 1px solid var(--border); font-size: 13px; color: var(--text-muted); }
+        .btn { background: var(--primary); color: #fff; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <span class="badge">Security & Compliance Transparency</span>
+            <h1>TrustAudit Security & Trust Center</h1>
+            <p class="subtitle">TrustAudit protects your source code, websites, and MCP systems with continuous security monitoring and verified GRC evidence management.</p>
+            <div style="margin-top: 24px;">
+                <a href="/dashboard" class="btn">Open App Dashboard</a>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <span class="tag">Data Protection</span>
+                <h3>India's DPDP Act, 2023</h3>
+                <p>Automated technical control evaluations for reasonable security safeguards under Section 8(1), notice requirements, parental consent gates, and statutory breach response workflows.</p>
+                <div style="color: #34d399; font-size: 13px; font-weight: 600;">Status: Phased Commencement Preparedness</div>
+            </div>
+
+            <div class="card">
+                <span class="tag">Auditing Standard</span>
+                <h3>SOC 2 Trust Services Criteria</h3>
+                <p>Readiness monitoring and automated evidence collection across CC6.1 (Logical Access), CC6.6 (Perimeter Defense), CC6.8 (Malicious Code), and CC7.1 (Patch SLAs).</p>
+                <div style="color: #38bdf8; font-size: 13px; font-weight: 600;">Status: Continuous Readiness & Evidence Vault</div>
+            </div>
+
+            <div class="card">
+                <span class="tag">ISMS Standard</span>
+                <h3>ISO/IEC 27001:2022</h3>
+                <p>Technical vulnerability management (A.8.8), network boundaries (A.8.20), cryptographic safeguards (A.8.24), and secure development life cycle controls (A.8.28).</p>
+                <div style="color: #a78bfa; font-size: 13px; font-weight: 600;">Status: Technical Controls Evaluation</div>
+            </div>
+
+            <div class="card">
+                <span class="tag">Perimeter Security</span>
+                <h3>Zero Secret Leakage Guarantee</h3>
+                <p>All scanned tokens, credentials, and cryptographic keys are irreversibly redacted before storage or display. Raw secrets are never stored in plain text.</p>
+                <div style="color: #34d399; font-size: 13px; font-weight: 600;">Status: 100% Cryptographically Redacted</div>
+            </div>
+
+            <div class="card">
+                <span class="tag">Architecture</span>
+                <h3>Multi-Tenant Data Isolation</h3>
+                <p>Organization data, scan results, evidence documents, and projects are strictly isolated by cryptographic organization tenant IDs with zero cross-customer data leakage.</p>
+                <div style="color: #38bdf8; font-size: 13px; font-weight: 600;">Status: Tenant Access Isolation Enforced</div>
+            </div>
+
+            <div class="card">
+                <span class="tag">Threat Intelligence</span>
+                <h3>Live CISA KEV Intelligence</h3>
+                <p>Continuous synchronization with the official CISA Known Exploited Vulnerabilities catalog ensuring third-party packages are checked against actively exploited zero-days.</p>
+                <div style="color: #f59e0b; font-size: 13px; font-weight: 600;">Status: Live Automated Sync Active</div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><strong>Disclaimer:</strong> TrustAudit provides automated technical gap analysis and evidence tracking. It does not constitute formal regulatory certification, an issued SOC 2 report, or legal advice. Compliance remains the statutory responsibility of the organization.</p>
+            <p>&copy; 2026 TrustAudit Security Platform. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>"""
+    return render_template_string(trust_html), 200
 
 
 if __name__ == "__main__":

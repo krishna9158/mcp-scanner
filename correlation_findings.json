@@ -43,7 +43,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989621.7157393,
-      "last_detected": 1795003258.3089914
+      "last_detected": 1795010393.037882
     },
     "VULN-INTEL-243C1A95": {
       "id": "VULN-INTEL-243C1A95",
@@ -90,7 +90,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989621.7157393,
-      "last_detected": 1795003258.3089914
+      "last_detected": 1795010393.037882
     },
     "VULN-INTEL-3715D476": {
       "id": "VULN-INTEL-3715D476",
@@ -135,7 +135,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989626.3122272,
-      "last_detected": 1795003264.4084089
+      "last_detected": 1795010397.31353
     },
     "VULN-INTEL-AA82575A": {
       "id": "VULN-INTEL-AA82575A",
@@ -180,7 +180,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989626.3122272,
-      "last_detected": 1795003264.4084089
+      "last_detected": 1795010397.31353
     },
     "VULN-INTEL-7A07901E": {
       "id": "VULN-INTEL-7A07901E",
@@ -225,7 +225,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989626.3122272,
-      "last_detected": 1795003264.4084089
+      "last_detected": 1795010397.31353
     },
     "VULN-INTEL-C2362AC4": {
       "id": "VULN-INTEL-C2362AC4",
@@ -269,7 +269,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989626.3122272,
-      "last_detected": 1795003264.4084089
+      "last_detected": 1795010397.31353
     },
     "VULN-INTEL-D58A28A1": {
       "id": "VULN-INTEL-D58A28A1",
@@ -313,7 +313,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989626.3122272,
-      "last_detected": 1795003264.4084089
+      "last_detected": 1795010397.31353
     },
     "VULN-INTEL-91D0A66F": {
       "id": "VULN-INTEL-91D0A66F",
@@ -358,7 +358,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989626.3122272,
-      "last_detected": 1795003264.4084089
+      "last_detected": 1795010397.31353
     },
     "VULN-INTEL-D630E957": {
       "id": "VULN-INTEL-D630E957",
@@ -403,7 +403,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989626.3122272,
-      "last_detected": 1795003264.4084089
+      "last_detected": 1795010397.31353
     },
     "VULN-INTEL-D3296381": {
       "id": "VULN-INTEL-D3296381",
@@ -448,7 +448,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989626.3122272,
-      "last_detected": 1795003264.4084089
+      "last_detected": 1795010397.31353
     },
     "VULN-INTEL-B1FB4D10": {
       "id": "VULN-INTEL-B1FB4D10",
@@ -493,7 +493,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989626.3122272,
-      "last_detected": 1795003264.4084089
+      "last_detected": 1795010397.31353
     },
     "VULN-INTEL-D039108C": {
       "id": "VULN-INTEL-D039108C",
@@ -538,7 +538,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989626.3122272,
-      "last_detected": 1795003264.4084089
+      "last_detected": 1795010397.31353
     },
     "VULN-INTEL-C987BBFB": {
       "id": "VULN-INTEL-C987BBFB",
@@ -583,7 +583,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989626.3122272,
-      "last_detected": 1795003264.4084089
+      "last_detected": 1795010397.31353
     },
     "VULN-INTEL-A90CB47F": {
       "id": "VULN-INTEL-A90CB47F",
@@ -630,7 +630,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989668.0100121,
-      "last_detected": 1795003321.3953466
+      "last_detected": 1795010440.4885957
     },
     "VULN-INTEL-938EC453": {
       "id": "VULN-INTEL-938EC453",
@@ -677,7 +677,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989668.0100121,
-      "last_detected": 1795003321.3953466
+      "last_detected": 1795010440.4885957
     },
     "VULN-INTEL-6267371C": {
       "id": "VULN-INTEL-6267371C",
@@ -721,7 +721,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989668.0100121,
-      "last_detected": 1795003321.3953466
+      "last_detected": 1795010440.4885957
     },
     "VULN-INTEL-1C80E495": {
       "id": "VULN-INTEL-1C80E495",
@@ -766,7 +766,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989668.0100121,
-      "last_detected": 1795003321.3953466
+      "last_detected": 1795010440.4885957
     },
     "VULN-INTEL-14951F68": {
       "id": "VULN-INTEL-14951F68",
@@ -813,7 +813,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989668.0100121,
-      "last_detected": 1795003321.3953466
+      "last_detected": 1795010440.4885957
     },
     "VULN-INTEL-DB67F39A": {
       "id": "VULN-INTEL-DB67F39A",
@@ -860,7 +860,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989669.671146,
-      "last_detected": 1795000556.9611497
+      "last_detected": 1795010892.5258443
     },
     "VULN-INTEL-87CD5D1B": {
       "id": "VULN-INTEL-87CD5D1B",
@@ -905,7 +905,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989685.5452547,
-      "last_detected": 1795003347.606442
+      "last_detected": 1795010460.3522942
     },
     "VULN-INTEL-7CA21C29": {
       "id": "VULN-INTEL-7CA21C29",
@@ -952,7 +952,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989685.5452547,
-      "last_detected": 1795003347.606442
+      "last_detected": 1795010460.3522942
     },
     "VULN-INTEL-6797D24C": {
       "id": "VULN-INTEL-6797D24C",
@@ -997,7 +997,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989691.4678104,
-      "last_detected": 1795003356.326876
+      "last_detected": 1795010466.8517444
     },
     "VULN-INTEL-DEB6FFAE": {
       "id": "VULN-INTEL-DEB6FFAE",
@@ -1044,7 +1044,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989691.4678104,
-      "last_detected": 1795003356.326876
+      "last_detected": 1795010466.8517444
     },
     "VULN-INTEL-3D34749C": {
       "id": "VULN-INTEL-3D34749C",
@@ -1102,7 +1102,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989708.0904195,
-      "last_detected": 1795003384.3457
+      "last_detected": 1795010484.794069
     },
     "VULN-INTEL-3738A214": {
       "id": "VULN-INTEL-3738A214",
@@ -1160,7 +1160,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989708.0904195,
-      "last_detected": 1795003384.3457
+      "last_detected": 1795010484.794069
     },
     "VULN-INTEL-5F663B1B": {
       "id": "VULN-INTEL-5F663B1B",
@@ -1218,7 +1218,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989708.0904195,
-      "last_detected": 1795003384.3457
+      "last_detected": 1795010484.794069
     },
     "VULN-INTEL-FD1C4101": {
       "id": "VULN-INTEL-FD1C4101",
@@ -1265,7 +1265,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989713.376204,
-      "last_detected": 1795003391.9048524
+      "last_detected": 1795010490.1096187
     },
     "VULN-INTEL-E5B1E303": {
       "id": "VULN-INTEL-E5B1E303",
@@ -1312,7 +1312,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989713.376204,
-      "last_detected": 1795003391.9048524
+      "last_detected": 1795010490.1096187
     },
     "VULN-INTEL-6393436F": {
       "id": "VULN-INTEL-6393436F",
@@ -1359,7 +1359,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989713.376204,
-      "last_detected": 1795003391.9048524
+      "last_detected": 1795010490.1096187
     },
     "VULN-INTEL-77149CAD": {
       "id": "VULN-INTEL-77149CAD",
@@ -1407,7 +1407,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989770.071667,
-      "last_detected": 1795003450.855203
+      "last_detected": 1795010536.2389128
     },
     "VULN-INTEL-E0DE433D": {
       "id": "VULN-INTEL-E0DE433D",
@@ -1455,7 +1455,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989770.071667,
-      "last_detected": 1795003450.855203
+      "last_detected": 1795010536.2389128
     },
     "VULN-INTEL-0ECEB446": {
       "id": "VULN-INTEL-0ECEB446",
@@ -1498,7 +1498,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989770.071667,
-      "last_detected": 1795003450.855203
+      "last_detected": 1795010536.2389128
     },
     "VULN-INTEL-A7051C93": {
       "id": "VULN-INTEL-A7051C93",
@@ -1543,7 +1543,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989779.613583,
-      "last_detected": 1795003460.7580276
+      "last_detected": 1795010545.0693767
     },
     "VULN-INTEL-D2BDCA35": {
       "id": "VULN-INTEL-D2BDCA35",
@@ -1588,7 +1588,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989779.613583,
-      "last_detected": 1795003460.7580276
+      "last_detected": 1795010545.0693767
     },
     "VULN-INTEL-90FC4E04": {
       "id": "VULN-INTEL-90FC4E04",
@@ -1632,7 +1632,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989779.613583,
-      "last_detected": 1795003460.7580276
+      "last_detected": 1795010545.0693767
     },
     "VULN-INTEL-361158FF": {
       "id": "VULN-INTEL-361158FF",
@@ -1677,7 +1677,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989779.613583,
-      "last_detected": 1795003460.7580276
+      "last_detected": 1795010545.0693767
     },
     "VULN-INTEL-CE5E2A36": {
       "id": "VULN-INTEL-CE5E2A36",
@@ -1722,7 +1722,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989789.2406712,
-      "last_detected": 1795003470.4003472
+      "last_detected": 1795010555.4949129
     },
     "VULN-INTEL-9FDDF70B": {
       "id": "VULN-INTEL-9FDDF70B",
@@ -1766,7 +1766,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989794.0584536,
-      "last_detected": 1795003475.3740058
+      "last_detected": 1795010558.9871206
     },
     "VULN-INTEL-1721EF02": {
       "id": "VULN-INTEL-1721EF02",
@@ -1811,7 +1811,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989794.0584536,
-      "last_detected": 1795003475.3740058
+      "last_detected": 1795010558.9871206
     },
     "VULN-INTEL-46C86F0F": {
       "id": "VULN-INTEL-46C86F0F",
@@ -1855,7 +1855,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989794.0584536,
-      "last_detected": 1795003475.3740058
+      "last_detected": 1795010558.9871206
     },
     "VULN-INTEL-A49083E0": {
       "id": "VULN-INTEL-A49083E0",
@@ -1899,7 +1899,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989794.0584536,
-      "last_detected": 1795003475.3740058
+      "last_detected": 1795010558.9871206
     },
     "VULN-INTEL-286A891A": {
       "id": "VULN-INTEL-286A891A",
@@ -1943,7 +1943,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989794.0584536,
-      "last_detected": 1795003475.3740058
+      "last_detected": 1795010558.9871206
     },
     "VULN-INTEL-F3025094": {
       "id": "VULN-INTEL-F3025094",
@@ -1992,7 +1992,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989817.6514127,
-      "last_detected": 1795003498.5900173
+      "last_detected": 1795010576.0854616
     },
     "VULN-INTEL-FE29A9E6": {
       "id": "VULN-INTEL-FE29A9E6",
@@ -2037,7 +2037,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989837.5607102,
-      "last_detected": 1795003519.6595
+      "last_detected": 1795010590.5170898
     },
     "VULN-INTEL-D3A411DB": {
       "id": "VULN-INTEL-D3A411DB",
@@ -2082,7 +2082,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989837.5607102,
-      "last_detected": 1795003519.6595
+      "last_detected": 1795010590.5170898
     },
     "VULN-INTEL-5BC7B8AC": {
       "id": "VULN-INTEL-5BC7B8AC",
@@ -2127,7 +2127,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989851.732462,
-      "last_detected": 1795003532.391559
+      "last_detected": 1795010599.024408
     },
     "VULN-INTEL-F4CA4820": {
       "id": "VULN-INTEL-F4CA4820",
@@ -2176,7 +2176,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989920.573,
-      "last_detected": 1795003603.3349073
+      "last_detected": 1795010655.1786358
     },
     "VULN-INTEL-491EC224": {
       "id": "VULN-INTEL-491EC224",
@@ -2223,7 +2223,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989920.573,
-      "last_detected": 1795003603.3349073
+      "last_detected": 1795010655.1786358
     },
     "VULN-INTEL-17BB24B6": {
       "id": "VULN-INTEL-17BB24B6",
@@ -2272,7 +2272,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989920.573,
-      "last_detected": 1795003603.3349073
+      "last_detected": 1795010655.1786358
     },
     "VULN-INTEL-BD169487": {
       "id": "VULN-INTEL-BD169487",
@@ -2319,7 +2319,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989920.573,
-      "last_detected": 1795003603.3349073
+      "last_detected": 1795010655.1786358
     },
     "VULN-INTEL-4E141013": {
       "id": "VULN-INTEL-4E141013",
@@ -2368,7 +2368,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989920.573,
-      "last_detected": 1795003603.3349073
+      "last_detected": 1795010655.1786358
     },
     "VULN-INTEL-08437305": {
       "id": "VULN-INTEL-08437305",
@@ -2417,7 +2417,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989920.573,
-      "last_detected": 1795003603.3349073
+      "last_detected": 1795010655.1786358
     },
     "VULN-INTEL-FCB0E91E": {
       "id": "VULN-INTEL-FCB0E91E",
@@ -2465,7 +2465,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989920.573,
-      "last_detected": 1795003603.3349073
+      "last_detected": 1795010655.1786358
     },
     "VULN-INTEL-591F6B42": {
       "id": "VULN-INTEL-591F6B42",
@@ -2511,7 +2511,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989920.573,
-      "last_detected": 1795003603.3349073
+      "last_detected": 1795010655.1786358
     },
     "VULN-INTEL-4242FA3A": {
       "id": "VULN-INTEL-4242FA3A",
@@ -2560,7 +2560,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989920.573,
-      "last_detected": 1795003603.3349073
+      "last_detected": 1795010655.1786358
     },
     "VULN-INTEL-48412630": {
       "id": "VULN-INTEL-48412630",
@@ -2608,7 +2608,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989920.573,
-      "last_detected": 1795003603.3349073
+      "last_detected": 1795010655.1786358
     },
     "VULN-INTEL-38316950": {
       "id": "VULN-INTEL-38316950",
@@ -2657,7 +2657,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989920.573,
-      "last_detected": 1795003603.3349073
+      "last_detected": 1795010655.1786358
     },
     "VULN-INTEL-670CBFA5": {
       "id": "VULN-INTEL-670CBFA5",
@@ -2706,7 +2706,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989920.573,
-      "last_detected": 1795003603.3349073
+      "last_detected": 1795010655.1786358
     },
     "VULN-INTEL-C40B953B": {
       "id": "VULN-INTEL-C40B953B",
@@ -2755,7 +2755,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989920.573,
-      "last_detected": 1795003603.3349073
+      "last_detected": 1795010655.1786358
     },
     "VULN-INTEL-D9255459": {
       "id": "VULN-INTEL-D9255459",
@@ -2802,7 +2802,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989920.573,
-      "last_detected": 1795003603.3349073
+      "last_detected": 1795010655.1786358
     },
     "VULN-INTEL-59E2B057": {
       "id": "VULN-INTEL-59E2B057",
@@ -2849,7 +2849,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989920.573,
-      "last_detected": 1795003603.3349073
+      "last_detected": 1795010655.1786358
     },
     "VULN-INTEL-A986D39F": {
       "id": "VULN-INTEL-A986D39F",
@@ -2898,7 +2898,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989920.573,
-      "last_detected": 1795003603.3349073
+      "last_detected": 1795010655.1786358
     },
     "VULN-INTEL-FE7E7E6A": {
       "id": "VULN-INTEL-FE7E7E6A",
@@ -2947,7 +2947,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989939.8684487,
-      "last_detected": 1795003622.2602875
+      "last_detected": 1795010670.539798
     },
     "VULN-INTEL-6378B224": {
       "id": "VULN-INTEL-6378B224",
@@ -3004,7 +3004,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989939.8684487,
-      "last_detected": 1795003622.2602875
+      "last_detected": 1795010670.539798
     },
     "VULN-INTEL-8949DB99": {
       "id": "VULN-INTEL-8949DB99",
@@ -3061,7 +3061,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989939.8684487,
-      "last_detected": 1795003622.2602875
+      "last_detected": 1795010670.539798
     },
     "VULN-INTEL-DBA5B5EC": {
       "id": "VULN-INTEL-DBA5B5EC",
@@ -3116,7 +3116,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989939.8684487,
-      "last_detected": 1795003622.2602875
+      "last_detected": 1795010670.539798
     },
     "VULN-INTEL-FBB264D5": {
       "id": "VULN-INTEL-FBB264D5",
@@ -3165,7 +3165,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989939.8684487,
-      "last_detected": 1795003622.2602875
+      "last_detected": 1795010670.539798
     },
     "VULN-INTEL-D24BACFC": {
       "id": "VULN-INTEL-D24BACFC",
@@ -3214,7 +3214,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989939.8684487,
-      "last_detected": 1795003622.2602875
+      "last_detected": 1795010670.539798
     },
     "VULN-INTEL-8C408CC6": {
       "id": "VULN-INTEL-8C408CC6",
@@ -3271,7 +3271,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989939.8684487,
-      "last_detected": 1795003622.2602875
+      "last_detected": 1795010670.539798
     },
     "VULN-INTEL-71B3AB83": {
       "id": "VULN-INTEL-71B3AB83",
@@ -3326,7 +3326,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989939.8684487,
-      "last_detected": 1795003622.2602875
+      "last_detected": 1795010670.539798
     },
     "VULN-INTEL-8B4769D7": {
       "id": "VULN-INTEL-8B4769D7",
@@ -3373,7 +3373,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989939.8684487,
-      "last_detected": 1795003622.2602875
+      "last_detected": 1795010670.539798
     },
     "VULN-INTEL-2E1FBF1A": {
       "id": "VULN-INTEL-2E1FBF1A",
@@ -3424,7 +3424,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989939.8684487,
-      "last_detected": 1795003622.2602875
+      "last_detected": 1795010670.539798
     },
     "VULN-INTEL-6E3EA49C": {
       "id": "VULN-INTEL-6E3EA49C",
@@ -3468,7 +3468,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989955.3119862,
-      "last_detected": 1795003633.7009642
+      "last_detected": 1795010679.8277314
     },
     "VULN-INTEL-29405EA1": {
       "id": "VULN-INTEL-29405EA1",
@@ -3519,7 +3519,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989955.3119862,
-      "last_detected": 1795003633.7009642
+      "last_detected": 1795010679.8277314
     },
     "VULN-INTEL-12768BC6": {
       "id": "VULN-INTEL-12768BC6",
@@ -3562,7 +3562,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794989995.8371387,
-      "last_detected": 1795003666.5576131
+      "last_detected": 1795010711.2315135
     },
     "VULN-INTEL-22C9BA1C": {
       "id": "VULN-INTEL-22C9BA1C",
@@ -3609,7 +3609,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794990096.935008,
-      "last_detected": 1795003757.054886
+      "last_detected": 1795010785.5707922
     },
     "VULN-INTEL-CF2B0BE1": {
       "id": "VULN-INTEL-CF2B0BE1",
@@ -3653,7 +3653,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794990103.8086767,
-      "last_detected": 1795003763.2202592
+      "last_detected": 1795010790.2345295
     },
     "VULN-INTEL-714E9D15": {
       "id": "VULN-INTEL-714E9D15",
@@ -3697,7 +3697,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794990103.8086767,
-      "last_detected": 1795003763.2202592
+      "last_detected": 1795010790.2345295
     },
     "VULN-INTEL-A7D1DB75": {
       "id": "VULN-INTEL-A7D1DB75",
@@ -3742,7 +3742,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991559.1898153,
-      "last_detected": 1795002424.6855192
+      "last_detected": 1795009668.6079762
     },
     "VULN-INTEL-A35F6867": {
       "id": "VULN-INTEL-A35F6867",
@@ -3788,7 +3788,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991559.1898153,
-      "last_detected": 1795002424.6855192
+      "last_detected": 1795009668.6079762
     },
     "VULN-INTEL-369851F5": {
       "id": "VULN-INTEL-369851F5",
@@ -3833,7 +3833,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991559.1898153,
-      "last_detected": 1795002424.6855192
+      "last_detected": 1795009668.6079762
     },
     "VULN-INTEL-0A8150F6": {
       "id": "VULN-INTEL-0A8150F6",
@@ -3878,7 +3878,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991559.1898153,
-      "last_detected": 1795002424.6855192
+      "last_detected": 1795009668.6079762
     },
     "VULN-INTEL-3B44C11F": {
       "id": "VULN-INTEL-3B44C11F",
@@ -3926,7 +3926,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991559.1898153,
-      "last_detected": 1795002424.6855192
+      "last_detected": 1795009668.6079762
     },
     "VULN-INTEL-69F111F8": {
       "id": "VULN-INTEL-69F111F8",
@@ -3971,7 +3971,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991559.1898153,
-      "last_detected": 1795002424.6855192
+      "last_detected": 1795009668.6079762
     },
     "VULN-INTEL-593A61CE": {
       "id": "VULN-INTEL-593A61CE",
@@ -4016,7 +4016,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991559.1898153,
-      "last_detected": 1795002424.6855192
+      "last_detected": 1795009668.6079762
     },
     "VULN-INTEL-5E21B8BF": {
       "id": "VULN-INTEL-5E21B8BF",
@@ -4061,7 +4061,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991559.1898153,
-      "last_detected": 1795002424.6855192
+      "last_detected": 1795009668.6079762
     },
     "VULN-INTEL-FB5F9EA8": {
       "id": "VULN-INTEL-FB5F9EA8",
@@ -4103,7 +4103,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991559.1898153,
-      "last_detected": 1795002424.6855192
+      "last_detected": 1795009668.6079762
     },
     "VULN-INTEL-0B56C161": {
       "id": "VULN-INTEL-0B56C161",
@@ -4152,7 +4152,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991559.1898153,
-      "last_detected": 1795002424.6855192
+      "last_detected": 1795009668.6079762
     },
     "VULN-INTEL-CDFFE0D0": {
       "id": "VULN-INTEL-CDFFE0D0",
@@ -4197,7 +4197,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991559.1898153,
-      "last_detected": 1795002424.6855192
+      "last_detected": 1795009668.6079762
     },
     "VULN-INTEL-64EA72D9": {
       "id": "VULN-INTEL-64EA72D9",
@@ -4243,7 +4243,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991561.2046552,
-      "last_detected": 1795002426.4833784
+      "last_detected": 1795009669.9201827
     },
     "VULN-INTEL-5F6CF631": {
       "id": "VULN-INTEL-5F6CF631",
@@ -4289,7 +4289,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991561.2046552,
-      "last_detected": 1795002426.4833784
+      "last_detected": 1795009669.9201827
     },
     "VULN-INTEL-E23496B2": {
       "id": "VULN-INTEL-E23496B2",
@@ -4339,7 +4339,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991561.2046552,
-      "last_detected": 1795002426.4833784
+      "last_detected": 1795009669.9201827
     },
     "VULN-INTEL-5F80B2A8": {
       "id": "VULN-INTEL-5F80B2A8",
@@ -4384,7 +4384,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991561.2046552,
-      "last_detected": 1795002426.4833784
+      "last_detected": 1795009669.9201827
     },
     "VULN-INTEL-307CBED8": {
       "id": "VULN-INTEL-307CBED8",
@@ -4431,7 +4431,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991561.2046552,
-      "last_detected": 1795002426.4833784
+      "last_detected": 1795009669.9201827
     },
     "VULN-INTEL-9FB105ED": {
       "id": "VULN-INTEL-9FB105ED",
@@ -4477,7 +4477,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991562.5139062,
-      "last_detected": 1795002427.727385
+      "last_detected": 1795009670.9377327
     },
     "VULN-INTEL-D798B9AD": {
       "id": "VULN-INTEL-D798B9AD",
@@ -4524,7 +4524,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991562.5139062,
-      "last_detected": 1795002427.727385
+      "last_detected": 1795009670.9377327
     },
     "VULN-INTEL-ABB25566": {
       "id": "VULN-INTEL-ABB25566",
@@ -4569,7 +4569,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991564.716061,
-      "last_detected": 1795002429.305851
+      "last_detected": 1795009672.2469175
     },
     "VULN-INTEL-0F7BFF61": {
       "id": "VULN-INTEL-0F7BFF61",
@@ -4615,7 +4615,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991564.716061,
-      "last_detected": 1795002429.305851
+      "last_detected": 1795009672.2469175
     },
     "VULN-INTEL-F13A3B59": {
       "id": "VULN-INTEL-F13A3B59",
@@ -4660,7 +4660,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991564.716061,
-      "last_detected": 1795002429.305851
+      "last_detected": 1795009672.2469175
     },
     "VULN-INTEL-CCE22201": {
       "id": "VULN-INTEL-CCE22201",
@@ -4705,7 +4705,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991564.716061,
-      "last_detected": 1795002429.305851
+      "last_detected": 1795009672.2469175
     },
     "VULN-INTEL-C30F085B": {
       "id": "VULN-INTEL-C30F085B",
@@ -4753,7 +4753,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991564.716061,
-      "last_detected": 1795002429.305851
+      "last_detected": 1795009672.2469175
     },
     "VULN-INTEL-14370B2B": {
       "id": "VULN-INTEL-14370B2B",
@@ -4798,7 +4798,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991564.716061,
-      "last_detected": 1795002429.305851
+      "last_detected": 1795009672.2469175
     },
     "VULN-INTEL-9C965EE5": {
       "id": "VULN-INTEL-9C965EE5",
@@ -4843,7 +4843,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991564.716061,
-      "last_detected": 1795002429.305851
+      "last_detected": 1795009672.2469175
     },
     "VULN-INTEL-AC9F1301": {
       "id": "VULN-INTEL-AC9F1301",
@@ -4888,7 +4888,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991564.716061,
-      "last_detected": 1795002429.305851
+      "last_detected": 1795009672.2469175
     },
     "VULN-INTEL-67B0FC56": {
       "id": "VULN-INTEL-67B0FC56",
@@ -4930,7 +4930,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991564.716061,
-      "last_detected": 1795002429.305851
+      "last_detected": 1795009672.2469175
     },
     "VULN-INTEL-71DD56FA": {
       "id": "VULN-INTEL-71DD56FA",
@@ -4979,7 +4979,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991564.716061,
-      "last_detected": 1795002429.305851
+      "last_detected": 1795009672.2469175
     },
     "VULN-INTEL-8E67EB60": {
       "id": "VULN-INTEL-8E67EB60",
@@ -5024,7 +5024,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991564.716061,
-      "last_detected": 1795002429.305851
+      "last_detected": 1795009672.2469175
     },
     "VULN-INTEL-6957C2A5": {
       "id": "VULN-INTEL-6957C2A5",
@@ -5069,7 +5069,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991571.1524162,
-      "last_detected": 1795002430.9002647
+      "last_detected": 1795009673.4580843
     },
     "VULN-INTEL-EE680ADE": {
       "id": "VULN-INTEL-EE680ADE",
@@ -5114,7 +5114,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991571.1524162,
-      "last_detected": 1795002430.9002647
+      "last_detected": 1795009673.4580843
     },
     "VULN-INTEL-D18EB760": {
       "id": "VULN-INTEL-D18EB760",
@@ -5158,7 +5158,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991571.1524162,
-      "last_detected": 1795002430.9002647
+      "last_detected": 1795009673.4580843
     },
     "VULN-INTEL-93311BA0": {
       "id": "VULN-INTEL-93311BA0",
@@ -5205,7 +5205,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991571.1524162,
-      "last_detected": 1795002430.9002647
+      "last_detected": 1795009673.4580843
     },
     "VULN-INTEL-F33B647B": {
       "id": "VULN-INTEL-F33B647B",
@@ -5248,7 +5248,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991598.4789855,
-      "last_detected": 1795002454.7239013
+      "last_detected": 1795009694.2811198
     },
     "VULN-INTEL-F6C49A9B": {
       "id": "VULN-INTEL-F6C49A9B",
@@ -5292,7 +5292,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991598.4789855,
-      "last_detected": 1795002454.7239013
+      "last_detected": 1795009694.2811198
     },
     "VULN-INTEL-3B6261E9": {
       "id": "VULN-INTEL-3B6261E9",
@@ -5336,7 +5336,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991598.4789855,
-      "last_detected": 1795002454.7239013
+      "last_detected": 1795009694.2811198
     },
     "VULN-INTEL-7BE2788B": {
       "id": "VULN-INTEL-7BE2788B",
@@ -5383,7 +5383,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991700.4697518,
-      "last_detected": 1795002543.3091602
+      "last_detected": 1795013348.6565127
     },
     "VULN-INTEL-A37BA672": {
       "id": "VULN-INTEL-A37BA672",
@@ -5432,7 +5432,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991707.1171634,
-      "last_detected": 1795002547.9809885
+      "last_detected": 1795013353.603323
     },
     "VULN-INTEL-2FE5147D": {
       "id": "VULN-INTEL-2FE5147D",
@@ -5481,7 +5481,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991707.1171634,
-      "last_detected": 1795002547.9809885
+      "last_detected": 1795013353.603323
     },
     "VULN-INTEL-D3884EAB": {
       "id": "VULN-INTEL-D3884EAB",
@@ -5530,7 +5530,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991707.1171634,
-      "last_detected": 1795002547.9809885
+      "last_detected": 1795013353.603323
     },
     "VULN-INTEL-E025EA2E": {
       "id": "VULN-INTEL-E025EA2E",
@@ -5579,7 +5579,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991707.1171634,
-      "last_detected": 1795002547.9809885
+      "last_detected": 1795013353.603323
     },
     "VULN-INTEL-B9460748": {
       "id": "VULN-INTEL-B9460748",
@@ -5628,7 +5628,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991707.1171634,
-      "last_detected": 1795002547.9809885
+      "last_detected": 1795013353.603323
     },
     "VULN-INTEL-A401A572": {
       "id": "VULN-INTEL-A401A572",
@@ -5672,7 +5672,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991707.1171634,
-      "last_detected": 1795002547.9809885
+      "last_detected": 1795013353.603323
     },
     "VULN-INTEL-D0B3414D": {
       "id": "VULN-INTEL-D0B3414D",
@@ -5716,7 +5716,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991707.1171634,
-      "last_detected": 1795002547.9809885
+      "last_detected": 1795013353.603323
     },
     "VULN-INTEL-E524549D": {
       "id": "VULN-INTEL-E524549D",
@@ -5763,7 +5763,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991720.3454902,
-      "last_detected": 1795002557.2255306
+      "last_detected": 1795013363.1587029
     },
     "VULN-INTEL-F4E2D681": {
       "id": "VULN-INTEL-F4E2D681",
@@ -5806,7 +5806,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991745.4683638,
-      "last_detected": 1795002576.8660586
+      "last_detected": 1795013383.4358532
     },
     "VULN-INTEL-C523B799": {
       "id": "VULN-INTEL-C523B799",
@@ -5850,7 +5850,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991745.4683638,
-      "last_detected": 1795002576.8660586
+      "last_detected": 1795013383.4358532
     },
     "VULN-INTEL-C331930B": {
       "id": "VULN-INTEL-C331930B",
@@ -5894,7 +5894,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991745.4683638,
-      "last_detected": 1795002576.8660586
+      "last_detected": 1795013383.4358532
     },
     "VULN-INTEL-02FDB3A2": {
       "id": "VULN-INTEL-02FDB3A2",
@@ -5941,7 +5941,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991841.4506555,
-      "last_detected": 1795002659.1972852
+      "last_detected": 1795013457.4305587
     },
     "VULN-INTEL-A9632B69": {
       "id": "VULN-INTEL-A9632B69",
@@ -5990,7 +5990,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991847.9057922,
-      "last_detected": 1795002665.1252856
+      "last_detected": 1795013462.335791
     },
     "VULN-INTEL-1B7C4615": {
       "id": "VULN-INTEL-1B7C4615",
@@ -6039,7 +6039,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991847.9057922,
-      "last_detected": 1795002665.1252856
+      "last_detected": 1795013462.335791
     },
     "VULN-INTEL-F764BA06": {
       "id": "VULN-INTEL-F764BA06",
@@ -6088,7 +6088,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991847.9057922,
-      "last_detected": 1795002665.1252856
+      "last_detected": 1795013462.335791
     },
     "VULN-INTEL-E6BE1DBF": {
       "id": "VULN-INTEL-E6BE1DBF",
@@ -6137,7 +6137,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991847.9057922,
-      "last_detected": 1795002665.1252856
+      "last_detected": 1795013462.335791
     },
     "VULN-INTEL-84113957": {
       "id": "VULN-INTEL-84113957",
@@ -6186,7 +6186,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991847.9057922,
-      "last_detected": 1795002665.1252856
+      "last_detected": 1795013462.335791
     },
     "VULN-INTEL-19C10612": {
       "id": "VULN-INTEL-19C10612",
@@ -6230,7 +6230,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991847.9057922,
-      "last_detected": 1795002665.1252856
+      "last_detected": 1795013462.335791
     },
     "VULN-INTEL-5DB4DF97": {
       "id": "VULN-INTEL-5DB4DF97",
@@ -6274,7 +6274,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991847.9057922,
-      "last_detected": 1795002665.1252856
+      "last_detected": 1795013462.335791
     },
     "VULN-INTEL-3E7ACFF0": {
       "id": "VULN-INTEL-3E7ACFF0",
@@ -6321,7 +6321,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991860.8505785,
-      "last_detected": 1795002676.8168702
+      "last_detected": 1795013471.9101174
     },
     "VULN-INTEL-2685F07F": {
       "id": "VULN-INTEL-2685F07F",
@@ -6367,7 +6367,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991863.383011,
-      "last_detected": 1795002679.2170217
+      "last_detected": 1795013473.7413347
     },
     "VULN-INTEL-2F8C91F7": {
       "id": "VULN-INTEL-2F8C91F7",
@@ -6414,7 +6414,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991863.383011,
-      "last_detected": 1795002679.2170217
+      "last_detected": 1795013473.7413347
     },
     "VULN-INTEL-095B8217": {
       "id": "VULN-INTEL-095B8217",
@@ -6459,7 +6459,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991864.9085212,
-      "last_detected": 1795002680.7441568
+      "last_detected": 1795013474.974139
     },
     "VULN-INTEL-AD074907": {
       "id": "VULN-INTEL-AD074907",
@@ -6505,7 +6505,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991864.9085212,
-      "last_detected": 1795002680.7441568
+      "last_detected": 1795013474.974139
     },
     "VULN-INTEL-3F013191": {
       "id": "VULN-INTEL-3F013191",
@@ -6550,7 +6550,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991864.9085212,
-      "last_detected": 1795002680.7441568
+      "last_detected": 1795013474.974139
     },
     "VULN-INTEL-E46DC17F": {
       "id": "VULN-INTEL-E46DC17F",
@@ -6595,7 +6595,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991864.9085212,
-      "last_detected": 1795002680.7441568
+      "last_detected": 1795013474.974139
     },
     "VULN-INTEL-BD4A5D5E": {
       "id": "VULN-INTEL-BD4A5D5E",
@@ -6643,7 +6643,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991864.9085212,
-      "last_detected": 1795002680.7441568
+      "last_detected": 1795013474.974139
     },
     "VULN-INTEL-787692FB": {
       "id": "VULN-INTEL-787692FB",
@@ -6688,7 +6688,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991864.9085212,
-      "last_detected": 1795002680.7441568
+      "last_detected": 1795013474.974139
     },
     "VULN-INTEL-4A5ED2E3": {
       "id": "VULN-INTEL-4A5ED2E3",
@@ -6733,7 +6733,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991864.9085212,
-      "last_detected": 1795002680.7441568
+      "last_detected": 1795013474.974139
     },
     "VULN-INTEL-B9A4FE46": {
       "id": "VULN-INTEL-B9A4FE46",
@@ -6778,7 +6778,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991864.9085212,
-      "last_detected": 1795002680.7441568
+      "last_detected": 1795013474.974139
     },
     "VULN-INTEL-D0F0CCD8": {
       "id": "VULN-INTEL-D0F0CCD8",
@@ -6820,7 +6820,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991864.9085212,
-      "last_detected": 1795002680.7441568
+      "last_detected": 1795013474.974139
     },
     "VULN-INTEL-D000538D": {
       "id": "VULN-INTEL-D000538D",
@@ -6869,7 +6869,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991864.9085212,
-      "last_detected": 1795002680.7441568
+      "last_detected": 1795013474.974139
     },
     "VULN-INTEL-5D6D15F2": {
       "id": "VULN-INTEL-5D6D15F2",
@@ -6914,7 +6914,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991864.9085212,
-      "last_detected": 1795002680.7441568
+      "last_detected": 1795013474.974139
     },
     "VULN-INTEL-947A8FBA": {
       "id": "VULN-INTEL-947A8FBA",
@@ -6959,7 +6959,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991866.7485232,
-      "last_detected": 1795002682.7356288
+      "last_detected": 1795013476.3037107
     },
     "VULN-INTEL-F377A0F7": {
       "id": "VULN-INTEL-F377A0F7",
@@ -7004,7 +7004,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991866.7485232,
-      "last_detected": 1795002682.7356288
+      "last_detected": 1795013476.3037107
     },
     "VULN-INTEL-AD65FC21": {
       "id": "VULN-INTEL-AD65FC21",
@@ -7048,7 +7048,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991866.7485232,
-      "last_detected": 1795002682.7356288
+      "last_detected": 1795013476.3037107
     },
     "VULN-INTEL-9ECED0DB": {
       "id": "VULN-INTEL-9ECED0DB",
@@ -7095,7 +7095,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991866.7485232,
-      "last_detected": 1795002682.7356288
+      "last_detected": 1795013476.3037107
     },
     "VULN-INTEL-D0ED858D": {
       "id": "VULN-INTEL-D0ED858D",
@@ -7138,7 +7138,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991890.7291434,
-      "last_detected": 1795002709.8419995
+      "last_detected": 1795013495.7856393
     },
     "VULN-INTEL-2B0D9DE8": {
       "id": "VULN-INTEL-2B0D9DE8",
@@ -7182,7 +7182,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991890.7291434,
-      "last_detected": 1795002709.8419995
+      "last_detected": 1795013495.7856393
     },
     "VULN-INTEL-76548CD4": {
       "id": "VULN-INTEL-76548CD4",
@@ -7226,7 +7226,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991890.7291434,
-      "last_detected": 1795002709.8419995
+      "last_detected": 1795013495.7856393
     },
     "VULN-INTEL-4504623D": {
       "id": "VULN-INTEL-4504623D",
@@ -7273,7 +7273,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991987.1807966,
-      "last_detected": 1795002790.5009701
+      "last_detected": 1795013570.0321143
     },
     "VULN-INTEL-8C2C917A": {
       "id": "VULN-INTEL-8C2C917A",
@@ -7322,7 +7322,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991993.895723,
-      "last_detected": 1795002796.227507
+      "last_detected": 1795013574.9296587
     },
     "VULN-INTEL-7E525918": {
       "id": "VULN-INTEL-7E525918",
@@ -7371,7 +7371,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991993.895723,
-      "last_detected": 1795002796.227507
+      "last_detected": 1795013574.9296587
     },
     "VULN-INTEL-9598B59B": {
       "id": "VULN-INTEL-9598B59B",
@@ -7420,7 +7420,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991993.895723,
-      "last_detected": 1795002796.227507
+      "last_detected": 1795013574.9296587
     },
     "VULN-INTEL-230A940E": {
       "id": "VULN-INTEL-230A940E",
@@ -7469,7 +7469,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991993.895723,
-      "last_detected": 1795002796.227507
+      "last_detected": 1795013574.9296587
     },
     "VULN-INTEL-9C5FE960": {
       "id": "VULN-INTEL-9C5FE960",
@@ -7518,7 +7518,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991993.895723,
-      "last_detected": 1795002796.227507
+      "last_detected": 1795013574.9296587
     },
     "VULN-INTEL-05305FCE": {
       "id": "VULN-INTEL-05305FCE",
@@ -7562,7 +7562,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991993.895723,
-      "last_detected": 1795002796.227507
+      "last_detected": 1795013574.9296587
     },
     "VULN-INTEL-13C04146": {
       "id": "VULN-INTEL-13C04146",
@@ -7606,7 +7606,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794991993.895723,
-      "last_detected": 1795002796.227507
+      "last_detected": 1795013574.9296587
     },
     "VULN-INTEL-9C7BF7D9": {
       "id": "VULN-INTEL-9C7BF7D9",
@@ -7653,7 +7653,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992007.886414,
-      "last_detected": 1795002807.4504564
+      "last_detected": 1795013585.269917
     },
     "VULN-INTEL-C1B0ADBF": {
       "id": "VULN-INTEL-C1B0ADBF",
@@ -7698,7 +7698,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992011.8331106,
-      "last_detected": 1795002810.8876343
+      "last_detected": 1795013588.2956786
     },
     "VULN-INTEL-E9E65083": {
       "id": "VULN-INTEL-E9E65083",
@@ -7743,7 +7743,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992011.8331106,
-      "last_detected": 1795002810.8876343
+      "last_detected": 1795013588.2956786
     },
     "VULN-INTEL-750B14D6": {
       "id": "VULN-INTEL-750B14D6",
@@ -7790,7 +7790,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992011.8331106,
-      "last_detected": 1795002810.8876343
+      "last_detected": 1795013588.2956786
     },
     "VULN-INTEL-3F7DD6D5": {
       "id": "VULN-INTEL-3F7DD6D5",
@@ -7837,7 +7837,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992011.8331106,
-      "last_detected": 1795002810.8876343
+      "last_detected": 1795013588.2956786
     },
     "VULN-INTEL-8C357565": {
       "id": "VULN-INTEL-8C357565",
@@ -7884,7 +7884,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992011.8331106,
-      "last_detected": 1795002810.8876343
+      "last_detected": 1795013588.2956786
     },
     "VULN-INTEL-3C27D1CE": {
       "id": "VULN-INTEL-3C27D1CE",
@@ -7929,7 +7929,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992011.8331106,
-      "last_detected": 1795002810.8876343
+      "last_detected": 1795013588.2956786
     },
     "VULN-INTEL-4416E4E8": {
       "id": "VULN-INTEL-4416E4E8",
@@ -7978,7 +7978,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992011.8331106,
-      "last_detected": 1795002810.8876343
+      "last_detected": 1795013588.2956786
     },
     "VULN-INTEL-1EFE835A": {
       "id": "VULN-INTEL-1EFE835A",
@@ -8029,7 +8029,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992011.8331106,
-      "last_detected": 1795002810.8876343
+      "last_detected": 1795013588.2956786
     },
     "VULN-INTEL-3004AFC7": {
       "id": "VULN-INTEL-3004AFC7",
@@ -8073,7 +8073,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992015.6652758,
-      "last_detected": 1795002814.3784008
+      "last_detected": 1795013591.9112353
     },
     "VULN-INTEL-A01EE0C6": {
       "id": "VULN-INTEL-A01EE0C6",
@@ -8118,7 +8118,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992015.6652758,
-      "last_detected": 1795002814.3784008
+      "last_detected": 1795013591.9112353
     },
     "VULN-INTEL-395E7E8A": {
       "id": "VULN-INTEL-395E7E8A",
@@ -8163,7 +8163,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-565BA638": {
       "id": "VULN-INTEL-565BA638",
@@ -8208,7 +8208,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-E1A56888": {
       "id": "VULN-INTEL-E1A56888",
@@ -8253,7 +8253,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-295887DF": {
       "id": "VULN-INTEL-295887DF",
@@ -8298,7 +8298,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-89A17C59": {
       "id": "VULN-INTEL-89A17C59",
@@ -8341,7 +8341,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-65A3C9BE": {
       "id": "VULN-INTEL-65A3C9BE",
@@ -8386,7 +8386,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-DA3ADF71": {
       "id": "VULN-INTEL-DA3ADF71",
@@ -8431,7 +8431,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-85343C80": {
       "id": "VULN-INTEL-85343C80",
@@ -8476,7 +8476,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-A9F95C52": {
       "id": "VULN-INTEL-A9F95C52",
@@ -8520,7 +8520,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-7C18A57F": {
       "id": "VULN-INTEL-7C18A57F",
@@ -8563,7 +8563,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-A827DDA7": {
       "id": "VULN-INTEL-A827DDA7",
@@ -8608,7 +8608,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-A36AC142": {
       "id": "VULN-INTEL-A36AC142",
@@ -8653,7 +8653,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-CDC540FD": {
       "id": "VULN-INTEL-CDC540FD",
@@ -8696,7 +8696,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-0CA42C5A": {
       "id": "VULN-INTEL-0CA42C5A",
@@ -8741,7 +8741,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-C109D4B8": {
       "id": "VULN-INTEL-C109D4B8",
@@ -8785,7 +8785,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-643DF202": {
       "id": "VULN-INTEL-643DF202",
@@ -8828,7 +8828,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-B4F38395": {
       "id": "VULN-INTEL-B4F38395",
@@ -8873,7 +8873,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-0F84CE28": {
       "id": "VULN-INTEL-0F84CE28",
@@ -8918,7 +8918,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-EF916061": {
       "id": "VULN-INTEL-EF916061",
@@ -8963,7 +8963,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-72928EEB": {
       "id": "VULN-INTEL-72928EEB",
@@ -9008,7 +9008,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-CCD206ED": {
       "id": "VULN-INTEL-CCD206ED",
@@ -9053,7 +9053,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-0A8DF5EC": {
       "id": "VULN-INTEL-0A8DF5EC",
@@ -9098,7 +9098,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-EEF4E693": {
       "id": "VULN-INTEL-EEF4E693",
@@ -9143,7 +9143,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-465138B2": {
       "id": "VULN-INTEL-465138B2",
@@ -9186,7 +9186,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-60A58138": {
       "id": "VULN-INTEL-60A58138",
@@ -9231,7 +9231,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-50CDB602": {
       "id": "VULN-INTEL-50CDB602",
@@ -9274,7 +9274,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-280DEE7F": {
       "id": "VULN-INTEL-280DEE7F",
@@ -9318,7 +9318,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-E374DB81": {
       "id": "VULN-INTEL-E374DB81",
@@ -9361,7 +9361,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-73ECB6D2": {
       "id": "VULN-INTEL-73ECB6D2",
@@ -9405,7 +9405,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-F6E8F92F": {
       "id": "VULN-INTEL-F6E8F92F",
@@ -9448,7 +9448,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-115D5355": {
       "id": "VULN-INTEL-115D5355",
@@ -9493,7 +9493,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-C0B9C63B": {
       "id": "VULN-INTEL-C0B9C63B",
@@ -9538,7 +9538,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-A633B980": {
       "id": "VULN-INTEL-A633B980",
@@ -9581,7 +9581,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-EDB737A5": {
       "id": "VULN-INTEL-EDB737A5",
@@ -9626,7 +9626,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-2C9A86DB": {
       "id": "VULN-INTEL-2C9A86DB",
@@ -9671,7 +9671,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-B5602F99": {
       "id": "VULN-INTEL-B5602F99",
@@ -9716,7 +9716,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-0386324B": {
       "id": "VULN-INTEL-0386324B",
@@ -9759,7 +9759,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-41900B1C": {
       "id": "VULN-INTEL-41900B1C",
@@ -9804,7 +9804,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-78E3D391": {
       "id": "VULN-INTEL-78E3D391",
@@ -9847,7 +9847,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-8A8D482B": {
       "id": "VULN-INTEL-8A8D482B",
@@ -9892,7 +9892,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-F3920BA7": {
       "id": "VULN-INTEL-F3920BA7",
@@ -9937,7 +9937,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-FA3770F2": {
       "id": "VULN-INTEL-FA3770F2",
@@ -9982,7 +9982,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-B7F064F0": {
       "id": "VULN-INTEL-B7F064F0",
@@ -10027,7 +10027,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992018.8857586,
-      "last_detected": 1795002817.0106788
+      "last_detected": 1795013594.1848063
     },
     "VULN-INTEL-97E07C0A": {
       "id": "VULN-INTEL-97E07C0A",
@@ -10072,7 +10072,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992028.5459151,
-      "last_detected": 1795002824.638209
+      "last_detected": 1795013601.829193
     },
     "VULN-INTEL-DF723F78": {
       "id": "VULN-INTEL-DF723F78",
@@ -10115,7 +10115,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992048.4313772,
-      "last_detected": 1795002839.7115185
+      "last_detected": 1795013611.593299
     },
     "VULN-INTEL-BBAB3886": {
       "id": "VULN-INTEL-BBAB3886",
@@ -10162,7 +10162,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992049.6498082,
-      "last_detected": 1795002840.7965438
+      "last_detected": 1795013612.64398
     },
     "VULN-INTEL-ACCC1367": {
       "id": "VULN-INTEL-ACCC1367",
@@ -10207,7 +10207,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992069.808192,
-      "last_detected": 1795002856.8601432
+      "last_detected": 1795013629.033703
     },
     "VULN-INTEL-2D1EBCF9": {
       "id": "VULN-INTEL-2D1EBCF9",
@@ -10254,7 +10254,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992071.4564316,
-      "last_detected": 1795002857.9686162
+      "last_detected": 1795013630.053801
     },
     "VULN-INTEL-DB45B70A": {
       "id": "VULN-INTEL-DB45B70A",
@@ -10301,7 +10301,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992071.4564316,
-      "last_detected": 1795002857.9686162
+      "last_detected": 1795013630.053801
     },
     "VULN-INTEL-75D92D1A": {
       "id": "VULN-INTEL-75D92D1A",
@@ -10346,7 +10346,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992139.0897381,
-      "last_detected": 1795002907.2168634
+      "last_detected": 1795013681.208322
     },
     "VULN-INTEL-C82DE442": {
       "id": "VULN-INTEL-C82DE442",
@@ -10391,7 +10391,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992139.0897381,
-      "last_detected": 1795002907.2168634
+      "last_detected": 1795013681.208322
     },
     "VULN-INTEL-ACB97B3F": {
       "id": "VULN-INTEL-ACB97B3F",
@@ -10435,7 +10435,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992147.9833477,
-      "last_detected": 1795002912.9398184
+      "last_detected": 1795013687.5246332
     },
     "VULN-INTEL-BDDB8312": {
       "id": "VULN-INTEL-BDDB8312",
@@ -10482,7 +10482,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992329.1462872,
-      "last_detected": 1795003050.396572
+      "last_detected": 1795013809.0847383
     },
     "VULN-INTEL-D76C9D10": {
       "id": "VULN-INTEL-D76C9D10",
@@ -10529,7 +10529,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992329.1462872,
-      "last_detected": 1795003050.396572
+      "last_detected": 1795013809.0847383
     },
     "VULN-INTEL-C5A9CD9B": {
       "id": "VULN-INTEL-C5A9CD9B",
@@ -10573,7 +10573,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795003081.2679152
+      "last_detected": 1795013837.3322368
     },
     "VULN-INTEL-3170DA45": {
       "id": "VULN-INTEL-3170DA45",
@@ -10618,7 +10618,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795003081.2679152
+      "last_detected": 1795013837.3322368
     },
     "VULN-INTEL-065B87C6": {
       "id": "VULN-INTEL-065B87C6",
@@ -10663,7 +10663,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795003081.2679152
+      "last_detected": 1795013837.3322368
     },
     "VULN-INTEL-F1A54643": {
       "id": "VULN-INTEL-F1A54643",
@@ -10706,7 +10706,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795003081.2679152
+      "last_detected": 1795013837.3322368
     },
     "VULN-INTEL-E94A12A4": {
       "id": "VULN-INTEL-E94A12A4",
@@ -10753,7 +10753,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795003081.2679152
+      "last_detected": 1795013837.3322368
     },
     "VULN-INTEL-8F7BD95E": {
       "id": "VULN-INTEL-8F7BD95E",
@@ -10796,7 +10796,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795003081.2679152
+      "last_detected": 1795013837.3322368
     },
     "VULN-INTEL-091B1E05": {
       "id": "VULN-INTEL-091B1E05",
@@ -10841,7 +10841,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795003081.2679152
+      "last_detected": 1795013837.3322368
     },
     "VULN-INTEL-E8FDDDE6": {
       "id": "VULN-INTEL-E8FDDDE6",
@@ -10886,7 +10886,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795003081.2679152
+      "last_detected": 1795013837.3322368
     },
     "VULN-INTEL-04E34309": {
       "id": "VULN-INTEL-04E34309",
@@ -10931,7 +10931,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795003081.2679152
+      "last_detected": 1795013837.3322368
     },
     "VULN-INTEL-F2622285": {
       "id": "VULN-INTEL-F2622285",
@@ -10976,7 +10976,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795003081.2679152
+      "last_detected": 1795013837.3322368
     },
     "VULN-INTEL-58FB1F2E": {
       "id": "VULN-INTEL-58FB1F2E",
@@ -11023,7 +11023,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795003081.2679152
+      "last_detected": 1795013837.3322368
     },
     "VULN-INTEL-FF7EFED3": {
       "id": "VULN-INTEL-FF7EFED3",
@@ -11068,7 +11068,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795003081.2679152
+      "last_detected": 1795013837.3322368
     },
     "VULN-INTEL-4B678A76": {
       "id": "VULN-INTEL-4B678A76",
@@ -11113,7 +11113,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795003081.2679152
+      "last_detected": 1795013837.3322368
     },
     "VULN-INTEL-291361C7": {
       "id": "VULN-INTEL-291361C7",
@@ -11160,7 +11160,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795003081.2679152
+      "last_detected": 1795013837.3322368
     },
     "VULN-INTEL-B41EBF73": {
       "id": "VULN-INTEL-B41EBF73",
@@ -11206,7 +11206,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795003081.2679152
+      "last_detected": 1795013837.3322368
     },
     "VULN-INTEL-5A52BBEA": {
       "id": "VULN-INTEL-5A52BBEA",
@@ -11253,7 +11253,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795003081.2679152
+      "last_detected": 1795013837.3322368
     },
     "VULN-INTEL-5CDA915A": {
       "id": "VULN-INTEL-5CDA915A",
@@ -11300,7 +11300,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795003081.2679152
+      "last_detected": 1795013837.3322368
     },
     "VULN-INTEL-4702097C": {
       "id": "VULN-INTEL-4702097C",
@@ -11347,7 +11347,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795003081.2679152
+      "last_detected": 1795013837.3322368
     },
     "VULN-INTEL-3FF3BEFD": {
       "id": "VULN-INTEL-3FF3BEFD",
@@ -11394,7 +11394,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795003081.2679152
+      "last_detected": 1795013837.3322368
     },
     "VULN-INTEL-F8DB96DD": {
       "id": "VULN-INTEL-F8DB96DD",
@@ -11439,7 +11439,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795003081.2679152
+      "last_detected": 1795013837.3322368
     },
     "VULN-INTEL-6255A398": {
       "id": "VULN-INTEL-6255A398",
@@ -11484,7 +11484,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795003081.2679152
+      "last_detected": 1795013837.3322368
     },
     "VULN-INTEL-F150B5B6": {
       "id": "VULN-INTEL-F150B5B6",
@@ -11529,7 +11529,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795003081.2679152
+      "last_detected": 1795013837.3322368
     },
     "VULN-INTEL-3D9F8D9D": {
       "id": "VULN-INTEL-3D9F8D9D",
@@ -11574,7 +11574,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795003081.2679152
+      "last_detected": 1795013837.3322368
     },
     "VULN-INTEL-61F3A9B0": {
       "id": "VULN-INTEL-61F3A9B0",
@@ -11621,7 +11621,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795003081.2679152
+      "last_detected": 1795013837.3322368
     },
     "VULN-INTEL-B3D66424": {
       "id": "VULN-INTEL-B3D66424",
@@ -11666,7 +11666,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795003081.2679152
+      "last_detected": 1795013837.3322368
     },
     "VULN-INTEL-7DF73F42": {
       "id": "VULN-INTEL-7DF73F42",
@@ -11713,7 +11713,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795003081.2679152
+      "last_detected": 1795013837.3322368
     },
     "VULN-INTEL-07792319": {
       "id": "VULN-INTEL-07792319",
@@ -11758,7 +11758,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795003081.2679152
+      "last_detected": 1795013837.3322368
     },
     "VULN-INTEL-EDC6F7F8": {
       "id": "VULN-INTEL-EDC6F7F8",
@@ -11805,7 +11805,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795003081.2679152
+      "last_detected": 1795013837.3322368
     },
     "VULN-INTEL-7BE02BB3": {
       "id": "VULN-INTEL-7BE02BB3",
@@ -11852,7 +11852,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795003081.2679152
+      "last_detected": 1795013837.3322368
     },
     "VULN-INTEL-DDEC682E": {
       "id": "VULN-INTEL-DDEC682E",
@@ -11897,7 +11897,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795003081.2679152
+      "last_detected": 1795013837.3322368
     },
     "VULN-INTEL-675F973B": {
       "id": "VULN-INTEL-675F973B",
@@ -11942,7 +11942,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795003081.2679152
+      "last_detected": 1795013837.3322368
     },
     "VULN-INTEL-AF67FF33": {
       "id": "VULN-INTEL-AF67FF33",
@@ -11987,7 +11987,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795003081.2679152
+      "last_detected": 1795013837.3322368
     },
     "VULN-INTEL-21B6A8B2": {
       "id": "VULN-INTEL-21B6A8B2",
@@ -12032,7 +12032,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795003081.2679152
+      "last_detected": 1795013837.3322368
     },
     "VULN-INTEL-74E361E1": {
       "id": "VULN-INTEL-74E361E1",
@@ -12077,7 +12077,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795003081.2679152
+      "last_detected": 1795013837.3322368
     },
     "VULN-INTEL-5A87E8F1": {
       "id": "VULN-INTEL-5A87E8F1",
@@ -12122,7 +12122,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795003081.2679152
+      "last_detected": 1795013837.3322368
     },
     "VULN-INTEL-344386C0": {
       "id": "VULN-INTEL-344386C0",
@@ -12167,7 +12167,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992366.762851,
-      "last_detected": 1795003081.2679152
+      "last_detected": 1795013837.3322368
     },
     "VULN-INTEL-29FCFF48": {
       "id": "VULN-INTEL-29FCFF48",
@@ -12214,7 +12214,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992371.4710255,
-      "last_detected": 1795003085.955
+      "last_detected": 1795013840.6886382
     },
     "VULN-INTEL-F365EAAF": {
       "id": "VULN-INTEL-F365EAAF",
@@ -12261,7 +12261,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992371.4710255,
-      "last_detected": 1795003085.955
+      "last_detected": 1795013840.6886382
     },
     "VULN-INTEL-3BF04396": {
       "id": "VULN-INTEL-3BF04396",
@@ -12306,7 +12306,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992371.4710255,
-      "last_detected": 1795003085.955
+      "last_detected": 1795013840.6886382
     },
     "VULN-INTEL-97302C30": {
       "id": "VULN-INTEL-97302C30",
@@ -12355,7 +12355,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992374.1293428,
-      "last_detected": 1795003088.4803104
+      "last_detected": 1795013842.694563
     },
     "VULN-INTEL-29533046": {
       "id": "VULN-INTEL-29533046",
@@ -12406,7 +12406,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992374.1293428,
-      "last_detected": 1795003088.4803104
+      "last_detected": 1795013842.694563
     },
     "VULN-INTEL-33BD3522": {
       "id": "VULN-INTEL-33BD3522",
@@ -12457,7 +12457,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992374.1293428,
-      "last_detected": 1795003088.4803104
+      "last_detected": 1795013842.694563
     },
     "VULN-INTEL-C87F14E9": {
       "id": "VULN-INTEL-C87F14E9",
@@ -12508,7 +12508,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992374.1293428,
-      "last_detected": 1795003088.4803104
+      "last_detected": 1795013842.694563
     },
     "VULN-INTEL-9282FE7A": {
       "id": "VULN-INTEL-9282FE7A",
@@ -12559,7 +12559,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992374.1293428,
-      "last_detected": 1795003088.4803104
+      "last_detected": 1795013842.694563
     },
     "VULN-INTEL-F998B202": {
       "id": "VULN-INTEL-F998B202",
@@ -12610,7 +12610,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992374.1293428,
-      "last_detected": 1795003088.4803104
+      "last_detected": 1795013842.694563
     },
     "VULN-INTEL-7072C562": {
       "id": "VULN-INTEL-7072C562",
@@ -12661,7 +12661,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992374.1293428,
-      "last_detected": 1795003088.4803104
+      "last_detected": 1795013842.694563
     },
     "VULN-INTEL-A6707D6A": {
       "id": "VULN-INTEL-A6707D6A",
@@ -12712,7 +12712,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992449.5162513,
-      "last_detected": 1795003164.7941406
+      "last_detected": 1795010319.1289883
     },
     "VULN-INTEL-1F3B356C": {
       "id": "VULN-INTEL-1F3B356C",
@@ -12761,7 +12761,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992498.6902678,
-      "last_detected": 1795003216.9782217
+      "last_detected": 1795010357.8191743
     },
     "VULN-INTEL-354C6832": {
       "id": "VULN-INTEL-354C6832",
@@ -12810,7 +12810,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992498.6902678,
-      "last_detected": 1795003216.9782217
+      "last_detected": 1795010357.8191743
     },
     "VULN-INTEL-70E59D7E": {
       "id": "VULN-INTEL-70E59D7E",
@@ -12859,7 +12859,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992498.6902678,
-      "last_detected": 1795003216.9782217
+      "last_detected": 1795010357.8191743
     },
     "VULN-INTEL-7F43C2B9": {
       "id": "VULN-INTEL-7F43C2B9",
@@ -12908,7 +12908,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992498.6902678,
-      "last_detected": 1795003216.9782217
+      "last_detected": 1795010357.8191743
     },
     "VULN-INTEL-F65D9D06": {
       "id": "VULN-INTEL-F65D9D06",
@@ -12957,7 +12957,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992498.6902678,
-      "last_detected": 1795003216.9782217
+      "last_detected": 1795010357.8191743
     },
     "VULN-INTEL-47ADAB94": {
       "id": "VULN-INTEL-47ADAB94",
@@ -13006,7 +13006,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992498.6902678,
-      "last_detected": 1795003216.9782217
+      "last_detected": 1795010357.8191743
     },
     "VULN-INTEL-60056BD8": {
       "id": "VULN-INTEL-60056BD8",
@@ -13053,7 +13053,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992498.6902678,
-      "last_detected": 1795003216.9782217
+      "last_detected": 1795010357.8191743
     },
     "VULN-INTEL-DBE93190": {
       "id": "VULN-INTEL-DBE93190",
@@ -13102,7 +13102,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992498.6902678,
-      "last_detected": 1795003216.9782217
+      "last_detected": 1795010357.8191743
     },
     "VULN-INTEL-D2B0A7DA": {
       "id": "VULN-INTEL-D2B0A7DA",
@@ -13151,7 +13151,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992498.6902678,
-      "last_detected": 1795003216.9782217
+      "last_detected": 1795010357.8191743
     },
     "VULN-INTEL-242809A8": {
       "id": "VULN-INTEL-242809A8",
@@ -13198,7 +13198,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992498.6902678,
-      "last_detected": 1795003216.9782217
+      "last_detected": 1795010357.8191743
     },
     "VULN-INTEL-4DE042DB": {
       "id": "VULN-INTEL-4DE042DB",
@@ -13247,7 +13247,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992498.6902678,
-      "last_detected": 1795003216.9782217
+      "last_detected": 1795010357.8191743
     },
     "VULN-INTEL-5C4B9A4C": {
       "id": "VULN-INTEL-5C4B9A4C",
@@ -13296,7 +13296,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992498.6902678,
-      "last_detected": 1795003216.9782217
+      "last_detected": 1795010357.8191743
     },
     "VULN-INTEL-34ABDA6A": {
       "id": "VULN-INTEL-34ABDA6A",
@@ -13341,7 +13341,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992513.651894,
-      "last_detected": 1795003231.9431767
+      "last_detected": 1795010368.354624
     },
     "VULN-INTEL-2E38F4D7": {
       "id": "VULN-INTEL-2E38F4D7",
@@ -13386,7 +13386,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992513.651894,
-      "last_detected": 1795003231.9431767
+      "last_detected": 1795010368.354624
     },
     "VULN-INTEL-07283BF6": {
       "id": "VULN-INTEL-07283BF6",
@@ -13431,7 +13431,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992515.1482124,
-      "last_detected": 1795003233.2371573
+      "last_detected": 1795010369.3798966
     },
     "VULN-INTEL-18A82C19": {
       "id": "VULN-INTEL-18A82C19",
@@ -13476,7 +13476,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992515.1482124,
-      "last_detected": 1795003233.2371573
+      "last_detected": 1795010369.3798966
     },
     "VULN-INTEL-CEC8C047": {
       "id": "VULN-INTEL-CEC8C047",
@@ -13521,7 +13521,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992515.1482124,
-      "last_detected": 1795003233.2371573
+      "last_detected": 1795010369.3798966
     },
     "VULN-INTEL-768E389B": {
       "id": "VULN-INTEL-768E389B",
@@ -13570,7 +13570,7 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794992517.6171806,
-      "last_detected": 1795003235.8614109
+      "last_detected": 1795010372.8909633
     },
     "VULN-INTEL-B2E10C3F": {
       "id": "VULN-INTEL-B2E10C3F",
@@ -13613,7 +13613,781 @@
       ],
       "source": "OSV / NVD / CISA KEV",
       "first_detected": 1794993118.7771916,
-      "last_detected": 1795000444.1963286
+      "last_detected": 1795010823.5576973
+    },
+    "VULN-INTEL-A9CC5435": {
+      "id": "VULN-INTEL-A9CC5435",
+      "org_id": "org-default",
+      "project_id": "proj-030c01e0",
+      "asset_id": "asset-repo-proj-030c01e0",
+      "component_id": "comp-40f89f49b1",
+      "package_name": "express",
+      "installed_version": "4.18.2",
+      "ecosystem": "npm",
+      "manifest_file": "package.json",
+      "environment": "Source Code",
+      "cve_id": "CVE-2024-43796",
+      "osv_id": "GHSA-qw6h-vgh9-j6wx",
+      "title": "[CVE-2024-43796] Vulnerability in express (4.18.2)",
+      "summary": "express vulnerable to XSS via response.redirect()",
+      "description": "### Impact\n\nIn express <4.20.0, passing untrusted user input - even after sanitizing it - to `response.redirect()` may execute untrusted code\n\n### Patches\n\nthis issue is patched in express 4.20.0\n\n### Workarounds\n\nusers are encouraged to upgrade to the patched version of express, but otherwise can workaround this issue by making sure any untrusted inputs are safe, ideally by validating them against an explicit allowlist\n\n### Details\n\nsuccessful exploitation of this vector requires the following:\n\n1. The attacker MUST control the input to response.redirect()\n1. express MUST NOT redirect before the template appears\n1. the browser MUST NOT complete redirection before:\n1. the user MUST click on the link in the template\n",
+      "severity": "HIGH",
+      "risk_score": 66,
+      "cvss_score": 7.5,
+      "cvss_vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:P/VC:N/VI:N/VA:N/SC:L/SI:L/SA:L",
+      "is_known_exploited": false,
+      "kev_details": null,
+      "correlation_state": "CONFIRMED_AFFECTED",
+      "status": "NEW",
+      "why_prioritized": "Prioritized because the affected component 'express' version is confirmed in your environment, and the target is internet-facing in production.",
+      "affected_version_ranges": [
+        ">=0, <4.20.0",
+        ">=5.0.0-alpha.1, <5.0.0"
+      ],
+      "fixed_versions": [
+        "4.20.0",
+        "5.0.0"
+      ],
+      "remediation": "Upgrade 'express' from installed version 4.18.2 to 4.20.0, 5.0.0.",
+      "ai_prompt": "Fix vulnerability CVE-2024-43796 in express by upgrading from version 4.18.2 to 4.20.0, 5.0.0.",
+      "references": [
+        "https://github.com/expressjs/express/security/advisories/GHSA-qw6h-vgh9-j6wx",
+        "https://nvd.nist.gov/vuln/detail/CVE-2024-43796",
+        "https://github.com/expressjs/express/commit/54271f69b511fea198471e6ff3400ab805d6b553",
+        "https://github.com/expressjs/express",
+        "https://osv.dev/vulnerability/GHSA-qw6h-vgh9-j6wx"
+      ],
+      "source": "OSV / NVD / CISA KEV",
+      "first_detected": 1795013303.042424,
+      "last_detected": 1795013661.4486923
+    },
+    "VULN-INTEL-05B9F559": {
+      "id": "VULN-INTEL-05B9F559",
+      "org_id": "org-default",
+      "project_id": "proj-030c01e0",
+      "asset_id": "asset-repo-proj-030c01e0",
+      "component_id": "comp-40f89f49b1",
+      "package_name": "express",
+      "installed_version": "4.18.2",
+      "ecosystem": "npm",
+      "manifest_file": "package.json",
+      "environment": "Source Code",
+      "cve_id": "CVE-2024-29041",
+      "osv_id": "GHSA-rv95-896h-c2vc",
+      "title": "[CVE-2024-29041] Vulnerability in express (4.18.2)",
+      "summary": "Express.js Open Redirect in malformed URLs",
+      "description": "### Impact\n\nVersions of Express.js prior to 4.19.2 and pre-release alpha and beta versions before 5.0.0-beta.3 are affected by an open redirect vulnerability using malformed URLs.\n\nWhen a user of Express performs a redirect using a user-provided URL Express performs an encode [using `encodeurl`](https://github.com/pillarjs/encodeurl) on the contents before passing it to the `location` header. This can cause malformed URLs to be evaluated in unexpected ways by common redirect allow list implementations in Express applications, leading to an Open Redirect via bypass of a properly implemented allow list.\n\nThe main method impacted is `res.location()` but this is also called from within `res.redirect()`.\n\n### Patches\n\nhttps://github.com/expressjs/express/commit/0867302ddbde0e9463d0564fea5861feb",
+      "severity": "HIGH",
+      "risk_score": 66,
+      "cvss_score": 7.5,
+      "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+      "is_known_exploited": false,
+      "kev_details": null,
+      "correlation_state": "CONFIRMED_AFFECTED",
+      "status": "NEW",
+      "why_prioritized": "Prioritized because the affected component 'express' version is confirmed in your environment, and the target is internet-facing in production.",
+      "affected_version_ranges": [
+        ">=0, <4.19.2",
+        ">=5.0.0-alpha.1, <5.0.0-beta.3"
+      ],
+      "fixed_versions": [
+        "4.19.2",
+        "5.0.0-beta.3"
+      ],
+      "remediation": "Upgrade 'express' from installed version 4.18.2 to 4.19.2, 5.0.0-beta.3.",
+      "ai_prompt": "Fix vulnerability CVE-2024-29041 in express by upgrading from version 4.18.2 to 4.19.2, 5.0.0-beta.3.",
+      "references": [
+        "https://github.com/expressjs/express/security/advisories/GHSA-rv95-896h-c2vc",
+        "https://nvd.nist.gov/vuln/detail/CVE-2024-29041",
+        "https://github.com/koajs/koa/issues/1800",
+        "https://github.com/expressjs/express/pull/5539",
+        "https://github.com/expressjs/express/commit/0867302ddbde0e9463d0564fea5861feb708c2dd",
+        "https://github.com/expressjs/express/commit/0b746953c4bd8e377123527db11f9cd866e39f94"
+      ],
+      "source": "OSV / NVD / CISA KEV",
+      "first_detected": 1795013303.042424,
+      "last_detected": 1795013661.4486923
+    },
+    "VULN-INTEL-E4EE0F11": {
+      "id": "VULN-INTEL-E4EE0F11",
+      "org_id": "org-default",
+      "project_id": "proj-8df621d6",
+      "asset_id": "asset-repo-proj-8df621d6",
+      "component_id": "comp-f3571daf95",
+      "package_name": "urllib3",
+      "installed_version": "1.26.4",
+      "ecosystem": "PyPI",
+      "manifest_file": "requirements.txt",
+      "environment": "Source Code",
+      "cve_id": "CVE-2025-66471",
+      "osv_id": "PYSEC-2026-1994",
+      "title": "[CVE-2025-66471] Vulnerability in urllib3 (1.26.4)",
+      "summary": "urllib3 streaming API improperly handles highly compressed data",
+      "description": "### Impact\n\nurllib3's [streaming API](https://urllib3.readthedocs.io/en/2.5.0/advanced-usage.html#streaming-and-i-o) is designed for the efficient handling of large HTTP responses by reading the content in chunks, rather than loading the entire response body into memory at once.\n\nWhen streaming a compressed response, urllib3 can perform decoding or decompression based on the HTTP `Content-Encoding` header (e.g., `gzip`, `deflate`, `br`, or `zstd`). The library must read compressed data from the network and decompress it until the requested chunk size is met. Any resulting decompressed data that exceeds the requested amount is held in an internal buffer for the next read operation.\n\nThe decompression logic could cause urllib3 to fully decode a small amount of highly compressed data in a sin",
+      "severity": "HIGH",
+      "risk_score": 66,
+      "cvss_score": 7.5,
+      "cvss_vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:H",
+      "is_known_exploited": false,
+      "kev_details": null,
+      "correlation_state": "CONFIRMED_AFFECTED",
+      "status": "NEW",
+      "why_prioritized": "Prioritized because the affected component 'urllib3' version is confirmed in your environment, and the target is internet-facing in production.",
+      "affected_version_ranges": [
+        ">=1.0, <2.6.0"
+      ],
+      "fixed_versions": [
+        "2.6.0"
+      ],
+      "remediation": "Upgrade 'urllib3' from installed version 1.26.4 to 2.6.0.",
+      "ai_prompt": "Fix vulnerability CVE-2025-66471 in urllib3 by upgrading from version 1.26.4 to 2.6.0.",
+      "references": [
+        "https://github.com/urllib3/urllib3/security/advisories/GHSA-2xpw-w6gg-jr37",
+        "https://nvd.nist.gov/vuln/detail/CVE-2025-66471",
+        "https://github.com/urllib3/urllib3/commit/c19571de34c47de3a766541b041637ba5f716ed7",
+        "https://github.com/urllib3/urllib3",
+        "https://pypi.org/project/urllib3",
+        "https://github.com/advisories/GHSA-2xpw-w6gg-jr37"
+      ],
+      "source": "OSV / NVD / CISA KEV",
+      "first_detected": 1795013314.4011827,
+      "last_detected": 1795013314.4011827
+    },
+    "VULN-INTEL-772E3511": {
+      "id": "VULN-INTEL-772E3511",
+      "org_id": "org-default",
+      "project_id": "proj-8df621d6",
+      "asset_id": "asset-repo-proj-8df621d6",
+      "component_id": "comp-f3571daf95",
+      "package_name": "urllib3",
+      "installed_version": "1.26.4",
+      "ecosystem": "PyPI",
+      "manifest_file": "requirements.txt",
+      "environment": "Source Code",
+      "cve_id": "CVE-2024-37891",
+      "osv_id": "PYSEC-2026-1995",
+      "title": "[CVE-2024-37891] Vulnerability in urllib3 (1.26.4)",
+      "summary": "urllib3's Proxy-Authorization request header isn't stripped during cross-origin redirects",
+      "description": "When using urllib3's proxy support with `ProxyManager`, the `Proxy-Authorization` header is only sent to the configured proxy, as expected.\n\nHowever, when sending HTTP requests *without* using urllib3's proxy support, it's possible to accidentally configure the `Proxy-Authorization` header even though it won't have any effect as the request is not using a forwarding proxy or a tunneling proxy. In those cases, urllib3 doesn't treat the `Proxy-Authorization` HTTP header as one carrying authentication material and thus doesn't strip the header on cross-origin redirects.\n\nBecause this is a highly unlikely scenario, we believe the severity of this vulnerability is low for almost all users. Out of an abundance of caution urllib3 will automatically strip the `Proxy-Authorization` header during cr",
+      "severity": "HIGH",
+      "risk_score": 66,
+      "cvss_score": 7.5,
+      "cvss_vector": "CVSS:3.1/AV:N/AC:H/PR:H/UI:N/S:U/C:H/I:N/A:N",
+      "is_known_exploited": false,
+      "kev_details": null,
+      "correlation_state": "CONFIRMED_AFFECTED",
+      "status": "NEW",
+      "why_prioritized": "Prioritized because the affected component 'urllib3' version is confirmed in your environment, and the target is internet-facing in production.",
+      "affected_version_ranges": [
+        ">=2.0.0, <2.2.2"
+      ],
+      "fixed_versions": [
+        "1.26.19",
+        "2.2.2"
+      ],
+      "remediation": "Upgrade 'urllib3' from installed version 1.26.4 to 1.26.19, 2.2.2.",
+      "ai_prompt": "Fix vulnerability CVE-2024-37891 in urllib3 by upgrading from version 1.26.4 to 1.26.19, 2.2.2.",
+      "references": [
+        "https://github.com/urllib3/urllib3/security/advisories/GHSA-34jh-p97f-mpxf",
+        "https://nvd.nist.gov/vuln/detail/CVE-2024-37891",
+        "https://github.com/urllib3/urllib3/commit/40b6d1605814dd1db0a46e202d6e56f2e4c9a468",
+        "https://github.com/urllib3/urllib3/commit/accff72ecc2f6cf5a76d9570198a93ac7c90270e",
+        "https://github.com/urllib3/urllib3",
+        "https://lists.debian.org/debian-lts-announce/2024/12/msg00020.html"
+      ],
+      "source": "OSV / NVD / CISA KEV",
+      "first_detected": 1795013314.4011827,
+      "last_detected": 1795013314.4011827
+    },
+    "VULN-INTEL-C05D813A": {
+      "id": "VULN-INTEL-C05D813A",
+      "org_id": "org-default",
+      "project_id": "proj-8df621d6",
+      "asset_id": "asset-repo-proj-8df621d6",
+      "component_id": "comp-f3571daf95",
+      "package_name": "urllib3",
+      "installed_version": "1.26.4",
+      "ecosystem": "PyPI",
+      "manifest_file": "requirements.txt",
+      "environment": "Source Code",
+      "cve_id": "CVE-2026-21441",
+      "osv_id": "PYSEC-2026-1996",
+      "title": "[CVE-2026-21441] Vulnerability in urllib3 (1.26.4)",
+      "summary": "Decompression-bomb safeguards bypassed when following HTTP redirects (streaming API)",
+      "description": "### Impact\n\nurllib3's [streaming API](https://urllib3.readthedocs.io/en/2.6.2/advanced-usage.html#streaming-and-i-o) is designed for the efficient handling of large HTTP responses by reading the content in chunks, rather than loading the entire response body into memory at once.\n\nurllib3 can perform decoding or decompression based on the HTTP `Content-Encoding` header (e.g., `gzip`, `deflate`, `br`, or `zstd`). When using the streaming API, the library decompresses only the necessary bytes, enabling partial content consumption.\n\nHowever, for HTTP redirect responses, the library would read the entire response body to drain the connection and decompress the content unnecessarily. This decompression occurred even before any read methods were called, and configured read limits did not restrict",
+      "severity": "HIGH",
+      "risk_score": 66,
+      "cvss_score": 7.5,
+      "cvss_vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:H",
+      "is_known_exploited": false,
+      "kev_details": null,
+      "correlation_state": "CONFIRMED_AFFECTED",
+      "status": "NEW",
+      "why_prioritized": "Prioritized because the affected component 'urllib3' version is confirmed in your environment, and the target is internet-facing in production.",
+      "affected_version_ranges": [
+        ">=1.22, <2.6.3"
+      ],
+      "fixed_versions": [
+        "2.6.3"
+      ],
+      "remediation": "Upgrade 'urllib3' from installed version 1.26.4 to 2.6.3.",
+      "ai_prompt": "Fix vulnerability CVE-2026-21441 in urllib3 by upgrading from version 1.26.4 to 2.6.3.",
+      "references": [
+        "https://github.com/urllib3/urllib3/security/advisories/GHSA-38jv-5279-wg99",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-21441",
+        "https://github.com/urllib3/urllib3/commit/8864ac407bba8607950025e0979c4c69bc7abc7b",
+        "https://github.com/urllib3/urllib3",
+        "https://lists.debian.org/debian-lts-announce/2026/01/msg00017.html",
+        "https://pypi.org/project/urllib3"
+      ],
+      "source": "OSV / NVD / CISA KEV",
+      "first_detected": 1795013314.4011827,
+      "last_detected": 1795013314.4011827
+    },
+    "VULN-INTEL-E3E9E8E8": {
+      "id": "VULN-INTEL-E3E9E8E8",
+      "org_id": "org-default",
+      "project_id": "proj-8df621d6",
+      "asset_id": "asset-repo-proj-8df621d6",
+      "component_id": "comp-f3571daf95",
+      "package_name": "urllib3",
+      "installed_version": "1.26.4",
+      "ecosystem": "PyPI",
+      "manifest_file": "requirements.txt",
+      "environment": "Source Code",
+      "cve_id": "CVE-2026-97687",
+      "osv_id": "PYSEC-2026-4175",
+      "title": "[CVE-2026-97687] Vulnerability in urllib3 (1.26.4)",
+      "summary": "urllib3: HTTPS proxy TLS configuration may be ignored or overridden",
+      "description": "## Impact\n\nurllib3 supports configuring TLS independently for an HTTPS proxy and the target server.\n\n`proxy_ssl_context`, `proxy_assert_hostname`, and `proxy_assert_fingerprint` configure the TLS connection to the proxy. `ssl_context` and the other target-specific TLS parameters configure the connection to the target server.\n\nIn urllib3 versions 1.26.0 through 2.7.0, these configurations were not consistently separated. Depending on the proxy mode, urllib3 could:\n\n1. Ignore `proxy_ssl_context` and use the target server's SSL context for the TLS connection to an HTTPS forwarding proxy.\n2. Override the HTTPS proxy's certificate-verification policy with the target server's certificate-verification policy.\n3. Apply target-specific SNI, hostname assertions, certificate fingerprint assertions, o",
+      "severity": "HIGH",
+      "risk_score": 66,
+      "cvss_score": 7.5,
+      "cvss_vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:P/VC:H/VI:H/VA:N/SC:N/SI:N/SA:N",
+      "is_known_exploited": false,
+      "kev_details": null,
+      "correlation_state": "CONFIRMED_AFFECTED",
+      "status": "NEW",
+      "why_prioritized": "Prioritized because the affected component 'urllib3' version is confirmed in your environment, and the target is internet-facing in production.",
+      "affected_version_ranges": [
+        ">=1.26.0, <2.8.0"
+      ],
+      "fixed_versions": [
+        "2.8.0"
+      ],
+      "remediation": "Upgrade 'urllib3' from installed version 1.26.4 to 2.8.0.",
+      "ai_prompt": "Fix vulnerability CVE-2026-97687 in urllib3 by upgrading from version 1.26.4 to 2.8.0.",
+      "references": [
+        "https://github.com/urllib3/urllib3/security/advisories/GHSA-8988-9cw3-xx77",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-97687",
+        "https://github.com/urllib3/urllib3/pull/5093",
+        "https://github.com/urllib3/urllib3/commit/07408cec79d1856d81bb42c74a904a24fdb9e465",
+        "https://github.com/urllib3/urllib3/commit/b6447295fff7b38fdffc67e0df9712d60cef3cc3",
+        "https://github.com/urllib3/urllib3"
+      ],
+      "source": "OSV / NVD / CISA KEV",
+      "first_detected": 1795013314.4011827,
+      "last_detected": 1795013314.4011827
+    },
+    "VULN-INTEL-A8017938": {
+      "id": "VULN-INTEL-A8017938",
+      "org_id": "org-default",
+      "project_id": "proj-8df621d6",
+      "asset_id": "asset-repo-proj-8df621d6",
+      "component_id": "comp-f3571daf95",
+      "package_name": "urllib3",
+      "installed_version": "1.26.4",
+      "ecosystem": "PyPI",
+      "manifest_file": "requirements.txt",
+      "environment": "Source Code",
+      "cve_id": "CVE-2023-45803",
+      "osv_id": "PYSEC-2023-212",
+      "title": "[CVE-2023-45803] Vulnerability in urllib3 (1.26.4)",
+      "summary": "urllib3 is a user-friendly HTTP client library for Python. urllib3 previously wouldn't remove the HTTP request body when an HTTP redirect re",
+      "description": "urllib3 is a user-friendly HTTP client library for Python. urllib3 previously wouldn't remove the HTTP request body when an HTTP redirect response using status 301, 302, or 303 after the request had its method changed from one that could accept a request body (like `POST`) to `GET` as is required by HTTP RFCs. Although this behavior is not specified in the section for redirects, it can be inferred by piecing together information from different sections and we have observed the behavior in other major HTTP client implementations like curl and web browsers. Because the vulnerability requires a previously trusted service to become compromised in order to have an impact on confidentiality we believe the exploitability of this vulnerability is low. Additionally, many users aren't putting sensit",
+      "severity": "HIGH",
+      "risk_score": 66,
+      "cvss_score": 7.5,
+      "cvss_vector": "CVSS:3.1/AV:A/AC:H/PR:H/UI:N/S:U/C:H/I:N/A:N",
+      "is_known_exploited": false,
+      "kev_details": null,
+      "correlation_state": "CONFIRMED_AFFECTED",
+      "status": "NEW",
+      "why_prioritized": "Prioritized because the affected component 'urllib3' version is confirmed in your environment, and the target is internet-facing in production.",
+      "affected_version_ranges": [
+        ">=0, <4e98d57809dacab1cbe625fddeec1a290c478ea9",
+        ">=0, <1.26.18"
+      ],
+      "fixed_versions": [
+        "4e98d57809dacab1cbe625fddeec1a290c478ea9",
+        "2.0.7",
+        "1.26.18"
+      ],
+      "remediation": "Upgrade 'urllib3' from installed version 1.26.4 to 4e98d57809dacab1cbe625fddeec1a290c478ea9, 2.0.7, 1.26.18.",
+      "ai_prompt": "Fix vulnerability CVE-2023-45803 in urllib3 by upgrading from version 1.26.4 to 4e98d57809dacab1cbe625fddeec1a290c478ea9, 2.0.7, 1.26.18.",
+      "references": [
+        "https://github.com/urllib3/urllib3/security/advisories/GHSA-g4mx-q9vg-27p4",
+        "https://www.rfc-editor.org/rfc/rfc9110.html#name-get",
+        "https://github.com/urllib3/urllib3/commit/4e98d57809dacab1cbe625fddeec1a290c478ea9",
+        "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/PPDPLM6UUMN55ESPQWJFLLIZY4ZKCNRX/",
+        "https://osv.dev/vulnerability/PYSEC-2023-212",
+        "https://nvd.nist.gov/vuln/detail/CVE-2023-45803"
+      ],
+      "source": "OSV / NVD / CISA KEV",
+      "first_detected": 1795013314.4011827,
+      "last_detected": 1795013314.4011827
+    },
+    "VULN-INTEL-E4FB246F": {
+      "id": "VULN-INTEL-E4FB246F",
+      "org_id": "org-default",
+      "project_id": "proj-8df621d6",
+      "asset_id": "asset-repo-proj-8df621d6",
+      "component_id": "comp-f3571daf95",
+      "package_name": "urllib3",
+      "installed_version": "1.26.4",
+      "ecosystem": "PyPI",
+      "manifest_file": "requirements.txt",
+      "environment": "Source Code",
+      "cve_id": "CVE-2025-66418",
+      "osv_id": "PYSEC-2026-1998",
+      "title": "[CVE-2025-66418] Vulnerability in urllib3 (1.26.4)",
+      "summary": "urllib3 allows an unbounded number of links in the decompression chain",
+      "description": "## Impact\n\nurllib3 supports chained HTTP encoding algorithms for response content according to RFC 9110 (e.g., `Content-Encoding: gzip, zstd`).\n\nHowever, the number of links in the decompression chain was unbounded allowing a malicious server to insert a virtually unlimited number of compression steps leading to high CPU usage and massive memory allocation for the decompressed data.\n\n\n## Affected usages\n\nApplications and libraries using urllib3 version 2.5.0 and earlier for HTTP requests to untrusted sources unless they disable content decoding explicitly.\n\n\n## Remediation\n\nUpgrade to at least urllib3 v2.6.0 in which the library limits the number of links to 5.\n\nIf upgrading is not immediately possible, use [`preload_content=False`](https://urllib3.readthedocs.io/en/2.5.0/advanced-usage.ht",
+      "severity": "HIGH",
+      "risk_score": 66,
+      "cvss_score": 7.5,
+      "cvss_vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:H",
+      "is_known_exploited": false,
+      "kev_details": null,
+      "correlation_state": "CONFIRMED_AFFECTED",
+      "status": "NEW",
+      "why_prioritized": "Prioritized because the affected component 'urllib3' version is confirmed in your environment, and the target is internet-facing in production.",
+      "affected_version_ranges": [
+        ">=1.24, <2.6.0"
+      ],
+      "fixed_versions": [
+        "2.6.0"
+      ],
+      "remediation": "Upgrade 'urllib3' from installed version 1.26.4 to 2.6.0.",
+      "ai_prompt": "Fix vulnerability CVE-2025-66418 in urllib3 by upgrading from version 1.26.4 to 2.6.0.",
+      "references": [
+        "https://github.com/urllib3/urllib3/security/advisories/GHSA-gm62-xv2j-4w53",
+        "https://nvd.nist.gov/vuln/detail/CVE-2025-66418",
+        "https://github.com/urllib3/urllib3/commit/24d7b67eac89f94e11003424bcf0d8f7b72222a8",
+        "https://github.com/urllib3/urllib3",
+        "https://pypi.org/project/urllib3",
+        "https://github.com/advisories/GHSA-gm62-xv2j-4w53"
+      ],
+      "source": "OSV / NVD / CISA KEV",
+      "first_detected": 1795013314.4011827,
+      "last_detected": 1795013314.4011827
+    },
+    "VULN-INTEL-5D3C4AF3": {
+      "id": "VULN-INTEL-5D3C4AF3",
+      "org_id": "org-default",
+      "project_id": "proj-8df621d6",
+      "asset_id": "asset-repo-proj-8df621d6",
+      "component_id": "comp-f3571daf95",
+      "package_name": "urllib3",
+      "installed_version": "1.26.4",
+      "ecosystem": "PyPI",
+      "manifest_file": "requirements.txt",
+      "environment": "Source Code",
+      "cve_id": "CVE-2025-50181",
+      "osv_id": "PYSEC-2026-1999",
+      "title": "[CVE-2025-50181] Vulnerability in urllib3 (1.26.4)",
+      "summary": "urllib3 redirects are not disabled when retries are disabled on PoolManager instantiation",
+      "description": "urllib3 handles redirects and retries using the same mechanism, which is controlled by the `Retry` object. The most common way to disable redirects is at the request level, as follows:\n\n```python\nresp = urllib3.request(\"GET\", \"https://httpbin.org/redirect/1\", redirect=False)\nprint(resp.status)\n# 302\n```\n\nHowever, it is also possible to disable redirects, for all requests, by instantiating a `PoolManager` and specifying `retries` in a way that disable redirects:\n\n```python\nimport urllib3\n\nhttp = urllib3.PoolManager(retries=0)  # should raise MaxRetryError on redirect\nhttp = urllib3.PoolManager(retries=urllib3.Retry(redirect=0))  # equivalent to the above\nhttp = urllib3.PoolManager(retries=False)  # should return the first response\n\nresp = http.request(\"GET\", \"https://httpbin.org/redirect/1\"",
+      "severity": "HIGH",
+      "risk_score": 66,
+      "cvss_score": 7.5,
+      "cvss_vector": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:H/I:N/A:N",
+      "is_known_exploited": false,
+      "kev_details": null,
+      "correlation_state": "CONFIRMED_AFFECTED",
+      "status": "NEW",
+      "why_prioritized": "Prioritized because the affected component 'urllib3' version is confirmed in your environment, and the target is internet-facing in production.",
+      "affected_version_ranges": [
+        ">=0, <2.5.0"
+      ],
+      "fixed_versions": [
+        "2.5.0"
+      ],
+      "remediation": "Upgrade 'urllib3' from installed version 1.26.4 to 2.5.0.",
+      "ai_prompt": "Fix vulnerability CVE-2025-50181 in urllib3 by upgrading from version 1.26.4 to 2.5.0.",
+      "references": [
+        "https://github.com/urllib3/urllib3/security/advisories/GHSA-pq67-6m6q-mj2v",
+        "https://nvd.nist.gov/vuln/detail/CVE-2025-50181",
+        "https://github.com/urllib3/urllib3/commit/f05b1329126d5be6de501f9d1e3e36738bc08857",
+        "https://github.com/urllib3/urllib3",
+        "https://github.com/urllib3/urllib3/releases/tag/2.5.0",
+        "https://pypi.org/project/urllib3"
+      ],
+      "source": "OSV / NVD / CISA KEV",
+      "first_detected": 1795013314.4011827,
+      "last_detected": 1795013314.4011827
+    },
+    "VULN-INTEL-91303E9A": {
+      "id": "VULN-INTEL-91303E9A",
+      "org_id": "org-default",
+      "project_id": "proj-8df621d6",
+      "asset_id": "asset-repo-proj-8df621d6",
+      "component_id": "comp-f3571daf95",
+      "package_name": "urllib3",
+      "installed_version": "1.26.4",
+      "ecosystem": "PyPI",
+      "manifest_file": "requirements.txt",
+      "environment": "Source Code",
+      "cve_id": "CVE-2021-33503",
+      "osv_id": "PYSEC-2021-108",
+      "title": "[CVE-2021-33503] Vulnerability in urllib3 (1.26.4)",
+      "summary": "An issue was discovered in urllib3 before 1.26.5. When provided with a URL containing many @ characters in the authority component, the auth",
+      "description": "An issue was discovered in urllib3 before 1.26.5. When provided with a URL containing many @ characters in the authority component, the authority regular expression exhibits catastrophic backtracking, causing a denial of service if a URL were passed as a parameter or redirected to via an HTTP redirect.",
+      "severity": "HIGH",
+      "risk_score": 66,
+      "cvss_score": 7.5,
+      "cvss_vector": null,
+      "is_known_exploited": false,
+      "kev_details": null,
+      "correlation_state": "CONFIRMED_AFFECTED",
+      "status": "NEW",
+      "why_prioritized": "Prioritized because the affected component 'urllib3' version is confirmed in your environment, and the target is internet-facing in production.",
+      "affected_version_ranges": [
+        ">=5b047b645f5f93900d5e2fc31230848c25eb1f5f, <2d4a3fee6de2fa45eb82169361918f759269b4ec",
+        ">=1.25.4, <1.26.5"
+      ],
+      "fixed_versions": [
+        "2d4a3fee6de2fa45eb82169361918f759269b4ec",
+        "1.26.5"
+      ],
+      "remediation": "Upgrade 'urllib3' from installed version 1.26.4 to 2d4a3fee6de2fa45eb82169361918f759269b4ec, 1.26.5.",
+      "ai_prompt": "Fix vulnerability CVE-2021-33503 in urllib3 by upgrading from version 1.26.4 to 2d4a3fee6de2fa45eb82169361918f759269b4ec, 1.26.5.",
+      "references": [
+        "https://github.com/advisories/GHSA-q2q7-5pp4-w6pg",
+        "https://github.com/urllib3/urllib3/commit/2d4a3fee6de2fa45eb82169361918f759269b4ec",
+        "https://osv.dev/vulnerability/PYSEC-2021-108",
+        "https://nvd.nist.gov/vuln/detail/CVE-2021-33503"
+      ],
+      "source": "OSV / NVD / CISA KEV",
+      "first_detected": 1795013314.4011827,
+      "last_detected": 1795013314.4011827
+    },
+    "VULN-INTEL-FA8048EF": {
+      "id": "VULN-INTEL-FA8048EF",
+      "org_id": "org-default",
+      "project_id": "proj-8df621d6",
+      "asset_id": "asset-repo-proj-8df621d6",
+      "component_id": "comp-f3571daf95",
+      "package_name": "urllib3",
+      "installed_version": "1.26.4",
+      "ecosystem": "PyPI",
+      "manifest_file": "requirements.txt",
+      "environment": "Source Code",
+      "cve_id": "CVE-2026-44431",
+      "osv_id": "PYSEC-2026-141",
+      "title": "[CVE-2026-44431] Vulnerability in urllib3 (1.26.4)",
+      "summary": "urllib3 is an HTTP client library for Python. From 1.23 to before 2.7.0, cross-origin redirects followed from the low-level API via ProxyMan",
+      "description": "urllib3 is an HTTP client library for Python. From 1.23 to before 2.7.0, cross-origin redirects followed from the low-level API via ProxyManager.connection_from_url().urlopen(..., assert_same_host=False) still forward these sensitive headers. This vulnerability is fixed in 2.7.0.",
+      "severity": "HIGH",
+      "risk_score": 66,
+      "cvss_score": 7.5,
+      "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+      "is_known_exploited": false,
+      "kev_details": null,
+      "correlation_state": "CONFIRMED_AFFECTED",
+      "status": "NEW",
+      "why_prioritized": "Prioritized because the affected component 'urllib3' version is confirmed in your environment, and the target is internet-facing in production.",
+      "affected_version_ranges": [
+        ">=1.23, <2.7.0"
+      ],
+      "fixed_versions": [
+        "2.7.0"
+      ],
+      "remediation": "Upgrade 'urllib3' from installed version 1.26.4 to 2.7.0.",
+      "ai_prompt": "Fix vulnerability CVE-2026-44431 in urllib3 by upgrading from version 1.26.4 to 2.7.0.",
+      "references": [
+        "https://github.com/urllib3/urllib3/security/advisories/GHSA-qccp-gfcp-xxvc",
+        "https://osv.dev/vulnerability/PYSEC-2026-141",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-44431"
+      ],
+      "source": "OSV / NVD / CISA KEV",
+      "first_detected": 1795013314.4011827,
+      "last_detected": 1795013314.4011827
+    },
+    "VULN-INTEL-A6C3E55C": {
+      "id": "VULN-INTEL-A6C3E55C",
+      "org_id": "org-default",
+      "project_id": "proj-8df621d6",
+      "asset_id": "asset-repo-proj-8df621d6",
+      "component_id": "comp-f3571daf95",
+      "package_name": "urllib3",
+      "installed_version": "1.26.4",
+      "ecosystem": "PyPI",
+      "manifest_file": "requirements.txt",
+      "environment": "Source Code",
+      "cve_id": "CVE-2023-43804",
+      "osv_id": "PYSEC-2023-192",
+      "title": "[CVE-2023-43804] Vulnerability in urllib3 (1.26.4)",
+      "summary": "urllib3 is a user-friendly HTTP client library for Python. urllib3 doesn't treat the `Cookie` HTTP header special or provide any helpers for",
+      "description": "urllib3 is a user-friendly HTTP client library for Python. urllib3 doesn't treat the `Cookie` HTTP header special or provide any helpers for managing cookies over HTTP, that is the responsibility of the user. However, it is possible for a user to specify a `Cookie` header and unknowingly leak information via HTTP redirects to a different origin if that user doesn't disable redirects explicitly. This issue has been patched in urllib3 version 1.26.17 or 2.0.5.",
+      "severity": "HIGH",
+      "risk_score": 66,
+      "cvss_score": 7.5,
+      "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:N",
+      "is_known_exploited": false,
+      "kev_details": null,
+      "correlation_state": "CONFIRMED_AFFECTED",
+      "status": "NEW",
+      "why_prioritized": "Prioritized because the affected component 'urllib3' version is confirmed in your environment, and the target is internet-facing in production.",
+      "affected_version_ranges": [
+        ">=0, <01220354d389cd05474713f8c982d05c9b17aafb",
+        ">=0, <1.26.17"
+      ],
+      "fixed_versions": [
+        "644124ecd0b6e417c527191f866daa05a5a2056d",
+        "01220354d389cd05474713f8c982d05c9b17aafb",
+        "2.0.6",
+        "1.26.17"
+      ],
+      "remediation": "Upgrade 'urllib3' from installed version 1.26.4 to 644124ecd0b6e417c527191f866daa05a5a2056d, 01220354d389cd05474713f8c982d05c9b17aafb, 2.0.6, 1.26.17.",
+      "ai_prompt": "Fix vulnerability CVE-2023-43804 in urllib3 by upgrading from version 1.26.4 to 644124ecd0b6e417c527191f866daa05a5a2056d, 01220354d389cd05474713f8c982d05c9b17aafb, 2.0.6, 1.26.17.",
+      "references": [
+        "https://github.com/urllib3/urllib3/commit/644124ecd0b6e417c527191f866daa05a5a2056d",
+        "https://github.com/urllib3/urllib3/security/advisories/GHSA-v845-jxx5-vc9f",
+        "https://github.com/urllib3/urllib3/commit/01220354d389cd05474713f8c982d05c9b17aafb",
+        "https://lists.debian.org/debian-lts-announce/2023/10/msg00012.html",
+        "https://osv.dev/vulnerability/PYSEC-2023-192",
+        "https://nvd.nist.gov/vuln/detail/CVE-2023-43804"
+      ],
+      "source": "OSV / NVD / CISA KEV",
+      "first_detected": 1795013314.4011827,
+      "last_detected": 1795013314.4011827
+    },
+    "VULN-INTEL-C8088B6A": {
+      "id": "VULN-INTEL-C8088B6A",
+      "org_id": "org-default",
+      "project_id": "proj-8df621d6",
+      "asset_id": "asset-repo-proj-8df621d6",
+      "component_id": "comp-f3571daf95",
+      "package_name": "urllib3",
+      "installed_version": "1.26.4",
+      "ecosystem": "PyPI",
+      "manifest_file": "requirements.txt",
+      "environment": "Source Code",
+      "cve_id": "CVE-2026-97689",
+      "osv_id": "PYSEC-2026-4177",
+      "title": "[CVE-2026-97689] Vulnerability in urllib3 (1.26.4)",
+      "summary": "urllib3: HTTPResponse.stream()/read_chunked() buffers an unbounded chunk-size line into memory",
+      "description": "## Impact\n\nurllib3's [streaming API](https://urllib3.readthedocs.io/en/2.7.0/advanced-usage.html#streaming-and-i-o) is designed for efficiently handling large HTTP responses by reading the content in chunks, rather than loading the entire response body into memory at once. When decoding a [chunked-transfer-encoded response](https://httpwg.org/specs/rfc9112.html#chunked.encoding), this API reads each chunk's size field by buffering until it sees `\\n` or EOF.\n\nA malicious HTTP server can return `Transfer-Encoding: chunked` and then send a very long run of bytes without any newline, causing the streaming client to buffer that entire run before urllib3 can reject the chunk size as invalid and allocate more memory than intended.\n\nTo fix the issue, we'll reject chunk-size fields larger than 6553",
+      "severity": "HIGH",
+      "risk_score": 66,
+      "cvss_score": 7.5,
+      "cvss_vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:H",
+      "is_known_exploited": false,
+      "kev_details": null,
+      "correlation_state": "CONFIRMED_AFFECTED",
+      "status": "NEW",
+      "why_prioritized": "Prioritized because the affected component 'urllib3' version is confirmed in your environment, and the target is internet-facing in production.",
+      "affected_version_ranges": [
+        ">=1.10.3, <2.8.0"
+      ],
+      "fixed_versions": [
+        "2.8.0"
+      ],
+      "remediation": "Upgrade 'urllib3' from installed version 1.26.4 to 2.8.0.",
+      "ai_prompt": "Fix vulnerability CVE-2026-97689 in urllib3 by upgrading from version 1.26.4 to 2.8.0.",
+      "references": [
+        "https://github.com/urllib3/urllib3/security/advisories/GHSA-vxq7-64xx-v4gw",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-97689",
+        "https://github.com/urllib3/urllib3/commit/cd770b059b543be29298ea5c52afb0b1b090f5ed",
+        "https://github.com/urllib3/urllib3",
+        "https://github.com/urllib3/urllib3/releases/tag/2.8.0",
+        "https://pypi.org/project/urllib3"
+      ],
+      "source": "OSV / NVD / CISA KEV",
+      "first_detected": 1795013314.4011827,
+      "last_detected": 1795013314.4011827
+    },
+    "VULN-INTEL-7910B9AB": {
+      "id": "VULN-INTEL-7910B9AB",
+      "org_id": "org-default",
+      "project_id": "proj-8df621d6",
+      "asset_id": "asset-repo-proj-8df621d6",
+      "component_id": "comp-6388b97749",
+      "package_name": "requests",
+      "installed_version": "2.25.1",
+      "ecosystem": "PyPI",
+      "manifest_file": "requirements.txt",
+      "environment": "Source Code",
+      "cve_id": "CVE-2024-47081",
+      "osv_id": "PYSEC-2026-1872",
+      "title": "[CVE-2024-47081] Vulnerability in requests (2.25.1)",
+      "summary": "Requests vulnerable to .netrc credentials leak via malicious URLs",
+      "description": "### Impact\n\nDue to a URL parsing issue, Requests releases prior to 2.32.4 may leak .netrc credentials to third parties for specific maliciously-crafted URLs.\n\n### Workarounds\nFor older versions of Requests, use of the .netrc file can be disabled with `trust_env=False` on your Requests Session ([docs](https://requests.readthedocs.io/en/latest/api/#requests.Session.trust_env)).\n\n### References\nhttps://github.com/psf/requests/pull/6965\nhttps://seclists.org/fulldisclosure/2025/Jun/2",
+      "severity": "HIGH",
+      "risk_score": 66,
+      "cvss_score": 7.5,
+      "cvss_vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:N/A:N",
+      "is_known_exploited": false,
+      "kev_details": null,
+      "correlation_state": "CONFIRMED_AFFECTED",
+      "status": "NEW",
+      "why_prioritized": "Prioritized because the affected component 'requests' version is confirmed in your environment, and the target is internet-facing in production.",
+      "affected_version_ranges": [
+        ">=0, <2.32.4"
+      ],
+      "fixed_versions": [
+        "2.32.4"
+      ],
+      "remediation": "Upgrade 'requests' from installed version 2.25.1 to 2.32.4.",
+      "ai_prompt": "Fix vulnerability CVE-2024-47081 in requests by upgrading from version 2.25.1 to 2.32.4.",
+      "references": [
+        "https://github.com/psf/requests/security/advisories/GHSA-9hjg-9r4m-mvj7",
+        "https://nvd.nist.gov/vuln/detail/CVE-2024-47081",
+        "https://github.com/psf/requests/pull/6965",
+        "https://github.com/psf/requests/commit/96ba401c1296ab1dda74a2365ef36d88f7d144ef",
+        "https://github.com/psf/requests",
+        "https://requests.readthedocs.io/en/latest/api/#requests.Session.trust_env"
+      ],
+      "source": "OSV / NVD / CISA KEV",
+      "first_detected": 1795013315.6293569,
+      "last_detected": 1795013315.6293569
+    },
+    "VULN-INTEL-D5002D40": {
+      "id": "VULN-INTEL-D5002D40",
+      "org_id": "org-default",
+      "project_id": "proj-8df621d6",
+      "asset_id": "asset-repo-proj-8df621d6",
+      "component_id": "comp-6388b97749",
+      "package_name": "requests",
+      "installed_version": "2.25.1",
+      "ecosystem": "PyPI",
+      "manifest_file": "requirements.txt",
+      "environment": "Source Code",
+      "cve_id": "CVE-2024-35195",
+      "osv_id": "PYSEC-2026-1873",
+      "title": "[CVE-2024-35195] Vulnerability in requests (2.25.1)",
+      "summary": "Requests `Session` object does not verify requests after making first request with verify=False",
+      "description": "When using a `requests.Session`, if the first request to a given origin is made with `verify=False`, TLS certificate verification may remain disabled for all subsequent requests to that origin, even if `verify=True` is explicitly specified later.\n\nThis occurs because the underlying connection is reused from the session's connection pool, causing the initial TLS verification setting to persist for the lifetime of the pooled connection. As a result, applications may unintentionally send requests without certificate verification, leading to potential man-in-the-middle attacks and compromised confidentiality or integrity.\n\nThis behavior affects versions of `requests` prior to 2.32.0.",
+      "severity": "HIGH",
+      "risk_score": 66,
+      "cvss_score": 7.5,
+      "cvss_vector": "CVSS:3.1/AV:L/AC:H/PR:H/UI:R/S:U/C:H/I:H/A:N",
+      "is_known_exploited": false,
+      "kev_details": null,
+      "correlation_state": "CONFIRMED_AFFECTED",
+      "status": "NEW",
+      "why_prioritized": "Prioritized because the affected component 'requests' version is confirmed in your environment, and the target is internet-facing in production.",
+      "affected_version_ranges": [
+        ">=0, <2.32.0"
+      ],
+      "fixed_versions": [
+        "2.32.0"
+      ],
+      "remediation": "Upgrade 'requests' from installed version 2.25.1 to 2.32.0.",
+      "ai_prompt": "Fix vulnerability CVE-2024-35195 in requests by upgrading from version 2.25.1 to 2.32.0.",
+      "references": [
+        "https://github.com/psf/requests/security/advisories/GHSA-9wx4-h78v-vm56",
+        "https://nvd.nist.gov/vuln/detail/CVE-2024-35195",
+        "https://github.com/psf/requests/pull/6655",
+        "https://github.com/psf/requests/commit/a58d7f2ffb4d00b46dca2d70a3932a0b37e22fac",
+        "https://github.com/psf/requests",
+        "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/IYLSNK5TL46Q6XPRVMHVWS63MVJQOK4Q"
+      ],
+      "source": "OSV / NVD / CISA KEV",
+      "first_detected": 1795013315.6293569,
+      "last_detected": 1795013315.6293569
+    },
+    "VULN-INTEL-7158B14A": {
+      "id": "VULN-INTEL-7158B14A",
+      "org_id": "org-default",
+      "project_id": "proj-8df621d6",
+      "asset_id": "asset-repo-proj-8df621d6",
+      "component_id": "comp-6388b97749",
+      "package_name": "requests",
+      "installed_version": "2.25.1",
+      "ecosystem": "PyPI",
+      "manifest_file": "requirements.txt",
+      "environment": "Source Code",
+      "cve_id": "CVE-2026-25645",
+      "osv_id": "PYSEC-2026-2275",
+      "title": "[CVE-2026-25645] Vulnerability in requests (2.25.1)",
+      "summary": "Requests is a HTTP library. Prior to version 2.33.0, the `requests.utils.extract_zipped_paths()` utility function uses a predictable filenam",
+      "description": "Requests is a HTTP library. Prior to version 2.33.0, the `requests.utils.extract_zipped_paths()` utility function uses a predictable filename when extracting files from zip archives into the system temporary directory. If the target file already exists, it is reused without validation. A local attacker with write access to the temp directory could pre-create a malicious file that would be loaded in place of the legitimate one. Standard usage of the Requests library is not affected by this vulnerability. Only applications that call `extract_zipped_paths()` directly are impacted. Starting in version 2.33.0, the library extracts files to a non-deterministic location. If developers are unable to upgrade, they can set `TMPDIR` in their environment to a directory with restricted write access.",
+      "severity": "HIGH",
+      "risk_score": 66,
+      "cvss_score": 7.5,
+      "cvss_vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:H/A:N",
+      "is_known_exploited": false,
+      "kev_details": null,
+      "correlation_state": "CONFIRMED_AFFECTED",
+      "status": "NEW",
+      "why_prioritized": "Prioritized because the affected component 'requests' version is confirmed in your environment, and the target is internet-facing in production.",
+      "affected_version_ranges": [
+        ">=0, <2.33.0"
+      ],
+      "fixed_versions": [
+        "2.33.0"
+      ],
+      "remediation": "Upgrade 'requests' from installed version 2.25.1 to 2.33.0.",
+      "ai_prompt": "Fix vulnerability CVE-2026-25645 in requests by upgrading from version 2.25.1 to 2.33.0.",
+      "references": [
+        "https://github.com/psf/requests/releases/tag/v2.33.0",
+        "https://github.com/psf/requests/security/advisories/GHSA-gc5v-m9x4-r6x2",
+        "https://github.com/psf/requests/commit/66d21cb07bd6255b1280291c4fafb71803cdb3b7",
+        "https://osv.dev/vulnerability/PYSEC-2026-2275",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-25645"
+      ],
+      "source": "OSV / NVD / CISA KEV",
+      "first_detected": 1795013315.6293569,
+      "last_detected": 1795013315.6293569
+    },
+    "VULN-INTEL-71267F52": {
+      "id": "VULN-INTEL-71267F52",
+      "org_id": "org-default",
+      "project_id": "proj-8df621d6",
+      "asset_id": "asset-repo-proj-8df621d6",
+      "component_id": "comp-6388b97749",
+      "package_name": "requests",
+      "installed_version": "2.25.1",
+      "ecosystem": "PyPI",
+      "manifest_file": "requirements.txt",
+      "environment": "Source Code",
+      "cve_id": "CVE-2023-32681",
+      "osv_id": "PYSEC-2023-74",
+      "title": "[CVE-2023-32681] Vulnerability in requests (2.25.1)",
+      "summary": "Requests is a HTTP library. Since Requests 2.3.0, Requests has been leaking Proxy-Authorization headers to destination servers when redirect",
+      "description": "Requests is a HTTP library. Since Requests 2.3.0, Requests has been leaking Proxy-Authorization headers to destination servers when redirected to an HTTPS endpoint. This is a product of how we use `rebuild_proxies` to reattach the `Proxy-Authorization` header to requests. For HTTP connections sent through the tunnel, the proxy will identify the header in the request itself and remove it prior to forwarding to the destination server. However when sent over HTTPS, the `Proxy-Authorization` header must be sent in the CONNECT request as the proxy has no visibility into the tunneled request. This results in Requests forwarding proxy credentials to the destination server unintentionally, allowing a malicious actor to potentially exfiltrate sensitive information. This issue has been patched in ve",
+      "severity": "HIGH",
+      "risk_score": 66,
+      "cvss_score": 7.5,
+      "cvss_vector": null,
+      "is_known_exploited": false,
+      "kev_details": null,
+      "correlation_state": "CONFIRMED_AFFECTED",
+      "status": "NEW",
+      "why_prioritized": "Prioritized because the affected component 'requests' version is confirmed in your environment, and the target is internet-facing in production.",
+      "affected_version_ranges": [
+        ">=0, <74ea7cf7a6a27a4eeb2ae24e162bcc942a6706d5",
+        ">=2.3.0, <2.31.0"
+      ],
+      "fixed_versions": [
+        "74ea7cf7a6a27a4eeb2ae24e162bcc942a6706d5",
+        "2.31.0"
+      ],
+      "remediation": "Upgrade 'requests' from installed version 2.25.1 to 74ea7cf7a6a27a4eeb2ae24e162bcc942a6706d5, 2.31.0.",
+      "ai_prompt": "Fix vulnerability CVE-2023-32681 in requests by upgrading from version 2.25.1 to 74ea7cf7a6a27a4eeb2ae24e162bcc942a6706d5, 2.31.0.",
+      "references": [
+        "https://github.com/psf/requests/security/advisories/GHSA-j8r2-6x86-q33q",
+        "https://github.com/psf/requests/releases/tag/v2.31.0",
+        "https://github.com/psf/requests/commit/74ea7cf7a6a27a4eeb2ae24e162bcc942a6706d5",
+        "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/AW7HNFGYP44RT3DUDQXG2QT3OEV2PJ7Y/",
+        "https://osv.dev/vulnerability/PYSEC-2023-74",
+        "https://nvd.nist.gov/vuln/detail/CVE-2023-32681"
+      ],
+      "source": "OSV / NVD / CISA KEV",
+      "first_detected": 1795013315.6293569,
+      "last_detected": 1795013315.6293569
     }
   }
 }

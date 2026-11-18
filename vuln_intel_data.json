@@ -22,13 +22,13 @@
     },
     "cisa_kev": {
       "name": "CISA KEV Catalog",
-      "status": "Healthy",
-      "last_successful_sync": "2026-11-18T05:45:48.524992+00:00",
-      "last_attempted_sync": "2026-11-18T05:45:48.524992+00:00",
+      "status": "Degraded",
+      "last_successful_sync": "2026-11-18T14:30:37.972461+00:00",
+      "last_attempted_sync": "2026-11-18T14:47:37.384283+00:00",
       "records_count": 0,
       "records_created": 0,
       "records_updated": 0,
-      "errors": null
+      "errors": "Failed to sync CISA KEV: HTTPSConnectionPool(host='www.cisa.gov', port=443): Max retries exceeded with url: /sites/default/files/feeds/known_exploited_vulnerabilities.json (Caused by NameResolutionError(\"HTTPSConnection(host='www.cisa.gov', port=443): Failed to resolve 'www.cisa.gov' ([Errno 11001] getaddrinfo failed)\"))"
     }
   },
   "vulnerabilities": {
@@ -77,7 +77,7 @@
         }
       },
       "created_at": "2026-08-29T08:39:38.347460+00:00",
-      "updated_at": "2026-11-18T11:47:06.553000+00:00",
+      "updated_at": "2026-11-18T13:47:49.967641+00:00",
       "cvss_vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:H/A:H",
       "published_at": "2020-07-15T19:15:48Z",
       "modified_at": "2025-08-12T21:56:17.174859Z",
@@ -130,17 +130,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-qw6h-vgh9-j6wx",
         "database_specific": {
+          "nvd_published_at": "2024-09-10T15:15:17Z",
           "cwe_ids": [
             "CWE-79"
           ],
           "severity": "LOW",
           "github_reviewed": true,
-          "github_reviewed_at": "2024-09-10T19:41:04Z",
-          "nvd_published_at": "2024-09-10T15:15:17Z"
+          "github_reviewed_at": "2024-09-10T19:41:04Z"
         }
       },
       "created_at": "2026-08-29T08:41:28.344325+00:00",
-      "updated_at": "2026-11-18T11:51:19.235604+00:00"
+      "updated_at": "2026-11-18T14:54:22.263979+00:00"
     },
     "VULN-CVE-2024-29041": {
       "id": "VULN-CVE-2024-29041",
@@ -191,7 +191,7 @@
         }
       },
       "created_at": "2026-08-29T08:41:28.345776+00:00",
-      "updated_at": "2026-11-18T11:51:19.270215+00:00"
+      "updated_at": "2026-11-18T14:54:22.276975+00:00"
     },
     "VULN-CVE-2025-66471": {
       "id": "VULN-CVE-2025-66471",
@@ -231,7 +231,7 @@
         "database_specific": {}
       },
       "created_at": "2026-08-29T08:45:07.641506+00:00",
-      "updated_at": "2026-11-18T11:51:21.101993+00:00"
+      "updated_at": "2026-11-18T14:51:15.189541+00:00"
     },
     "VULN-CVE-2024-37891": {
       "id": "VULN-CVE-2024-37891",
@@ -272,7 +272,7 @@
         "database_specific": {}
       },
       "created_at": "2026-08-29T08:45:07.646397+00:00",
-      "updated_at": "2026-11-18T11:51:21.130906+00:00"
+      "updated_at": "2026-11-18T14:51:15.204798+00:00"
     },
     "VULN-CVE-2026-21441": {
       "id": "VULN-CVE-2026-21441",
@@ -312,7 +312,7 @@
         "database_specific": {}
       },
       "created_at": "2026-08-29T08:45:07.651583+00:00",
-      "updated_at": "2026-11-18T11:51:21.167090+00:00"
+      "updated_at": "2026-11-18T14:51:15.218184+00:00"
     },
     "VULN-CVE-2023-45803": {
       "id": "VULN-CVE-2023-45803",
@@ -355,7 +355,7 @@
         "database_specific": {}
       },
       "created_at": "2026-08-29T08:45:07.655733+00:00",
-      "updated_at": "2026-11-18T11:51:21.043553+00:00"
+      "updated_at": "2026-11-18T14:51:15.160188+00:00"
     },
     "VULN-CVE-2025-66418": {
       "id": "VULN-CVE-2025-66418",
@@ -395,7 +395,7 @@
         "database_specific": {}
       },
       "created_at": "2026-08-29T08:45:07.663155+00:00",
-      "updated_at": "2026-11-18T11:51:21.193254+00:00"
+      "updated_at": "2026-11-18T14:51:15.231029+00:00"
     },
     "VULN-CVE-2025-50181": {
       "id": "VULN-CVE-2025-50181",
@@ -435,7 +435,7 @@
         "database_specific": {}
       },
       "created_at": "2026-08-29T08:45:07.669367+00:00",
-      "updated_at": "2026-11-18T11:51:21.232703+00:00"
+      "updated_at": "2026-11-18T14:51:15.244026+00:00"
     },
     "VULN-CVE-2021-33503": {
       "id": "VULN-CVE-2021-33503",
@@ -475,7 +475,7 @@
         "database_specific": {}
       },
       "created_at": "2026-08-29T08:45:07.673708+00:00",
-      "updated_at": "2026-11-18T11:51:20.987033+00:00"
+      "updated_at": "2026-11-18T14:51:15.131532+00:00"
     },
     "VULN-CVE-2026-44431": {
       "id": "VULN-CVE-2026-44431",
@@ -512,7 +512,7 @@
         "database_specific": {}
       },
       "created_at": "2026-08-29T08:45:07.679190+00:00",
-      "updated_at": "2026-11-18T11:51:21.073296+00:00"
+      "updated_at": "2026-11-18T14:51:15.174159+00:00"
     },
     "VULN-CVE-2023-43804": {
       "id": "VULN-CVE-2023-43804",
@@ -556,7 +556,7 @@
         "database_specific": {}
       },
       "created_at": "2026-08-29T08:45:07.683777+00:00",
-      "updated_at": "2026-11-18T11:51:21.012826+00:00"
+      "updated_at": "2026-11-18T14:51:15.143784+00:00"
     },
     "VULN-CVE-2024-47081": {
       "id": "VULN-CVE-2024-47081",
@@ -596,7 +596,7 @@
         "database_specific": {}
       },
       "created_at": "2026-08-29T08:45:08.764411+00:00",
-      "updated_at": "2026-11-18T11:51:22.828162+00:00"
+      "updated_at": "2026-11-18T14:51:16.387274+00:00"
     },
     "VULN-CVE-2024-35195": {
       "id": "VULN-CVE-2024-35195",
@@ -636,7 +636,7 @@
         "database_specific": {}
       },
       "created_at": "2026-08-29T08:45:08.770166+00:00",
-      "updated_at": "2026-11-18T11:51:22.852859+00:00"
+      "updated_at": "2026-11-18T14:51:16.402599+00:00"
     },
     "VULN-CVE-2026-25645": {
       "id": "VULN-CVE-2026-25645",
@@ -675,7 +675,7 @@
         "database_specific": {}
       },
       "created_at": "2026-08-29T08:45:08.775107+00:00",
-      "updated_at": "2026-11-18T11:51:22.869023+00:00"
+      "updated_at": "2026-11-18T14:51:16.419798+00:00"
     },
     "VULN-CVE-2023-32681": {
       "id": "VULN-CVE-2023-32681",
@@ -717,7 +717,7 @@
         "database_specific": {}
       },
       "created_at": "2026-08-29T08:45:08.779587+00:00",
-      "updated_at": "2026-11-18T11:51:22.815100+00:00"
+      "updated_at": "2026-11-18T14:51:16.373391+00:00"
     },
     "VULN-CVE-2020-28500": {
       "id": "VULN-CVE-2020-28500",
@@ -771,7 +771,7 @@
         }
       },
       "created_at": "2026-08-29T11:54:31.179396+00:00",
-      "updated_at": "2026-11-18T11:47:06.500239+00:00"
+      "updated_at": "2026-11-18T13:47:49.936975+00:00"
     },
     "VULN-CVE-2021-23337": {
       "id": "VULN-CVE-2021-23337",
@@ -814,18 +814,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-35jh-r3h4-6jhm",
         "database_specific": {
+          "github_reviewed_at": "2021-03-31T23:59:26Z",
+          "nvd_published_at": "2021-02-15T13:15:00Z",
           "cwe_ids": [
             "CWE-77",
             "CWE-94"
           ],
           "severity": "HIGH",
-          "github_reviewed": true,
-          "github_reviewed_at": "2021-03-31T23:59:26Z",
-          "nvd_published_at": "2021-02-15T13:15:00Z"
+          "github_reviewed": true
         }
       },
       "created_at": "2026-08-29T11:54:31.183380+00:00",
-      "updated_at": "2026-11-18T11:47:06.522640+00:00"
+      "updated_at": "2026-11-18T13:47:49.955997+00:00"
     },
     "VULN-CVE-2025-13465": {
       "id": "VULN-CVE-2025-13465",
@@ -879,7 +879,7 @@
         }
       },
       "created_at": "2026-08-29T11:54:31.188275+00:00",
-      "updated_at": "2026-11-18T12:02:36.365696+00:00"
+      "updated_at": "2026-11-18T14:01:06.889179+00:00"
     },
     "VULN-GO-2026-5932": {
       "id": "VULN-GO-2026-5932",
@@ -912,7 +912,7 @@
         "https://go.dev/issue/81227",
         "https://osv.dev/vulnerability/GO-2026-5932"
       ],
-      "installed_version": "0.57.0",
+      "installed_version": "0.55.0",
       "raw_source_metadata": {
         "osv_id": "GO-2026-5932",
         "database_specific": {
@@ -921,7 +921,7 @@
         }
       },
       "created_at": "2026-08-31T10:10:20.381585+00:00",
-      "updated_at": "2026-11-18T12:07:46.575101+00:00"
+      "updated_at": "2026-11-18T14:51:35.804083+00:00"
     },
     "VULN-CVE-2026-25536": {
       "id": "VULN-CVE-2026-25536",
@@ -959,17 +959,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-345p-7cg4-v4c7",
         "database_specific": {
-          "severity": "HIGH",
-          "github_reviewed": true,
           "github_reviewed_at": "2026-02-04T20:04:16Z",
           "nvd_published_at": "2026-02-04T22:15:59Z",
           "cwe_ids": [
             "CWE-362"
-          ]
+          ],
+          "severity": "HIGH",
+          "github_reviewed": true
         }
       },
       "created_at": "2026-09-01T11:48:56.942039+00:00",
-      "updated_at": "2026-11-18T11:53:30.944529+00:00"
+      "updated_at": "2026-11-18T14:53:08.318111+00:00"
     },
     "VULN-CVE-2026-0621": {
       "id": "VULN-CVE-2026-0621",
@@ -1007,17 +1007,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-8r9q-7v3j-jr4g",
         "database_specific": {
+          "cwe_ids": [
+            "CWE-1333"
+          ],
           "severity": "HIGH",
           "github_reviewed": true,
           "github_reviewed_at": "2026-01-06T21:20:37Z",
-          "nvd_published_at": "2026-01-05T21:16:14Z",
-          "cwe_ids": [
-            "CWE-1333"
-          ]
+          "nvd_published_at": "2026-01-05T21:16:14Z"
         }
       },
       "created_at": "2026-09-01T11:48:56.945322+00:00",
-      "updated_at": "2026-11-18T11:53:31.026340+00:00"
+      "updated_at": "2026-11-18T14:53:08.367452+00:00"
     },
     "VULN-CVE-2026-31808": {
       "id": "VULN-CVE-2026-31808",
@@ -1054,17 +1054,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-5v7r-6r5c-r473",
         "database_specific": {
-          "cwe_ids": [
-            "CWE-835"
-          ],
           "severity": "MODERATE",
           "github_reviewed": true,
           "github_reviewed_at": "2026-03-10T23:57:09Z",
-          "nvd_published_at": "2026-03-10T21:16:50Z"
+          "nvd_published_at": "2026-03-10T21:16:50Z",
+          "cwe_ids": [
+            "CWE-835"
+          ]
         }
       },
       "created_at": "2026-09-01T11:49:00.052659+00:00",
-      "updated_at": "2026-11-18T11:53:34.397591+00:00"
+      "updated_at": "2026-11-18T14:53:11.927448+00:00"
     },
     "VULN-CVE-2026-32630": {
       "id": "VULN-CVE-2026-32630",
@@ -1102,18 +1102,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-j47w-4g3g-c36v",
         "database_specific": {
-          "severity": "MODERATE",
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-03-13T20:56:05Z",
-          "nvd_published_at": "2026-03-16T14:19:40Z",
           "cwe_ids": [
             "CWE-400",
             "CWE-409"
-          ]
+          ],
+          "severity": "MODERATE",
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-03-13T20:56:05Z",
+          "nvd_published_at": "2026-03-16T14:19:40Z"
         }
       },
       "created_at": "2026-09-01T11:49:00.055718+00:00",
-      "updated_at": "2026-11-18T11:53:34.423000+00:00"
+      "updated_at": "2026-11-18T14:53:11.947632+00:00"
     },
     "VULN-CVE-2026-56762": {
       "id": "VULN-CVE-2026-56762",
@@ -1162,7 +1162,7 @@
         }
       },
       "created_at": "2026-09-01T11:49:02.785516+00:00",
-      "updated_at": "2026-11-18T11:53:37.024129+00:00"
+      "updated_at": "2026-11-18T14:53:14.202958+00:00"
     },
     "VULN-CVE-2026-47676": {
       "id": "VULN-CVE-2026-47676",
@@ -1211,7 +1211,7 @@
         }
       },
       "created_at": "2026-09-01T11:49:02.787925+00:00",
-      "updated_at": "2026-11-18T11:53:37.045836+00:00"
+      "updated_at": "2026-11-18T14:53:14.234627+00:00"
     },
     "VULN-CVE-2026-47675": {
       "id": "VULN-CVE-2026-47675",
@@ -1249,18 +1249,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-3hrh-pfw6-9m5x",
         "database_specific": {
+          "github_reviewed_at": "2026-06-04T17:59:25Z",
           "nvd_published_at": "2026-05-28T17:16:32Z",
           "cwe_ids": [
             "CWE-113",
             "CWE-1287"
           ],
           "severity": "MODERATE",
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-06-04T17:59:25Z"
+          "github_reviewed": true
         }
       },
       "created_at": "2026-09-01T11:49:02.790069+00:00",
-      "updated_at": "2026-11-18T11:53:37.087296+00:00"
+      "updated_at": "2026-11-18T14:53:14.262008+00:00"
     },
     "VULN-CVE-2026-56761": {
       "id": "VULN-CVE-2026-56761",
@@ -1296,17 +1296,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-458j-xx4x-4375",
         "database_specific": {
+          "severity": "MODERATE",
+          "github_reviewed": true,
           "github_reviewed_at": "2026-04-16T01:02:24Z",
           "nvd_published_at": null,
           "cwe_ids": [
             "CWE-79"
-          ],
-          "severity": "MODERATE",
-          "github_reviewed": true
+          ]
         }
       },
       "created_at": "2026-09-01T11:49:02.791956+00:00",
-      "updated_at": "2026-11-18T11:53:37.111316+00:00"
+      "updated_at": "2026-11-18T14:53:14.279399+00:00"
     },
     "VULN-CVE-2026-29086": {
       "id": "VULN-CVE-2026-29086",
@@ -1343,18 +1343,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-5pq2-9x2x-5p6w",
         "database_specific": {
-          "severity": "MODERATE",
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-03-04T19:49:14Z",
-          "nvd_published_at": "2026-03-04T23:16:10Z",
           "cwe_ids": [
             "CWE-1113",
             "CWE-113"
-          ]
+          ],
+          "severity": "MODERATE",
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-03-04T19:49:14Z",
+          "nvd_published_at": "2026-03-04T23:16:10Z"
         }
       },
       "created_at": "2026-09-01T11:49:02.794097+00:00",
-      "updated_at": "2026-11-18T11:53:37.171340+00:00"
+      "updated_at": "2026-11-18T14:53:14.330062+00:00"
     },
     "VULN-CVE-2026-44455": {
       "id": "VULN-CVE-2026-44455",
@@ -1390,17 +1390,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-69xw-7hcm-h432",
         "database_specific": {
-          "github_reviewed_at": "2026-05-06T23:49:43Z",
-          "nvd_published_at": "2026-05-13T16:16:57Z",
           "cwe_ids": [
             "CWE-74"
           ],
           "severity": "MODERATE",
-          "github_reviewed": true
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-05-06T23:49:43Z",
+          "nvd_published_at": "2026-05-13T16:16:57Z"
         }
       },
       "created_at": "2026-09-01T11:49:02.795919+00:00",
-      "updated_at": "2026-11-18T11:53:37.183916+00:00"
+      "updated_at": "2026-11-18T14:53:14.341520+00:00"
     },
     "VULN-CVE-2026-24472": {
       "id": "VULN-CVE-2026-24472",
@@ -1438,18 +1438,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-6wqw-2p9w-4vw4",
         "database_specific": {
+          "nvd_published_at": "2026-01-27T20:16:22Z",
           "cwe_ids": [
             "CWE-524",
             "CWE-613"
           ],
           "severity": "MODERATE",
           "github_reviewed": true,
-          "github_reviewed_at": "2026-01-27T19:04:17Z",
-          "nvd_published_at": "2026-01-27T20:16:22Z"
+          "github_reviewed_at": "2026-01-27T19:04:17Z"
         }
       },
       "created_at": "2026-09-01T11:49:02.797589+00:00",
-      "updated_at": "2026-11-18T11:53:37.196315+00:00"
+      "updated_at": "2026-11-18T14:53:14.353156+00:00"
     },
     "VULN-CVE-2026-71849": {
       "id": "VULN-CVE-2026-71849",
@@ -1497,7 +1497,7 @@
         }
       },
       "created_at": "2026-09-01T11:49:02.799324+00:00",
-      "updated_at": "2026-11-18T11:53:37.209303+00:00"
+      "updated_at": "2026-11-18T14:53:14.368850+00:00"
     },
     "VULN-CVE-2026-54290": {
       "id": "VULN-CVE-2026-54290",
@@ -1533,17 +1533,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-88fw-hqm2-52qc",
         "database_specific": {
+          "nvd_published_at": "2026-06-22T18:16:47Z",
           "cwe_ids": [
             "CWE-942"
           ],
           "severity": "HIGH",
           "github_reviewed": true,
-          "github_reviewed_at": "2026-06-16T14:15:39Z",
-          "nvd_published_at": "2026-06-22T18:16:47Z"
+          "github_reviewed_at": "2026-06-16T14:15:39Z"
         }
       },
       "created_at": "2026-09-01T11:49:02.801133+00:00",
-      "updated_at": "2026-11-18T11:53:37.221834+00:00"
+      "updated_at": "2026-11-18T14:53:14.381532+00:00"
     },
     "VULN-CVE-2026-69207": {
       "id": "VULN-CVE-2026-69207",
@@ -1581,17 +1581,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-8j4g-w8fx-2239",
         "database_specific": {
+          "github_reviewed": true,
           "github_reviewed_at": "2026-08-03T20:23:30Z",
           "nvd_published_at": null,
           "cwe_ids": [
             "CWE-1333"
           ],
-          "severity": "MODERATE",
-          "github_reviewed": true
+          "severity": "MODERATE"
         }
       },
       "created_at": "2026-09-01T11:49:02.803263+00:00",
-      "updated_at": "2026-11-18T11:53:37.240742+00:00"
+      "updated_at": "2026-11-18T14:53:14.396032+00:00"
     },
     "VULN-CVE-2026-24771": {
       "id": "VULN-CVE-2026-24771",
@@ -1638,7 +1638,7 @@
         }
       },
       "created_at": "2026-09-01T11:49:02.805147+00:00",
-      "updated_at": "2026-11-18T11:53:37.257953+00:00"
+      "updated_at": "2026-11-18T14:53:14.407646+00:00"
     },
     "VULN-CVE-2026-44456": {
       "id": "VULN-CVE-2026-44456",
@@ -1684,7 +1684,7 @@
         }
       },
       "created_at": "2026-09-01T11:49:02.807145+00:00",
-      "updated_at": "2026-11-18T11:53:37.274549+00:00"
+      "updated_at": "2026-11-18T14:53:14.426021+00:00"
     },
     "VULN-CVE-2026-71850": {
       "id": "VULN-CVE-2026-71850",
@@ -1722,17 +1722,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-f23p-vx2j-j53r",
         "database_specific": {
-          "cwe_ids": [
-            "CWE-488"
-          ],
           "severity": "MODERATE",
           "github_reviewed": true,
           "github_reviewed_at": "2026-08-07T18:42:01Z",
-          "nvd_published_at": null
+          "nvd_published_at": null,
+          "cwe_ids": [
+            "CWE-488"
+          ]
         }
       },
       "created_at": "2026-09-01T11:49:02.809235+00:00",
-      "updated_at": "2026-11-18T11:53:37.318896+00:00"
+      "updated_at": "2026-11-18T14:53:14.475480+00:00"
     },
     "VULN-CVE-2026-47673": {
       "id": "VULN-CVE-2026-47673",
@@ -1770,17 +1770,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-f577-qrjj-4474",
         "database_specific": {
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-06-04T17:52:04Z",
           "nvd_published_at": "2026-05-28T17:16:32Z",
           "cwe_ids": [
             "CWE-285"
           ],
-          "severity": "MODERATE",
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-06-04T17:52:04Z"
+          "severity": "MODERATE"
         }
       },
       "created_at": "2026-09-01T11:49:02.811810+00:00",
-      "updated_at": "2026-11-18T11:53:37.345280+00:00"
+      "updated_at": "2026-11-18T14:53:14.496254+00:00"
     },
     "VULN-CVE-2026-56764": {
       "id": "VULN-CVE-2026-56764",
@@ -1818,17 +1818,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-gq3j-xvxp-8hrf",
         "database_specific": {
+          "severity": "LOW",
+          "github_reviewed": true,
           "github_reviewed_at": "2026-02-19T20:15:59Z",
           "nvd_published_at": null,
           "cwe_ids": [
             "CWE-208"
-          ],
-          "severity": "LOW",
-          "github_reviewed": true
+          ]
         }
       },
       "created_at": "2026-09-01T11:49:02.814031+00:00",
-      "updated_at": "2026-11-18T11:53:37.403779+00:00"
+      "updated_at": "2026-11-18T14:53:14.543236+00:00"
     },
     "VULN-CVE-2026-44459": {
       "id": "VULN-CVE-2026-44459",
@@ -1864,17 +1864,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-hm8q-7f3q-5f36",
         "database_specific": {
+          "nvd_published_at": "2026-05-13T16:16:57Z",
           "cwe_ids": [
             "CWE-1284"
           ],
           "severity": "LOW",
           "github_reviewed": true,
-          "github_reviewed_at": "2026-05-09T00:45:19Z",
-          "nvd_published_at": "2026-05-13T16:16:57Z"
+          "github_reviewed_at": "2026-05-09T00:45:19Z"
         }
       },
       "created_at": "2026-09-01T11:49:02.816194+00:00",
-      "updated_at": "2026-11-18T11:53:37.482377+00:00"
+      "updated_at": "2026-11-18T14:53:14.611946+00:00"
     },
     "VULN-CVE-2026-54287": {
       "id": "VULN-CVE-2026-54287",
@@ -1920,7 +1920,7 @@
         }
       },
       "created_at": "2026-09-01T11:49:02.818291+00:00",
-      "updated_at": "2026-11-18T11:53:37.505626+00:00"
+      "updated_at": "2026-11-18T14:53:14.635286+00:00"
     },
     "VULN-CVE-2026-29085": {
       "id": "VULN-CVE-2026-29085",
@@ -1957,17 +1957,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-p6xx-57qc-3wxr",
         "database_specific": {
-          "severity": "MODERATE",
           "github_reviewed": true,
           "github_reviewed_at": "2026-03-04T19:48:41Z",
           "nvd_published_at": "2026-03-04T23:16:10Z",
           "cwe_ids": [
             "CWE-74"
-          ]
+          ],
+          "severity": "MODERATE"
         }
       },
       "created_at": "2026-09-01T11:49:02.820868+00:00",
-      "updated_at": "2026-11-18T11:53:37.518040+00:00"
+      "updated_at": "2026-11-18T14:53:14.647215+00:00"
     },
     "VULN-CVE-2026-44457": {
       "id": "VULN-CVE-2026-44457",
@@ -2013,7 +2013,7 @@
         }
       },
       "created_at": "2026-09-01T11:49:02.823086+00:00",
-      "updated_at": "2026-11-18T11:53:37.529812+00:00"
+      "updated_at": "2026-11-18T14:53:14.659291+00:00"
     },
     "VULN-CVE-2026-29045": {
       "id": "VULN-CVE-2026-29045",
@@ -2050,17 +2050,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-q5qw-h33p-qvwr",
         "database_specific": {
-          "github_reviewed_at": "2026-03-04T19:48:00Z",
           "nvd_published_at": "2026-03-04T23:16:10Z",
           "cwe_ids": [
             "CWE-177"
           ],
           "severity": "HIGH",
-          "github_reviewed": true
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-03-04T19:48:00Z"
         }
       },
       "created_at": "2026-09-01T11:49:02.826327+00:00",
-      "updated_at": "2026-11-18T11:53:37.544882+00:00"
+      "updated_at": "2026-11-18T14:53:14.671097+00:00"
     },
     "VULN-CVE-2026-44458": {
       "id": "VULN-CVE-2026-44458",
@@ -2096,18 +2096,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-qp7p-654g-cw7p",
         "database_specific": {
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-05-09T00:46:44Z",
-          "nvd_published_at": null,
           "cwe_ids": [
             "CWE-116",
             "CWE-74"
           ],
-          "severity": "MODERATE"
+          "severity": "MODERATE",
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-05-09T00:46:44Z",
+          "nvd_published_at": null
         }
       },
       "created_at": "2026-09-01T11:49:02.829378+00:00",
-      "updated_at": "2026-11-18T11:53:37.558280+00:00"
+      "updated_at": "2026-11-18T14:53:14.682966+00:00"
     },
     "VULN-CVE-2026-24398": {
       "id": "VULN-CVE-2026-24398",
@@ -2145,17 +2145,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-r354-f388-2fhh",
         "database_specific": {
+          "nvd_published_at": "2026-01-27T19:16:16Z",
           "cwe_ids": [
             "CWE-185"
           ],
           "severity": "MODERATE",
           "github_reviewed": true,
-          "github_reviewed_at": "2026-01-27T19:01:43Z",
-          "nvd_published_at": "2026-01-27T19:16:16Z"
+          "github_reviewed_at": "2026-01-27T19:01:43Z"
         }
       },
       "created_at": "2026-09-01T11:49:02.831784+00:00",
-      "updated_at": "2026-11-18T11:53:37.571089+00:00"
+      "updated_at": "2026-11-18T14:53:14.697332+00:00"
     },
     "VULN-CVE-2026-39410": {
       "id": "VULN-CVE-2026-39410",
@@ -2193,17 +2193,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-r5rp-j6wh-rvv4",
         "database_specific": {
+          "severity": "MODERATE",
           "github_reviewed": true,
           "github_reviewed_at": "2026-04-08T00:17:21Z",
           "nvd_published_at": "2026-04-08T15:16:15Z",
           "cwe_ids": [
             "CWE-20"
-          ],
-          "severity": "MODERATE"
+          ]
         }
       },
       "created_at": "2026-09-01T11:49:02.834246+00:00",
-      "updated_at": "2026-11-18T11:53:37.584979+00:00"
+      "updated_at": "2026-11-18T14:53:14.714691+00:00"
     },
     "VULN-CVE-2026-54288": {
       "id": "VULN-CVE-2026-54288",
@@ -2249,7 +2249,7 @@
         }
       },
       "created_at": "2026-09-01T11:49:02.836994+00:00",
-      "updated_at": "2026-11-18T11:53:37.596468+00:00"
+      "updated_at": "2026-11-18T14:53:14.728217+00:00"
     },
     "VULN-CVE-2026-56763": {
       "id": "VULN-CVE-2026-56763",
@@ -2287,17 +2287,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-v8w9-8mx6-g223",
         "database_specific": {
-          "cwe_ids": [
-            "CWE-1321"
-          ],
           "severity": "MODERATE",
           "github_reviewed": true,
           "github_reviewed_at": "2026-03-11T00:31:47Z",
-          "nvd_published_at": null
+          "nvd_published_at": null,
+          "cwe_ids": [
+            "CWE-1321"
+          ]
         }
       },
       "created_at": "2026-09-01T11:49:02.839482+00:00",
-      "updated_at": "2026-11-18T11:53:37.608366+00:00"
+      "updated_at": "2026-11-18T14:53:14.741189+00:00"
     },
     "VULN-CVE-2026-24473": {
       "id": "VULN-CVE-2026-24473",
@@ -2335,19 +2335,19 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-w332-q679-j88p",
         "database_specific": {
+          "severity": "MODERATE",
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-01-27T19:09:01Z",
+          "nvd_published_at": "2026-01-27T20:16:23Z",
           "cwe_ids": [
             "CWE-200",
             "CWE-284",
             "CWE-668"
-          ],
-          "severity": "MODERATE",
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-01-27T19:09:01Z",
-          "nvd_published_at": "2026-01-27T20:16:23Z"
+          ]
         }
       },
       "created_at": "2026-09-01T11:49:02.842423+00:00",
-      "updated_at": "2026-11-18T11:53:37.621339+00:00"
+      "updated_at": "2026-11-18T14:53:14.754077+00:00"
     },
     "VULN-CVE-2026-59895": {
       "id": "VULN-CVE-2026-59895",
@@ -2396,7 +2396,7 @@
         }
       },
       "created_at": "2026-09-01T11:49:02.845651+00:00",
-      "updated_at": "2026-11-18T11:53:37.634770+00:00"
+      "updated_at": "2026-11-18T14:53:14.767027+00:00"
     },
     "VULN-CVE-2026-54289": {
       "id": "VULN-CVE-2026-54289",
@@ -2432,17 +2432,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-wgpf-jwqj-8h8p",
         "database_specific": {
+          "severity": "MODERATE",
           "github_reviewed": true,
           "github_reviewed_at": "2026-06-16T14:32:31Z",
           "nvd_published_at": "2026-06-22T18:16:47Z",
           "cwe_ids": [
             "CWE-348"
-          ],
-          "severity": "MODERATE"
+          ]
         }
       },
       "created_at": "2026-09-01T11:49:02.848596+00:00",
-      "updated_at": "2026-11-18T11:53:37.648262+00:00"
+      "updated_at": "2026-11-18T14:53:14.780175+00:00"
     },
     "VULN-CVE-2026-39407": {
       "id": "VULN-CVE-2026-39407",
@@ -2480,17 +2480,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-wmmm-f939-6g9c",
         "database_specific": {
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-04-08T00:16:45Z",
           "nvd_published_at": "2026-04-08T15:16:14Z",
           "cwe_ids": [
             "CWE-22"
           ],
-          "severity": "MODERATE"
+          "severity": "MODERATE",
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-04-08T00:16:45Z"
         }
       },
       "created_at": "2026-09-01T11:49:02.851198+00:00",
-      "updated_at": "2026-11-18T11:53:37.662141+00:00"
+      "updated_at": "2026-11-18T14:53:14.793182+00:00"
     },
     "VULN-CVE-2026-54286": {
       "id": "VULN-CVE-2026-54286",
@@ -2526,17 +2526,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-wwfh-h76j-fc44",
         "database_specific": {
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-06-16T14:09:03Z",
           "nvd_published_at": "2026-06-22T18:16:47Z",
           "cwe_ids": [
             "CWE-22"
           ],
-          "severity": "MODERATE",
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-06-16T14:09:03Z"
+          "severity": "MODERATE"
         }
       },
       "created_at": "2026-09-01T11:49:02.854882+00:00",
-      "updated_at": "2026-11-18T11:53:37.683951+00:00"
+      "updated_at": "2026-11-18T14:53:14.806150+00:00"
     },
     "VULN-CVE-2026-39408": {
       "id": "VULN-CVE-2026-39408",
@@ -2574,17 +2574,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-xf4j-xp2r-rqqx",
         "database_specific": {
-          "github_reviewed": true,
           "github_reviewed_at": "2026-04-08T00:16:51Z",
           "nvd_published_at": "2026-04-08T15:16:14Z",
           "cwe_ids": [
             "CWE-22"
           ],
-          "severity": "MODERATE"
+          "severity": "MODERATE",
+          "github_reviewed": true
         }
       },
       "created_at": "2026-09-01T11:49:02.857821+00:00",
-      "updated_at": "2026-11-18T11:53:37.709355+00:00"
+      "updated_at": "2026-11-18T14:53:14.819253+00:00"
     },
     "VULN-CVE-2026-59897": {
       "id": "VULN-CVE-2026-59897",
@@ -2622,17 +2622,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-xgm2-5f3f-mvvc",
         "database_specific": {
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-07-21T18:18:13Z",
-          "nvd_published_at": "2026-07-08T17:17:27Z",
           "cwe_ids": [
             "CWE-348"
           ],
-          "severity": "MODERATE"
+          "severity": "MODERATE",
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-07-21T18:18:13Z",
+          "nvd_published_at": "2026-07-08T17:17:27Z"
         }
       },
       "created_at": "2026-09-01T11:49:02.861121+00:00",
-      "updated_at": "2026-11-18T11:53:37.739990+00:00"
+      "updated_at": "2026-11-18T14:53:14.832146+00:00"
     },
     "VULN-CVE-2026-39409": {
       "id": "VULN-CVE-2026-39409",
@@ -2670,17 +2670,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-xpcf-pg52-r92g",
         "database_specific": {
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-04-08T00:17:14Z",
+          "nvd_published_at": "2026-04-08T15:16:14Z",
           "cwe_ids": [
             "CWE-180"
           ],
-          "severity": "MODERATE",
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-04-08T00:17:14Z",
-          "nvd_published_at": "2026-04-08T15:16:14Z"
+          "severity": "MODERATE"
         }
       },
       "created_at": "2026-09-01T11:49:02.864226+00:00",
-      "updated_at": "2026-11-18T11:53:37.763819+00:00"
+      "updated_at": "2026-11-18T14:53:14.845811+00:00"
     },
     "VULN-CVE-2026-47674": {
       "id": "VULN-CVE-2026-47674",
@@ -2718,18 +2718,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-xrhx-7g5j-rcj5",
         "database_specific": {
+          "github_reviewed": true,
           "github_reviewed_at": "2026-06-04T18:00:22Z",
           "nvd_published_at": "2026-05-28T17:16:32Z",
           "cwe_ids": [
             "CWE-1289",
             "CWE-185"
           ],
-          "severity": "MODERATE",
-          "github_reviewed": true
+          "severity": "MODERATE"
         }
       },
       "created_at": "2026-09-01T11:49:02.867112+00:00",
-      "updated_at": "2026-11-18T11:53:37.776580+00:00"
+      "updated_at": "2026-11-18T14:53:14.859349+00:00"
     },
     "VULN-CVE-2025-9262": {
       "id": "VULN-CVE-2025-9262",
@@ -2765,18 +2765,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-p6rm-483j-37jf",
         "database_specific": {
+          "github_reviewed_at": "2025-08-21T14:52:32Z",
           "nvd_published_at": "2025-08-20T23:15:30Z",
           "cwe_ids": [
             "CWE-77",
             "CWE-78"
           ],
           "severity": "LOW",
-          "github_reviewed": true,
-          "github_reviewed_at": "2025-08-21T14:52:32Z"
+          "github_reviewed": true
         }
       },
       "created_at": "2026-09-01T11:49:22.005472+00:00",
-      "updated_at": "2026-11-18T11:53:59.728455+00:00"
+      "updated_at": "2026-11-18T14:53:31.604145+00:00"
     },
     "VULN-CVE-2025-69873": {
       "id": "VULN-CVE-2025-69873",
@@ -2816,18 +2816,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-2g4f-4pwh-qvx6",
         "database_specific": {
+          "severity": "MODERATE",
           "github_reviewed": true,
           "github_reviewed_at": "2026-02-17T16:38:57Z",
           "nvd_published_at": "2026-02-11T19:15:50Z",
           "cwe_ids": [
             "CWE-1333",
             "CWE-400"
-          ],
-          "severity": "MODERATE"
+          ]
         }
       },
       "created_at": "2026-09-01T11:49:23.623060+00:00",
-      "updated_at": "2026-11-18T11:54:00.807279+00:00"
+      "updated_at": "2026-11-18T14:53:32.659610+00:00"
     },
     "VULN-CVE-2026-59952": {
       "id": "VULN-CVE-2026-59952",
@@ -2875,7 +2875,7 @@
         }
       },
       "created_at": "2026-09-01T11:49:41.959288+00:00",
-      "updated_at": "2026-11-18T11:54:16.870067+00:00"
+      "updated_at": "2026-11-18T14:53:49.048651+00:00"
     },
     "VULN-CVE-2026-47429": {
       "id": "VULN-CVE-2026-47429",
@@ -2926,7 +2926,7 @@
         }
       },
       "created_at": "2026-09-01T11:49:43.404033+00:00",
-      "updated_at": "2026-11-18T11:54:17.986060+00:00"
+      "updated_at": "2026-11-18T14:53:50.065339+00:00"
     },
     "VULN-CVE-2026-44494": {
       "id": "VULN-CVE-2026-44494",
@@ -2974,7 +2974,7 @@
         }
       },
       "created_at": "2026-09-01T11:53:33.569409+00:00",
-      "updated_at": "2026-11-18T11:58:01.293943+00:00"
+      "updated_at": "2026-11-18T14:57:17.341557+00:00"
     },
     "VULN-CVE-2026-44495": {
       "id": "VULN-CVE-2026-44495",
@@ -3023,7 +3023,7 @@
         }
       },
       "created_at": "2026-09-01T11:53:33.575329+00:00",
-      "updated_at": "2026-11-18T11:58:01.324260+00:00"
+      "updated_at": "2026-11-18T14:57:17.354185+00:00"
     },
     "VULN-CVE-2026-42044": {
       "id": "VULN-CVE-2026-42044",
@@ -3059,18 +3059,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-3w6x-2g7m-8v23",
         "database_specific": {
+          "severity": "MODERATE",
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-05-05T00:19:33Z",
           "nvd_published_at": "2026-04-24T18:16:31Z",
           "cwe_ids": [
             "CWE-1321",
             "CWE-915"
-          ],
-          "severity": "MODERATE",
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-05-05T00:19:33Z"
+          ]
         }
       },
       "created_at": "2026-09-01T11:53:33.578725+00:00",
-      "updated_at": "2026-11-18T11:58:01.375330+00:00"
+      "updated_at": "2026-11-18T14:57:17.377238+00:00"
     },
     "VULN-CVE-2026-67313": {
       "id": "VULN-CVE-2026-67313",
@@ -3110,18 +3110,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-42h9-826w-cgv3",
         "database_specific": {
-          "nvd_published_at": "2026-08-06T22:18:25Z",
           "cwe_ids": [
             "CWE-400",
             "CWE-674"
           ],
           "severity": "MODERATE",
           "github_reviewed": true,
-          "github_reviewed_at": "2026-07-20T17:58:59Z"
+          "github_reviewed_at": "2026-07-20T17:58:59Z",
+          "nvd_published_at": "2026-08-06T22:18:25Z"
         }
       },
       "created_at": "2026-09-01T11:53:33.582478+00:00",
-      "updated_at": "2026-11-18T11:58:01.411532+00:00"
+      "updated_at": "2026-11-18T14:57:17.388276+00:00"
     },
     "VULN-CVE-2026-42037": {
       "id": "VULN-CVE-2026-42037",
@@ -3157,17 +3157,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-445q-vr5w-6q77",
         "database_specific": {
-          "nvd_published_at": "2026-04-24T18:16:30Z",
           "cwe_ids": [
             "CWE-93"
           ],
           "severity": "MODERATE",
           "github_reviewed": true,
-          "github_reviewed_at": "2026-05-05T00:40:45Z"
+          "github_reviewed_at": "2026-05-05T00:40:45Z",
+          "nvd_published_at": "2026-04-24T18:16:30Z"
         }
       },
       "created_at": "2026-09-01T11:53:33.586071+00:00",
-      "updated_at": "2026-11-18T11:58:01.446270+00:00"
+      "updated_at": "2026-11-18T14:57:17.399255+00:00"
     },
     "VULN-CVE-2026-42034": {
       "id": "VULN-CVE-2026-42034",
@@ -3215,7 +3215,7 @@
         }
       },
       "created_at": "2026-09-01T11:53:33.589854+00:00",
-      "updated_at": "2026-11-18T11:58:01.589758+00:00"
+      "updated_at": "2026-11-18T14:57:17.447120+00:00"
     },
     "VULN-CVE-2026-42039": {
       "id": "VULN-CVE-2026-42039",
@@ -3255,17 +3255,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-62hf-57xw-28j9",
         "database_specific": {
+          "github_reviewed": true,
           "github_reviewed_at": "2026-05-05T00:34:32Z",
           "nvd_published_at": "2026-04-24T18:16:30Z",
           "cwe_ids": [
             "CWE-674"
           ],
-          "severity": "MODERATE",
-          "github_reviewed": true
+          "severity": "MODERATE"
         }
       },
       "created_at": "2026-09-01T11:53:33.593631+00:00",
-      "updated_at": "2026-11-18T11:58:01.635458+00:00"
+      "updated_at": "2026-11-18T14:57:17.465292+00:00"
     },
     "VULN-CVE-2026-42035": {
       "id": "VULN-CVE-2026-42035",
@@ -3314,7 +3314,7 @@
         }
       },
       "created_at": "2026-09-01T11:53:33.597361+00:00",
-      "updated_at": "2026-11-18T11:58:01.680705+00:00"
+      "updated_at": "2026-11-18T14:57:17.478820+00:00"
     },
     "VULN-CVE-2026-44488": {
       "id": "VULN-CVE-2026-44488",
@@ -3362,7 +3362,7 @@
         }
       },
       "created_at": "2026-09-01T11:53:33.600767+00:00",
-      "updated_at": "2026-11-18T11:58:01.729692+00:00"
+      "updated_at": "2026-11-18T14:57:17.491893+00:00"
     },
     "VULN-CVE-2026-67319": {
       "id": "VULN-CVE-2026-67319",
@@ -3402,17 +3402,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-7q8q-rj6j-mhjq",
         "database_specific": {
+          "nvd_published_at": "2026-08-06T22:18:25Z",
           "cwe_ids": [
             "CWE-1321"
           ],
           "severity": "MODERATE",
           "github_reviewed": true,
-          "github_reviewed_at": "2026-07-20T22:37:31Z",
-          "nvd_published_at": "2026-08-06T22:18:25Z"
+          "github_reviewed_at": "2026-07-20T22:37:31Z"
         }
       },
       "created_at": "2026-09-01T11:53:33.604319+00:00",
-      "updated_at": "2026-11-18T11:58:01.770066+00:00"
+      "updated_at": "2026-11-18T14:57:17.508050+00:00"
     },
     "VULN-CVE-2026-44490": {
       "id": "VULN-CVE-2026-44490",
@@ -3461,7 +3461,7 @@
         }
       },
       "created_at": "2026-09-01T11:53:33.608007+00:00",
-      "updated_at": "2026-11-18T11:58:01.816098+00:00"
+      "updated_at": "2026-11-18T14:57:17.531443+00:00"
     },
     "VULN-CVE-2026-67315": {
       "id": "VULN-CVE-2026-67315",
@@ -3501,18 +3501,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-f4gw-2p7v-4548",
         "database_specific": {
+          "nvd_published_at": "2026-08-06T22:18:25Z",
           "cwe_ids": [
             "CWE-183",
             "CWE-918"
           ],
           "severity": "MODERATE",
           "github_reviewed": true,
-          "github_reviewed_at": "2026-07-20T22:20:18Z",
-          "nvd_published_at": "2026-08-06T22:18:25Z"
+          "github_reviewed_at": "2026-07-20T22:20:18Z"
         }
       },
       "created_at": "2026-09-01T11:53:33.611439+00:00",
-      "updated_at": "2026-11-18T11:58:01.889706+00:00"
+      "updated_at": "2026-11-18T14:57:17.577066+00:00"
     },
     "VULN-CVE-2026-44496": {
       "id": "VULN-CVE-2026-44496",
@@ -3552,18 +3552,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-hfxv-24rg-xrqf",
         "database_specific": {
+          "severity": "HIGH",
+          "github_reviewed": true,
           "github_reviewed_at": "2026-06-04T14:24:06Z",
           "nvd_published_at": null,
           "cwe_ids": [
             "CWE-1333",
             "CWE-400"
-          ],
-          "severity": "HIGH",
-          "github_reviewed": true
+          ]
         }
       },
       "created_at": "2026-09-01T11:53:33.615607+00:00",
-      "updated_at": "2026-11-18T11:58:01.928765+00:00"
+      "updated_at": "2026-11-18T14:57:17.591627+00:00"
     },
     "VULN-CVE-2026-44486": {
       "id": "VULN-CVE-2026-44486",
@@ -3603,17 +3603,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-j5f8-grm9-p9fc",
         "database_specific": {
+          "github_reviewed_at": "2026-06-04T14:15:01Z",
+          "nvd_published_at": "2026-06-11T17:16:32Z",
           "cwe_ids": [
             "CWE-200"
           ],
           "severity": "HIGH",
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-06-04T14:15:01Z",
-          "nvd_published_at": "2026-06-11T17:16:32Z"
+          "github_reviewed": true
         }
       },
       "created_at": "2026-09-01T11:53:33.619442+00:00",
-      "updated_at": "2026-11-18T11:58:01.962294+00:00"
+      "updated_at": "2026-11-18T14:57:17.607841+00:00"
     },
     "VULN-CVE-2026-67317": {
       "id": "VULN-CVE-2026-67317",
@@ -3661,7 +3661,7 @@
         }
       },
       "created_at": "2026-09-01T11:53:33.623742+00:00",
-      "updated_at": "2026-11-18T11:58:02.028006+00:00"
+      "updated_at": "2026-11-18T14:57:17.640140+00:00"
     },
     "VULN-CVE-2026-42038": {
       "id": "VULN-CVE-2026-42038",
@@ -3699,17 +3699,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-m7pr-hjqh-92cm",
         "database_specific": {
-          "severity": "MODERATE",
           "github_reviewed": true,
           "github_reviewed_at": "2026-05-05T00:40:17Z",
           "nvd_published_at": "2026-04-24T18:16:30Z",
           "cwe_ids": [
             "CWE-918"
-          ]
+          ],
+          "severity": "MODERATE"
         }
       },
       "created_at": "2026-09-01T11:53:33.627349+00:00",
-      "updated_at": "2026-11-18T11:58:02.056212+00:00"
+      "updated_at": "2026-11-18T14:57:17.657659+00:00"
     },
     "VULN-CVE-2026-67316": {
       "id": "VULN-CVE-2026-67316",
@@ -3759,7 +3759,7 @@
         }
       },
       "created_at": "2026-09-01T11:53:33.631689+00:00",
-      "updated_at": "2026-11-18T11:58:02.110183+00:00"
+      "updated_at": "2026-11-18T14:57:17.684975+00:00"
     },
     "VULN-CVE-2026-67318": {
       "id": "VULN-CVE-2026-67318",
@@ -3797,17 +3797,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-mwf2-3pr3-8698",
         "database_specific": {
+          "nvd_published_at": "2026-08-06T22:18:25Z",
           "cwe_ids": [
             "CWE-400"
           ],
           "severity": "MODERATE",
           "github_reviewed": true,
-          "github_reviewed_at": "2026-07-20T22:37:03Z",
-          "nvd_published_at": "2026-08-06T22:18:25Z"
+          "github_reviewed_at": "2026-07-20T22:37:03Z"
         }
       },
       "created_at": "2026-09-01T11:53:33.635642+00:00",
-      "updated_at": "2026-11-18T11:58:02.140440+00:00"
+      "updated_at": "2026-11-18T14:57:17.699584+00:00"
     },
     "VULN-CVE-2026-44487": {
       "id": "VULN-CVE-2026-44487",
@@ -3857,7 +3857,7 @@
         }
       },
       "created_at": "2026-09-01T11:53:33.640148+00:00",
-      "updated_at": "2026-11-18T11:58:02.174951+00:00"
+      "updated_at": "2026-11-18T14:57:17.716499+00:00"
     },
     "VULN-CVE-2026-42033": {
       "id": "VULN-CVE-2026-42033",
@@ -3905,7 +3905,7 @@
         }
       },
       "created_at": "2026-09-01T11:53:33.644061+00:00",
-      "updated_at": "2026-11-18T11:58:02.205769+00:00"
+      "updated_at": "2026-11-18T14:57:17.733445+00:00"
     },
     "VULN-CVE-2026-44492": {
       "id": "VULN-CVE-2026-44492",
@@ -3945,18 +3945,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-pjwm-pj3p-43mv",
         "database_specific": {
-          "cwe_ids": [
-            "CWE-289",
-            "CWE-918"
-          ],
           "severity": "HIGH",
           "github_reviewed": true,
           "github_reviewed_at": "2026-05-29T15:59:30Z",
-          "nvd_published_at": "2026-06-11T17:16:33Z"
+          "nvd_published_at": "2026-06-11T17:16:33Z",
+          "cwe_ids": [
+            "CWE-289",
+            "CWE-918"
+          ]
         }
       },
       "created_at": "2026-09-01T11:53:33.649188+00:00",
-      "updated_at": "2026-11-18T11:58:02.231840+00:00"
+      "updated_at": "2026-11-18T14:57:17.745854+00:00"
     },
     "VULN-CVE-2026-67312": {
       "id": "VULN-CVE-2026-67312",
@@ -4007,7 +4007,7 @@
         }
       },
       "created_at": "2026-09-01T11:53:33.653467+00:00",
-      "updated_at": "2026-11-18T11:58:02.258100+00:00"
+      "updated_at": "2026-11-18T14:57:17.760830+00:00"
     },
     "VULN-CVE-2026-42043": {
       "id": "VULN-CVE-2026-42043",
@@ -4057,7 +4057,7 @@
         }
       },
       "created_at": "2026-09-01T11:53:33.658117+00:00",
-      "updated_at": "2026-11-18T11:58:02.283430+00:00"
+      "updated_at": "2026-11-18T14:57:17.772465+00:00"
     },
     "VULN-CVE-2026-42264": {
       "id": "VULN-CVE-2026-42264",
@@ -4095,17 +4095,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-q8qp-cvcw-x6jj",
         "database_specific": {
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-05-05T00:18:38Z",
+          "nvd_published_at": "2026-05-08T04:16:20Z",
           "cwe_ids": [
             "CWE-1321"
           ],
-          "severity": "HIGH",
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-05-05T00:18:38Z",
-          "nvd_published_at": "2026-05-08T04:16:20Z"
+          "severity": "HIGH"
         }
       },
       "created_at": "2026-09-01T11:53:33.662517+00:00",
-      "updated_at": "2026-11-18T11:58:02.306704+00:00"
+      "updated_at": "2026-11-18T14:57:17.783585+00:00"
     },
     "VULN-CVE-2026-42036": {
       "id": "VULN-CVE-2026-42036",
@@ -4143,17 +4143,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-vf2m-468p-8v99",
         "database_specific": {
+          "cwe_ids": [
+            "CWE-770"
+          ],
           "severity": "MODERATE",
           "github_reviewed": true,
           "github_reviewed_at": "2026-05-05T00:26:57Z",
-          "nvd_published_at": "2026-04-24T18:16:30Z",
-          "cwe_ids": [
-            "CWE-770"
-          ]
+          "nvd_published_at": "2026-04-24T18:16:30Z"
         }
       },
       "created_at": "2026-09-01T11:53:33.667298+00:00",
-      "updated_at": "2026-11-18T11:58:02.337296+00:00"
+      "updated_at": "2026-11-18T14:57:17.795857+00:00"
     },
     "VULN-CVE-2026-42041": {
       "id": "VULN-CVE-2026-42041",
@@ -4191,18 +4191,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-w9j2-pvgh-6h63",
         "database_specific": {
+          "severity": "MODERATE",
           "github_reviewed": true,
           "github_reviewed_at": "2026-05-05T00:21:39Z",
           "nvd_published_at": "2026-04-24T18:16:31Z",
           "cwe_ids": [
             "CWE-1321",
             "CWE-287"
-          ],
-          "severity": "MODERATE"
+          ]
         }
       },
       "created_at": "2026-09-01T11:53:33.671540+00:00",
-      "updated_at": "2026-11-18T11:58:02.390863+00:00"
+      "updated_at": "2026-11-18T14:57:17.817911+00:00"
     },
     "VULN-CVE-2026-42040": {
       "id": "VULN-CVE-2026-42040",
@@ -4240,18 +4240,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-xhjh-pmcv-23jw",
         "database_specific": {
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-05-05T00:18:03Z",
-          "nvd_published_at": "2026-04-24T18:16:30Z",
           "cwe_ids": [
             "CWE-116",
             "CWE-626"
           ],
-          "severity": "LOW"
+          "severity": "LOW",
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-05-05T00:18:03Z",
+          "nvd_published_at": "2026-04-24T18:16:30Z"
         }
       },
       "created_at": "2026-09-01T11:53:33.676095+00:00",
-      "updated_at": "2026-11-18T11:58:02.419279+00:00"
+      "updated_at": "2026-11-18T14:57:17.828906+00:00"
     },
     "VULN-CVE-2026-42042": {
       "id": "VULN-CVE-2026-42042",
@@ -4300,7 +4300,7 @@
         }
       },
       "created_at": "2026-09-01T11:53:33.680680+00:00",
-      "updated_at": "2026-11-18T11:58:02.447265+00:00"
+      "updated_at": "2026-11-18T14:57:17.840684+00:00"
     },
     "VULN-CVE-2026-12590": {
       "id": "VULN-CVE-2026-12590",
@@ -4350,7 +4350,7 @@
         }
       },
       "created_at": "2026-09-01T11:53:37.597753+00:00",
-      "updated_at": "2026-11-18T11:58:06.002744+00:00"
+      "updated_at": "2026-11-18T14:57:20.714439+00:00"
     },
     "VULN-CVE-2025-13466": {
       "id": "VULN-CVE-2025-13466",
@@ -4388,17 +4388,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-wqch-xfxh-vrr4",
         "database_specific": {
+          "severity": "MODERATE",
+          "github_reviewed": true,
+          "github_reviewed_at": "2025-11-25T14:20:21Z",
           "nvd_published_at": "2025-11-24T19:15:46Z",
           "cwe_ids": [
             "CWE-400"
-          ],
-          "severity": "MODERATE",
-          "github_reviewed": true,
-          "github_reviewed_at": "2025-11-25T14:20:21Z"
+          ]
         }
       },
       "created_at": "2026-09-01T11:53:37.604128+00:00",
-      "updated_at": "2026-11-18T11:58:06.025890+00:00"
+      "updated_at": "2026-11-18T14:57:20.733851+00:00"
     },
     "VULN-CVE-2026-13149": {
       "id": "VULN-CVE-2026-13149",
@@ -4440,18 +4440,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-3jxr-9vmj-r5cp",
         "database_specific": {
-          "github_reviewed_at": "2026-07-20T20:51:09Z",
-          "nvd_published_at": "2026-06-30T10:16:34Z",
           "cwe_ids": [
             "CWE-400",
             "CWE-407"
           ],
           "severity": "HIGH",
-          "github_reviewed": true
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-07-20T20:51:09Z",
+          "nvd_published_at": "2026-06-30T10:16:34Z"
         }
       },
       "created_at": "2026-09-01T11:53:40.013614+00:00",
-      "updated_at": "2026-11-18T11:58:08.511085+00:00"
+      "updated_at": "2026-11-18T14:57:22.728392+00:00"
     },
     "VULN-CVE-2026-33750": {
       "id": "VULN-CVE-2026-33750",
@@ -4495,17 +4495,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-f886-m6hf-6m8v",
         "database_specific": {
-          "severity": "MODERATE",
-          "github_reviewed": true,
           "github_reviewed_at": "2026-03-26T18:29:42Z",
           "nvd_published_at": "2026-03-27T15:16:57Z",
           "cwe_ids": [
             "CWE-400"
-          ]
+          ],
+          "severity": "MODERATE",
+          "github_reviewed": true
         }
       },
       "created_at": "2026-09-01T11:53:40.018768+00:00",
-      "updated_at": "2026-11-18T11:58:08.588907+00:00"
+      "updated_at": "2026-11-18T14:57:22.756301+00:00"
     },
     "VULN-CVE-2026-14257": {
       "id": "VULN-CVE-2026-14257",
@@ -4549,18 +4549,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-mh99-v99m-4gvg",
         "database_specific": {
-          "nvd_published_at": "2026-07-23T14:17:00Z",
           "cwe_ids": [
             "CWE-400",
             "CWE-770"
           ],
           "severity": "HIGH",
           "github_reviewed": true,
-          "github_reviewed_at": "2026-07-24T21:53:14Z"
+          "github_reviewed_at": "2026-07-24T21:53:14Z",
+          "nvd_published_at": "2026-07-23T14:17:00Z"
         }
       },
       "created_at": "2026-09-01T11:53:40.023604+00:00",
-      "updated_at": "2026-11-18T11:58:08.640907+00:00"
+      "updated_at": "2026-11-18T14:57:22.768949+00:00"
     },
     "VULN-CVE-2026-69152": {
       "id": "VULN-CVE-2026-69152",
@@ -4615,7 +4615,7 @@
         }
       },
       "created_at": "2026-09-01T11:53:40.028778+00:00",
-      "updated_at": "2026-11-18T11:58:08.771012+00:00"
+      "updated_at": "2026-11-18T14:57:22.812908+00:00"
     },
     "VULN-CVE-2026-24001": {
       "id": "VULN-CVE-2026-24001",
@@ -4659,18 +4659,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-73rr-hh4g-fpgx",
         "database_specific": {
-          "severity": "LOW",
           "github_reviewed": true,
           "github_reviewed_at": "2026-01-14T21:34:12Z",
           "nvd_published_at": "2026-01-22T03:15:47Z",
           "cwe_ids": [
             "CWE-1333",
             "CWE-400"
-          ]
+          ],
+          "severity": "LOW"
         }
       },
       "created_at": "2026-09-01T11:54:52.473212+00:00",
-      "updated_at": "2026-11-18T11:59:24.816583+00:00"
+      "updated_at": "2026-11-18T13:58:39.143232+00:00"
     },
     "VULN-CVE-2026-13676": {
       "id": "VULN-CVE-2026-13676",
@@ -4712,18 +4712,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-4c8g-83qw-93j6",
         "database_specific": {
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-07-21T19:03:11Z",
           "nvd_published_at": "2026-06-29T14:16:47Z",
           "cwe_ids": [
             "CWE-436",
             "CWE-551"
           ],
-          "severity": "HIGH",
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-07-21T19:03:11Z"
+          "severity": "HIGH"
         }
       },
       "created_at": "2026-09-01T11:55:43.183409+00:00",
-      "updated_at": "2026-11-18T12:00:17.014702+00:00"
+      "updated_at": "2026-11-18T13:59:17.838081+00:00"
     },
     "VULN-CVE-2026-18446": {
       "id": "VULN-CVE-2026-18446",
@@ -4765,17 +4765,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-7p8r-x3mc-p8w7",
         "database_specific": {
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-08-03T19:16:43Z",
           "nvd_published_at": "2026-07-31T15:16:27Z",
           "cwe_ids": [
             "CWE-436"
           ],
-          "severity": "HIGH"
+          "severity": "HIGH",
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-08-03T19:16:43Z"
         }
       },
       "created_at": "2026-09-01T11:55:43.189818+00:00",
-      "updated_at": "2026-11-18T12:00:17.038693+00:00"
+      "updated_at": "2026-11-18T13:59:17.849824+00:00"
     },
     "VULN-CVE-2026-6321": {
       "id": "VULN-CVE-2026-6321",
@@ -4815,17 +4815,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-q3j6-qgpj-74h6",
         "database_specific": {
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-05-08T17:15:09Z",
+          "nvd_published_at": "2026-05-04T20:16:20Z",
           "cwe_ids": [
             "CWE-22"
           ],
-          "severity": "HIGH",
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-05-08T17:15:09Z",
-          "nvd_published_at": "2026-05-04T20:16:20Z"
+          "severity": "HIGH"
         }
       },
       "created_at": "2026-09-01T11:55:43.195203+00:00",
-      "updated_at": "2026-11-18T12:00:17.133234+00:00"
+      "updated_at": "2026-11-18T13:59:17.903046+00:00"
     },
     "VULN-CVE-2026-16221": {
       "id": "VULN-CVE-2026-16221",
@@ -4867,17 +4867,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-v2hh-gcrm-f6hx",
         "database_specific": {
-          "github_reviewed_at": "2026-07-21T22:08:28Z",
           "nvd_published_at": "2026-07-19T15:16:49Z",
           "cwe_ids": [
             "CWE-436"
           ],
           "severity": "HIGH",
-          "github_reviewed": true
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-07-21T22:08:28Z"
         }
       },
       "created_at": "2026-09-01T11:55:43.200094+00:00",
-      "updated_at": "2026-11-18T12:00:17.175187+00:00"
+      "updated_at": "2026-11-18T13:59:17.929655+00:00"
     },
     "VULN-CVE-2026-6322": {
       "id": "VULN-CVE-2026-6322",
@@ -4917,18 +4917,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-v39h-62p7-jpjc",
         "database_specific": {
-          "severity": "HIGH",
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-05-08T19:13:01Z",
           "nvd_published_at": "2026-05-05T11:16:33Z",
           "cwe_ids": [
             "CWE-140",
             "CWE-436"
-          ]
+          ],
+          "severity": "HIGH",
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-05-08T19:13:01Z"
         }
       },
       "created_at": "2026-09-01T11:55:43.205000+00:00",
-      "updated_at": "2026-11-18T12:00:17.196368+00:00"
+      "updated_at": "2026-11-18T13:59:17.942305+00:00"
     },
     "VULN-CVE-2026-32141": {
       "id": "VULN-CVE-2026-32141",
@@ -4966,17 +4966,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-25h7-pfq9-p65f",
         "database_specific": {
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-03-13T15:40:42Z",
+          "nvd_published_at": "2026-03-12T18:16:25Z",
           "cwe_ids": [
             "CWE-674"
           ],
-          "severity": "HIGH",
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-03-13T15:40:42Z",
-          "nvd_published_at": "2026-03-12T18:16:25Z"
+          "severity": "HIGH"
         }
       },
       "created_at": "2026-09-01T11:55:57.299654+00:00",
-      "updated_at": "2026-11-18T12:00:31.959246+00:00"
+      "updated_at": "2026-11-18T13:59:28.365389+00:00"
     },
     "VULN-CVE-2026-33228": {
       "id": "VULN-CVE-2026-33228",
@@ -5014,18 +5014,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-rf6f-7fwh-wjgh",
         "database_specific": {
-          "severity": "HIGH",
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-03-19T17:43:54Z",
-          "nvd_published_at": "2026-03-20T23:16:46Z",
           "cwe_ids": [
             "CWE-1321",
             "CWE-915"
-          ]
+          ],
+          "severity": "HIGH",
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-03-19T17:43:54Z",
+          "nvd_published_at": "2026-03-20T23:16:46Z"
         }
       },
       "created_at": "2026-09-01T11:55:57.305815+00:00",
-      "updated_at": "2026-11-18T12:00:31.981909+00:00"
+      "updated_at": "2026-11-18T13:59:28.394157+00:00"
     },
     "VULN-CVE-2026-12143": {
       "id": "VULN-CVE-2026-12143",
@@ -5077,7 +5077,7 @@
         }
       },
       "created_at": "2026-09-01T11:56:00.987270+00:00",
-      "updated_at": "2026-11-18T12:00:35.879454+00:00"
+      "updated_at": "2026-11-18T13:59:32.909467+00:00"
     },
     "VULN-CVE-2025-64756": {
       "id": "VULN-CVE-2025-64756",
@@ -5127,7 +5127,7 @@
         }
       },
       "created_at": "2026-09-01T11:56:22.601548+00:00",
-      "updated_at": "2026-11-18T12:00:58.346811+00:00"
+      "updated_at": "2026-11-18T13:59:53.071387+00:00"
     },
     "VULN-CVE-2026-33916": {
       "id": "VULN-CVE-2026-33916",
@@ -5165,18 +5165,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-2qvq-rjwj-gvw9",
         "database_specific": {
-          "cwe_ids": [
-            "CWE-1321",
-            "CWE-79"
-          ],
           "severity": "MODERATE",
           "github_reviewed": true,
           "github_reviewed_at": "2026-03-26T22:20:51Z",
-          "nvd_published_at": "2026-03-27T21:17:27Z"
+          "nvd_published_at": "2026-03-27T21:17:27Z",
+          "cwe_ids": [
+            "CWE-1321",
+            "CWE-79"
+          ]
         }
       },
       "created_at": "2026-09-01T11:56:29.336128+00:00",
-      "updated_at": "2026-11-18T12:01:04.427279+00:00"
+      "updated_at": "2026-11-18T13:59:57.324187+00:00"
     },
     "VULN-CVE-2026-33937": {
       "id": "VULN-CVE-2026-33937",
@@ -5214,18 +5214,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-2w6w-674q-4c4q",
         "database_specific": {
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-03-27T18:19:58Z",
           "nvd_published_at": "2026-03-27T21:17:27Z",
           "cwe_ids": [
             "CWE-843",
             "CWE-94"
           ],
-          "severity": "CRITICAL",
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-03-27T18:19:58Z"
+          "severity": "CRITICAL"
         }
       },
       "created_at": "2026-09-01T11:56:29.343587+00:00",
-      "updated_at": "2026-11-18T12:01:04.483581+00:00"
+      "updated_at": "2026-11-18T13:59:57.342895+00:00"
     },
     "VULN-CVE-2026-33938": {
       "id": "VULN-CVE-2026-33938",
@@ -5263,18 +5263,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-3mfm-83xf-c92r",
         "database_specific": {
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-03-27T18:20:44Z",
-          "nvd_published_at": "2026-03-27T21:17:27Z",
           "cwe_ids": [
             "CWE-843",
             "CWE-94"
           ],
-          "severity": "HIGH"
+          "severity": "HIGH",
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-03-27T18:20:44Z",
+          "nvd_published_at": "2026-03-27T21:17:27Z"
         }
       },
       "created_at": "2026-09-01T11:56:29.349526+00:00",
-      "updated_at": "2026-11-18T12:01:04.510675+00:00"
+      "updated_at": "2026-11-18T13:59:57.355561+00:00"
     },
     "VULN-GHSA-442j-39wm-28r2": {
       "id": "VULN-GHSA-442j-39wm-28r2",
@@ -5321,7 +5321,7 @@
         }
       },
       "created_at": "2026-09-01T11:56:29.354934+00:00",
-      "updated_at": "2026-11-18T12:01:04.532078+00:00"
+      "updated_at": "2026-11-18T13:59:57.369366+00:00"
     },
     "VULN-GHSA-7rx3-28cr-v5wh": {
       "id": "VULN-GHSA-7rx3-28cr-v5wh",
@@ -5368,7 +5368,7 @@
         }
       },
       "created_at": "2026-09-01T11:56:29.361730+00:00",
-      "updated_at": "2026-11-18T12:01:04.553875+00:00"
+      "updated_at": "2026-11-18T13:59:57.383191+00:00"
     },
     "VULN-CVE-2026-33939": {
       "id": "VULN-CVE-2026-33939",
@@ -5416,7 +5416,7 @@
         }
       },
       "created_at": "2026-09-01T11:56:29.367433+00:00",
-      "updated_at": "2026-11-18T12:01:04.604678+00:00"
+      "updated_at": "2026-11-18T13:59:57.410238+00:00"
     },
     "VULN-CVE-2026-33940": {
       "id": "VULN-CVE-2026-33940",
@@ -5465,7 +5465,7 @@
         }
       },
       "created_at": "2026-09-01T11:56:29.373053+00:00",
-      "updated_at": "2026-11-18T12:01:04.649837+00:00"
+      "updated_at": "2026-11-18T13:59:57.435118+00:00"
     },
     "VULN-CVE-2026-33941": {
       "id": "VULN-CVE-2026-33941",
@@ -5515,7 +5515,7 @@
         }
       },
       "created_at": "2026-09-01T11:56:29.378350+00:00",
-      "updated_at": "2026-11-18T12:01:04.671803+00:00"
+      "updated_at": "2026-11-18T13:59:57.449806+00:00"
     },
     "VULN-CVE-2026-59869": {
       "id": "VULN-CVE-2026-59869",
@@ -5566,7 +5566,7 @@
         }
       },
       "created_at": "2026-09-01T11:57:22.745418+00:00",
-      "updated_at": "2026-11-18T12:02:01.467790+00:00"
+      "updated_at": "2026-11-18T14:00:40.526390+00:00"
     },
     "VULN-GHSA-5p4m-2wfm-xmqj": {
       "id": "VULN-GHSA-5p4m-2wfm-xmqj",
@@ -5613,7 +5613,7 @@
         }
       },
       "created_at": "2026-09-01T11:57:22.753092+00:00",
-      "updated_at": "2026-11-18T12:02:01.500967+00:00"
+      "updated_at": "2026-11-18T14:00:40.547045+00:00"
     },
     "VULN-CVE-2026-53550": {
       "id": "VULN-CVE-2026-53550",
@@ -5651,17 +5651,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-h67p-54hq-rp68",
         "database_specific": {
+          "github_reviewed": true,
           "github_reviewed_at": "2026-06-15T17:15:07Z",
           "nvd_published_at": "2026-06-22T16:16:38Z",
           "cwe_ids": [
             "CWE-407"
           ],
-          "severity": "MODERATE",
-          "github_reviewed": true
+          "severity": "MODERATE"
         }
       },
       "created_at": "2026-09-01T11:57:22.760012+00:00",
-      "updated_at": "2026-11-18T12:02:01.520769+00:00"
+      "updated_at": "2026-11-18T14:00:40.567989+00:00"
     },
     "VULN-CVE-2025-64718": {
       "id": "VULN-CVE-2025-64718",
@@ -5701,17 +5701,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-mh29-5h37-fv8m",
         "database_specific": {
+          "nvd_published_at": "2025-11-13T16:15:57Z",
           "cwe_ids": [
             "CWE-1321"
           ],
           "severity": "MODERATE",
           "github_reviewed": true,
-          "github_reviewed_at": "2025-11-14T14:29:48Z",
-          "nvd_published_at": "2025-11-13T16:15:57Z"
+          "github_reviewed_at": "2025-11-14T14:29:48Z"
         }
       },
       "created_at": "2026-09-01T11:57:22.769581+00:00",
-      "updated_at": "2026-11-18T12:02:01.540732+00:00"
+      "updated_at": "2026-11-18T14:00:40.582935+00:00"
     },
     "VULN-CVE-2026-27904": {
       "id": "VULN-CVE-2026-27904",
@@ -5772,7 +5772,7 @@
         }
       },
       "created_at": "2026-09-01T11:58:18.659573+00:00",
-      "updated_at": "2026-11-18T12:03:04.359878+00:00"
+      "updated_at": "2026-11-18T14:01:24.805916+00:00"
     },
     "VULN-CVE-2026-26996": {
       "id": "VULN-CVE-2026-26996",
@@ -5823,17 +5823,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-3ppc-4f35-3m26",
         "database_specific": {
-          "severity": "HIGH",
           "github_reviewed": true,
           "github_reviewed_at": "2026-02-18T22:38:11Z",
           "nvd_published_at": "2026-02-20T03:16:01Z",
           "cwe_ids": [
             "CWE-1333"
-          ]
+          ],
+          "severity": "HIGH"
         }
       },
       "created_at": "2026-09-01T11:58:18.666202+00:00",
-      "updated_at": "2026-11-18T12:03:04.387484+00:00"
+      "updated_at": "2026-11-18T14:01:24.820993+00:00"
     },
     "VULN-CVE-2026-27903": {
       "id": "VULN-CVE-2026-27903",
@@ -5884,17 +5884,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-7r86-cg39-jmmj",
         "database_specific": {
+          "severity": "HIGH",
+          "github_reviewed": true,
           "github_reviewed_at": "2026-02-26T22:10:18Z",
           "nvd_published_at": "2026-02-26T02:16:21Z",
           "cwe_ids": [
             "CWE-407"
-          ],
-          "severity": "HIGH",
-          "github_reviewed": true
+          ]
         }
       },
       "created_at": "2026-09-01T11:58:18.672273+00:00",
-      "updated_at": "2026-11-18T12:03:04.411042+00:00"
+      "updated_at": "2026-11-18T14:01:24.833626+00:00"
     },
     "VULN-CVE-2026-67214": {
       "id": "VULN-CVE-2026-67214",
@@ -5934,17 +5934,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-28wg-ghj8-5hjv",
         "database_specific": {
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-08-07T20:52:58Z",
+          "nvd_published_at": "2026-07-29T14:16:35Z",
           "cwe_ids": [
             "CWE-835"
           ],
-          "severity": "HIGH",
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-08-07T20:52:58Z",
-          "nvd_published_at": "2026-07-29T14:16:35Z"
+          "severity": "HIGH"
         }
       },
       "created_at": "2026-09-01T11:58:25.977099+00:00",
-      "updated_at": "2026-11-18T12:03:11.926736+00:00"
+      "updated_at": "2026-11-18T14:01:30.126486+00:00"
     },
     "VULN-CVE-2026-67213": {
       "id": "VULN-CVE-2026-67213",
@@ -5984,17 +5984,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-2v37-7h3g-55p8",
         "database_specific": {
+          "severity": "HIGH",
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-08-07T20:50:34Z",
           "nvd_published_at": "2026-07-29T14:16:34Z",
           "cwe_ids": [
             "CWE-835"
-          ],
-          "severity": "HIGH",
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-08-07T20:50:34Z"
+          ]
         }
       },
       "created_at": "2026-09-01T11:58:25.983667+00:00",
-      "updated_at": "2026-11-18T12:03:11.956108+00:00"
+      "updated_at": "2026-11-18T14:01:30.141365+00:00"
     },
     "VULN-CVE-2026-33672": {
       "id": "VULN-CVE-2026-33672",
@@ -6045,7 +6045,7 @@
         }
       },
       "created_at": "2026-09-01T11:59:21.212107+00:00",
-      "updated_at": "2026-11-18T12:04:10.868035+00:00"
+      "updated_at": "2026-11-18T14:02:16.246358+00:00"
     },
     "VULN-CVE-2026-33671": {
       "id": "VULN-CVE-2026-33671",
@@ -6086,17 +6086,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-c2c7-rcm5-vvqj",
         "database_specific": {
+          "github_reviewed_at": "2026-03-25T21:12:07Z",
+          "nvd_published_at": "2026-03-26T22:16:30Z",
           "cwe_ids": [
             "CWE-1333"
           ],
           "severity": "HIGH",
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-03-25T21:12:07Z",
-          "nvd_published_at": "2026-03-26T22:16:30Z"
+          "github_reviewed": true
         }
       },
       "created_at": "2026-09-01T11:59:21.222592+00:00",
-      "updated_at": "2026-11-18T12:04:10.905714+00:00"
+      "updated_at": "2026-11-18T14:02:16.259696+00:00"
     },
     "VULN-CVE-2026-45623": {
       "id": "VULN-CVE-2026-45623",
@@ -6134,18 +6134,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-6g55-p6wh-862q",
         "database_specific": {
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-07-23T15:06:16Z",
           "nvd_published_at": null,
           "cwe_ids": [
             "CWE-200",
             "CWE-22"
           ],
-          "severity": "HIGH"
+          "severity": "HIGH",
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-07-23T15:06:16Z"
         }
       },
       "created_at": "2026-09-01T11:59:30.552360+00:00",
-      "updated_at": "2026-11-18T12:04:20.768702+00:00"
+      "updated_at": "2026-11-18T14:02:25.077975+00:00"
     },
     "VULN-CVE-2026-69153": {
       "id": "VULN-CVE-2026-69153",
@@ -6194,7 +6194,7 @@
         }
       },
       "created_at": "2026-09-01T11:59:30.560123+00:00",
-      "updated_at": "2026-11-18T12:04:20.794179+00:00"
+      "updated_at": "2026-11-18T14:02:25.095905+00:00"
     },
     "VULN-CVE-2026-41305": {
       "id": "VULN-CVE-2026-41305",
@@ -6241,7 +6241,7 @@
         }
       },
       "created_at": "2026-09-01T11:59:30.567177+00:00",
-      "updated_at": "2026-11-18T12:04:20.820320+00:00"
+      "updated_at": "2026-11-18T14:02:25.114241+00:00"
     },
     "VULN-CVE-2026-73646": {
       "id": "VULN-CVE-2026-73646",
@@ -6289,7 +6289,7 @@
         }
       },
       "created_at": "2026-09-01T11:59:30.573971+00:00",
-      "updated_at": "2026-11-18T12:04:20.844278+00:00"
+      "updated_at": "2026-11-18T14:02:25.127740+00:00"
     },
     "VULN-CVE-2025-15284": {
       "id": "VULN-CVE-2025-15284",
@@ -6326,17 +6326,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-6rw7-vpxm-498p",
         "database_specific": {
+          "github_reviewed_at": "2025-12-30T21:02:54Z",
+          "nvd_published_at": "2025-12-29T23:15:42Z",
           "cwe_ids": [
             "CWE-20"
           ],
           "severity": "MODERATE",
-          "github_reviewed": true,
-          "github_reviewed_at": "2025-12-30T21:02:54Z",
-          "nvd_published_at": "2025-12-29T23:15:42Z"
+          "github_reviewed": true
         }
       },
       "created_at": "2026-09-01T11:59:44.967363+00:00",
-      "updated_at": "2026-11-18T12:04:35.479248+00:00"
+      "updated_at": "2026-11-18T14:02:39.022040+00:00"
     },
     "VULN-CVE-2026-8723": {
       "id": "VULN-CVE-2026-8723",
@@ -6373,17 +6373,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-q8mj-m7cp-5q26",
         "database_specific": {
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-05-22T17:27:19Z",
           "nvd_published_at": "2026-05-17T00:16:21Z",
           "cwe_ids": [
             "CWE-476"
           ],
-          "severity": "MODERATE",
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-05-22T17:27:19Z"
+          "severity": "MODERATE"
         }
       },
       "created_at": "2026-09-01T11:59:44.976643+00:00",
-      "updated_at": "2026-11-18T12:04:35.512657+00:00"
+      "updated_at": "2026-11-18T14:02:39.036698+00:00"
     },
     "VULN-CVE-2026-2391": {
       "id": "VULN-CVE-2026-2391",
@@ -6420,17 +6420,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-w7fw-mjwx-w883",
         "database_specific": {
+          "github_reviewed": true,
           "github_reviewed_at": "2026-02-12T17:04:39Z",
           "nvd_published_at": "2026-02-12T05:17:11Z",
           "cwe_ids": [
             "CWE-20"
           ],
-          "severity": "LOW",
-          "github_reviewed": true
+          "severity": "LOW"
         }
       },
       "created_at": "2026-09-01T11:59:44.985422+00:00",
-      "updated_at": "2026-11-18T12:04:35.557149+00:00"
+      "updated_at": "2026-11-18T14:02:39.049527+00:00"
     },
     "VULN-CVE-2026-27606": {
       "id": "VULN-CVE-2026-27606",
@@ -6472,17 +6472,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-mw96-cpmx-2vgc",
         "database_specific": {
+          "github_reviewed_at": "2026-02-25T22:37:26Z",
+          "nvd_published_at": "2026-02-25T03:16:04Z",
           "cwe_ids": [
             "CWE-22"
           ],
           "severity": "HIGH",
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-02-25T22:37:26Z",
-          "nvd_published_at": "2026-02-25T03:16:04Z"
+          "github_reviewed": true
         }
       },
       "created_at": "2026-09-01T12:00:06.912666+00:00",
-      "updated_at": "2026-11-18T12:04:58.620155+00:00"
+      "updated_at": "2026-11-18T14:02:56.095451+00:00"
     },
     "VULN-CVE-2026-13311": {
       "id": "VULN-CVE-2026-13311",
@@ -6520,17 +6520,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-395f-4hp3-45gv",
         "database_specific": {
+          "github_reviewed_at": "2026-07-20T21:49:34Z",
+          "nvd_published_at": "2026-06-25T05:16:52Z",
           "cwe_ids": [
             "CWE-407"
           ],
           "severity": "HIGH",
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-07-20T21:49:34Z",
-          "nvd_published_at": "2026-06-25T05:16:52Z"
+          "github_reviewed": true
         }
       },
       "created_at": "2026-09-01T12:00:26.048853+00:00",
-      "updated_at": "2026-11-18T12:05:19.669951+00:00"
+      "updated_at": "2026-11-18T14:03:10.528407+00:00"
     },
     "VULN-CVE-2026-9277": {
       "id": "VULN-CVE-2026-9277",
@@ -6568,18 +6568,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-w7jw-789q-3m8p",
         "database_specific": {
+          "nvd_published_at": "2026-05-22T14:16:30Z",
           "cwe_ids": [
             "CWE-77",
             "CWE-78"
           ],
           "severity": "CRITICAL",
           "github_reviewed": true,
-          "github_reviewed_at": "2026-06-09T14:27:15Z",
-          "nvd_published_at": "2026-05-22T14:16:30Z"
+          "github_reviewed_at": "2026-06-09T14:27:15Z"
         }
       },
       "created_at": "2026-09-01T12:00:26.056662+00:00",
-      "updated_at": "2026-11-18T12:05:19.691680+00:00"
+      "updated_at": "2026-11-18T14:03:10.548805+00:00"
     },
     "VULN-CVE-2026-1525": {
       "id": "VULN-CVE-2026-1525",
@@ -6619,17 +6619,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-2mjp-6q6p-2qxm",
         "database_specific": {
-          "github_reviewed_at": "2026-03-13T20:07:03Z",
           "nvd_published_at": "2026-03-12T20:16:02Z",
           "cwe_ids": [
             "CWE-444"
           ],
           "severity": "MODERATE",
-          "github_reviewed": true
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-03-13T20:07:03Z"
         }
       },
       "created_at": "2026-09-01T12:01:43.473235+00:00",
-      "updated_at": "2026-11-18T12:06:43.368001+00:00"
+      "updated_at": "2026-11-18T14:04:15.224473+00:00"
     },
     "VULN-CVE-2026-6733": {
       "id": "VULN-CVE-2026-6733",
@@ -6681,7 +6681,7 @@
         }
       },
       "created_at": "2026-09-01T12:01:43.480235+00:00",
-      "updated_at": "2026-11-18T12:06:43.430489+00:00"
+      "updated_at": "2026-11-18T14:04:15.239696+00:00"
     },
     "VULN-CVE-2026-1527": {
       "id": "VULN-CVE-2026-1527",
@@ -6721,17 +6721,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-4992-7rv2-5pvq",
         "database_specific": {
-          "cwe_ids": [
-            "CWE-93"
-          ],
           "severity": "MODERATE",
           "github_reviewed": true,
           "github_reviewed_at": "2026-03-13T20:41:26Z",
-          "nvd_published_at": "2026-03-12T21:16:25Z"
+          "nvd_published_at": "2026-03-12T21:16:25Z",
+          "cwe_ids": [
+            "CWE-93"
+          ]
         }
       },
       "created_at": "2026-09-01T12:01:43.486859+00:00",
-      "updated_at": "2026-11-18T12:06:43.454971+00:00"
+      "updated_at": "2026-11-18T14:04:15.253376+00:00"
     },
     "VULN-CVE-2026-16728": {
       "id": "VULN-CVE-2026-16728",
@@ -6773,17 +6773,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-8xcm-r25x-g524",
         "database_specific": {
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-08-03T19:24:33Z",
           "nvd_published_at": "2026-07-29T21:17:46Z",
           "cwe_ids": [
             "CWE-444"
           ],
-          "severity": "MODERATE"
+          "severity": "MODERATE",
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-08-03T19:24:33Z"
         }
       },
       "created_at": "2026-09-01T12:01:43.493816+00:00",
-      "updated_at": "2026-11-18T12:06:43.504404+00:00"
+      "updated_at": "2026-11-18T14:04:15.264752+00:00"
     },
     "VULN-CVE-2026-11525": {
       "id": "VULN-CVE-2026-11525",
@@ -6824,17 +6824,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-g8m3-5g58-fq7m",
         "database_specific": {
-          "nvd_published_at": "2026-06-17T18:17:35Z",
           "cwe_ids": [
             "CWE-183"
           ],
           "severity": "LOW",
           "github_reviewed": true,
-          "github_reviewed_at": "2026-06-19T14:34:46Z"
+          "github_reviewed_at": "2026-06-19T14:34:46Z",
+          "nvd_published_at": "2026-06-17T18:17:35Z"
         }
       },
       "created_at": "2026-09-01T12:01:43.500582+00:00",
-      "updated_at": "2026-11-18T12:06:43.573688+00:00"
+      "updated_at": "2026-11-18T14:04:15.287492+00:00"
     },
     "VULN-CVE-2026-22036": {
       "id": "VULN-CVE-2026-22036",
@@ -6883,7 +6883,7 @@
         }
       },
       "created_at": "2026-09-01T12:01:43.507443+00:00",
-      "updated_at": "2026-11-18T12:06:43.602855+00:00"
+      "updated_at": "2026-11-18T14:04:15.299527+00:00"
     },
     "VULN-CVE-2026-15157": {
       "id": "VULN-CVE-2026-15157",
@@ -6925,17 +6925,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-m8rv-5g2x-5cg5",
         "database_specific": {
-          "severity": "MODERATE",
           "github_reviewed": true,
           "github_reviewed_at": "2026-08-03T19:33:53Z",
           "nvd_published_at": "2026-07-29T22:16:52Z",
           "cwe_ids": [
             "CWE-93"
-          ]
+          ],
+          "severity": "MODERATE"
         }
       },
       "created_at": "2026-09-01T12:01:43.514407+00:00",
-      "updated_at": "2026-11-18T12:06:43.626277+00:00"
+      "updated_at": "2026-11-18T14:04:15.311393+00:00"
     },
     "VULN-CVE-2026-9679": {
       "id": "VULN-CVE-2026-9679",
@@ -6986,7 +6986,7 @@
         }
       },
       "created_at": "2026-09-01T12:01:43.521703+00:00",
-      "updated_at": "2026-11-18T12:06:43.650857+00:00"
+      "updated_at": "2026-11-18T14:04:15.322923+00:00"
     },
     "VULN-CVE-2026-16729": {
       "id": "VULN-CVE-2026-16729",
@@ -7028,17 +7028,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-v3r7-h72x-cjcm",
         "database_specific": {
+          "github_reviewed_at": "2026-08-03T19:30:52Z",
           "nvd_published_at": "2026-07-29T17:16:51Z",
           "cwe_ids": [
             "CWE-74"
           ],
           "severity": "MODERATE",
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-08-03T19:30:52Z"
+          "github_reviewed": true
         }
       },
       "created_at": "2026-09-01T12:01:43.528509+00:00",
-      "updated_at": "2026-11-18T12:06:43.718979+00:00"
+      "updated_at": "2026-11-18T14:04:15.378084+00:00"
     },
     "VULN-CVE-2026-2229": {
       "id": "VULN-CVE-2026-2229",
@@ -7088,7 +7088,7 @@
         }
       },
       "created_at": "2026-09-01T12:01:43.535797+00:00",
-      "updated_at": "2026-11-18T12:06:43.740228+00:00"
+      "updated_at": "2026-11-18T14:04:15.389529+00:00"
     },
     "VULN-CVE-2026-1526": {
       "id": "VULN-CVE-2026-1526",
@@ -7128,17 +7128,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-vrm6-8vpv-qv8q",
         "database_specific": {
+          "severity": "HIGH",
+          "github_reviewed": true,
           "github_reviewed_at": "2026-03-13T20:41:56Z",
           "nvd_published_at": "2026-03-12T21:16:23Z",
           "cwe_ids": [
             "CWE-409"
-          ],
-          "severity": "HIGH",
-          "github_reviewed": true
+          ]
         }
       },
       "created_at": "2026-09-01T12:01:43.543009+00:00",
-      "updated_at": "2026-11-18T12:06:43.761884+00:00"
+      "updated_at": "2026-11-18T14:04:15.401084+00:00"
     },
     "VULN-CVE-2026-12151": {
       "id": "VULN-CVE-2026-12151",
@@ -7191,7 +7191,7 @@
         }
       },
       "created_at": "2026-09-01T12:01:43.550488+00:00",
-      "updated_at": "2026-11-18T12:06:43.784655+00:00"
+      "updated_at": "2026-11-18T14:04:15.412914+00:00"
     },
     "VULN-CVE-2026-39365": {
       "id": "VULN-CVE-2026-39365",
@@ -7244,7 +7244,7 @@
         }
       },
       "created_at": "2026-09-01T12:02:03.687635+00:00",
-      "updated_at": "2026-11-18T12:07:02.278762+00:00"
+      "updated_at": "2026-11-18T14:04:30.560072+00:00"
     },
     "VULN-CVE-2026-53571": {
       "id": "VULN-CVE-2026-53571",
@@ -7287,18 +7287,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-fx2h-pf6j-xcff",
         "database_specific": {
-          "cwe_ids": [
-            "CWE-200",
-            "CWE-22"
-          ],
           "severity": "MODERATE",
           "github_reviewed": true,
           "github_reviewed_at": "2026-06-15T17:17:45Z",
-          "nvd_published_at": "2026-06-22T18:16:44Z"
+          "nvd_published_at": "2026-06-22T18:16:44Z",
+          "cwe_ids": [
+            "CWE-200",
+            "CWE-22"
+          ]
         }
       },
       "created_at": "2026-09-01T12:02:03.695767+00:00",
-      "updated_at": "2026-11-18T12:07:02.372356+00:00"
+      "updated_at": "2026-11-18T14:04:30.641609+00:00"
     },
     "VULN-CVE-2026-39363": {
       "id": "VULN-CVE-2026-39363",
@@ -7351,7 +7351,7 @@
         }
       },
       "created_at": "2026-09-01T12:02:03.704671+00:00",
-      "updated_at": "2026-11-18T12:07:02.409559+00:00"
+      "updated_at": "2026-11-18T14:04:30.660541+00:00"
     },
     "VULN-CVE-2026-39364": {
       "id": "VULN-CVE-2026-39364",
@@ -7402,7 +7402,7 @@
         }
       },
       "created_at": "2026-09-01T12:02:03.712137+00:00",
-      "updated_at": "2026-11-18T12:07:02.489989+00:00"
+      "updated_at": "2026-11-18T14:04:30.699015+00:00"
     },
     "VULN-CVE-2026-53632": {
       "id": "VULN-CVE-2026-53632",
@@ -7448,18 +7448,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-v6wh-96g9-6wx3",
         "database_specific": {
+          "severity": "MODERATE",
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-06-15T17:18:31Z",
           "nvd_published_at": null,
           "cwe_ids": [
             "CWE-522",
             "CWE-73"
-          ],
-          "severity": "MODERATE",
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-06-15T17:18:31Z"
+          ]
         }
       },
       "created_at": "2026-09-01T12:02:03.719714+00:00",
-      "updated_at": "2026-11-18T12:07:02.511140+00:00"
+      "updated_at": "2026-11-18T14:04:30.711657+00:00"
     },
     "VULN-CVE-2026-45736": {
       "id": "VULN-CVE-2026-45736",
@@ -7496,17 +7496,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-58qx-3vcg-4xpx",
         "database_specific": {
-          "cwe_ids": [
-            "CWE-908"
-          ],
           "severity": "MODERATE",
           "github_reviewed": true,
           "github_reviewed_at": "2026-05-18T19:02:40Z",
-          "nvd_published_at": "2026-05-15T15:16:54Z"
+          "nvd_published_at": "2026-05-15T15:16:54Z",
+          "cwe_ids": [
+            "CWE-908"
+          ]
         }
       },
       "created_at": "2026-09-01T12:02:16.345255+00:00",
-      "updated_at": "2026-11-18T12:07:13.716109+00:00"
+      "updated_at": "2026-11-18T14:04:39.845367+00:00"
     },
     "VULN-CVE-2026-48779": {
       "id": "VULN-CVE-2026-48779",
@@ -7550,6 +7550,7 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-96hv-2xvq-fx4p",
         "database_specific": {
+          "severity": "HIGH",
           "github_reviewed": true,
           "github_reviewed_at": "2026-06-15T16:34:23Z",
           "nvd_published_at": "2026-06-17T13:20:42Z",
@@ -7557,12 +7558,11 @@
             "CWE-1050",
             "CWE-400",
             "CWE-770"
-          ],
-          "severity": "HIGH"
+          ]
         }
       },
       "created_at": "2026-09-01T12:02:16.355312+00:00",
-      "updated_at": "2026-11-18T12:07:13.741902+00:00"
+      "updated_at": "2026-11-18T14:04:39.866570+00:00"
     },
     "VULN-CVE-2026-78662": {
       "id": "VULN-CVE-2026-78662",
@@ -7604,7 +7604,7 @@
         }
       },
       "created_at": "2026-09-15T10:46:42.863369+00:00",
-      "updated_at": "2026-11-18T11:51:49.889354+00:00"
+      "updated_at": "2026-11-18T14:51:35.826411+00:00"
     },
     "VULN-CVE-2026-56855": {
       "id": "VULN-CVE-2026-56855",
@@ -7646,7 +7646,7 @@
         }
       },
       "created_at": "2026-09-15T10:46:42.877752+00:00",
-      "updated_at": "2026-11-18T11:51:49.918897+00:00"
+      "updated_at": "2026-11-18T14:51:35.842508+00:00"
     },
     "VULN-CVE-2026-84445": {
       "id": "VULN-CVE-2026-84445",
@@ -7691,7 +7691,7 @@
         }
       },
       "created_at": "2026-09-15T10:48:53.689238+00:00",
-      "updated_at": "2026-11-18T11:53:27.482418+00:00"
+      "updated_at": "2026-11-18T14:53:05.300546+00:00"
     },
     "VULN-CVE-2026-84363": {
       "id": "VULN-CVE-2026-84363",
@@ -7729,17 +7729,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-crvj-82cr-hjcx",
         "database_specific": {
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-09-08T21:22:50Z",
           "nvd_published_at": "2026-09-01T21:18:47Z",
           "cwe_ids": [
             "CWE-444"
           ],
-          "severity": "MODERATE",
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-09-08T21:22:50Z"
+          "severity": "MODERATE"
         }
       },
       "created_at": "2026-09-15T10:54:34.669202+00:00",
-      "updated_at": "2026-11-18T11:53:37.293124+00:00"
+      "updated_at": "2026-11-18T14:53:14.449588+00:00"
     },
     "VULN-CVE-2026-84364": {
       "id": "VULN-CVE-2026-84364",
@@ -7787,7 +7787,7 @@
         }
       },
       "created_at": "2026-09-15T10:54:34.711060+00:00",
-      "updated_at": "2026-11-18T11:53:37.375284+00:00"
+      "updated_at": "2026-11-18T14:53:14.521864+00:00"
     },
     "VULN-CVE-2026-84365": {
       "id": "VULN-CVE-2026-84365",
@@ -7825,17 +7825,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-gqvv-2mrq-wpjv",
         "database_specific": {
-          "severity": "MODERATE",
           "github_reviewed": true,
           "github_reviewed_at": "2026-09-08T21:23:51Z",
           "nvd_published_at": "2026-09-01T21:18:47Z",
           "cwe_ids": [
             "CWE-22"
-          ]
+          ],
+          "severity": "MODERATE"
         }
       },
       "created_at": "2026-09-15T10:54:34.755887+00:00",
-      "updated_at": "2026-11-18T11:53:37.432661+00:00"
+      "updated_at": "2026-11-18T14:53:14.566092+00:00"
     },
     "VULN-CVE-2026-84373": {
       "id": "VULN-CVE-2026-84373",
@@ -7876,17 +7876,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-82fw-gwwq-j7x9",
         "database_specific": {
-          "github_reviewed": true,
           "github_reviewed_at": "2026-09-08T20:46:45Z",
           "nvd_published_at": "2026-09-01T22:17:19Z",
           "cwe_ids": [
             "CWE-22"
           ],
-          "severity": "MODERATE"
+          "severity": "MODERATE",
+          "github_reviewed": true
         }
       },
       "created_at": "2026-09-15T10:55:24.827784+00:00",
-      "updated_at": "2026-11-18T11:57:30.404672+00:00"
+      "updated_at": "2026-11-18T14:56:49.099058+00:00"
     },
     "VULN-GHSA-p498-v437-472g": {
       "id": "VULN-GHSA-p498-v437-472g",
@@ -7933,7 +7933,7 @@
         }
       },
       "created_at": "2026-09-15T10:56:45.663232+00:00",
-      "updated_at": "2026-11-18T11:55:12.958369+00:00"
+      "updated_at": "2026-11-18T14:54:47.541781+00:00"
     },
     "VULN-CVE-2026-75975": {
       "id": "VULN-CVE-2026-75975",
@@ -7975,18 +7975,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-f65p-4m7j-42xc",
         "database_specific": {
+          "severity": "HIGH",
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-09-02T15:43:30Z",
           "nvd_published_at": "2026-08-24T10:16:40Z",
           "cwe_ids": [
             "CWE-20",
             "CWE-918"
-          ],
-          "severity": "HIGH",
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-09-02T15:43:30Z"
+          ]
         }
       },
       "created_at": "2026-09-15T11:03:04.073254+00:00",
-      "updated_at": "2026-11-18T12:00:17.063421+00:00"
+      "updated_at": "2026-11-18T13:59:17.862113+00:00"
     },
     "VULN-CVE-2026-76172": {
       "id": "VULN-CVE-2026-76172",
@@ -8028,17 +8028,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-jqff-g426-hqxp",
         "database_specific": {
-          "github_reviewed_at": "2026-09-02T15:41:53Z",
-          "nvd_published_at": "2026-08-24T11:16:40Z",
           "cwe_ids": [
             "CWE-177"
           ],
           "severity": "HIGH",
-          "github_reviewed": true
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-09-02T15:41:53Z",
+          "nvd_published_at": "2026-08-24T11:16:40Z"
         }
       },
       "created_at": "2026-09-15T11:03:04.091196+00:00",
-      "updated_at": "2026-11-18T12:00:17.110123+00:00"
+      "updated_at": "2026-11-18T13:59:17.889747+00:00"
     },
     "VULN-CVE-2026-84375": {
       "id": "VULN-CVE-2026-84375",
@@ -8078,18 +8078,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-2883-xcg3-v3hh",
         "database_specific": {
-          "nvd_published_at": "2026-09-01T22:17:19Z",
           "cwe_ids": [
             "CWE-400",
             "CWE-407"
           ],
           "severity": "HIGH",
           "github_reviewed": true,
-          "github_reviewed_at": "2026-09-08T21:24:51Z"
+          "github_reviewed_at": "2026-09-08T21:24:51Z",
+          "nvd_published_at": "2026-09-01T22:17:19Z"
         }
       },
       "created_at": "2026-09-15T11:05:08.623177+00:00",
-      "updated_at": "2026-11-18T12:02:01.416431+00:00"
+      "updated_at": "2026-11-18T14:00:40.500722+00:00"
     },
     "VULN-CVE-2026-73086": {
       "id": "VULN-CVE-2026-73086",
@@ -8139,7 +8139,7 @@
         }
       },
       "created_at": "2026-09-15T11:06:28.145035+00:00",
-      "updated_at": "2026-11-18T12:03:11.982169+00:00"
+      "updated_at": "2026-11-18T14:01:30.153922+00:00"
     },
     "VULN-CVE-2026-82417": {
       "id": "VULN-CVE-2026-82417",
@@ -8176,18 +8176,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-4mjr-xmp4-gh2g",
         "database_specific": {
-          "github_reviewed_at": "2026-09-02T14:45:13Z",
-          "nvd_published_at": "2026-08-30T00:16:34Z",
           "cwe_ids": [
             "CWE-248",
             "CWE-703"
           ],
           "severity": "MODERATE",
-          "github_reviewed": true
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-09-02T14:45:13Z",
+          "nvd_published_at": "2026-08-30T00:16:34Z"
         }
       },
       "created_at": "2026-09-15T11:08:05.573284+00:00",
-      "updated_at": "2026-11-18T12:04:35.385414+00:00"
+      "updated_at": "2026-11-18T14:02:38.996344+00:00"
     },
     "VULN-CVE-2026-97687": {
       "id": "VULN-CVE-2026-97687",
@@ -8227,7 +8227,7 @@
         "database_specific": {}
       },
       "created_at": "2026-10-13T14:02:58.415724+00:00",
-      "updated_at": "2026-11-18T11:51:21.251368+00:00"
+      "updated_at": "2026-11-18T14:51:15.256773+00:00"
     },
     "VULN-CVE-2026-97689": {
       "id": "VULN-CVE-2026-97689",
@@ -8267,7 +8267,7 @@
         "database_specific": {}
       },
       "created_at": "2026-10-13T14:02:58.556137+00:00",
-      "updated_at": "2026-11-18T11:51:21.265508+00:00"
+      "updated_at": "2026-11-18T14:51:15.277695+00:00"
     },
     "VULN-CVE-2026-78659": {
       "id": "VULN-CVE-2026-78659",
@@ -8315,7 +8315,7 @@
         }
       },
       "created_at": "2026-10-13T14:05:39.123573+00:00",
-      "updated_at": "2026-11-18T11:53:16.244125+00:00"
+      "updated_at": "2026-11-18T14:52:54.937039+00:00"
     },
     "VULN-CVE-2026-78660": {
       "id": "VULN-CVE-2026-78660",
@@ -8363,7 +8363,7 @@
         }
       },
       "created_at": "2026-10-13T14:05:39.152876+00:00",
-      "updated_at": "2026-11-18T11:53:16.276638+00:00"
+      "updated_at": "2026-11-18T14:52:54.949979+00:00"
     },
     "VULN-CVE-2026-78669": {
       "id": "VULN-CVE-2026-78669",
@@ -8411,7 +8411,7 @@
         }
       },
       "created_at": "2026-10-13T14:05:39.168413+00:00",
-      "updated_at": "2026-11-18T11:53:16.308029+00:00"
+      "updated_at": "2026-11-18T14:52:54.962633+00:00"
     },
     "VULN-CVE-2026-78663": {
       "id": "VULN-CVE-2026-78663",
@@ -8459,7 +8459,7 @@
         }
       },
       "created_at": "2026-10-13T14:05:39.182958+00:00",
-      "updated_at": "2026-11-18T11:53:16.324485+00:00"
+      "updated_at": "2026-11-18T14:52:54.974523+00:00"
     },
     "VULN-CVE-2026-97032": {
       "id": "VULN-CVE-2026-97032",
@@ -8507,7 +8507,7 @@
         }
       },
       "created_at": "2026-10-13T14:05:39.199869+00:00",
-      "updated_at": "2026-11-18T11:53:16.342493+00:00"
+      "updated_at": "2026-11-18T14:52:54.987022+00:00"
     },
     "VULN-CVE-2026-104850": {
       "id": "VULN-CVE-2026-104850",
@@ -8559,7 +8559,7 @@
         }
       },
       "created_at": "2026-10-13T14:11:40.709471+00:00",
-      "updated_at": "2026-11-18T11:53:31.006575+00:00"
+      "updated_at": "2026-11-18T14:53:08.354543+00:00"
     },
     "VULN-CVE-2026-93981": {
       "id": "VULN-CVE-2026-93981",
@@ -8597,17 +8597,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-hxh3-vqpv-xpqv",
         "database_specific": {
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-09-30T23:46:16Z",
           "nvd_published_at": null,
           "cwe_ids": [
             "CWE-79"
           ],
-          "severity": "MODERATE"
+          "severity": "MODERATE",
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-09-30T23:46:16Z"
         }
       },
       "created_at": "2026-10-13T14:11:49.196303+00:00",
-      "updated_at": "2026-11-18T11:53:37.493858+00:00"
+      "updated_at": "2026-11-18T14:53:14.623313+00:00"
     },
     "VULN-CVE-2026-74866": {
       "id": "VULN-CVE-2026-74866",
@@ -8645,17 +8645,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-gxm5-99cw-xjw9",
         "database_specific": {
+          "nvd_published_at": "2026-08-21T09:16:40Z",
           "cwe_ids": [
             "CWE-93"
           ],
           "severity": "MODERATE",
           "github_reviewed": true,
-          "github_reviewed_at": "2026-10-05T22:33:44Z",
-          "nvd_published_at": "2026-08-21T09:16:40Z"
+          "github_reviewed_at": "2026-10-05T22:33:44Z"
         }
       },
       "created_at": "2026-10-13T14:13:59.648789+00:00",
-      "updated_at": "2026-11-18T11:55:07.232226+00:00"
+      "updated_at": "2026-11-18T14:54:41.220301+00:00"
     },
     "VULN-CVE-2026-19481": {
       "id": "VULN-CVE-2026-19481",
@@ -8703,7 +8703,7 @@
         }
       },
       "created_at": "2026-10-13T14:13:59.669542+00:00",
-      "updated_at": "2026-11-18T11:55:07.266737+00:00"
+      "updated_at": "2026-11-18T14:54:41.240728+00:00"
     },
     "VULN-CVE-2026-101898": {
       "id": "VULN-CVE-2026-101898",
@@ -8751,7 +8751,7 @@
         }
       },
       "created_at": "2026-10-13T14:17:46.321452+00:00",
-      "updated_at": "2026-11-18T11:58:01.348264+00:00"
+      "updated_at": "2026-11-18T14:57:17.365888+00:00"
     },
     "VULN-CVE-2026-101899": {
       "id": "VULN-CVE-2026-101899",
@@ -8799,7 +8799,7 @@
         }
       },
       "created_at": "2026-10-13T14:17:46.391146+00:00",
-      "updated_at": "2026-11-18T11:58:01.469566+00:00"
+      "updated_at": "2026-11-18T14:57:17.410228+00:00"
     },
     "VULN-CVE-2026-101900": {
       "id": "VULN-CVE-2026-101900",
@@ -8837,7 +8837,6 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-4hqw-qxg8-jxx2",
         "database_specific": {
-          "severity": "MODERATE",
           "github_reviewed": true,
           "github_reviewed_at": "2026-09-30T15:34:46Z",
           "nvd_published_at": "2026-09-28T18:17:18Z",
@@ -8845,11 +8844,12 @@
             "CWE-1321",
             "CWE-693",
             "CWE-74"
-          ]
+          ],
+          "severity": "MODERATE"
         }
       },
       "created_at": "2026-10-13T14:17:46.407785+00:00",
-      "updated_at": "2026-11-18T11:58:01.501363+00:00"
+      "updated_at": "2026-11-18T14:57:17.421903+00:00"
     },
     "VULN-CVE-2026-101901": {
       "id": "VULN-CVE-2026-101901",
@@ -8897,7 +8897,7 @@
         }
       },
       "created_at": "2026-10-13T14:17:46.424568+00:00",
-      "updated_at": "2026-11-18T11:58:01.547783+00:00"
+      "updated_at": "2026-11-18T14:57:17.434422+00:00"
     },
     "VULN-CVE-2026-101902": {
       "id": "VULN-CVE-2026-101902",
@@ -8937,17 +8937,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-9fr6-4gfg-395g",
         "database_specific": {
-          "cwe_ids": [
-            "CWE-1321"
-          ],
           "severity": "MODERATE",
           "github_reviewed": true,
           "github_reviewed_at": "2026-09-30T15:12:49Z",
-          "nvd_published_at": "2026-09-28T18:17:18Z"
+          "nvd_published_at": "2026-09-28T18:17:18Z",
+          "cwe_ids": [
+            "CWE-1321"
+          ]
         }
       },
       "created_at": "2026-10-13T14:17:46.547586+00:00",
-      "updated_at": "2026-11-18T11:58:01.854943+00:00"
+      "updated_at": "2026-11-18T14:57:17.557306+00:00"
     },
     "VULN-CVE-2026-101904": {
       "id": "VULN-CVE-2026-101904",
@@ -8985,18 +8985,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-j8rh-479h-cp32",
         "database_specific": {
+          "github_reviewed": true,
           "github_reviewed_at": "2026-09-30T15:35:14Z",
           "nvd_published_at": "2026-09-28T18:17:18Z",
           "cwe_ids": [
             "CWE-1321",
             "CWE-74"
           ],
-          "severity": "MODERATE",
-          "github_reviewed": true
+          "severity": "MODERATE"
         }
       },
       "created_at": "2026-10-13T14:17:46.628871+00:00",
-      "updated_at": "2026-11-18T11:58:01.993867+00:00"
+      "updated_at": "2026-11-18T14:57:17.624937+00:00"
     },
     "VULN-CVE-2026-101906": {
       "id": "VULN-CVE-2026-101906",
@@ -9034,18 +9034,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-mghh-pgcx-3jjj",
         "database_specific": {
+          "github_reviewed_at": "2026-09-30T15:03:02Z",
+          "nvd_published_at": "2026-09-28T18:17:19Z",
           "cwe_ids": [
             "CWE-1333",
             "CWE-400"
           ],
           "severity": "HIGH",
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-09-30T15:03:02Z",
-          "nvd_published_at": "2026-09-28T18:17:19Z"
+          "github_reviewed": true
         }
       },
       "created_at": "2026-10-13T14:17:46.681522+00:00",
-      "updated_at": "2026-11-18T11:58:02.079752+00:00"
+      "updated_at": "2026-11-18T14:57:17.673013+00:00"
     },
     "VULN-CVE-2026-101908": {
       "id": "VULN-CVE-2026-101908",
@@ -9093,7 +9093,7 @@
         }
       },
       "created_at": "2026-10-13T14:17:46.874176+00:00",
-      "updated_at": "2026-11-18T11:58:02.363924+00:00"
+      "updated_at": "2026-11-18T14:57:17.807017+00:00"
     },
     "VULN-CVE-2026-102276": {
       "id": "VULN-CVE-2026-102276",
@@ -9137,18 +9137,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-6j4f-fj2g-mc7p",
         "database_specific": {
-          "cwe_ids": [
-            "CWE-400",
-            "CWE-674"
-          ],
           "severity": "HIGH",
           "github_reviewed": true,
           "github_reviewed_at": "2026-09-29T23:44:58Z",
-          "nvd_published_at": "2026-09-28T21:17:16Z"
+          "nvd_published_at": "2026-09-28T21:17:16Z",
+          "cwe_ids": [
+            "CWE-400",
+            "CWE-674"
+          ]
         }
       },
       "created_at": "2026-10-13T14:17:54.430015+00:00",
-      "updated_at": "2026-11-18T11:58:08.550007+00:00"
+      "updated_at": "2026-11-18T14:57:22.744252+00:00"
     },
     "VULN-CVE-2026-102277": {
       "id": "VULN-CVE-2026-102277",
@@ -9192,18 +9192,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-q2hr-2g5m-vwhr",
         "database_specific": {
-          "cwe_ids": [
-            "CWE-400",
-            "CWE-407"
-          ],
           "severity": "MODERATE",
           "github_reviewed": true,
           "github_reviewed_at": "2026-09-29T23:45:39Z",
-          "nvd_published_at": "2026-09-28T21:17:16Z"
+          "nvd_published_at": "2026-09-28T21:17:16Z",
+          "cwe_ids": [
+            "CWE-400",
+            "CWE-407"
+          ]
         }
       },
       "created_at": "2026-10-13T14:17:54.482808+00:00",
-      "updated_at": "2026-11-18T11:58:08.691512+00:00"
+      "updated_at": "2026-11-18T14:57:22.785495+00:00"
     },
     "VULN-CVE-2026-102278": {
       "id": "VULN-CVE-2026-102278",
@@ -9247,18 +9247,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-qhr7-859c-m2p7",
         "database_specific": {
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-09-29T23:45:17Z",
           "nvd_published_at": "2026-09-28T21:17:16Z",
           "cwe_ids": [
             "CWE-400",
             "CWE-674"
           ],
-          "severity": "HIGH",
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-09-29T23:45:17Z"
+          "severity": "HIGH"
         }
       },
       "created_at": "2026-10-13T14:17:54.506381+00:00",
-      "updated_at": "2026-11-18T11:58:08.722888+00:00"
+      "updated_at": "2026-11-18T14:57:22.799487+00:00"
     },
     "VULN-CVE-2026-93687": {
       "id": "VULN-CVE-2026-93687",
@@ -9356,7 +9356,7 @@
         }
       },
       "created_at": "2026-10-13T14:20:38.947810+00:00",
-      "updated_at": "2026-11-18T12:00:17.086709+00:00"
+      "updated_at": "2026-11-18T13:59:17.876876+00:00"
     },
     "VULN-CVE-2026-84292": {
       "id": "VULN-CVE-2026-84292",
@@ -9398,17 +9398,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-qw65-cvwx-89v3",
         "database_specific": {
+          "nvd_published_at": "2026-09-02T20:17:39Z",
           "cwe_ids": [
             "CWE-116"
           ],
           "severity": "HIGH",
           "github_reviewed": true,
-          "github_reviewed_at": "2026-09-28T21:24:39Z",
-          "nvd_published_at": "2026-09-02T20:17:39Z"
+          "github_reviewed_at": "2026-09-28T21:24:39Z"
         }
       },
       "created_at": "2026-10-13T14:20:39.007382+00:00",
-      "updated_at": "2026-11-18T12:00:17.154464+00:00"
+      "updated_at": "2026-11-18T13:59:17.916228+00:00"
     },
     "VULN-CVE-2026-106446": {
       "id": "VULN-CVE-2026-106446",
@@ -9457,7 +9457,7 @@
         }
       },
       "created_at": "2026-10-13T14:21:41.067571+00:00",
-      "updated_at": "2026-11-18T12:01:04.579914+00:00"
+      "updated_at": "2026-11-18T13:59:57.396778+00:00"
     },
     "VULN-CVE-2026-106445": {
       "id": "VULN-CVE-2026-106445",
@@ -9495,18 +9495,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-p8wg-vrv2-v86f",
         "database_specific": {
-          "nvd_published_at": "2026-10-06T20:17:26Z",
           "cwe_ids": [
             "CWE-1289",
             "CWE-184"
           ],
           "severity": "CRITICAL",
           "github_reviewed": true,
-          "github_reviewed_at": "2026-10-08T17:52:26Z"
+          "github_reviewed_at": "2026-10-08T17:52:26Z",
+          "nvd_published_at": "2026-10-06T20:17:26Z"
         }
       },
       "created_at": "2026-10-13T14:21:41.105923+00:00",
-      "updated_at": "2026-11-18T12:01:04.627223+00:00"
+      "updated_at": "2026-11-18T13:59:57.422588+00:00"
     },
     "VULN-CVE-2026-106444": {
       "id": "VULN-CVE-2026-106444",
@@ -9544,17 +9544,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-xw65-4hp5-5hc7",
         "database_specific": {
+          "cwe_ids": [
+            "CWE-116"
+          ],
           "severity": "MODERATE",
           "github_reviewed": true,
           "github_reviewed_at": "2026-10-08T17:52:37Z",
-          "nvd_published_at": "2026-10-06T20:17:26Z",
-          "cwe_ids": [
-            "CWE-116"
-          ]
+          "nvd_published_at": "2026-10-06T20:17:26Z"
         }
       },
       "created_at": "2026-10-13T14:21:41.171346+00:00",
-      "updated_at": "2026-11-18T12:01:04.694810+00:00"
+      "updated_at": "2026-11-18T13:59:57.464942+00:00"
     },
     "VULN-CVE-2026-90711": {
       "id": "VULN-CVE-2026-90711",
@@ -9592,7 +9592,6 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-jqcg-44mw-7w3h",
         "database_specific": {
-          "github_reviewed": true,
           "github_reviewed_at": "2026-10-05T23:30:26Z",
           "nvd_published_at": "2026-09-15T07:16:33Z",
           "cwe_ids": [
@@ -9600,11 +9599,12 @@
             "CWE-348",
             "CWE-697"
           ],
-          "severity": "CRITICAL"
+          "severity": "CRITICAL",
+          "github_reviewed": true
         }
       },
       "created_at": "2026-10-13T14:26:03.152717+00:00",
-      "updated_at": "2026-11-18T12:04:30.439877+00:00"
+      "updated_at": "2026-11-18T14:02:35.510617+00:00"
     },
     "VULN-CVE-2026-18540": {
       "id": "VULN-CVE-2026-18540",
@@ -9656,7 +9656,7 @@
         }
       },
       "created_at": "2026-10-13T14:38:44.586051+00:00",
-      "updated_at": "2026-11-18T12:06:43.697143+00:00"
+      "updated_at": "2026-11-18T14:04:15.365640+00:00"
     },
     "VULN-CVE-2026-93749": {
       "id": "VULN-CVE-2026-93749",
@@ -9694,17 +9694,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-68fv-2mgg-jv7q",
         "database_specific": {
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-10-05T23:31:22Z",
-          "nvd_published_at": "2026-09-18T18:18:33Z",
           "cwe_ids": [
             "CWE-1284"
           ],
-          "severity": "HIGH"
+          "severity": "HIGH",
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-10-05T23:31:22Z",
+          "nvd_published_at": "2026-09-18T18:18:33Z"
         }
       },
       "created_at": "2026-10-13T15:33:58.429850+00:00",
-      "updated_at": "2026-11-18T12:05:32.406025+00:00"
+      "updated_at": "2026-11-18T14:03:19.039808+00:00"
     },
     "VULN-CVE-2026-4800": {
       "id": "VULN-CVE-2026-4800",
@@ -9745,17 +9745,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-r5fr-rjxr-66jc",
         "database_specific": {
+          "cwe_ids": [
+            "CWE-94"
+          ],
           "severity": "HIGH",
           "github_reviewed": true,
           "github_reviewed_at": "2026-04-01T23:51:12Z",
-          "nvd_published_at": "2026-03-31T20:16:29Z",
-          "cwe_ids": [
-            "CWE-94"
-          ]
+          "nvd_published_at": "2026-03-31T20:16:29Z"
         }
       },
       "created_at": "2026-11-18T06:45:53.004223+00:00",
-      "updated_at": "2026-11-18T12:02:36.339825+00:00"
+      "updated_at": "2026-11-18T14:01:06.867707+00:00"
     },
     "VULN-CVE-2026-128085": {
       "id": "VULN-CVE-2026-128085",
@@ -9808,7 +9808,7 @@
         }
       },
       "created_at": "2026-11-18T06:48:32.387842+00:00",
-      "updated_at": "2026-11-18T12:09:17.073412+00:00"
+      "updated_at": "2026-11-18T14:52:50.050324+00:00"
     },
     "VULN-CVE-2026-78661": {
       "id": "VULN-CVE-2026-78661",
@@ -9841,16 +9841,16 @@
         "https://osv.dev/vulnerability/GO-2026-6860",
         "https://nvd.nist.gov/vuln/detail/CVE-2026-78661"
       ],
-      "installed_version": "0.60.0",
+      "installed_version": "0.58.0",
       "raw_source_metadata": {
         "osv_id": "GO-2026-6860",
         "database_specific": {
-          "review_status": "REVIEWED",
-          "url": "https://pkg.go.dev/vuln/GO-2026-6860"
+          "url": "https://pkg.go.dev/vuln/GO-2026-6860",
+          "review_status": "REVIEWED"
         }
       },
       "created_at": "2026-11-18T06:48:40.719724+00:00",
-      "updated_at": "2026-11-18T12:09:23.245261+00:00"
+      "updated_at": "2026-11-18T14:52:54.999044+00:00"
     },
     "VULN-CVE-2026-97045": {
       "id": "VULN-CVE-2026-97045",
@@ -9883,7 +9883,7 @@
         "https://osv.dev/vulnerability/GO-2026-6866",
         "https://nvd.nist.gov/vuln/detail/CVE-2026-97045"
       ],
-      "installed_version": "0.60.0",
+      "installed_version": "0.58.0",
       "raw_source_metadata": {
         "osv_id": "GO-2026-6866",
         "database_specific": {
@@ -9892,7 +9892,7 @@
         }
       },
       "created_at": "2026-11-18T06:48:40.752430+00:00",
-      "updated_at": "2026-11-18T12:09:23.288939+00:00"
+      "updated_at": "2026-11-18T14:52:55.012452+00:00"
     },
     "VULN-CVE-2026-111767": {
       "id": "VULN-CVE-2026-111767",
@@ -9930,18 +9930,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-22jm-h49p-29qw",
         "database_specific": {
-          "github_reviewed_at": "2026-10-20T18:26:54Z",
-          "nvd_published_at": null,
           "cwe_ids": [
             "CWE-639",
             "CWE-862"
           ],
           "severity": "HIGH",
-          "github_reviewed": true
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-10-20T18:26:54Z",
+          "nvd_published_at": null
         }
       },
       "created_at": "2026-11-18T06:55:26.986439+00:00",
-      "updated_at": "2026-11-18T11:53:30.905586+00:00"
+      "updated_at": "2026-11-18T14:53:08.305753+00:00"
     },
     "VULN-CVE-2026-111768": {
       "id": "VULN-CVE-2026-111768",
@@ -9982,17 +9982,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-46jr-4wx8-v453",
         "database_specific": {
+          "severity": "HIGH",
           "github_reviewed": true,
           "github_reviewed_at": "2026-10-20T20:06:35Z",
           "nvd_published_at": null,
           "cwe_ids": [
             "CWE-770"
-          ],
-          "severity": "HIGH"
+          ]
         }
       },
       "created_at": "2026-11-18T06:55:27.056991+00:00",
-      "updated_at": "2026-11-18T11:53:30.975476+00:00"
+      "updated_at": "2026-11-18T14:53:08.330110+00:00"
     },
     "VULN-CVE-2026-111769": {
       "id": "VULN-CVE-2026-111769",
@@ -10033,17 +10033,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-6prh-2h8m-c8cw",
         "database_specific": {
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-10-20T18:26:30Z",
-          "nvd_published_at": null,
           "cwe_ids": [
             "CWE-200"
           ],
-          "severity": "MODERATE"
+          "severity": "MODERATE",
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-10-20T18:26:30Z",
+          "nvd_published_at": null
         }
       },
       "created_at": "2026-11-18T06:55:27.091735+00:00",
-      "updated_at": "2026-11-18T11:53:30.994297+00:00"
+      "updated_at": "2026-11-18T14:53:08.342192+00:00"
     },
     "VULN-GHSA-f897-62hf-6gxq": {
       "id": "VULN-GHSA-f897-62hf-6gxq",
@@ -10088,17 +10088,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-f897-62hf-6gxq",
         "database_specific": {
-          "github_reviewed": true,
           "github_reviewed_at": "2026-10-27T19:02:00Z",
           "nvd_published_at": null,
           "cwe_ids": [
             "CWE-770"
           ],
-          "severity": "HIGH"
+          "severity": "HIGH",
+          "github_reviewed": true
         }
       },
       "created_at": "2026-11-18T06:55:27.198346+00:00",
-      "updated_at": "2026-11-18T11:53:31.048055+00:00"
+      "updated_at": "2026-11-18T14:53:08.380069+00:00"
     },
     "VULN-CVE-2026-111771": {
       "id": "VULN-CVE-2026-111771",
@@ -10155,7 +10155,7 @@
         }
       },
       "created_at": "2026-11-18T06:55:27.236285+00:00",
-      "updated_at": "2026-11-18T11:53:31.073602+00:00"
+      "updated_at": "2026-11-18T14:53:08.392318+00:00"
     },
     "VULN-CVE-2026-126359": {
       "id": "VULN-CVE-2026-126359",
@@ -10193,17 +10193,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-3gg2-335m-rxc6",
         "database_specific": {
+          "severity": "LOW",
           "github_reviewed": true,
           "github_reviewed_at": "2026-11-12T23:22:36Z",
           "nvd_published_at": null,
           "cwe_ids": [
             "CWE-79"
-          ],
-          "severity": "LOW"
+          ]
         }
       },
       "created_at": "2026-11-18T06:55:36.105864+00:00",
-      "updated_at": "2026-11-18T11:53:37.067825+00:00"
+      "updated_at": "2026-11-18T14:53:14.249134+00:00"
     },
     "VULN-CVE-2026-126355": {
       "id": "VULN-CVE-2026-126355",
@@ -10251,7 +10251,7 @@
         }
       },
       "created_at": "2026-11-18T06:55:36.228646+00:00",
-      "updated_at": "2026-11-18T11:53:37.126269+00:00"
+      "updated_at": "2026-11-18T14:53:14.293196+00:00"
     },
     "VULN-CVE-2026-126356": {
       "id": "VULN-CVE-2026-126356",
@@ -10300,7 +10300,7 @@
         }
       },
       "created_at": "2026-11-18T06:55:36.269098+00:00",
-      "updated_at": "2026-11-18T11:53:37.145074+00:00"
+      "updated_at": "2026-11-18T14:53:14.305460+00:00"
     },
     "VULN-CVE-2026-126357": {
       "id": "VULN-CVE-2026-126357",
@@ -10338,17 +10338,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-4m76-xfj5-7975",
         "database_specific": {
-          "github_reviewed": true,
           "github_reviewed_at": "2026-11-12T23:24:11Z",
           "nvd_published_at": null,
           "cwe_ids": [
             "CWE-288"
           ],
-          "severity": "MODERATE"
+          "severity": "MODERATE",
+          "github_reviewed": true
         }
       },
       "created_at": "2026-11-18T06:55:36.305328+00:00",
-      "updated_at": "2026-11-18T11:53:37.158942+00:00"
+      "updated_at": "2026-11-18T14:53:14.318374+00:00"
     },
     "VULN-CVE-2026-126358": {
       "id": "VULN-CVE-2026-126358",
@@ -10386,17 +10386,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-h7mg-cq63-vhpq",
         "database_specific": {
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-11-12T23:23:30Z",
           "nvd_published_at": null,
           "cwe_ids": [
             "CWE-863"
           ],
-          "severity": "MODERATE",
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-11-12T23:23:30Z"
+          "severity": "MODERATE"
         }
       },
       "created_at": "2026-11-18T06:55:36.939593+00:00",
-      "updated_at": "2026-11-18T11:53:37.464579+00:00"
+      "updated_at": "2026-11-18T14:53:14.588435+00:00"
     },
     "VULN-CVE-2023-54404": {
       "id": "VULN-CVE-2023-54404",
@@ -10444,7 +10444,7 @@
         }
       },
       "created_at": "2026-11-18T06:55:46.988203+00:00",
-      "updated_at": "2026-11-18T11:53:44.647471+00:00"
+      "updated_at": "2026-11-18T14:53:21.836859+00:00"
     },
     "VULN-CVE-2026-112949": {
       "id": "VULN-CVE-2026-112949",
@@ -10484,19 +10484,19 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-qxg6-89mg-rqv8",
         "database_specific": {
-          "severity": "MODERATE",
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-10-21T19:54:26Z",
           "nvd_published_at": "2026-10-20T16:17:05Z",
           "cwe_ids": [
             "CWE-116",
             "CWE-306",
             "CWE-94"
-          ]
+          ],
+          "severity": "MODERATE",
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-10-21T19:54:26Z"
         }
       },
       "created_at": "2026-11-18T07:01:09.917944+00:00",
-      "updated_at": "2026-11-18T11:57:30.416704+00:00"
+      "updated_at": "2026-11-18T14:56:49.114311+00:00"
     },
     "VULN-CVE-2026-111181": {
       "id": "VULN-CVE-2026-111181",
@@ -10536,17 +10536,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-27r3-jxmh-p828",
         "database_specific": {
-          "nvd_published_at": "2026-10-22T15:17:04Z",
           "cwe_ids": [
             "CWE-248"
           ],
           "severity": "HIGH",
           "github_reviewed": true,
-          "github_reviewed_at": "2026-10-23T20:53:11Z"
+          "github_reviewed_at": "2026-10-23T20:53:11Z",
+          "nvd_published_at": "2026-10-22T15:17:04Z"
         }
       },
       "created_at": "2026-11-18T07:01:59.668554+00:00",
-      "updated_at": "2026-11-18T11:58:05.976807+00:00"
+      "updated_at": "2026-11-18T14:57:20.700920+00:00"
     },
     "VULN-CVE-2026-110725": {
       "id": "VULN-CVE-2026-110725",
@@ -10588,18 +10588,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-333x-w4r6-6crp",
         "database_specific": {
-          "nvd_published_at": "2026-10-20T07:17:08Z",
           "cwe_ids": [
             "CWE-116",
             "CWE-41"
           ],
           "severity": "LOW",
           "github_reviewed": true,
-          "github_reviewed_at": "2026-10-23T21:36:40Z"
+          "github_reviewed_at": "2026-10-23T21:36:40Z",
+          "nvd_published_at": "2026-10-20T07:17:08Z"
         }
       },
       "created_at": "2026-11-18T07:04:57.598725+00:00",
-      "updated_at": "2026-11-18T12:00:16.990829+00:00"
+      "updated_at": "2026-11-18T13:59:17.825906+00:00"
     },
     "VULN-CVE-2026-110306": {
       "id": "VULN-CVE-2026-110306",
@@ -10641,18 +10641,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-w74x-v6f9-j3xg",
         "database_specific": {
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-10-23T21:41:36Z",
+          "nvd_published_at": "2026-10-20T07:17:08Z",
           "cwe_ids": [
             "CWE-172",
             "CWE-180"
           ],
-          "severity": "MODERATE",
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-10-23T21:41:36Z",
-          "nvd_published_at": "2026-10-20T07:17:08Z"
+          "severity": "MODERATE"
         }
       },
       "created_at": "2026-11-18T07:04:57.945143+00:00",
-      "updated_at": "2026-11-18T12:00:17.220287+00:00"
+      "updated_at": "2026-11-18T13:59:17.955076+00:00"
     },
     "VULN-CVE-2026-110095": {
       "id": "VULN-CVE-2026-110095",
@@ -10694,17 +10694,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-xhq7-xmqj-769h",
         "database_specific": {
+          "github_reviewed": true,
           "github_reviewed_at": "2026-10-23T21:39:34Z",
           "nvd_published_at": "2026-10-20T07:17:08Z",
           "cwe_ids": [
             "CWE-41"
           ],
-          "severity": "LOW",
-          "github_reviewed": true
+          "severity": "LOW"
         }
       },
       "created_at": "2026-11-18T07:04:57.994895+00:00",
-      "updated_at": "2026-11-18T12:00:17.248811+00:00"
+      "updated_at": "2026-11-18T13:59:17.968953+00:00"
     },
     "VULN-CVE-2026-111755": {
       "id": "VULN-CVE-2026-111755",
@@ -10753,7 +10753,7 @@
         }
       },
       "created_at": "2026-11-18T07:05:22.496975+00:00",
-      "updated_at": "2026-11-18T12:00:33.252334+00:00"
+      "updated_at": "2026-11-18T13:59:29.387102+00:00"
     },
     "VULN-CVE-2026-116689": {
       "id": "VULN-CVE-2026-116689",
@@ -10801,7 +10801,7 @@
         }
       },
       "created_at": "2026-11-18T07:05:22.531125+00:00",
-      "updated_at": "2026-11-18T12:00:33.283719+00:00"
+      "updated_at": "2026-11-18T13:59:29.400053+00:00"
     },
     "VULN-CVE-2026-111756": {
       "id": "VULN-CVE-2026-111756",
@@ -10839,18 +10839,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-q3jh-wrc6-jgq8",
         "database_specific": {
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-10-20T17:58:04Z",
-          "nvd_published_at": null,
           "cwe_ids": [
             "CWE-200",
             "CWE-212"
           ],
-          "severity": "HIGH"
+          "severity": "HIGH",
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-10-20T17:58:04Z",
+          "nvd_published_at": null
         }
       },
       "created_at": "2026-11-18T07:05:22.565958+00:00",
-      "updated_at": "2026-11-18T12:00:33.306507+00:00"
+      "updated_at": "2026-11-18T13:59:29.412835+00:00"
     },
     "VULN-CVE-2026-118773": {
       "id": "VULN-CVE-2026-118773",
@@ -10888,17 +10888,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-3g3m-2fjr-6pw4",
         "database_specific": {
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-10-30T23:09:11Z",
           "nvd_published_at": "2026-10-29T19:17:19Z",
           "cwe_ids": [
             "CWE-400"
           ],
-          "severity": "MODERATE",
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-10-30T23:09:11Z"
+          "severity": "MODERATE"
         }
       },
       "created_at": "2026-11-18T07:05:55.568897+00:00",
-      "updated_at": "2026-11-18T12:00:58.322059+00:00"
+      "updated_at": "2026-11-18T13:59:53.055455+00:00"
     },
     "VULN-CVE-2026-112366": {
       "id": "VULN-CVE-2026-112366",
@@ -10934,17 +10934,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-fc5q-39xc-vjpf",
         "database_specific": {
-          "github_reviewed_at": "2026-11-17T15:56:42Z",
           "nvd_published_at": "2026-10-19T16:17:07Z",
           "cwe_ids": [
             "CWE-1333"
           ],
           "severity": "HIGH",
-          "github_reviewed": true
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-11-17T15:56:42Z"
         }
       },
       "created_at": "2026-11-18T07:10:03.340618+00:00",
-      "updated_at": "2026-11-18T12:04:10.943547+00:00"
+      "updated_at": "2026-11-18T14:02:16.272757+00:00"
     },
     "VULN-CVE-2026-110816": {
       "id": "VULN-CVE-2026-110816",
@@ -10982,18 +10982,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-6pq8-jhm2-2vcw",
         "database_specific": {
+          "github_reviewed_at": "2026-10-27T16:10:55Z",
+          "nvd_published_at": "2026-10-14T22:17:23Z",
           "cwe_ids": [
             "CWE-248",
             "CWE-704"
           ],
           "severity": "MODERATE",
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-10-27T16:10:55Z",
-          "nvd_published_at": "2026-10-14T22:17:23Z"
+          "github_reviewed": true
         }
       },
       "created_at": "2026-11-18T07:10:34.744125+00:00",
-      "updated_at": "2026-11-18T12:04:35.411874+00:00"
+      "updated_at": "2026-11-18T14:02:39.008932+00:00"
     },
     "VULN-CVE-2026-109383": {
       "id": "VULN-CVE-2026-109383",
@@ -11045,7 +11045,7 @@
         }
       },
       "created_at": "2026-11-18T07:13:11.284003+00:00",
-      "updated_at": "2026-11-18T12:06:43.345622+00:00"
+      "updated_at": "2026-11-18T14:04:15.196118+00:00"
     },
     "VULN-CVE-2026-109932": {
       "id": "VULN-CVE-2026-109932",
@@ -11099,7 +11099,7 @@
         }
       },
       "created_at": "2026-11-18T07:13:11.477246+00:00",
-      "updated_at": "2026-11-18T12:06:43.552863+00:00"
+      "updated_at": "2026-11-18T14:04:15.276158+00:00"
     },
     "VULN-CVE-2026-87018": {
       "id": "VULN-CVE-2026-87018",
@@ -11141,18 +11141,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-qrxm-fqhp-jwvm",
         "database_specific": {
-          "github_reviewed": true,
           "github_reviewed_at": "2026-10-27T19:02:21Z",
           "nvd_published_at": "2026-10-15T19:17:46Z",
           "cwe_ids": [
             "CWE-248",
             "CWE-617"
           ],
-          "severity": "HIGH"
+          "severity": "HIGH",
+          "github_reviewed": true
         }
       },
       "created_at": "2026-11-18T07:13:11.654117+00:00",
-      "updated_at": "2026-11-18T12:06:43.674601+00:00"
+      "updated_at": "2026-11-18T14:04:15.344218+00:00"
     },
     "VULN-CVE-2026-112942": {
       "id": "VULN-CVE-2026-112942",
@@ -11204,17 +11204,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-587h-7wmj-h5pm",
         "database_specific": {
-          "github_reviewed_at": "2026-10-20T19:48:25Z",
-          "nvd_published_at": "2026-10-20T15:17:17Z",
           "cwe_ids": [
             "CWE-77"
           ],
           "severity": "HIGH",
-          "github_reviewed": true
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-10-20T19:48:25Z",
+          "nvd_published_at": "2026-10-20T15:17:17Z"
         }
       },
       "created_at": "2026-11-18T07:13:35.091487+00:00",
-      "updated_at": "2026-11-18T12:07:02.303739+00:00"
+      "updated_at": "2026-11-18T14:04:30.588521+00:00"
     },
     "VULN-CVE-2026-112943": {
       "id": "VULN-CVE-2026-112943",
@@ -11266,17 +11266,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-698v-4r3x-3vcv",
         "database_specific": {
+          "nvd_published_at": "2026-10-20T15:17:17Z",
           "cwe_ids": [
             "CWE-78"
           ],
           "severity": "MODERATE",
           "github_reviewed": true,
-          "github_reviewed_at": "2026-10-20T18:30:24Z",
-          "nvd_published_at": "2026-10-20T15:17:17Z"
+          "github_reviewed_at": "2026-10-20T18:30:24Z"
         }
       },
       "created_at": "2026-11-18T07:13:35.132867+00:00",
-      "updated_at": "2026-11-18T12:07:02.325744+00:00"
+      "updated_at": "2026-11-18T14:04:30.607619+00:00"
     },
     "VULN-CVE-2026-112945": {
       "id": "VULN-CVE-2026-112945",
@@ -11325,17 +11325,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-9jrq-w75r-8gcw",
         "database_specific": {
-          "severity": "LOW",
-          "github_reviewed": true,
           "github_reviewed_at": "2026-10-21T16:48:14Z",
           "nvd_published_at": "2026-10-20T16:17:05Z",
           "cwe_ids": [
             "CWE-80"
-          ]
+          ],
+          "severity": "LOW",
+          "github_reviewed": true
         }
       },
       "created_at": "2026-11-18T07:13:35.181529+00:00",
-      "updated_at": "2026-11-18T12:07:02.346484+00:00"
+      "updated_at": "2026-11-18T14:04:30.623306+00:00"
     },
     "VULN-CVE-2026-112944": {
       "id": "VULN-CVE-2026-112944",
@@ -11387,17 +11387,17 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-r825-w8mm-5pxw",
         "database_specific": {
-          "severity": "MODERATE",
           "github_reviewed": true,
           "github_reviewed_at": "2026-10-20T19:51:52Z",
           "nvd_published_at": "2026-10-20T15:17:17Z",
           "cwe_ids": [
             "CWE-88"
-          ]
+          ],
+          "severity": "MODERATE"
         }
       },
       "created_at": "2026-11-18T07:13:35.298995+00:00",
-      "updated_at": "2026-11-18T12:07:02.432719+00:00"
+      "updated_at": "2026-11-18T14:04:30.672514+00:00"
     },
     "VULN-CVE-2026-112946": {
       "id": "VULN-CVE-2026-112946",
@@ -11446,18 +11446,18 @@
       "raw_source_metadata": {
         "osv_id": "GHSA-rq7h-c2jc-7f22",
         "database_specific": {
+          "github_reviewed": true,
+          "github_reviewed_at": "2026-10-21T16:47:42Z",
           "nvd_published_at": "2026-10-20T16:17:05Z",
           "cwe_ids": [
             "CWE-22",
             "CWE-284"
           ],
-          "severity": "MODERATE",
-          "github_reviewed": true,
-          "github_reviewed_at": "2026-10-21T16:47:42Z"
+          "severity": "MODERATE"
         }
       },
       "created_at": "2026-11-18T07:13:35.339197+00:00",
-      "updated_at": "2026-11-18T12:07:02.468999+00:00"
+      "updated_at": "2026-11-18T14:04:30.684596+00:00"
     }
   },
   "cve_index": {

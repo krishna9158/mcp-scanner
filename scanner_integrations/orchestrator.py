@@ -80,17 +80,40 @@ def build_scanner_record(
     duration: float = 0.0,
     error: Optional[str] = None,
     reason: Optional[str] = None,
+    start_time: Optional[float] = None,
+    completion_time: Optional[float] = None,
+    exit_code: Optional[int] = None,
 ) -> Dict[str, Any]:
     """Constructs a standardized execution telemetry record for a scanner engine."""
     canonical_status = normalize_engine_status(status)
+    # Never report successful execution if engine is unavailable, skipped, or failed
+    if not available and canonical_status == "EXECUTED":
+        canonical_status = "UNAVAILABLE"
+        executed = False
+
+    t_end = completion_time or time.time()
+    t_start = start_time or (t_end - duration if duration else t_end)
+
+    if exit_code is None:
+        exit_code = 0 if (executed and canonical_status == "EXECUTED") else (1 if canonical_status in ("FAILED", "ERROR") else None)
+
     return {
         "scanner": scanner,
         "name": name,
         "available": available,
-        "version": version,
+        "installation_status": "INSTALLED" if available else "NOT_INSTALLED",
+        "version": version or ("Not Available" if not available else "Unknown"),
+        "operational_status": "HEALTHY" if available else "UNAVAILABLE",
         "executed": executed,
-        "status": canonical_status,  # EXECUTED, SKIPPED, FAILED, NOT_APPLICABLE
+        "status": canonical_status,  # EXECUTED, SKIPPED, FAILED, NOT_APPLICABLE, UNAVAILABLE
+        "scan_execution_status": canonical_status,
+        "start_time": time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime(t_start)),
+        "completion_time": time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime(t_end)),
+        "exit_code": exit_code,
+        "errors": error,
+        "findings_generated": findings_count,
         "findings_count": findings_count,
+        "execution_duration": round(duration, 2),
         "duration": round(duration, 2),
         "error": error,
         "reason": reason,
@@ -112,9 +135,18 @@ class ScanOrchestrator:
 
     def get_engine_status(self) -> Dict[str, Any]:
         """Returns health and availability telemetry across all security engines."""
+        import shutil
+        from scanner_integrations.base import get_subprocess_env
+        semgrep_bin = shutil.which("semgrep", path=get_subprocess_env().get("PATH"))
+        semgrep_available = bool(semgrep_bin)
         return {
             "mcp_engine": {"name": "Proprietary MCP Engine", "available": True, "version": "2.0 (Built-in)", "status": "READY"},
-            "semgrep": {"name": "Semgrep SAST", "available": True, "version": "1.172.0 (Built-in/CLI)", "status": "READY"},
+            "semgrep": {
+                "name": "Semgrep SAST",
+                "available": semgrep_available,
+                "version": "1.172.0" if semgrep_available else "Not Installed",
+                "status": "READY" if semgrep_available else "UNAVAILABLE"
+            },
             "gitleaks": self.gitleaks.health_check(),
             "osv_scanner": self.osv_scanner.health_check(),
             "trivy": self.trivy.health_check(),
@@ -154,6 +186,16 @@ class ScanOrchestrator:
 
         scanner_records: Dict[str, Dict[str, Any]] = {}
         all_raw_findings: List[Dict[str, Any]] = []
+        b_findings: List[Dict[str, Any]] = []
+        c_findings: List[Dict[str, Any]] = []
+        gl_findings: List[Dict[str, Any]] = []
+        osv_findings: List[Dict[str, Any]] = []
+        trivy_findings: List[Dict[str, Any]] = []
+        syft_findings: List[Dict[str, Any]] = []
+        ai_appsec_findings: List[Dict[str, Any]] = []
+        appsec_findings: List[Dict[str, Any]] = []
+        iac_findings: List[Dict[str, Any]] = []
+        api_findings: List[Dict[str, Any]] = []
 
         # 1. Passive Web Security Scanner
         emit_log("[ENGINE] Passive Web -> START")
@@ -608,6 +650,16 @@ class ScanOrchestrator:
 
         scanner_records: Dict[str, Dict[str, Any]] = {}
         all_raw_findings: List[Dict[str, Any]] = []
+        b_findings: List[Dict[str, Any]] = []
+        c_findings: List[Dict[str, Any]] = []
+        gl_findings: List[Dict[str, Any]] = []
+        osv_findings: List[Dict[str, Any]] = []
+        trivy_findings: List[Dict[str, Any]] = []
+        syft_findings: List[Dict[str, Any]] = []
+        ai_appsec_findings: List[Dict[str, Any]] = []
+        appsec_findings: List[Dict[str, Any]] = []
+        iac_findings: List[Dict[str, Any]] = []
+        api_findings: List[Dict[str, Any]] = []
 
         # 1. MCP SECURITY ENGINE
         emit_log("[ENGINE] MCP Scanner -> START")
@@ -690,74 +742,133 @@ class ScanOrchestrator:
         # 2. SEMGREP SAST ENGINE
         emit_log("[ENGINE] Semgrep -> START")
         t0 = time.time()
+        import shutil
+        from scanner_integrations.base import get_subprocess_env
+        sg_bin = shutil.which("semgrep", path=get_subprocess_env().get("PATH")) or shutil.which("pysemgrep", path=get_subprocess_env().get("PATH"))
+        semgrep_available = bool(sg_bin)
+
         semgrep_findings_count = 0
-        for tool in report:
-            sg_list = tool.get("semgrep_findings", [])
-            semgrep_findings_count += len(sg_list)
-            for sf in sg_list:
-                all_raw_findings.append(normalize_finding(
-                    scanner="semgrep",
-                    category="code_security",
-                    title=sf.get("check_id", "Semgrep Security Finding"),
-                    description=sf.get("extra", {}).get("message", "Pattern match detected by Semgrep."),
-                    severity=sf.get("extra", {}).get("severity", "MEDIUM"),
-                    confidence="CONFIRMED",
-                    file=sf.get("path"),
-                    line=sf.get("start", {}).get("line"),
-                    evidence=sf.get("extra", {}).get("lines") or "Semgrep rule match",
-                    remediation="Remediate code according to Semgrep AppSec rule recommendations.",
-                ))
-        sg_dur = time.time() - t0
-        emit_log(f"[ENGINE] Semgrep -> COMPLETE -> {semgrep_findings_count} findings ({sg_dur:.2f}s)")
-        record_tool_execution("semgrep", "completed", sg_dur, semgrep_findings_count)
-        scanner_records["semgrep"] = build_scanner_record(
-            scanner="semgrep",
-            name="Semgrep Semantic SAST Engine",
-            available=True,
-            version="1.172.0 (AST + CLI)",
-            executed=True,
-            status="EXECUTED",
-            findings_count=semgrep_findings_count,
-            duration=sg_dur,
-        )
+        if not semgrep_available:
+            emit_log("[ENGINE] Semgrep -> SKIPPED (CLI binary not installed)")
+            sg_dur = 0.0
+            scanner_records["semgrep"] = build_scanner_record(
+                scanner="semgrep",
+                name="Semgrep Semantic SAST Engine",
+                available=False,
+                version=None,
+                executed=False,
+                status="UNAVAILABLE",
+                findings_count=0,
+                duration=0.0,
+                reason="Semgrep CLI binary is not installed in system PATH or environment. Install with 'pip install semgrep'.",
+            )
+            record_tool_execution("semgrep", "not_installed", 0.0, 0)
+        else:
+            for tool in report:
+                sg_list = tool.get("semgrep_findings", [])
+                semgrep_findings_count += len(sg_list)
+                for sf in sg_list:
+                    all_raw_findings.append(normalize_finding(
+                        scanner="semgrep",
+                        category="code_security",
+                        title=sf.get("check_id", "Semgrep Security Finding"),
+                        description=sf.get("extra", {}).get("message", "Pattern match detected by Semgrep."),
+                        severity=sf.get("extra", {}).get("severity", "MEDIUM"),
+                        confidence="CONFIRMED",
+                        file=sf.get("path"),
+                        line=sf.get("start", {}).get("line"),
+                        evidence=sf.get("extra", {}).get("lines") or "Semgrep rule match",
+                        remediation="Remediate code according to Semgrep AppSec rule recommendations.",
+                    ))
+            sg_dur = time.time() - t0
+            emit_log(f"[ENGINE] Semgrep -> COMPLETE -> {semgrep_findings_count} findings ({sg_dur:.2f}s)")
+            record_tool_execution("semgrep", "completed", sg_dur, semgrep_findings_count)
+            scanner_records["semgrep"] = build_scanner_record(
+                scanner="semgrep",
+                name="Semgrep Semantic SAST Engine",
+                available=True,
+                version="1.172.0 (AST + CLI)",
+                executed=True,
+                status="EXECUTED",
+                findings_count=semgrep_findings_count,
+                duration=sg_dur,
+            )
 
         # 3. BANDIT PYTHON SAST ENGINE
         emit_log("[ENGINE] Bandit SAST -> START")
         t0 = time.time()
-        bandit_res = self.bandit.scan(folder)
-        b_dur = time.time() - t0
-        b_findings = bandit_res.get("findings", [])
-        scanner_records["bandit"] = build_scanner_record(
-            scanner="bandit",
-            name="Bandit Python SAST Engine",
-            available=self.bandit.check_available(),
-            version=self.bandit.get_version(),
-            executed=bandit_res.get("status") == "COMPLETED",
-            status=bandit_res.get("status", "EXECUTED"),
-            findings_count=len(b_findings),
-            duration=b_dur,
-        )
-        all_raw_findings.extend(b_findings)
-        emit_log(f"[ENGINE] Bandit SAST -> COMPLETE -> {len(b_findings)} findings ({b_dur:.2f}s)")
+        b_avail = self.bandit.check_available()
+        if not b_avail:
+            emit_log("[ENGINE] Bandit SAST -> SKIPPED (Binary not installed)")
+            scanner_records["bandit"] = build_scanner_record(
+                scanner="bandit",
+                name="Bandit Python SAST Engine",
+                available=False,
+                version=None,
+                executed=False,
+                status="UNAVAILABLE",
+                findings_count=0,
+                duration=0.0,
+                reason="Bandit Python SAST CLI binary is not installed in system PATH or environment.",
+            )
+            record_tool_execution("bandit", "not_installed", 0.0, 0)
+        else:
+            bandit_res = self.bandit.scan(folder)
+            b_dur = time.time() - t0
+            b_findings = bandit_res.get("findings", [])
+            b_exec = bandit_res.get("status") == "COMPLETED"
+            scanner_records["bandit"] = build_scanner_record(
+                scanner="bandit",
+                name="Bandit Python SAST Engine",
+                available=True,
+                version=self.bandit.get_version(),
+                executed=b_exec,
+                status="EXECUTED" if b_exec else "FAILED",
+                findings_count=len(b_findings),
+                duration=b_dur,
+                error=bandit_res.get("error"),
+            )
+            all_raw_findings.extend(b_findings)
+            emit_log(f"[ENGINE] Bandit SAST -> COMPLETE -> {len(b_findings)} findings ({b_dur:.2f}s)")
+            record_tool_execution("bandit", "completed" if b_exec else "failed", b_dur, len(b_findings))
 
         # 4. CHECKOV IAC SECURITY ENGINE
         emit_log("[ENGINE] Checkov IaC -> START")
         t0 = time.time()
-        checkov_res = self.checkov.scan(folder)
-        c_dur = time.time() - t0
-        c_findings = checkov_res.get("findings", [])
-        scanner_records["checkov"] = build_scanner_record(
-            scanner="checkov",
-            name="Checkov IaC Security Engine",
-            available=self.checkov.check_available(),
-            version=self.checkov.get_version(),
-            executed=checkov_res.get("status") == "COMPLETED",
-            status=checkov_res.get("status", "EXECUTED"),
-            findings_count=len(c_findings),
-            duration=c_dur,
-        )
-        all_raw_findings.extend(c_findings)
-        emit_log(f"[ENGINE] Checkov IaC -> COMPLETE -> {len(c_findings)} findings ({c_dur:.2f}s)")
+        c_avail = self.checkov.check_available()
+        if not c_avail:
+            emit_log("[ENGINE] Checkov IaC -> SKIPPED (Binary not installed)")
+            scanner_records["checkov"] = build_scanner_record(
+                scanner="checkov",
+                name="Checkov IaC Security Engine",
+                available=False,
+                version=None,
+                executed=False,
+                status="UNAVAILABLE",
+                findings_count=0,
+                duration=0.0,
+                reason="Checkov IaC static analysis CLI is not installed in system PATH.",
+            )
+            record_tool_execution("checkov", "not_installed", 0.0, 0)
+        else:
+            checkov_res = self.checkov.scan(folder)
+            c_dur = time.time() - t0
+            c_findings = checkov_res.get("findings", [])
+            c_exec = checkov_res.get("status") == "COMPLETED"
+            scanner_records["checkov"] = build_scanner_record(
+                scanner="checkov",
+                name="Checkov IaC Security Engine",
+                available=True,
+                version=self.checkov.get_version(),
+                executed=c_exec,
+                status="EXECUTED" if c_exec else "FAILED",
+                findings_count=len(c_findings),
+                duration=c_dur,
+                error=checkov_res.get("error"),
+            )
+            all_raw_findings.extend(c_findings)
+            emit_log(f"[ENGINE] Checkov IaC -> COMPLETE -> {len(c_findings)} findings ({c_dur:.2f}s)")
+            record_tool_execution("checkov", "completed" if c_exec else "failed", c_dur, len(c_findings))
 
         # 5. GITLEAKS SECRET SCANNER
         if not self.gitleaks.check_available():
@@ -768,7 +879,7 @@ class ScanOrchestrator:
                 available=False,
                 version=None,
                 executed=False,
-                status="FAILED",
+                status="UNAVAILABLE",
                 reason="Gitleaks CORE CLI binary is not installed in system PATH. Install with 'winget install Gitleaks.Gitleaks' or 'brew install gitleaks'.",
             )
             record_tool_execution("gitleaks", "not_installed", 0.0, 0)
@@ -778,19 +889,21 @@ class ScanOrchestrator:
             gitleaks_res = self.gitleaks.scan(folder)
             gl_dur = time.time() - t0
             gl_findings = gitleaks_res.get("normalized_findings", [])
+            gl_exec = gitleaks_res.get("status") == "COMPLETED"
             emit_log(f"[ENGINE] Gitleaks -> COMPLETE -> {len(gl_findings)} findings ({gl_dur:.2f}s)")
             scanner_records["gitleaks"] = build_scanner_record(
                 scanner="gitleaks",
                 name="Gitleaks CORE Secret Scanner",
                 available=True,
                 version=gitleaks_res.get("version"),
-                executed=True,
-                status="EXECUTED",
+                executed=gl_exec,
+                status="EXECUTED" if gl_exec else "FAILED",
                 findings_count=len(gl_findings),
                 duration=gl_dur,
+                error=gitleaks_res.get("error"),
             )
             all_raw_findings.extend(gl_findings)
-            record_tool_execution("gitleaks", "completed", gl_dur, len(gl_findings))
+            record_tool_execution("gitleaks", "completed" if gl_exec else "failed", gl_dur, len(gl_findings))
 
         # Built-in secret validator
         raw_secrets = scan_folder_for_secrets(folder, max_files=None if full_scan else 5000)
@@ -831,7 +944,7 @@ class ScanOrchestrator:
                 available=False,
                 version=None,
                 executed=False,
-                status="FAILED",
+                status="UNAVAILABLE",
                 reason="OSV-Scanner CLI is not installed in system PATH. Install with 'winget install Google.OSV-Scanner' or 'go install github.com/google/osv-scanner/cmd/osv-scanner@latest'.",
             )
             record_tool_execution("osv_scanner", "not_installed", 0.0, 0)
@@ -841,19 +954,21 @@ class ScanOrchestrator:
             osv_res = self.osv_scanner.scan(folder)
             osv_dur = time.time() - t0
             osv_findings = osv_res.get("normalized_findings", [])
+            osv_exec = osv_res.get("status") == "COMPLETED"
             emit_log(f"[ENGINE] OSV -> COMPLETE -> {len(osv_findings)} findings ({osv_dur:.2f}s)")
             scanner_records["osv_scanner"] = build_scanner_record(
                 scanner="osv_scanner",
                 name="OSV-Scanner CLI Engine",
                 available=True,
                 version=osv_res.get("version"),
-                executed=True,
-                status="EXECUTED",
+                executed=osv_exec,
+                status="EXECUTED" if osv_exec else "FAILED",
                 findings_count=len(osv_findings),
                 duration=osv_dur,
+                error=osv_res.get("error"),
             )
             all_raw_findings.extend(osv_findings)
-            record_tool_execution("osv_scanner", "completed", osv_dur, len(osv_findings))
+            record_tool_execution("osv_scanner", "completed" if osv_exec else "failed", osv_dur, len(osv_findings))
 
         # Built-in OSV API dependency checker
         dependencies = scan_dependencies(folder, max_packages=100 if full_scan else 30)
@@ -906,7 +1021,7 @@ class ScanOrchestrator:
                 available=False,
                 version=None,
                 executed=False,
-                status="FAILED",
+                status="UNAVAILABLE",
                 reason="Trivy CLI is not installed in system PATH. Install with 'winget install AquaSecurity.Trivy' or 'brew install trivy'.",
             )
             record_tool_execution("trivy", "not_installed", 0.0, 0)
@@ -916,39 +1031,59 @@ class ScanOrchestrator:
             trivy_res = self.trivy.scan(folder)
             trivy_dur = time.time() - t0
             trivy_findings = trivy_res.get("normalized_findings", [])
+            trivy_exec = trivy_res.get("status") == "COMPLETED"
             emit_log(f"[ENGINE] Trivy -> COMPLETE -> {len(trivy_findings)} findings ({trivy_dur:.2f}s)")
             scanner_records["trivy"] = build_scanner_record(
                 scanner="trivy",
                 name="Trivy Filesystem & Misconfig Scanner",
                 available=True,
                 version=trivy_res.get("version"),
-                executed=True,
-                status="EXECUTED",
+                executed=trivy_exec,
+                status="EXECUTED" if trivy_exec else "FAILED",
                 findings_count=len(trivy_findings),
                 duration=trivy_dur,
+                error=trivy_res.get("error"),
             )
             all_raw_findings.extend(trivy_findings)
-            record_tool_execution("trivy", "completed", trivy_dur, len(trivy_findings))
+            record_tool_execution("trivy", "completed" if trivy_exec else "failed", trivy_dur, len(trivy_findings))
 
         # 8. SYFT SBOM GENERATION
-        emit_log("[ENGINE] Syft -> START")
         t0 = time.time()
-        syft_res = self.syft.scan(folder)
-        syft_dur = time.time() - t0
-        sbom_data = syft_res.get("sbom", {})
-        emit_log(f"[ENGINE] Syft -> COMPLETE -> {sbom_data.get('total_packages', 0)} packages ({syft_dur:.2f}s)")
-        scanner_records["syft"] = build_scanner_record(
-            scanner="syft",
-            name="Syft SBOM Generation Engine",
-            available=syft_res.get("available", False),
-            version=syft_res.get("version"),
-            executed=True,
-            status="EXECUTED",
-            findings_count=sbom_data.get("total_packages", 0),
-            duration=syft_dur,
-            reason=None if syft_res.get("available") else "Native manifest analysis used (Syft CLI not installed).",
-        )
-        record_tool_execution("syft", "completed", syft_dur, sbom_data.get("total_packages", 0))
+        syft_avail = self.syft.check_available()
+        if not syft_avail:
+            emit_log("[ENGINE] Syft -> SKIPPED (CLI binary not installed in PATH)")
+            syft_res = self.syft.scan(folder)
+            syft_dur = time.time() - t0
+            sbom_data = syft_res.get("sbom", {})
+            scanner_records["syft"] = build_scanner_record(
+                scanner="syft",
+                name="Syft SBOM Generation Engine",
+                available=False,
+                version=None,
+                executed=False,
+                status="UNAVAILABLE",
+                findings_count=0,
+                duration=0.0,
+                reason="Anchore Syft CLI binary is not installed in PATH. Install with 'winget install Anchore.Syft' or 'brew install syft'.",
+            )
+            record_tool_execution("syft", "not_installed", 0.0, 0)
+        else:
+            emit_log("[ENGINE] Syft -> START")
+            syft_res = self.syft.scan(folder)
+            syft_dur = time.time() - t0
+            sbom_data = syft_res.get("sbom", {})
+            emit_log(f"[ENGINE] Syft -> COMPLETE -> {sbom_data.get('total_packages', 0)} packages ({syft_dur:.2f}s)")
+            scanner_records["syft"] = build_scanner_record(
+                scanner="syft",
+                name="Syft SBOM Generation Engine",
+                available=True,
+                version=syft_res.get("version"),
+                executed=True,
+                status="EXECUTED",
+                findings_count=sbom_data.get("total_packages", 0),
+                duration=syft_dur,
+            )
+            record_tool_execution("syft", "completed", syft_dur, sbom_data.get("total_packages", 0))
 
         # 9. AI-Code Security Patterns
         emit_log("[ENGINE] AI-Code Security -> START")
@@ -1109,7 +1244,7 @@ class ScanOrchestrator:
             auth_analysis=auth_analysis,
             raw_findings=deduplicated,
             attack_paths=attack_paths,
-            iac_findings=c_findings,
+            iac_findings=(iac_findings or []) + (c_findings or []),
         )
 
         overall_score = compute_overall_score(report, secrets, dependencies, typosquats)
@@ -1239,6 +1374,16 @@ class ScanOrchestrator:
 
         scanner_records: Dict[str, Dict[str, Any]] = {}
         all_raw_findings: List[Dict[str, Any]] = []
+        b_findings: List[Dict[str, Any]] = []
+        c_findings: List[Dict[str, Any]] = []
+        gl_findings: List[Dict[str, Any]] = []
+        osv_findings: List[Dict[str, Any]] = []
+        trivy_findings: List[Dict[str, Any]] = []
+        syft_findings: List[Dict[str, Any]] = []
+        ai_appsec_findings: List[Dict[str, Any]] = []
+        appsec_findings: List[Dict[str, Any]] = []
+        iac_findings: List[Dict[str, Any]] = []
+        api_findings: List[Dict[str, Any]] = []
 
         # 1. MCP Core Analysis
         emit_log("[ENGINE] MCP Core Analyzer -> START")

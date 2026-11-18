@@ -349,6 +349,54 @@
       "dependencies_count": 1,
       "appsec_count": 0,
       "attack_paths_count": 0
+    },
+    {
+      "timestamp": 1795013302.0710402,
+      "scanned_at_iso": "2026-11-18 14:48:22 UTC",
+      "score": 94,
+      "grade": "A",
+      "overall_score": "RED",
+      "tools_count": 0,
+      "secrets_count": 0,
+      "dependencies_count": 1,
+      "appsec_count": 0,
+      "attack_paths_count": 0
+    },
+    {
+      "timestamp": 1795013326.1577058,
+      "scanned_at_iso": "2026-11-18 14:48:46 UTC",
+      "score": 94,
+      "grade": "A",
+      "overall_score": "RED",
+      "tools_count": 0,
+      "secrets_count": 0,
+      "dependencies_count": 1,
+      "appsec_count": 0,
+      "attack_paths_count": 0
+    },
+    {
+      "timestamp": 1795013335.1254303,
+      "scanned_at_iso": "2026-11-18 14:48:55 UTC",
+      "score": 94,
+      "grade": "A",
+      "overall_score": "RED",
+      "tools_count": 0,
+      "secrets_count": 0,
+      "dependencies_count": 1,
+      "appsec_count": 0,
+      "attack_paths_count": 0
+    },
+    {
+      "timestamp": 1795013660.4856439,
+      "scanned_at_iso": "2026-11-18 14:54:20 UTC",
+      "score": 94,
+      "grade": "A",
+      "overall_score": "RED",
+      "tools_count": 0,
+      "secrets_count": 0,
+      "dependencies_count": 1,
+      "appsec_count": 0,
+      "attack_paths_count": 0
     }
   ],
   "demo.testfire.net": [
@@ -477,6 +525,18 @@
     {
       "timestamp": 1788265987.376129,
       "scanned_at_iso": "2026-09-01 12:33:07 UTC",
+      "score": 92,
+      "grade": "A",
+      "overall_score": "GREEN",
+      "tools_count": 1,
+      "secrets_count": 0,
+      "dependencies_count": 0,
+      "appsec_count": 0,
+      "attack_paths_count": 0
+    },
+    {
+      "timestamp": 1795012228.2698746,
+      "scanned_at_iso": "2026-11-18 14:30:28 UTC",
       "score": 92,
       "grade": "A",
       "overall_score": "GREEN",
@@ -679,6 +739,18 @@
       "dependencies_count": 0,
       "appsec_count": 0,
       "attack_paths_count": 0
+    },
+    {
+      "timestamp": 1795012296.194394,
+      "scanned_at_iso": "2026-11-18 14:31:36 UTC",
+      "score": 23,
+      "grade": "F",
+      "overall_score": "GREEN",
+      "tools_count": 0,
+      "secrets_count": 0,
+      "dependencies_count": 0,
+      "appsec_count": 0,
+      "attack_paths_count": 0
     }
   ],
   "c:\\users\\krish\\downloads\\mcp-scanner-main-v5\\mcp-scanner-main\\tests\\fixtures\\vulnerable-project": [
@@ -746,6 +818,18 @@
       "timestamp": 1788266132.510375,
       "scanned_at_iso": "2026-09-01 12:35:32 UTC",
       "score": 79,
+      "grade": "B",
+      "overall_score": "RED",
+      "tools_count": 0,
+      "secrets_count": 1,
+      "dependencies_count": 2,
+      "appsec_count": 0,
+      "attack_paths_count": 0
+    },
+    {
+      "timestamp": 1795013313.039527,
+      "scanned_at_iso": "2026-11-18 14:48:33 UTC",
+      "score": 82,
       "grade": "B",
       "overall_score": "RED",
       "tools_count": 0,

@@ -17807,6 +17807,48 @@
       "environment": "Source Code",
       "first_seen": 1794989579.730863,
       "last_seen": 1794989579.730863
+    },
+    "proj-030c01e0:npm:express": {
+      "id": "comp-40f89f49b1",
+      "org_id": "org-default",
+      "project_id": "proj-030c01e0",
+      "asset_id": "asset-repo-proj-030c01e0",
+      "repository": "C:\\Users\\krish\\Downloads\\mcp-scanner-main-v5\\mcp-scanner-main\\tests\\fixtures\\tiny-project",
+      "package_name": "express",
+      "version": "4.18.2",
+      "ecosystem": "npm",
+      "manifest_file": "package.json",
+      "environment": "Source Code",
+      "first_seen": 1795013302.1485958,
+      "last_seen": 1795013660.5694933
+    },
+    "proj-8df621d6:PyPI:urllib3": {
+      "id": "comp-f3571daf95",
+      "org_id": "org-default",
+      "project_id": "proj-8df621d6",
+      "asset_id": "asset-repo-proj-8df621d6",
+      "repository": "C:\\Users\\krish\\Downloads\\mcp-scanner-main-v5\\mcp-scanner-main\\tests\\fixtures\\vulnerable-project",
+      "package_name": "urllib3",
+      "version": "1.26.4",
+      "ecosystem": "PyPI",
+      "manifest_file": "requirements.txt",
+      "environment": "Source Code",
+      "first_seen": 1795013313.1095238,
+      "last_seen": 1795013313.1095238
+    },
+    "proj-8df621d6:PyPI:requests": {
+      "id": "comp-6388b97749",
+      "org_id": "org-default",
+      "project_id": "proj-8df621d6",
+      "asset_id": "asset-repo-proj-8df621d6",
+      "repository": "C:\\Users\\krish\\Downloads\\mcp-scanner-main-v5\\mcp-scanner-main\\tests\\fixtures\\vulnerable-project",
+      "package_name": "requests",
+      "version": "2.25.1",
+      "ecosystem": "PyPI",
+      "manifest_file": "requirements.txt",
+      "environment": "Source Code",
+      "first_seen": 1795013313.1095238,
+      "last_seen": 1795013313.1095238
     }
   },
   "manifests": {}

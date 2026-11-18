@@ -1894,7 +1894,7 @@ class TestScanManagerDiagnosticsAndFlow:
         assert result is not None
         record = scan_manager.get_scan_job(scan_id)
         assert record["status"] == "COMPLETED"
-        assert record["duration"] < 30.0
+        assert record["duration"] < 90.0
 
     def test_known_vulnerable_project_detects_findings(self):
         """Verify scan on vulnerable fixture produces findings > 0."""

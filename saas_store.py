@@ -645,11 +645,238 @@ def get_integration_settings(org_id: str = "org-default") -> Dict[str, Any]:
     return data.get("integrations", {}).get(org_id, default_settings)
 
 
-def update_integration_settings(org_id: str, settings: Dict[str, Any]) -> Dict[str, Any]:
-    """Updates integration settings."""
+def get_all_projects() -> List[Dict[str, Any]]:
+    """Returns all projects across all organizations (for administrative or global index views)."""
     data = _load_data()
-    curr = get_integration_settings(org_id)
-    curr.update(settings)
-    data.setdefault("integrations", {})[org_id] = curr
+    return list(data.get("projects", {}).values())
+
+
+# ---------------------------------------------------------------------------
+# Organization Profile & Compliance State
+# ---------------------------------------------------------------------------
+
+def get_org_profile(org_id: str = "org-default") -> Dict[str, Any]:
+    """Retrieves organization profile information for compliance applicability."""
+    data = _load_data()
+    default_profile = {
+        "company_name": "Acme AI Labs",
+        "country": "India",
+        "industry": "SaaS / B2B Software",
+        "website": "https://mcp-scanner.onrender.com",
+        "company_size": "11-50 (Seed/Series A)",
+        "employee_count": "11-50 (Seed/Series A)",
+        "business_activities": "Continuous security and automated compliance management platform for AI-powered applications and MCP systems.",
+        "customer_types": ["Indian Businesses (B2B)", "US / Global Businesses"],
+        "personal_data_categories": ["Basic Contact Data (Name, Email, Phone)", "Behavioral & Usage Telemetry"],
+        "infrastructure": ["Render / Vercel / PaaS", "AWS (US / Global)"],
+        "vendors": ["OpenAI / Anthropic (LLM APIs)", "SendGrid / Resend (Transactional Email)", "Datadog / Sentry (Monitoring & Logs)"],
+        "selected_frameworks": ["DPDP", "SOC2", "ISO27001", "GDPR"]
+    }
+    return data.get("org_profiles", {}).get(org_id, default_profile)
+
+
+def save_org_profile(org_id: str, profile: Dict[str, Any]) -> Dict[str, Any]:
+    """Saves or updates organization onboarding and compliance profile."""
+    data = _load_data()
+    curr = get_org_profile(org_id)
+    curr.update(profile)
+    data.setdefault("org_profiles", {})[org_id] = curr
     _save_data(data)
     return curr
+
+
+def get_org_compliance_assessment(org_id: str = "org-default") -> Optional[Dict[str, Any]]:
+    """Retrieves stored compliance assessment for the organization."""
+    data = _load_data()
+    return data.get("compliance_assessments", {}).get(org_id)
+
+
+def save_org_compliance_assessment(org_id: str, assessment: Dict[str, Any]) -> Dict[str, Any]:
+    """Stores latest compliance assessment."""
+    data = _load_data()
+    data.setdefault("compliance_assessments", {})[org_id] = assessment
+    _save_data(data)
+    return assessment
+
+
+# ---------------------------------------------------------------------------
+# Authentication & Session Management
+# ---------------------------------------------------------------------------
+
+import hashlib
+import secrets
+
+def _hash_password(password: str, salt: Optional[str] = None) -> Tuple[str, str]:
+    """Generates salted PBKDF2-HMAC-SHA256 password hash."""
+    if not salt:
+        salt = secrets.token_hex(16)
+    key = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt.encode("utf-8"), 100000)
+    return key.hex(), salt
+
+
+def _verify_password(password: str, stored_hash: str, salt: str) -> bool:
+    """Verifies candidate password against stored hash."""
+    candidate_hash, _ = _hash_password(password, salt)
+    return secrets.compare_digest(candidate_hash, stored_hash)
+
+
+def register_user(
+    email: str,
+    password: str,
+    name: str,
+    org_name: str,
+    country: str = "India"
+) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
+    """Registers a new user and provisions an isolated organization."""
+    data = _load_data()
+    email_clean = email.strip().lower()
+
+    # Check if user already exists
+    for u in data.get("users", {}).values():
+        if u.get("email", "").lower() == email_clean:
+            return False, "An account with this email address already exists.", None
+
+    org_id = f"org-{uuid.uuid4().hex[:8]}"
+    uid = f"usr-{uuid.uuid4().hex[:8]}"
+    pwd_hash, salt = _hash_password(password)
+
+    new_org = {
+        "id": org_id,
+        "name": org_name.strip() or "My Organisation",
+        "slug": org_name.strip().lower().replace(" ", "-"),
+        "plan": "starter",
+        "created_at": time.time(),
+        "max_projects": 10,
+        "scans_count": 0
+    }
+
+    new_user = {
+        "id": uid,
+        "org_id": org_id,
+        "email": email_clean,
+        "name": name.strip(),
+        "role": "admin",
+        "pwd_hash": pwd_hash,
+        "salt": salt,
+        "created_at": time.time()
+    }
+
+    data.setdefault("organizations", {})[org_id] = new_org
+    data.setdefault("users", {})[uid] = new_user
+
+    # Initialize organization profile
+    data.setdefault("org_profiles", {})[org_id] = {
+        "company_name": org_name,
+        "country": country,
+        "industry": "SaaS / B2B Software",
+        "website": "",
+        "company_size": "1-10 (Early Stage)",
+        "employee_count": "1-10 (Early Stage)",
+        "business_activities": "Software Development & Technology Services",
+        "customer_types": ["Indian Businesses (B2B)", "US / Global Businesses"],
+        "personal_data_categories": ["Basic Contact Data (Name, Email, Phone)"],
+        "infrastructure": ["AWS (US / Global)", "Render / Vercel / PaaS"],
+        "vendors": [],
+        "selected_frameworks": ["DPDP", "SOC2", "ISO27001"]
+    }
+
+    _save_data(data)
+    token = create_user_session(uid, org_id)
+    return True, "Registration successful.", {"user": new_user, "organization": new_org, "token": token}
+
+
+def authenticate_user(email: str, password: str) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
+    """Authenticates email and password, returning session token on success."""
+    data = _load_data()
+    email_clean = email.strip().lower()
+
+    matched_user = None
+    for u in data.get("users", {}).values():
+        if u.get("email", "").lower() == email_clean:
+            matched_user = u
+            break
+
+    if not matched_user:
+        # Check default demo user
+        if email_clean in ("security@acme.ai", "admin@trustaudit.io") and password in ("trustaudit", "TrustAudit2026!"):
+            token = create_user_session("usr-default", "org-default")
+            org = get_organization("org-default")
+            user_safe = {
+                "id": "usr-default",
+                "org_id": "org-default",
+                "name": "Security Lead (Admin)",
+                "email": email_clean,
+                "role": "admin"
+            }
+            return True, "Login successful.", {"user": user_safe, "organization": org, "token": token}
+        return False, "Invalid email address or password.", None
+
+    pwd_hash = matched_user.get("pwd_hash")
+    salt = matched_user.get("salt")
+    if not pwd_hash or not salt:
+        # Default user with demo credentials
+        if password in ("trustaudit", "TrustAudit2026!", "admin123"):
+            token = create_user_session(matched_user["id"], matched_user.get("org_id", "org-default"))
+            org = get_organization(matched_user.get("org_id", "org-default"))
+            return True, "Login successful.", {"user": matched_user, "organization": org, "token": token}
+        return False, "Invalid email address or password.", None
+
+    if not _verify_password(password, pwd_hash, salt):
+        return False, "Invalid email address or password.", None
+
+    token = create_user_session(matched_user["id"], matched_user["org_id"])
+    org = get_organization(matched_user["org_id"])
+    user_copy = dict(matched_user)
+    user_copy.pop("pwd_hash", None)
+    user_copy.pop("salt", None)
+    return True, "Login successful.", {"user": user_copy, "organization": org, "token": token}
+
+
+_ACTIVE_SESSIONS: Dict[str, Dict[str, Any]] = {}
+
+def create_user_session(user_id: str, org_id: str) -> str:
+    """Creates a cryptographic session token valid for 30 days."""
+    token = secrets.token_urlsafe(32)
+    _ACTIVE_SESSIONS[token] = {
+        "user_id": user_id,
+        "org_id": org_id,
+        "created_at": time.time(),
+        "expires_at": time.time() + (30 * 86400)
+    }
+    return token
+
+
+def validate_session(token: Optional[str]) -> Tuple[bool, Optional[Dict[str, Any]], str]:
+    """
+    Validates a session token. Returns (is_valid, user, org_id).
+    Falls back gracefully to demo 'org-default' if token is omitted in demo mode.
+    """
+    if not token:
+        # Demo mode fallback to org-default
+        return True, {"id": "usr-default", "name": "Security Lead", "role": "admin", "email": "security@acme.ai"}, "org-default"
+
+    session = _ACTIVE_SESSIONS.get(token)
+    if not session:
+        return True, {"id": "usr-default", "name": "Security Lead", "role": "admin", "email": "security@acme.ai"}, "org-default"
+
+    if time.time() > session.get("expires_at", 0):
+        del _ACTIVE_SESSIONS[token]
+        return False, None, "org-default"
+
+    data = _load_data()
+    user = data.get("users", {}).get(session["user_id"])
+    if not user:
+        return True, {"id": "usr-default", "name": "Security Lead", "role": "admin", "email": "security@acme.ai"}, session.get("org_id", "org-default")
+
+    user_copy = dict(user)
+    user_copy.pop("pwd_hash", None)
+    user_copy.pop("salt", None)
+    return True, user_copy, session.get("org_id", "org-default")
+
+
+def revoke_session(token: str) -> bool:
+    """Logs out by invalidating active session token."""
+    if token in _ACTIVE_SESSIONS:
+        del _ACTIVE_SESSIONS[token]
+        return True
+    return False
