@@ -26,6 +26,141 @@
       "created_at": 1795012125.5107918,
       "max_projects": 10,
       "scans_count": 0
+    },
+    "org-1757c2aa": {
+      "id": "org-1757c2aa",
+      "name": "Fintech Startup Ltd",
+      "slug": "fintech-startup-ltd",
+      "plan": "starter",
+      "created_at": 1795024578.416061,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-ebc7cb07": {
+      "id": "org-ebc7cb07",
+      "name": "Company Alpha",
+      "slug": "company-alpha",
+      "plan": "starter",
+      "created_at": 1795024579.2395952,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-b26073ec": {
+      "id": "org-b26073ec",
+      "name": "Company Beta",
+      "slug": "company-beta",
+      "plan": "starter",
+      "created_at": 1795024579.3234107,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-833c1322": {
+      "id": "org-833c1322",
+      "name": "Corp Alpha",
+      "slug": "corp-alpha",
+      "plan": "starter",
+      "created_at": 1795024579.459583,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-e72fc558": {
+      "id": "org-e72fc558",
+      "name": "Corp Beta",
+      "slug": "corp-beta",
+      "plan": "starter",
+      "created_at": 1795024579.5488698,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-7e718d9a": {
+      "id": "org-7e718d9a",
+      "name": "Fintech Startup Ltd",
+      "slug": "fintech-startup-ltd",
+      "plan": "starter",
+      "created_at": 1795025516.4006927,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-a6803dcc": {
+      "id": "org-a6803dcc",
+      "name": "Company Alpha",
+      "slug": "company-alpha",
+      "plan": "starter",
+      "created_at": 1795025517.0530095,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-8980e5b8": {
+      "id": "org-8980e5b8",
+      "name": "Company Beta",
+      "slug": "company-beta",
+      "plan": "starter",
+      "created_at": 1795025517.1308165,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-6f5c523c": {
+      "id": "org-6f5c523c",
+      "name": "Corp Alpha",
+      "slug": "corp-alpha",
+      "plan": "starter",
+      "created_at": 1795025517.2414348,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-a9033e6d": {
+      "id": "org-a9033e6d",
+      "name": "Corp Beta",
+      "slug": "corp-beta",
+      "plan": "starter",
+      "created_at": 1795025517.3176396,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-798c1a92": {
+      "id": "org-798c1a92",
+      "name": "Fintech Startup Ltd",
+      "slug": "fintech-startup-ltd",
+      "plan": "starter",
+      "created_at": 1795026354.5541997,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-f242b720": {
+      "id": "org-f242b720",
+      "name": "Company Alpha",
+      "slug": "company-alpha",
+      "plan": "starter",
+      "created_at": 1795026355.2250204,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-4f62eb37": {
+      "id": "org-4f62eb37",
+      "name": "Company Beta",
+      "slug": "company-beta",
+      "plan": "starter",
+      "created_at": 1795026355.3029253,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-b1b59c91": {
+      "id": "org-b1b59c91",
+      "name": "Corp Alpha",
+      "slug": "corp-alpha",
+      "plan": "starter",
+      "created_at": 1795026355.4115968,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-61d5761c": {
+      "id": "org-61d5761c",
+      "name": "Corp Beta",
+      "slug": "corp-beta",
+      "plan": "starter",
+      "created_at": 1795026355.499484,
+      "max_projects": 10,
+      "scans_count": 0
     }
   },
   "users": {
@@ -56,6 +191,156 @@
       "pwd_hash": "cc585e8cb334d34205a017875f27183955e9e982276448fe3b224fa792b80cb8",
       "salt": "45d5514a4cf111d7e320aa62f741bf82",
       "created_at": 1795012125.5107937
+    },
+    "usr-90185f8c": {
+      "id": "usr-90185f8c",
+      "org_id": "org-1757c2aa",
+      "email": "compliance_400183@acme.ai",
+      "name": "Compliance Lead",
+      "role": "admin",
+      "pwd_hash": "50a3b3f9b1c7579c08e56631e8887ba30300758a21adb526a1d8e9680922adda",
+      "salt": "12e6c811ade31080f1e20c79aeef0df9",
+      "created_at": 1795024578.4160624
+    },
+    "usr-aa11d46c": {
+      "id": "usr-aa11d46c",
+      "org_id": "org-ebc7cb07",
+      "email": "alice_a82934@tenant-a.com",
+      "name": "Alice A",
+      "role": "admin",
+      "pwd_hash": "f6c9240d47c51e30414539ccfbdf00a33e32f8ec1f67ca09afb636a494efbed6",
+      "salt": "7449e278ebeeea67498e9d1ad3e370f4",
+      "created_at": 1795024579.2395976
+    },
+    "usr-d9d6e964": {
+      "id": "usr-d9d6e964",
+      "org_id": "org-b26073ec",
+      "email": "bob_3efa15@tenant-b.com",
+      "name": "Bob B",
+      "role": "admin",
+      "pwd_hash": "46eb0ee6e172316c1fe154090ccc51414d825cfe7b99e0266bcf116d40c31a11",
+      "salt": "e7c07609fcdda5b7f63d25e397e4962c",
+      "created_at": 1795024579.3234127
+    },
+    "usr-af6298b3": {
+      "id": "usr-af6298b3",
+      "org_id": "org-833c1322",
+      "email": "dev_a_37759d@corp-a.com",
+      "name": "Dev A",
+      "role": "admin",
+      "pwd_hash": "baad4406e9f8b0512120d478138d696ca522320752f527df29657290c732f0e9",
+      "salt": "316e363074e8ed8e1569bad6799c4a1f",
+      "created_at": 1795024579.4595854
+    },
+    "usr-5bd854d0": {
+      "id": "usr-5bd854d0",
+      "org_id": "org-e72fc558",
+      "email": "dev_b_76a6aa@corp-b.com",
+      "name": "Dev B",
+      "role": "admin",
+      "pwd_hash": "38e243d7c9df0915327c16e454c739cccab386f12622495f5b482796feea44d9",
+      "salt": "bd2761af1079d03959f756e52ba2edd8",
+      "created_at": 1795024579.5488722
+    },
+    "usr-6abf41f4": {
+      "id": "usr-6abf41f4",
+      "org_id": "org-7e718d9a",
+      "email": "compliance_0ec4c3@acme.ai",
+      "name": "Compliance Lead",
+      "role": "admin",
+      "pwd_hash": "7a7a06cb26d747f521dcd0531f9cda2c8fe930074cf1618f240fb2e543188524",
+      "salt": "46226d7f23347dcc3e60dcc4a3a6febe",
+      "created_at": 1795025516.4006946
+    },
+    "usr-16b4e895": {
+      "id": "usr-16b4e895",
+      "org_id": "org-a6803dcc",
+      "email": "alice_65469e@tenant-a.com",
+      "name": "Alice A",
+      "role": "admin",
+      "pwd_hash": "e5b3592fc1c1f87cfbeaf13ad011e5d408087266ad16f2b651ea79c548727616",
+      "salt": "be290a7e5cea86529614899568a7a724",
+      "created_at": 1795025517.0530114
+    },
+    "usr-db62a004": {
+      "id": "usr-db62a004",
+      "org_id": "org-8980e5b8",
+      "email": "bob_cf91c1@tenant-b.com",
+      "name": "Bob B",
+      "role": "admin",
+      "pwd_hash": "399eefb9e8744ea6d63e7e55491b9bcddaf1bc712960f510730feb3b59110910",
+      "salt": "40b42d70ccfd0fcff467ecf33710feae",
+      "created_at": 1795025517.1308184
+    },
+    "usr-7a46e3bb": {
+      "id": "usr-7a46e3bb",
+      "org_id": "org-6f5c523c",
+      "email": "dev_a_3c3631@corp-a.com",
+      "name": "Dev A",
+      "role": "admin",
+      "pwd_hash": "5a878d1be1e328bb56ed05eb01703e04700170cf488d56ff6c6e0f3d73fe2659",
+      "salt": "6190da840b7c91c222f9b10cc09d2ba1",
+      "created_at": 1795025517.2414362
+    },
+    "usr-cb6c5f69": {
+      "id": "usr-cb6c5f69",
+      "org_id": "org-a9033e6d",
+      "email": "dev_b_055707@corp-b.com",
+      "name": "Dev B",
+      "role": "admin",
+      "pwd_hash": "86cc85a15695f9e59702b6d693ff3600c233cdea5ee68adcea85854277781179",
+      "salt": "2482a077ea6ad62756f63f1c5fd39d69",
+      "created_at": 1795025517.317642
+    },
+    "usr-1a67a1e9": {
+      "id": "usr-1a67a1e9",
+      "org_id": "org-798c1a92",
+      "email": "compliance_17da2c@acme.ai",
+      "name": "Compliance Lead",
+      "role": "admin",
+      "pwd_hash": "655d067988598ec0e21b89d75ce7b5cc4c6dc40d7a358a098197dd9c93384a1f",
+      "salt": "96ae897b3e423eb3a250a05ead997d44",
+      "created_at": 1795026354.5542016
+    },
+    "usr-e019b2b5": {
+      "id": "usr-e019b2b5",
+      "org_id": "org-f242b720",
+      "email": "alice_73c86f@tenant-a.com",
+      "name": "Alice A",
+      "role": "admin",
+      "pwd_hash": "fe6d5c987a71856c112279e7139286678b3c4ac3e23c7b556c1122fda23b6471",
+      "salt": "7eb37197153c35a9ce8eea45799fabd5",
+      "created_at": 1795026355.2250226
+    },
+    "usr-436cf257": {
+      "id": "usr-436cf257",
+      "org_id": "org-4f62eb37",
+      "email": "bob_0db153@tenant-b.com",
+      "name": "Bob B",
+      "role": "admin",
+      "pwd_hash": "569e09d15e98a6f664964dd37adffa24a3f64bd7de1a8d9ec0f844b741e12cca",
+      "salt": "6df4e5e38cdaef1276ba7dfcb223d3a0",
+      "created_at": 1795026355.3029268
+    },
+    "usr-1c381486": {
+      "id": "usr-1c381486",
+      "org_id": "org-b1b59c91",
+      "email": "dev_a_3b4def@corp-a.com",
+      "name": "Dev A",
+      "role": "admin",
+      "pwd_hash": "ca4cbe078f5cd4476bc3d8b4462068fc83e76c9c1f52b4793d694a0c8dac0d79",
+      "salt": "2b662d7d281237a9b5f2f3d5ce40e91b",
+      "created_at": 1795026355.4115992
+    },
+    "usr-f2fdd0c1": {
+      "id": "usr-f2fdd0c1",
+      "org_id": "org-61d5761c",
+      "email": "dev_b_d858c5@corp-b.com",
+      "name": "Dev B",
+      "role": "admin",
+      "pwd_hash": "037b4b0b18763e65746d372ef0ae6191601f2241d5300679b3c20108dc2bb4b5",
+      "salt": "fddc4c3f25cf91be2661311ddf03bc15",
+      "created_at": 1795026355.499486
     }
   },
   "projects": {
@@ -35128,6 +35413,46 @@
         ],
         "timestamp": 1795013315.7901056
       }
+    },
+    "proj-78b313d1": {
+      "id": "proj-78b313d1",
+      "org_id": "org-6f5c523c",
+      "name": "Alpha Secret Backend",
+      "target_type": "repository",
+      "repo_url": "https://github.com/corp-a/fd3f8b",
+      "website_url": "",
+      "mcp_servers_count": 1,
+      "regression_status": "PASS",
+      "monitoring_status": "ACTIVE",
+      "scan_frequency": "daily",
+      "next_scan_at": 1795111917.3633893,
+      "timeline": [],
+      "created_at": 1795025517.36339,
+      "last_score": 100,
+      "last_grade": "A",
+      "critical_findings": 0,
+      "open_findings": 0,
+      "last_scan": 1795025517.363392
+    },
+    "proj-9c3e08d8": {
+      "id": "proj-9c3e08d8",
+      "org_id": "org-b1b59c91",
+      "name": "Alpha Secret Backend",
+      "target_type": "repository",
+      "repo_url": "https://github.com/corp-a/f5dd8d",
+      "website_url": "",
+      "mcp_servers_count": 1,
+      "regression_status": "PASS",
+      "monitoring_status": "ACTIVE",
+      "scan_frequency": "daily",
+      "next_scan_at": 1795112755.5379179,
+      "timeline": [],
+      "created_at": 1795026355.5379188,
+      "last_score": 100,
+      "last_grade": "A",
+      "critical_findings": 0,
+      "open_findings": 0,
+      "last_scan": 1795026355.5379207
     }
   },
   "scans": {
@@ -35254,7 +35579,7 @@
     "org-default": {
       "organization_name": "Acme AI Labs",
       "country": "India",
-      "assessed_at": "2026-11-18 14:28:46 UTC",
+      "assessed_at": "2026-11-18 18:25:55 UTC",
       "applicability": {
         "DPDP": {
           "applicable": true,
@@ -35280,41 +35605,46 @@
       "frameworks": {
         "DPDP": {
           "metadata": {
-            "name": "Digital Personal Data Protection Act, 2023 (India)",
-            "short_name": "DPDP Act 2023",
+            "name": "Digital Personal Data Protection Act, 2023 & DPDP Rules, 2025 (India)",
+            "short_name": "DPDP Act 2023 & Rules 2025",
             "jurisdiction": "India",
-            "authority": "Data Protection Board of India (DPBI) / MeitY",
-            "version": "Act No. 22 of 2023 & Draft Implementation Rules",
-            "status": "Phased Commencement",
-            "description": "Comprehensive legal framework governing the processing of digital personal data in India, protecting individual autonomy while enabling lawful business processing.",
-            "disclaimer": "TrustAudit provides automated technical gap analysis and evidence tracking. It does not replace formal legal counsel or statutory audit by DPBI."
+            "authority": "Data Protection Board of India (DPBI) / Ministry of Electronics and Information Technology (MeitY)",
+            "version": "DPDP Act, 2023 (Act No. 22 of 2023) & DPDP Rules, 2025",
+            "status": "Phased Statutory Commencement",
+            "description": "Comprehensive statutory framework governing the processing of digital personal data in India. Establishes legal accountability for Data Fiduciaries, statutory safeguards, breach notification, and Data Principal rights.",
+            "disclaimer": "TrustAudit provides automated technical gap analysis, evidence tracking, and readiness evaluation. It does not replace formal legal counsel or statutory audit by DPBI. TrustAudit is not a registered statutory Consent Manager under Section 6(9).",
+            "commencement_timeline": {
+              "consent_managers_in_force": "Section 6(9) & Rule 4 (Registration and operation of Consent Managers) commenced on 13 November 2026.",
+              "substantive_fiduciary_scheduled": "Substantive Data Fiduciary obligations (including Sections 5, 8, 9, 10) and Rules 3, 5\u201316 are scheduled to commence on 13 May 2027.",
+              "status_distinction": "Delineates controls as: Already in force, Scheduled to commence, Readiness assessment, Not applicable, or Requires legal review. Future statutory requirements are assessed for preparedness and never represented as existing legal violations."
+            }
           },
           "applicable": true,
-          "readiness_score": 12,
+          "readiness_score": 18,
           "readiness_grade": "D",
-          "total_controls": 7,
+          "total_controls": 9,
           "implemented_count": 0,
-          "evidence_missing_count": 1,
-          "gap_count": 1,
+          "evidence_missing_count": 2,
+          "gap_count": 2,
           "expert_review_count": 4,
           "not_applicable_count": 1,
           "controls": [
             {
               "control_id": "DPDP-SEC-05",
-              "section": "Section 5",
-              "title": "Notice Before Requesting Consent",
-              "official_ref": "DPDP Act 2023, Section 5(1) & (2)",
-              "description": "Every request for consent must be accompanied or preceded by an itemized, clear notice describing the personal data sought to be processed, the specified purpose, how the Data Principal may exercise rights, and grievance redressal contact.",
+              "section": "Section 5 & Rule 3",
+              "title": "Notice-Related Requirements for Data Processing",
+              "official_ref": "DPDP Act 2023, Section 5 read with DPDP Rules 2025, Rule 3",
+              "description": "Every request for consent must be accompanied or preceded by an itemised notice informing the Data Principal of the personal data to be processed, specified purpose, manner of exercising rights, and grievance redressal mechanism.",
               "category": "Consent & Transparency",
-              "enforcement_phase": "PENDING_COMMENCEMENT",
-              "effective_date": "Scheduled for phased notification by MeitY",
+              "enforcement_phase": "SCHEDULED_TO_COMMENCE",
+              "effective_date": "13 May 2027 (Scheduled commencement)",
               "status": "REQUIRES_EXPERT_REVIEW",
               "status_label": "Requires Expert Review",
               "rationale": "This is a governance or legal control that cannot be validated purely via technical scans. Supporting documentation and legal sign-off required.",
               "evidence_count": 0,
               "active_findings_count": 0,
               "assessment_questions": [
-                "Does your website or application present a clear notice before capturing user personal data?",
+                "Does your website or application present an itemized notice before capturing user personal data?",
                 "Is the notice accessible in English and any of the 22 languages specified in the Eighth Schedule to the Constitution of India?",
                 "Does the notice explicitly explain how users can withdraw consent or raise a grievance?"
               ],
@@ -35331,24 +35661,24 @@
             },
             {
               "control_id": "DPDP-SEC-06",
-              "section": "Section 6",
-              "title": "Consent Architecture & Withdrawal Mechanism",
-              "official_ref": "DPDP Act 2023, Section 6(1) - (10)",
-              "description": "Consent must be free, specific, informed, unconditional, and unambiguous with clear affirmative action. Data Principals must have the right to withdraw consent with the same ease as giving it.",
-              "category": "Consent & Transparency",
-              "enforcement_phase": "PENDING_COMMENCEMENT",
-              "effective_date": "Phased Rules Notification",
+              "section": "Section 6(9) & Rule 4",
+              "title": "Consent Architecture & Consent Manager Integration",
+              "official_ref": "DPDP Act 2023, Section 6(9) read with DPDP Rules 2025, Rule 4",
+              "description": "Data Principals may give, manage, review, or withdraw consent through registered Consent Managers accountable to the DPBI. TrustAudit tracks organizational technical readiness to interface with registered Consent Managers and does not self-attest as a registered Consent Manager.",
+              "category": "Consent Architecture",
+              "enforcement_phase": "IN_FORCE_SUBSTANTIVE",
+              "effective_date": "13 November 2026 (In Force)",
               "status": "IMPLEMENTED_EVIDENCE_MISSING",
               "status_label": "Implemented (Evidence Missing)",
               "rationale": "Technical scanner checks passed with 0 related vulnerabilities, but formal policy or audit document has not yet been uploaded to Evidence Vault.",
               "evidence_count": 0,
               "active_findings_count": 0,
               "assessment_questions": [
-                "Can users withdraw their consent easily via user account settings or a dedicated self-service portal?",
-                "Do you integrate with registered Consent Managers as recognized by DPBI?"
+                "Can users withdraw their consent easily via account settings with equal ease to giving consent?",
+                "Is your data architecture prepared to process standard interoperable consent tokens from registered Consent Managers?"
               ],
               "evidence_requirements": [
-                "Documentation or UI workflow showing the 1-click or self-service consent withdrawal flow.",
+                "Documentation or UI workflow showing the self-service consent withdrawal flow.",
                 "Consent lifecycle database schema or audit trail format."
               ],
               "recommended_actions": [
@@ -35360,42 +35690,98 @@
             {
               "control_id": "DPDP-SEC-08-1",
               "section": "Section 8(1)",
-              "title": "Reasonable Security Safeguards to Prevent Data Breach",
-              "official_ref": "DPDP Act 2023, Section 8(1) & (5)",
-              "description": "A Data Fiduciary must implement reasonable security safeguards to prevent personal data breach in its possession or control, including by any Data Processor on its behalf.",
-              "category": "Data Security & Breach Prevention",
-              "enforcement_phase": "IN_FORCE_SUBSTANTIVE",
-              "effective_date": "Substantive cybersecurity obligation under Act & IT Act Section 43A",
+              "title": "General Data Fiduciary Responsibility",
+              "official_ref": "DPDP Act 2023, Section 8(1)",
+              "description": "A Data Fiduciary shall be responsible for complying with the provisions of this Act and the rules made thereunder in respect of any processing undertaken by it or on its behalf by a Data Processor.",
+              "category": "Governance & Accountability",
+              "enforcement_phase": "SCHEDULED_TO_COMMENCE",
+              "effective_date": "13 May 2027 (Scheduled commencement)",
               "status": "GAP_IDENTIFIED",
               "status_label": "Security Gap Identified",
-              "rationale": "167 active security finding(s) directly threaten this control. See remediation center.",
+              "rationale": "26 active security finding(s) directly threaten this control. See remediation center.",
               "evidence_count": 0,
-              "active_findings_count": 167,
+              "active_findings_count": 26,
               "assessment_questions": [
-                "Are all secrets, database credentials, and API keys stored in dedicated secret managers and excluded from source code repositories?",
-                "Is all personal data encrypted in transit using TLS 1.3/1.2 with HSTS enforced?",
-                "Are automated vulnerability scanning, SAST, and DAST conducted regularly across codebases and web endpoints?"
+                "Has your organization established formal data governance policies covering processors acting on your behalf?",
+                "Do Data Processor contracts mandate strict compliance with DPDP standards?"
               ],
               "evidence_requirements": [
-                "Automated SAST and repository vulnerability scan reports with zero confirmed critical secrets.",
-                "TLS certificate verification and security header analysis report.",
-                "Data-at-rest and in-transit encryption policy document."
+                "Data Protection Governance Charter.",
+                "Standard Data Processing Addendum (DPA) executed with third-party vendors."
               ],
               "recommended_actions": [
-                "Resolve all hardcoded credentials and database credentials identified by TrustAudit.",
-                "Enforce strict HTTPS with HSTS on all personal-data-ingesting endpoints."
+                "Execute Data Processing Addenda with all cloud and SaaS vendors handling user personal data.",
+                "Designate an executive lead accountable for personal data processing compliance."
+              ],
+              "expert_review_required": true
+            },
+            {
+              "control_id": "DPDP-SEC-08-4",
+              "section": "Section 8(4)",
+              "title": "Technical and Organisational Measures",
+              "official_ref": "DPDP Act 2023, Section 8(4)",
+              "description": "A Data Fiduciary shall implement appropriate technical and organisational measures to ensure effective observance of the provisions of this Act and the rules made thereunder.",
+              "category": "Technical & Organisational Measures",
+              "enforcement_phase": "SCHEDULED_TO_COMMENCE",
+              "effective_date": "13 May 2027 (Scheduled commencement)",
+              "status": "IMPLEMENTED_EVIDENCE_MISSING",
+              "status_label": "Implemented (Evidence Missing)",
+              "rationale": "Technical scanner checks passed with 0 related vulnerabilities, but formal policy or audit document has not yet been uploaded to Evidence Vault.",
+              "evidence_count": 0,
+              "active_findings_count": 0,
+              "assessment_questions": [
+                "Are role-based access controls (RBAC) and least privilege enforced across internal databases?",
+                "Are regular automated security assessments, dependency audits, and SAST scans embedded in CI/CD?"
+              ],
+              "evidence_requirements": [
+                "Access control policy and quarterly privilege review records.",
+                "TrustAudit automated CI/CD security audit reports."
+              ],
+              "recommended_actions": [
+                "Enforce multi-tenant access controls and least-privilege scoping across all database queries.",
+                "Embed TrustAudit automated PR security checks in build pipelines."
+              ],
+              "expert_review_required": false
+            },
+            {
+              "control_id": "DPDP-SEC-08-5",
+              "section": "Section 8(5) & Rule 6",
+              "title": "Reasonable Security Safeguards to Prevent Personal Data Breach",
+              "official_ref": "DPDP Act 2023, Section 8(5) read with DPDP Rules 2025, Rule 6",
+              "description": "A Data Fiduciary must protect personal data in its possession or under its control by taking reasonable security safeguards including encryption, secret protection, perimeter defense, and vulnerability patching to prevent personal data breach.",
+              "category": "Security Safeguards & Breach Prevention",
+              "enforcement_phase": "SCHEDULED_TO_COMMENCE",
+              "effective_date": "13 May 2027 (Scheduled commencement; IT Act Section 43A baseline in force)",
+              "status": "GAP_IDENTIFIED",
+              "status_label": "Security Gap Identified",
+              "rationale": "218 active security finding(s) directly threaten this control. See remediation center.",
+              "evidence_count": 0,
+              "active_findings_count": 218,
+              "assessment_questions": [
+                "Are all production credentials, database passwords, and API keys excluded from repositories and stored in secure key vaults?",
+                "Is all personal data encrypted in transit using modern TLS (1.2/1.3) with HSTS enforced?",
+                "Are automated vulnerability scans conducted regularly across repositories, APIs, and web perimeters?"
+              ],
+              "evidence_requirements": [
+                "TrustAudit Secret Detection report confirming 0 active exposed production secrets.",
+                "TLS certificate verification and perimeter security header audit report.",
+                "Data-at-rest and in-transit encryption architecture documentation."
+              ],
+              "recommended_actions": [
+                "Revoke and rotate any hardcoded credentials detected in source code.",
+                "Enforce HTTPS with HSTS on all personal-data-ingesting endpoints."
               ],
               "expert_review_required": false
             },
             {
               "control_id": "DPDP-SEC-08-6",
-              "section": "Section 8(6)",
-              "title": "Personal Data Breach Notification to DPBI & Data Principals",
-              "official_ref": "DPDP Act 2023, Section 8(6)",
-              "description": "In the event of a personal data breach, the Data Fiduciary shall give the Data Protection Board of India and each affected Data Principal intimate notification in such form and manner as may be prescribed.",
+              "section": "Section 8(6) & Rule 7",
+              "title": "Intimation of Personal Data Breach to DPBI & Data Principals",
+              "official_ref": "DPDP Act 2023, Section 8(6) read with DPDP Rules 2025, Rule 7",
+              "description": "In the event of a personal data breach, the Data Fiduciary shall give the Data Protection Board of India and each affected Data Principal intimation in such form, manner, and time as prescribed under Rule 7.",
               "category": "Incident Response",
-              "enforcement_phase": "PENDING_COMMENCEMENT",
-              "effective_date": "Phased Rules Notification",
+              "enforcement_phase": "SCHEDULED_TO_COMMENCE",
+              "effective_date": "13 May 2027 (Scheduled commencement)",
               "status": "REQUIRES_EXPERT_REVIEW",
               "status_label": "Requires Expert Review",
               "rationale": "This is a governance or legal control that cannot be validated purely via technical scans. Supporting documentation and legal sign-off required.",
@@ -35417,13 +35803,13 @@
             },
             {
               "control_id": "DPDP-SEC-08-7",
-              "section": "Section 8(7)",
-              "title": "Data Erasure & Purpose Limitation",
-              "official_ref": "DPDP Act 2023, Section 8(7) & (8)",
+              "section": "Section 8(7) & 8(8)",
+              "title": "Data Erasure and Purpose Limitation",
+              "official_ref": "DPDP Act 2023, Section 8(7) & 8(8)",
               "description": "A Data Fiduciary must erase personal data upon consent withdrawal or as soon as it is reasonable to assume that the specified purpose for which personal data was collected is no longer being served, unless retention is required by law.",
               "category": "Data Retention & Erasure",
-              "enforcement_phase": "PENDING_COMMENCEMENT",
-              "effective_date": "Phased Rules Notification",
+              "enforcement_phase": "SCHEDULED_TO_COMMENCE",
+              "effective_date": "13 May 2027 (Scheduled commencement)",
               "status": "REQUIRES_EXPERT_REVIEW",
               "status_label": "Requires Expert Review",
               "rationale": "This is a governance or legal control that cannot be validated purely via technical scans. Supporting documentation and legal sign-off required.",
@@ -35445,13 +35831,13 @@
             },
             {
               "control_id": "DPDP-SEC-09",
-              "section": "Section 9",
+              "section": "Section 9 & applicable Rules",
               "title": "Processing of Personal Data of Children",
-              "official_ref": "DPDP Act 2023, Section 9(1) - (3)",
+              "official_ref": "DPDP Act 2023, Section 9 read with applicable DPDP Rules 2025",
               "description": "A Data Fiduciary must obtain verifiable consent of the parent or lawful guardian before processing personal data of a child. Must not undertake tracking or behavioral monitoring of children or targeted advertising directed at children.",
               "category": "Child Protection",
-              "enforcement_phase": "PENDING_COMMENCEMENT",
-              "effective_date": "Phased Rules Notification",
+              "enforcement_phase": "SCHEDULED_TO_COMMENCE",
+              "effective_date": "13 May 2027 (Scheduled commencement)",
               "status": "NOT_APPLICABLE",
               "status_label": "Not Applicable",
               "rationale": "Excluded based on business profile: organization does not offer goods or services directed at minors.",
@@ -35506,13 +35892,13 @@
         "SOC2": {
           "metadata": {
             "name": "SOC 2 Trust Services Criteria",
-            "short_name": "SOC 2 (Readiness)",
+            "short_name": "SOC 2 (Readiness & Evidence Management)",
             "jurisdiction": "Global / North America (AICPA)",
             "authority": "American Institute of Certified Public Accountants (AICPA)",
-            "version": "2017 TSC with 2022 Points of Focus",
-            "status": "Active Standard",
-            "description": "Auditing procedure ensuring service providers securely manage client data across Security, Availability, Processing Integrity, Confidentiality, and Privacy.",
-            "disclaimer": "SOC 2 readiness assessments track control implementation and evidence collection. Formal SOC 2 Type 1 / Type 2 examination requires an independent CPA firm."
+            "version": "2017 TSC with 2022 Points of Focus (Published Criteria)",
+            "status": "Active Auditing Criteria",
+            "description": "AICPA Trust Services Criteria ensuring service organizations establish rigorous technical and operational controls across Security, Availability, Processing Integrity, Confidentiality, and Privacy.",
+            "disclaimer": "SOC 2 tracking in TrustAudit represents readiness evaluation and evidence management. Automated mappings cover selected technical criteria and do not constitute complete SOC 2 coverage, an issued SOC 2 examination report, or CPA attestation."
           },
           "applicable": true,
           "readiness_score": 0,
@@ -35527,17 +35913,17 @@
             {
               "control_id": "SOC2-CC6.1",
               "section": "CC6.1",
-              "title": "Logical Access Controls & Credential Management",
-              "official_ref": "AICPA TSC 2017 CC6.1",
+              "title": "Logical Access Security",
+              "official_ref": "AICPA TSC 2017 CC6.1 (2022 Focus)",
               "description": "The entity implements logical access security software, infrastructure, and architectures over protected information assets to protect them from security events.",
               "category": "Logical Access",
               "enforcement_phase": "IN_FORCE_SUBSTANTIVE",
-              "effective_date": "Active AICPA Criteria",
+              "effective_date": "Active AICPA Published Criteria",
               "status": "GAP_IDENTIFIED",
               "status_label": "Security Gap Identified",
-              "rationale": "22 active security finding(s) directly threaten this control. See remediation center.",
+              "rationale": "26 active security finding(s) directly threaten this control. See remediation center.",
               "evidence_count": 0,
-              "active_findings_count": 22,
+              "active_findings_count": 26,
               "assessment_questions": [
                 "Are all repository secrets, API keys, and database passwords excluded from source code and managed via dedicated secret stores?",
                 "Is Multi-Factor Authentication (MFA) strictly enforced for all developer accounts, cloud consoles, and Git repositories?",
@@ -35557,17 +35943,17 @@
             {
               "control_id": "SOC2-CC6.6",
               "section": "CC6.6",
-              "title": "Boundary & Perimeter Protection (Network Defense & Encryption)",
-              "official_ref": "AICPA TSC 2017 CC6.6",
-              "description": "The entity implements logical boundaries and perimeter protection to prevent unauthorized network access and secure data transmission.",
+              "title": "Protection Against Threats Originating Outside System Boundaries",
+              "official_ref": "AICPA TSC 2017 CC6.6 (2022 Focus)",
+              "description": "The entity implements logical boundaries and network protections against threats originating outside system boundaries.",
               "category": "Network & Perimeter Security",
               "enforcement_phase": "IN_FORCE_SUBSTANTIVE",
-              "effective_date": "Active AICPA Criteria",
+              "effective_date": "Active AICPA Published Criteria",
               "status": "GAP_IDENTIFIED",
               "status_label": "Security Gap Identified",
-              "rationale": "10 active security finding(s) directly threaten this control. See remediation center.",
+              "rationale": "31 active security finding(s) directly threaten this control. See remediation center.",
               "evidence_count": 0,
-              "active_findings_count": 10,
+              "active_findings_count": 31,
               "assessment_questions": [
                 "Is all network traffic to web applications encrypted in transit using TLS 1.2 or TLS 1.3 with strong cipher suites?",
                 "Are modern HTTP security headers (HSTS, CSP, X-Frame-Options) properly configured on public perimeter endpoints?",
@@ -35586,12 +35972,12 @@
             {
               "control_id": "SOC2-CC6.8",
               "section": "CC6.8",
-              "title": "Malicious Code & Unauthorized Execution Prevention",
-              "official_ref": "AICPA TSC 2017 CC6.8",
-              "description": "The entity implements controls to prevent or detect the introduction of unauthorized software, malicious code, or compromised agent integrations.",
+              "title": "Prevention, Detection, and Remediation of Unauthorised or Malicious Software",
+              "official_ref": "AICPA TSC 2017 CC6.8 (2022 Focus)",
+              "description": "The entity implements controls to prevent, detect, and remediate the introduction of unauthorized software, malicious code, or compromised agent integrations.",
               "category": "Application Security & Tool Control",
               "enforcement_phase": "IN_FORCE_SUBSTANTIVE",
-              "effective_date": "Active AICPA Criteria",
+              "effective_date": "Active AICPA Published Criteria",
               "status": "GAP_IDENTIFIED",
               "status_label": "Security Gap Identified",
               "rationale": "135 active security finding(s) directly threaten this control. See remediation center.",
@@ -35615,21 +36001,21 @@
             {
               "control_id": "SOC2-CC7.1",
               "section": "CC7.1",
-              "title": "Vulnerability Detection & Component Patch Management",
-              "official_ref": "AICPA TSC 2017 CC7.1",
-              "description": "The entity conducts ongoing vulnerability scans and monitors external vulnerability advisories to identify and patch security flaws in third-party software components.",
+              "title": "Monitoring of Configuration Changes and Susceptibility to Newly Discovered Vulnerabilities",
+              "official_ref": "AICPA TSC 2017 CC7.1 (2022 Focus)",
+              "description": "The entity uses detection and monitoring procedures to identify (1) changes to configurations that result in the introduction of new vulnerabilities, and (2) susceptibilities to newly discovered vulnerabilities.",
               "category": "Vulnerability Management",
               "enforcement_phase": "IN_FORCE_SUBSTANTIVE",
-              "effective_date": "Active AICPA Criteria",
+              "effective_date": "Active AICPA Published Criteria",
               "status": "GAP_IDENTIFIED",
               "status_label": "Security Gap Identified",
-              "rationale": "43 active security finding(s) directly threaten this control. See remediation center.",
+              "rationale": "69 active security finding(s) directly threaten this control. See remediation center.",
               "evidence_count": 0,
-              "active_findings_count": 43,
+              "active_findings_count": 69,
               "assessment_questions": [
                 "Are automated dependency vulnerability scans executed on every pull request and continuous build?",
                 "Is there a formal Service Level Agreement (SLA) for patching critical vulnerabilities (e.g. 7 days for CRITICAL)?",
-                "Does the team monitor CISA KEV or national vulnerability databases for zero-day component exploits?"
+                "Does the team monitor CISA KEV or national vulnerability databases for actively exploited component vulnerabilities?"
               ],
               "evidence_requirements": [
                 "TrustAudit Dependency & SBOM Scan report.",
@@ -35646,11 +36032,11 @@
               "control_id": "SOC2-CC8.1",
               "section": "CC8.1",
               "title": "Authorized Change Management & CI/CD Security Gates",
-              "official_ref": "AICPA TSC 2017 CC8.1",
+              "official_ref": "AICPA TSC 2017 CC8.1 (2022 Focus)",
               "description": "The entity authorizes, designs, tests, approves, and documents changes to infrastructure, applications, and configurations prior to production deployment.",
               "category": "Change Management",
               "enforcement_phase": "IN_FORCE_SUBSTANTIVE",
-              "effective_date": "Active AICPA Criteria",
+              "effective_date": "Active AICPA Published Criteria",
               "status": "REQUIRES_EXPERT_REVIEW",
               "status_label": "Requires Expert Review",
               "rationale": "This is a governance or legal control that cannot be validated purely via technical scans. Supporting documentation and legal sign-off required.",
@@ -35676,22 +36062,22 @@
         },
         "ISO27001": {
           "metadata": {
-            "name": "ISO/IEC 27001:2022",
-            "short_name": "ISO 27001:2022",
+            "name": "ISO/IEC 27001:2022 (including AMD 1:2024 Climate action)",
+            "short_name": "ISO/IEC 27001:2022",
             "jurisdiction": "International",
-            "authority": "International Organization for Standardization (ISO) / IEC",
-            "version": "ISO/IEC 27001:2022 (3rd Edition)",
+            "authority": "International Organization for Standardization (ISO) / International Electrotechnical Commission (IEC)",
+            "version": "ISO/IEC 27001:2022 + AMD 1:2024",
             "status": "Active International Standard",
-            "description": "Information security management system (ISMS) standard prescribing technical, organizational, physical, and people controls across 4 main themes.",
-            "disclaimer": "TrustAudit tracks technical control effectiveness and evidence posture. Accredited ISO 27001 certification requires formal Stage 1 & Stage 2 audits by an accredited Certification Body (CB)."
+            "description": "Global Information Security Management System (ISMS) standard prescribing organizational, people, physical, and technological security controls.",
+            "disclaimer": "TrustAudit evaluates technical control posture across selected Annex A controls. Automated technical scans do not establish full ISMS conformity or accredited ISO 27001 certification, which requires accredited third-party certification body audits."
           },
           "applicable": true,
           "readiness_score": 0,
           "readiness_grade": "D",
-          "total_controls": 4,
+          "total_controls": 5,
           "implemented_count": 0,
           "evidence_missing_count": 0,
-          "gap_count": 4,
+          "gap_count": 5,
           "expert_review_count": 0,
           "not_applicable_count": 0,
           "controls": [
@@ -35703,12 +36089,12 @@
               "description": "Information about technical vulnerabilities of information systems in use shall be obtained, the organization's exposure evaluated, and appropriate measures taken to address the associated risk.",
               "category": "Technological Controls",
               "enforcement_phase": "IN_FORCE_SUBSTANTIVE",
-              "effective_date": "Active ISO Standard",
+              "effective_date": "Active ISO/IEC 27001:2022 Standard",
               "status": "GAP_IDENTIFIED",
               "status_label": "Security Gap Identified",
-              "rationale": "43 active security finding(s) directly threaten this control. See remediation center.",
+              "rationale": "69 active security finding(s) directly threaten this control. See remediation center.",
               "evidence_count": 0,
-              "active_findings_count": 43,
+              "active_findings_count": 69,
               "assessment_questions": [
                 "Does the organization conduct continuous static and dynamic vulnerability assessments across all production assets?",
                 "Are vulnerabilities prioritized based on exploitability, threat intelligence (CISA KEV), and asset criticality?"
@@ -35726,17 +36112,17 @@
             {
               "control_id": "ISO-A.8.20",
               "section": "Control A.8.20",
-              "title": "Network Security & Boundary Controls",
+              "title": "Networks Security",
               "official_ref": "ISO/IEC 27001:2022 Annex A.8.20",
               "description": "Networks and network devices shall be secured, managed, and controlled to protect the information in systems and applications.",
               "category": "Technological Controls",
               "enforcement_phase": "IN_FORCE_SUBSTANTIVE",
-              "effective_date": "Active ISO Standard",
+              "effective_date": "Active ISO/IEC 27001:2022 Standard",
               "status": "GAP_IDENTIFIED",
               "status_label": "Security Gap Identified",
-              "rationale": "10 active security finding(s) directly threaten this control. See remediation center.",
+              "rationale": "31 active security finding(s) directly threaten this control. See remediation center.",
               "evidence_count": 0,
-              "active_findings_count": 10,
+              "active_findings_count": 31,
               "assessment_questions": [
                 "Are public perimeter web servers hardened against cross-origin data theft (CORS) and clickjacking?",
                 "Are network-exposed services authenticated with zero unauthenticated remote procedure calls?"
@@ -35754,17 +36140,17 @@
             {
               "control_id": "ISO-A.8.24",
               "section": "Control A.8.24",
-              "title": "Use of Cryptography & Key Management",
+              "title": "Use of Cryptography",
               "official_ref": "ISO/IEC 27001:2022 Annex A.8.24",
               "description": "Rules for the effective use of cryptography, including cryptographic key management, shall be defined and implemented.",
               "category": "Technological Controls",
               "enforcement_phase": "IN_FORCE_SUBSTANTIVE",
-              "effective_date": "Active ISO Standard",
+              "effective_date": "Active ISO/IEC 27001:2022 Standard",
               "status": "GAP_IDENTIFIED",
               "status_label": "Security Gap Identified",
-              "rationale": "22 active security finding(s) directly threaten this control. See remediation center.",
+              "rationale": "26 active security finding(s) directly threaten this control. See remediation center.",
               "evidence_count": 0,
-              "active_findings_count": 22,
+              "active_findings_count": 26,
               "assessment_questions": [
                 "Is deprecated cryptography (TLS 1.0/1.1, MD5, SHA-1) phased out across all application endpoints?",
                 "Are cryptographic API keys and private keys protected against source code repository leakage?"
@@ -35780,14 +36166,42 @@
               "expert_review_required": false
             },
             {
-              "control_id": "ISO-A.8.28",
-              "section": "Control A.8.28",
-              "title": "Secure Coding & Application Security",
-              "official_ref": "ISO/IEC 27001:2022 Annex A.8.28",
-              "description": "Secure coding principles shall be applied to software development to prevent injection flaws, unauthorized access, and design defects.",
+              "control_id": "ISO-A.8.25",
+              "section": "Control A.8.25",
+              "title": "Secure Development Life Cycle",
+              "official_ref": "ISO/IEC 27001:2022 Annex A.8.25",
+              "description": "Rules for the secure development of software and systems shall be established and applied to developments within the organization.",
               "category": "Technological Controls",
               "enforcement_phase": "IN_FORCE_SUBSTANTIVE",
-              "effective_date": "Active ISO Standard",
+              "effective_date": "Active ISO/IEC 27001:2022 Standard",
+              "status": "GAP_IDENTIFIED",
+              "status_label": "Security Gap Identified",
+              "rationale": "135 active security finding(s) directly threaten this control. See remediation center.",
+              "evidence_count": 0,
+              "active_findings_count": 135,
+              "assessment_questions": [
+                "Are security requirements identified and addressed across all phases of the software development lifecycle?",
+                "Are automated security gates enforced in continuous integration and deployment (CI/CD) pipelines?"
+              ],
+              "evidence_requirements": [
+                "Documented Secure Software Development Life Cycle (S-SDLC) policy.",
+                "CI/CD build pipeline logs demonstrating automated security testing gates."
+              ],
+              "recommended_actions": [
+                "Formalize an S-SDLC policy incorporating automated static analysis and vulnerability scans.",
+                "Enforce branch protection rules and automated security gate passing before production deployment."
+              ],
+              "expert_review_required": true
+            },
+            {
+              "control_id": "ISO-A.8.28",
+              "section": "Control A.8.28",
+              "title": "Secure Coding",
+              "official_ref": "ISO/IEC 27001:2022 Annex A.8.28",
+              "description": "Secure coding principles shall be applied to software development.",
+              "category": "Technological Controls",
+              "enforcement_phase": "IN_FORCE_SUBSTANTIVE",
+              "effective_date": "Active ISO/IEC 27001:2022 Standard",
               "status": "GAP_IDENTIFIED",
               "status_label": "Security Gap Identified",
               "rationale": "135 active security finding(s) directly threaten this control. See remediation center.",
@@ -35814,11 +36228,11 @@
             "name": "General Data Protection Regulation (Regulation (EU) 2016/679)",
             "short_name": "EU GDPR",
             "jurisdiction": "European Union / EEA",
-            "authority": "European Data Protection Board (EDPB) & National DPAs",
+            "authority": "European Data Protection Board (EDPB) & National Data Protection Authorities",
             "version": "Regulation (EU) 2016/679",
             "status": "Fully Enacted & Enforceable",
-            "description": "Stringent data protection and privacy regulation covering individuals within the European Union and the transfer of personal data outside the EU/EEA.",
-            "disclaimer": "TrustAudit provides automated technical control checks and record-keeping tools. Regulatory compliance remains the continuous legal responsibility of the Data Controller."
+            "description": "Regulation protecting fundamental rights and freedoms of natural persons regarding the processing of personal data and free movement of such data.",
+            "disclaimer": "TrustAudit provides automated technical control checks and record-keeping tools. Statutory compliance remains the legal responsibility of the Data Controller."
           },
           "applicable": true,
           "readiness_score": 0,
@@ -35869,9 +36283,9 @@
               "effective_date": "May 25, 2018",
               "status": "GAP_IDENTIFIED",
               "status_label": "Security Gap Identified",
-              "rationale": "32 active security finding(s) directly threaten this control. See remediation center.",
+              "rationale": "57 active security finding(s) directly threaten this control. See remediation center.",
               "evidence_count": 0,
-              "active_findings_count": 32,
+              "active_findings_count": 57,
               "assessment_questions": [
                 "Is personal data encrypted both in transit and at rest using modern encryption standards?",
                 "Does the organization have a process for regularly testing, assessing, and evaluating the effectiveness of technical measures?"
@@ -35948,6 +36362,396 @@
     },
     "org-b504027d": {
       "company_name": "Fintech Startup Ltd",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-1757c2aa": {
+      "company_name": "Fintech Startup Ltd",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-ebc7cb07": {
+      "company_name": "Company Alpha",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-b26073ec": {
+      "company_name": "Company Beta",
+      "country": "USA",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-833c1322": {
+      "company_name": "Corp Alpha",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-e72fc558": {
+      "company_name": "Corp Beta",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-7e718d9a": {
+      "company_name": "Fintech Startup Ltd",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-a6803dcc": {
+      "company_name": "Company Alpha",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-8980e5b8": {
+      "company_name": "Company Beta",
+      "country": "USA",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-6f5c523c": {
+      "company_name": "Corp Alpha",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-a9033e6d": {
+      "company_name": "Corp Beta",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-798c1a92": {
+      "company_name": "Fintech Startup Ltd",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-f242b720": {
+      "company_name": "Company Alpha",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-4f62eb37": {
+      "company_name": "Company Beta",
+      "country": "USA",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-b1b59c91": {
+      "company_name": "Corp Alpha",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-61d5761c": {
+      "company_name": "Corp Beta",
       "country": "India",
       "industry": "SaaS / B2B Software",
       "website": "",

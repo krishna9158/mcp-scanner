@@ -116,6 +116,16 @@ class GitleaksScanner(BaseScanner):
             normalized = self.normalize_findings(raw_findings, base_folder=target)
             dur = round(time.time() - start_time, 2)
 
+            # Sanitize raw findings so raw credentials are never persisted in memory or logs
+            sanitized_raw = []
+            for rf_item in raw_findings:
+                clean_item = dict(rf_item)
+                if "Secret" in clean_item and clean_item["Secret"]:
+                    clean_item["Secret"] = redact_secret_string(str(clean_item["Secret"]))
+                if "Match" in clean_item and clean_item["Match"]:
+                    clean_item["Match"] = redact_secret_string(str(clean_item["Match"]))
+                sanitized_raw.append(clean_item)
+
             return {
                 "scanner": self.name,
                 "name": "Gitleaks Secret Scanner",
@@ -125,7 +135,7 @@ class GitleaksScanner(BaseScanner):
                 "status": "completed",
                 "findings_count": len(normalized),
                 "duration": dur,
-                "raw_findings": raw_findings,
+                "raw_findings": sanitized_raw,
                 "normalized_findings": normalized,
                 "error": None,
             }

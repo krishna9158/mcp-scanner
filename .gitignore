@@ -12,3 +12,4 @@ __pycache__/
 
 # Local environment / secrets
 .env
+data/evidence_vault/

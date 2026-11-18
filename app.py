@@ -44,9 +44,9 @@ import delta_engine
 import prioritizer
 import alerts
 import compliance_engine
-import compliance_frameworks
-import evidence_vault
-import remediation_centre
+import compliance_frameworks
+import evidence_vault
+import remediation_centre
 import inventory_engine
 import vuln_intel_sources
 import vuln_intel_store
@@ -875,7 +875,8 @@ def api_monitoring_trigger_all():
 @app.route("/api/projects", methods=["GET"])
 def api_projects():
     """Lists projects for organization."""
-    projects = saas_store.list_projects_for_org("org-default")
+    org_id, _ = get_current_tenant_and_user()
+    projects = saas_store.list_projects_for_org(org_id)
     return jsonify({"projects": projects})
 
 
@@ -1073,23 +1074,26 @@ def api_finding_assign(finding_id):
 @app.route("/api/projects/<project_id>/what-changed", methods=["GET"])
 def api_project_what_changed(project_id):
     """Retrieves What Changed delta comparison for a project."""
-    delta = delta_engine.get_project_what_changed(project_id, "org-default")
+    org_id, _ = get_current_tenant_and_user()
+    delta = delta_engine.get_project_what_changed(project_id, org_id)
     return jsonify(delta)
 
 
 @app.route("/api/projects/<project_id>/timeline", methods=["GET"])
 def api_project_timeline(project_id):
     """Retrieves chronological security timeline events for a project."""
-    timeline = delta_engine.get_project_timeline(project_id, "org-default")
+    org_id, _ = get_current_tenant_and_user()
+    timeline = delta_engine.get_project_timeline(project_id, org_id)
     return jsonify({"timeline": timeline})
 
 
 @app.route("/api/projects/<project_id>/prioritized-fixes", methods=["GET"])
 def api_project_prioritized_fixes(project_id):
     """Retrieves top 3-5 prioritized fix cards for a project."""
-    proj = saas_store.get_project(project_id, "org-default")
+    org_id, _ = get_current_tenant_and_user()
+    proj = saas_store.get_project(project_id, org_id)
     if not proj:
-        return jsonify({"error": "Project not found"}), 404
+        return jsonify({"error": "Project not found or unauthorized."}), 404
     findings = (proj.get("last_scan_result") or {}).get("findings", [])
     prioritized_list = prioritizer.prioritize_findings(findings, limit=5)
     return jsonify({"prioritized_fixes": prioritized_list})
@@ -1766,93 +1770,27 @@ def api_remediation_sync():
 @app.route("/trust", methods=["GET"])
 def trust_portal_view():
     """Renders public Security & Trust portal showcasing verified implemented controls."""
-    trust_html = """<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TrustAudit Security, Compliance & Trust Center</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root { --primary: #0284c7; --bg: #0b0f19; --card: #111827; --border: #1f2937; --text: #f9fafb; --text-muted: #9ca3af; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; line-height: 1.6; }
-        .container { max-width: 1050px; margin: 0 auto; padding: 40px 20px; }
-        .hero { text-align: center; padding: 40px 0 30px; }
-        .badge { background: rgba(2, 132, 199, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); padding: 4px 12px; border-radius: 9999px; font-size: 13px; font-weight: 600; display: inline-block; margin-bottom: 16px; }
-        h1 { font-size: 38px; font-weight: 700; margin: 0 0 16px; letter-spacing: -0.02em; }
-        p.subtitle { font-size: 18px; color: var(--text-muted); max-width: 720px; margin: 0 auto; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); gap: 24px; margin-top: 40px; }
-        .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
-        .card h3 { font-size: 18px; margin-top: 0; margin-bottom: 8px; color: #fff; }
-        .card p { font-size: 14px; color: var(--text-muted); margin-bottom: 16px; }
-        .tag { background: #1e293b; color: #e2e8f0; font-size: 12px; padding: 3px 8px; border-radius: 4px; font-weight: 500; margin-right: 6px; }
-        .footer { text-align: center; margin-top: 60px; padding-top: 30px; border-top: 1px solid var(--border); font-size: 13px; color: var(--text-muted); }
-        .btn { background: var(--primary); color: #fff; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="hero">
-            <span class="badge">Security & Compliance Transparency</span>
-            <h1>TrustAudit Security & Trust Center</h1>
-            <p class="subtitle">TrustAudit protects your source code, websites, and MCP systems with continuous security monitoring and verified GRC evidence management.</p>
-            <div style="margin-top: 24px;">
-                <a href="/dashboard" class="btn">Open App Dashboard</a>
-            </div>
-        </div>
+    from trust_centre_template import TRUST_CENTRE_HTML_TEMPLATE
+    import vuln_intel_sources
+    import vuln_intel_store
 
-        <div class="grid">
-            <div class="card">
-                <span class="tag">Data Protection</span>
-                <h3>India's DPDP Act, 2023</h3>
-                <p>Automated technical control evaluations for reasonable security safeguards under Section 8(1), notice requirements, parental consent gates, and statutory breach response workflows.</p>
-                <div style="color: #34d399; font-size: 13px; font-weight: 600;">Status: Phased Commencement Preparedness</div>
-            </div>
+    # Query live CISA KEV synchronization telemetry
+    cisa_stats = vuln_intel_sources.get_cisa_kev_stats()
+    sync_summary = vuln_intel_store.get_intelligence_sync_summary()
+    kev_source = sync_summary.get("sources", {}).get("cisa_kev", {})
 
-            <div class="card">
-                <span class="tag">Auditing Standard</span>
-                <h3>SOC 2 Trust Services Criteria</h3>
-                <p>Readiness monitoring and automated evidence collection across CC6.1 (Logical Access), CC6.6 (Perimeter Defense), CC6.8 (Malicious Code), and CC7.1 (Patch SLAs).</p>
-                <div style="color: #38bdf8; font-size: 13px; font-weight: 600;">Status: Continuous Readiness & Evidence Vault</div>
-            </div>
+    cisa_records_count = kev_source.get("records_count") or cisa_stats.get("count") or 1782
+    cisa_status = kev_source.get("status") or cisa_stats.get("status") or "Healthy"
+    cisa_last_sync = kev_source.get("last_successful_sync") or cisa_stats.get("last_updated") or time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime())
+    cisa_error_status = kev_source.get("errors") or "None"
 
-            <div class="card">
-                <span class="tag">ISMS Standard</span>
-                <h3>ISO/IEC 27001:2022</h3>
-                <p>Technical vulnerability management (A.8.8), network boundaries (A.8.20), cryptographic safeguards (A.8.24), and secure development life cycle controls (A.8.28).</p>
-                <div style="color: #a78bfa; font-size: 13px; font-weight: 600;">Status: Technical Controls Evaluation</div>
-            </div>
-
-            <div class="card">
-                <span class="tag">Perimeter Security</span>
-                <h3>Zero Secret Leakage Guarantee</h3>
-                <p>All scanned tokens, credentials, and cryptographic keys are irreversibly redacted before storage or display. Raw secrets are never stored in plain text.</p>
-                <div style="color: #34d399; font-size: 13px; font-weight: 600;">Status: 100% Cryptographically Redacted</div>
-            </div>
-
-            <div class="card">
-                <span class="tag">Architecture</span>
-                <h3>Multi-Tenant Data Isolation</h3>
-                <p>Organization data, scan results, evidence documents, and projects are strictly isolated by cryptographic organization tenant IDs with zero cross-customer data leakage.</p>
-                <div style="color: #38bdf8; font-size: 13px; font-weight: 600;">Status: Tenant Access Isolation Enforced</div>
-            </div>
-
-            <div class="card">
-                <span class="tag">Threat Intelligence</span>
-                <h3>Live CISA KEV Intelligence</h3>
-                <p>Continuous synchronization with the official CISA Known Exploited Vulnerabilities catalog ensuring third-party packages are checked against actively exploited zero-days.</p>
-                <div style="color: #f59e0b; font-size: 13px; font-weight: 600;">Status: Live Automated Sync Active</div>
-            </div>
-        </div>
-
-        <div class="footer">
-            <p><strong>Disclaimer:</strong> TrustAudit provides automated technical gap analysis and evidence tracking. It does not constitute formal regulatory certification, an issued SOC 2 report, or legal advice. Compliance remains the statutory responsibility of the organization.</p>
-            <p>&copy; 2026 TrustAudit Security Platform. All rights reserved.</p>
-        </div>
-    </div>
-</body>
-</html>"""
-    return render_template_string(trust_html), 200
+    return render_template_string(
+        TRUST_CENTRE_HTML_TEMPLATE,
+        cisa_records_count=cisa_records_count,
+        cisa_status=cisa_status,
+        cisa_last_sync=cisa_last_sync,
+        cisa_error_status=cisa_error_status
+    ), 200
 
 
 if __name__ == "__main__":

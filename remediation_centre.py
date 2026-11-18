@@ -82,7 +82,7 @@ def generate_remediation_task_for_finding(finding: Dict[str, Any], org_id: str =
 
     if category == "secrets":
         what_is_wrong = f"Hardcoded credential or API secret found in '{file_path}' (line {line or 'N/A'})."
-        why_it_matters = "Anyone with read access to this code or backup images can impersonate your system, access production databases, or incur substantial cloud compute costs. Legally, this violates statutory safeguards under DPDP Section 8(1) and SOC 2 CC6.1."
+        why_it_matters = "Anyone with read access to this code or backup images can impersonate your system, access production databases, or incur substantial cloud compute costs. Legally, this violates statutory safeguards under DPDP Section 8(5) (read with Rule 6) and SOC 2 CC6.1."
         what_to_change = "Revoke the exposed key immediately, store new keys in a secret manager, and reference them via environment variables."
         step_instructions = [
             f"1. Open '{file_path}' and locate line {line or 1}.",

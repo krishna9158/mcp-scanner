@@ -25,65 +25,71 @@ from typing import Any, Dict, List, Optional
 
 FRAMEWORK_METADATA = {
     "DPDP": {
-        "name": "Digital Personal Data Protection Act, 2023 (India)",
-        "short_name": "DPDP Act 2023",
+        "name": "Digital Personal Data Protection Act, 2023 & DPDP Rules, 2025 (India)",
+        "short_name": "DPDP Act 2023 & Rules 2025",
         "jurisdiction": "India",
-        "authority": "Data Protection Board of India (DPBI) / MeitY",
-        "version": "Act No. 22 of 2023 & Draft Implementation Rules",
-        "status": "Phased Commencement",
-        "description": "Comprehensive legal framework governing the processing of digital personal data in India, protecting individual autonomy while enabling lawful business processing.",
-        "disclaimer": "TrustAudit provides automated technical gap analysis and evidence tracking. It does not replace formal legal counsel or statutory audit by DPBI."
+        "authority": "Data Protection Board of India (DPBI) / Ministry of Electronics and Information Technology (MeitY)",
+        "version": "DPDP Act, 2023 (Act No. 22 of 2023) & DPDP Rules, 2025",
+        "status": "Phased Statutory Commencement",
+        "description": "Comprehensive statutory framework governing the processing of digital personal data in India. Establishes legal accountability for Data Fiduciaries, statutory safeguards, breach notification, and Data Principal rights.",
+        "disclaimer": "TrustAudit provides automated technical gap analysis, evidence tracking, and readiness evaluation. It does not replace formal legal counsel or statutory audit by DPBI. TrustAudit is not a registered statutory Consent Manager under Section 6(9).",
+        "commencement_timeline": {
+            "consent_managers_in_force": "Section 6(9) & Rule 4 (Registration and operation of Consent Managers) commenced on 13 November 2026.",
+            "substantive_fiduciary_scheduled": "Substantive Data Fiduciary obligations (including Sections 5, 8, 9, 10) and Rules 3, 5–16 are scheduled to commence on 13 May 2027.",
+            "status_distinction": "Delineates controls as: Already in force, Scheduled to commence, Readiness assessment, Not applicable, or Requires legal review. Future statutory requirements are assessed for preparedness and never represented as existing legal violations."
+        }
     },
     "SOC2": {
         "name": "SOC 2 Trust Services Criteria",
-        "short_name": "SOC 2 (Readiness)",
+        "short_name": "SOC 2 (Readiness & Evidence Management)",
         "jurisdiction": "Global / North America (AICPA)",
         "authority": "American Institute of Certified Public Accountants (AICPA)",
-        "version": "2017 TSC with 2022 Points of Focus",
-        "status": "Active Standard",
-        "description": "Auditing procedure ensuring service providers securely manage client data across Security, Availability, Processing Integrity, Confidentiality, and Privacy.",
-        "disclaimer": "SOC 2 readiness assessments track control implementation and evidence collection. Formal SOC 2 Type 1 / Type 2 examination requires an independent CPA firm."
+        "version": "2017 TSC with 2022 Points of Focus (Published Criteria)",
+        "status": "Active Auditing Criteria",
+        "description": "AICPA Trust Services Criteria ensuring service organizations establish rigorous technical and operational controls across Security, Availability, Processing Integrity, Confidentiality, and Privacy.",
+        "disclaimer": "SOC 2 tracking in TrustAudit represents readiness evaluation and evidence management. Automated mappings cover selected technical criteria and do not constitute complete SOC 2 coverage, an issued SOC 2 examination report, or CPA attestation."
     },
     "ISO27001": {
-        "name": "ISO/IEC 27001:2022",
-        "short_name": "ISO 27001:2022",
+        "name": "ISO/IEC 27001:2022 (including AMD 1:2024 Climate action)",
+        "short_name": "ISO/IEC 27001:2022",
         "jurisdiction": "International",
-        "authority": "International Organization for Standardization (ISO) / IEC",
-        "version": "ISO/IEC 27001:2022 (3rd Edition)",
+        "authority": "International Organization for Standardization (ISO) / International Electrotechnical Commission (IEC)",
+        "version": "ISO/IEC 27001:2022 + AMD 1:2024",
         "status": "Active International Standard",
-        "description": "Information security management system (ISMS) standard prescribing technical, organizational, physical, and people controls across 4 main themes.",
-        "disclaimer": "TrustAudit tracks technical control effectiveness and evidence posture. Accredited ISO 27001 certification requires formal Stage 1 & Stage 2 audits by an accredited Certification Body (CB)."
+        "description": "Global Information Security Management System (ISMS) standard prescribing organizational, people, physical, and technological security controls.",
+        "disclaimer": "TrustAudit evaluates technical control posture across selected Annex A controls. Automated technical scans do not establish full ISMS conformity or accredited ISO 27001 certification, which requires accredited third-party certification body audits."
     },
     "GDPR": {
         "name": "General Data Protection Regulation (Regulation (EU) 2016/679)",
         "short_name": "EU GDPR",
         "jurisdiction": "European Union / EEA",
-        "authority": "European Data Protection Board (EDPB) & National DPAs",
+        "authority": "European Data Protection Board (EDPB) & National Data Protection Authorities",
         "version": "Regulation (EU) 2016/679",
         "status": "Fully Enacted & Enforceable",
-        "description": "Stringent data protection and privacy regulation covering individuals within the European Union and the transfer of personal data outside the EU/EEA.",
-        "disclaimer": "TrustAudit provides automated technical control checks and record-keeping tools. Regulatory compliance remains the continuous legal responsibility of the Data Controller."
+        "description": "Regulation protecting fundamental rights and freedoms of natural persons regarding the processing of personal data and free movement of such data.",
+        "disclaimer": "TrustAudit provides automated technical control checks and record-keeping tools. Statutory compliance remains the legal responsibility of the Data Controller."
     }
 }
 
 
 CONTROLS_DATABASE: Dict[str, List[Dict[str, Any]]] = {
     # --------------------------------------------------------------------------
-    # INDIA DPDP ACT 2023 & RULES
+    # INDIA DPDP ACT 2023 & DPDP RULES 2025
     # --------------------------------------------------------------------------
     "DPDP": [
         {
             "control_id": "DPDP-SEC-05",
-            "section": "Section 5",
-            "title": "Notice Before Requesting Consent",
-            "official_ref": "DPDP Act 2023, Section 5(1) & (2)",
-            "description": "Every request for consent must be accompanied or preceded by an itemized, clear notice describing the personal data sought to be processed, the specified purpose, how the Data Principal may exercise rights, and grievance redressal contact.",
+            "section": "Section 5 & Rule 3",
+            "title": "Notice-Related Requirements for Data Processing",
+            "official_ref": "DPDP Act 2023, Section 5 read with DPDP Rules 2025, Rule 3",
+            "description": "Every request for consent must be accompanied or preceded by an itemised notice informing the Data Principal of the personal data to be processed, specified purpose, manner of exercising rights, and grievance redressal mechanism.",
             "applicability": "Applies to all Data Fiduciaries processing personal data under consent.",
-            "enforcement_phase": "PENDING_COMMENCEMENT",  # Will take effect upon notification of Rules
-            "effective_date": "Scheduled for phased notification by MeitY",
+            "enforcement_phase": "SCHEDULED_TO_COMMENCE",
+            "effective_date": "13 May 2027 (Scheduled commencement)",
+            "status_display": "Readiness assessment",
             "category": "Consent & Transparency",
             "assessment_questions": [
-                "Does your website or application present a clear notice before capturing user personal data?",
+                "Does your website or application present an itemized notice before capturing user personal data?",
                 "Is the notice accessible in English and any of the 22 languages specified in the Eighth Schedule to the Constitution of India?",
                 "Does the notice explicitly explain how users can withdraw consent or raise a grievance?"
             ],
@@ -101,20 +107,21 @@ CONTROLS_DATABASE: Dict[str, List[Dict[str, Any]]] = {
         },
         {
             "control_id": "DPDP-SEC-06",
-            "section": "Section 6",
-            "title": "Consent Architecture & Withdrawal Mechanism",
-            "official_ref": "DPDP Act 2023, Section 6(1) - (10)",
-            "description": "Consent must be free, specific, informed, unconditional, and unambiguous with clear affirmative action. Data Principals must have the right to withdraw consent with the same ease as giving it.",
-            "applicability": "Mandatory for all consent-based processing.",
-            "enforcement_phase": "PENDING_COMMENCEMENT",
-            "effective_date": "Phased Rules Notification",
-            "category": "Consent & Transparency",
+            "section": "Section 6(9) & Rule 4",
+            "title": "Consent Architecture & Consent Manager Integration",
+            "official_ref": "DPDP Act 2023, Section 6(9) read with DPDP Rules 2025, Rule 4",
+            "description": "Data Principals may give, manage, review, or withdraw consent through registered Consent Managers accountable to the DPBI. TrustAudit tracks organizational technical readiness to interface with registered Consent Managers and does not self-attest as a registered Consent Manager.",
+            "applicability": "Mandatory for all consent-based processing ecosystems.",
+            "enforcement_phase": "IN_FORCE_SUBSTANTIVE",
+            "effective_date": "13 November 2026 (In Force)",
+            "status_display": "Already in force",
+            "category": "Consent Architecture",
             "assessment_questions": [
-                "Can users withdraw their consent easily via user account settings or a dedicated self-service portal?",
-                "Do you integrate with registered Consent Managers as recognized by DPBI?"
+                "Can users withdraw their consent easily via account settings with equal ease to giving consent?",
+                "Is your data architecture prepared to process standard interoperable consent tokens from registered Consent Managers?"
             ],
             "evidence_requirements": [
-                "Documentation or UI workflow showing the 1-click or self-service consent withdrawal flow.",
+                "Documentation or UI workflow showing the self-service consent withdrawal flow.",
                 "Consent lifecycle database schema or audit trail format."
             ],
             "recommended_actions": [
@@ -127,39 +134,93 @@ CONTROLS_DATABASE: Dict[str, List[Dict[str, Any]]] = {
         {
             "control_id": "DPDP-SEC-08-1",
             "section": "Section 8(1)",
-            "title": "Reasonable Security Safeguards to Prevent Data Breach",
-            "official_ref": "DPDP Act 2023, Section 8(1) & (5)",
-            "description": "A Data Fiduciary must implement reasonable security safeguards to prevent personal data breach in its possession or control, including by any Data Processor on its behalf.",
-            "applicability": "Mandatory for all entities processing digital personal data.",
-            "enforcement_phase": "IN_FORCE_SUBSTANTIVE",
-            "effective_date": "Substantive cybersecurity obligation under Act & IT Act Section 43A",
-            "category": "Data Security & Breach Prevention",
+            "title": "General Data Fiduciary Responsibility",
+            "official_ref": "DPDP Act 2023, Section 8(1)",
+            "description": "A Data Fiduciary shall be responsible for complying with the provisions of this Act and the rules made thereunder in respect of any processing undertaken by it or on its behalf by a Data Processor.",
+            "applicability": "Mandatory for all entities acting as Data Fiduciaries.",
+            "enforcement_phase": "SCHEDULED_TO_COMMENCE",
+            "effective_date": "13 May 2027 (Scheduled commencement)",
+            "status_display": "Readiness assessment",
+            "category": "Governance & Accountability",
             "assessment_questions": [
-                "Are all secrets, database credentials, and API keys stored in dedicated secret managers and excluded from source code repositories?",
-                "Is all personal data encrypted in transit using TLS 1.3/1.2 with HSTS enforced?",
-                "Are automated vulnerability scanning, SAST, and DAST conducted regularly across codebases and web endpoints?"
+                "Has your organization established formal data governance policies covering processors acting on your behalf?",
+                "Do Data Processor contracts mandate strict compliance with DPDP standards?"
             ],
             "evidence_requirements": [
-                "Automated SAST and repository vulnerability scan reports with zero confirmed critical secrets.",
-                "TLS certificate verification and security header analysis report.",
-                "Data-at-rest and in-transit encryption policy document."
+                "Data Protection Governance Charter.",
+                "Standard Data Processing Addendum (DPA) executed with third-party vendors."
             ],
             "recommended_actions": [
-                "Resolve all hardcoded credentials and database credentials identified by TrustAudit.",
-                "Enforce strict HTTPS with HSTS on all personal-data-ingesting endpoints."
+                "Execute Data Processing Addenda with all cloud and SaaS vendors handling user personal data.",
+                "Designate an executive lead accountable for personal data processing compliance."
+            ],
+            "expert_review_required": True,
+            "technical_scan_checks": []
+        },
+        {
+            "control_id": "DPDP-SEC-08-4",
+            "section": "Section 8(4)",
+            "title": "Technical and Organisational Measures",
+            "official_ref": "DPDP Act 2023, Section 8(4)",
+            "description": "A Data Fiduciary shall implement appropriate technical and organisational measures to ensure effective observance of the provisions of this Act and the rules made thereunder.",
+            "applicability": "Mandatory for all personal data processing systems.",
+            "enforcement_phase": "SCHEDULED_TO_COMMENCE",
+            "effective_date": "13 May 2027 (Scheduled commencement)",
+            "status_display": "Readiness assessment",
+            "category": "Technical & Organisational Measures",
+            "assessment_questions": [
+                "Are role-based access controls (RBAC) and least privilege enforced across internal databases?",
+                "Are regular automated security assessments, dependency audits, and SAST scans embedded in CI/CD?"
+            ],
+            "evidence_requirements": [
+                "Access control policy and quarterly privilege review records.",
+                "TrustAudit automated CI/CD security audit reports."
+            ],
+            "recommended_actions": [
+                "Enforce multi-tenant access controls and least-privilege scoping across all database queries.",
+                "Embed TrustAudit automated PR security checks in build pipelines."
+            ],
+            "expert_review_required": False,
+            "technical_scan_checks": ["code_security", "dependencies", "mcp_security"]
+        },
+        {
+            "control_id": "DPDP-SEC-08-5",
+            "section": "Section 8(5) & Rule 6",
+            "title": "Reasonable Security Safeguards to Prevent Personal Data Breach",
+            "official_ref": "DPDP Act 2023, Section 8(5) read with DPDP Rules 2025, Rule 6",
+            "description": "A Data Fiduciary must protect personal data in its possession or under its control by taking reasonable security safeguards including encryption, secret protection, perimeter defense, and vulnerability patching to prevent personal data breach.",
+            "applicability": "Mandatory for all entities processing digital personal data.",
+            "enforcement_phase": "SCHEDULED_TO_COMMENCE",
+            "effective_date": "13 May 2027 (Scheduled commencement; IT Act Section 43A baseline in force)",
+            "status_display": "Readiness assessment",
+            "category": "Security Safeguards & Breach Prevention",
+            "assessment_questions": [
+                "Are all production credentials, database passwords, and API keys excluded from repositories and stored in secure key vaults?",
+                "Is all personal data encrypted in transit using modern TLS (1.2/1.3) with HSTS enforced?",
+                "Are automated vulnerability scans conducted regularly across repositories, APIs, and web perimeters?"
+            ],
+            "evidence_requirements": [
+                "TrustAudit Secret Detection report confirming 0 active exposed production secrets.",
+                "TLS certificate verification and perimeter security header audit report.",
+                "Data-at-rest and in-transit encryption architecture documentation."
+            ],
+            "recommended_actions": [
+                "Revoke and rotate any hardcoded credentials detected in source code.",
+                "Enforce HTTPS with HSTS on all personal-data-ingesting endpoints."
             ],
             "expert_review_required": False,
             "technical_scan_checks": ["secrets", "tls", "headers", "dependencies", "code_security", "mcp_security"]
         },
         {
             "control_id": "DPDP-SEC-08-6",
-            "section": "Section 8(6)",
-            "title": "Personal Data Breach Notification to DPBI & Data Principals",
-            "official_ref": "DPDP Act 2023, Section 8(6)",
-            "description": "In the event of a personal data breach, the Data Fiduciary shall give the Data Protection Board of India and each affected Data Principal intimate notification in such form and manner as may be prescribed.",
+            "section": "Section 8(6) & Rule 7",
+            "title": "Intimation of Personal Data Breach to DPBI & Data Principals",
+            "official_ref": "DPDP Act 2023, Section 8(6) read with DPDP Rules 2025, Rule 7",
+            "description": "In the event of a personal data breach, the Data Fiduciary shall give the Data Protection Board of India and each affected Data Principal intimation in such form, manner, and time as prescribed under Rule 7.",
             "applicability": "Mandatory for all personal data breaches.",
-            "enforcement_phase": "PENDING_COMMENCEMENT",
-            "effective_date": "Phased Rules Notification",
+            "enforcement_phase": "SCHEDULED_TO_COMMENCE",
+            "effective_date": "13 May 2027 (Scheduled commencement)",
+            "status_display": "Readiness assessment",
             "category": "Incident Response",
             "assessment_questions": [
                 "Do you maintain an active Incident Response Plan with defined DPBI breach notification procedures?",
@@ -178,13 +239,14 @@ CONTROLS_DATABASE: Dict[str, List[Dict[str, Any]]] = {
         },
         {
             "control_id": "DPDP-SEC-08-7",
-            "section": "Section 8(7)",
-            "title": "Data Erasure & Purpose Limitation",
-            "official_ref": "DPDP Act 2023, Section 8(7) & (8)",
+            "section": "Section 8(7) & 8(8)",
+            "title": "Data Erasure and Purpose Limitation",
+            "official_ref": "DPDP Act 2023, Section 8(7) & 8(8)",
             "description": "A Data Fiduciary must erase personal data upon consent withdrawal or as soon as it is reasonable to assume that the specified purpose for which personal data was collected is no longer being served, unless retention is required by law.",
             "applicability": "Mandatory for all personal data processing.",
-            "enforcement_phase": "PENDING_COMMENCEMENT",
-            "effective_date": "Phased Rules Notification",
+            "enforcement_phase": "SCHEDULED_TO_COMMENCE",
+            "effective_date": "13 May 2027 (Scheduled commencement)",
+            "status_display": "Readiness assessment",
             "category": "Data Retention & Erasure",
             "assessment_questions": [
                 "Do you have an automated data retention and scheduled purging mechanism for inactive or deleted accounts?",
@@ -203,13 +265,14 @@ CONTROLS_DATABASE: Dict[str, List[Dict[str, Any]]] = {
         },
         {
             "control_id": "DPDP-SEC-09",
-            "section": "Section 9",
+            "section": "Section 9 & applicable Rules",
             "title": "Processing of Personal Data of Children",
-            "official_ref": "DPDP Act 2023, Section 9(1) - (3)",
+            "official_ref": "DPDP Act 2023, Section 9 read with applicable DPDP Rules 2025",
             "description": "A Data Fiduciary must obtain verifiable consent of the parent or lawful guardian before processing personal data of a child. Must not undertake tracking or behavioral monitoring of children or targeted advertising directed at children.",
             "applicability": "Applies to businesses offering goods or services to minors (<18 years in India).",
-            "enforcement_phase": "PENDING_COMMENCEMENT",
-            "effective_date": "Phased Rules Notification",
+            "enforcement_phase": "SCHEDULED_TO_COMMENCE",
+            "effective_date": "13 May 2027 (Scheduled commencement)",
+            "status_display": "Readiness assessment",
             "category": "Child Protection",
             "assessment_questions": [
                 "Do your products or AI tools process personal data of individuals under 18 years of age?",
@@ -236,6 +299,7 @@ CONTROLS_DATABASE: Dict[str, List[Dict[str, Any]]] = {
             "applicability": "Applies to entities designated as Significant Data Fiduciaries.",
             "enforcement_phase": "PENDING_NOTIFICATION",
             "effective_date": "Upon Government Notification",
+            "status_display": "Requires legal review",
             "category": "Governance & SDF Obligations",
             "assessment_questions": [
                 "Has your organization evaluated whether its user base or data volume meets SDF classification criteria?",
@@ -262,12 +326,13 @@ CONTROLS_DATABASE: Dict[str, List[Dict[str, Any]]] = {
         {
             "control_id": "SOC2-CC6.1",
             "section": "CC6.1",
-            "title": "Logical Access Controls & Credential Management",
-            "official_ref": "AICPA TSC 2017 CC6.1",
+            "title": "Logical Access Security",
+            "official_ref": "AICPA TSC 2017 CC6.1 (2022 Focus)",
             "description": "The entity implements logical access security software, infrastructure, and architectures over protected information assets to protect them from security events.",
             "applicability": "Mandatory for SOC 2 Security Category.",
             "enforcement_phase": "IN_FORCE_SUBSTANTIVE",
-            "effective_date": "Active AICPA Criteria",
+            "effective_date": "Active AICPA Published Criteria",
+            "status_display": "Readiness assessment",
             "category": "Logical Access",
             "assessment_questions": [
                 "Are all repository secrets, API keys, and database passwords excluded from source code and managed via dedicated secret stores?",
@@ -289,12 +354,13 @@ CONTROLS_DATABASE: Dict[str, List[Dict[str, Any]]] = {
         {
             "control_id": "SOC2-CC6.6",
             "section": "CC6.6",
-            "title": "Boundary & Perimeter Protection (Network Defense & Encryption)",
-            "official_ref": "AICPA TSC 2017 CC6.6",
-            "description": "The entity implements logical boundaries and perimeter protection to prevent unauthorized network access and secure data transmission.",
+            "title": "Protection Against Threats Originating Outside System Boundaries",
+            "official_ref": "AICPA TSC 2017 CC6.6 (2022 Focus)",
+            "description": "The entity implements logical boundaries and network protections against threats originating outside system boundaries.",
             "applicability": "Mandatory for SOC 2 Security Category.",
             "enforcement_phase": "IN_FORCE_SUBSTANTIVE",
-            "effective_date": "Active AICPA Criteria",
+            "effective_date": "Active AICPA Published Criteria",
+            "status_display": "Readiness assessment",
             "category": "Network & Perimeter Security",
             "assessment_questions": [
                 "Is all network traffic to web applications encrypted in transit using TLS 1.2 or TLS 1.3 with strong cipher suites?",
@@ -315,12 +381,13 @@ CONTROLS_DATABASE: Dict[str, List[Dict[str, Any]]] = {
         {
             "control_id": "SOC2-CC6.8",
             "section": "CC6.8",
-            "title": "Malicious Code & Unauthorized Execution Prevention",
-            "official_ref": "AICPA TSC 2017 CC6.8",
-            "description": "The entity implements controls to prevent or detect the introduction of unauthorized software, malicious code, or compromised agent integrations.",
+            "title": "Prevention, Detection, and Remediation of Unauthorised or Malicious Software",
+            "official_ref": "AICPA TSC 2017 CC6.8 (2022 Focus)",
+            "description": "The entity implements controls to prevent, detect, and remediate the introduction of unauthorized software, malicious code, or compromised agent integrations.",
             "applicability": "Mandatory for SOC 2 Security Category.",
             "enforcement_phase": "IN_FORCE_SUBSTANTIVE",
-            "effective_date": "Active AICPA Criteria",
+            "effective_date": "Active AICPA Published Criteria",
+            "status_display": "Readiness assessment",
             "category": "Application Security & Tool Control",
             "assessment_questions": [
                 "Do all AI agents and MCP tools operate under least-privilege permission boundaries?",
@@ -341,17 +408,18 @@ CONTROLS_DATABASE: Dict[str, List[Dict[str, Any]]] = {
         {
             "control_id": "SOC2-CC7.1",
             "section": "CC7.1",
-            "title": "Vulnerability Detection & Component Patch Management",
-            "official_ref": "AICPA TSC 2017 CC7.1",
-            "description": "The entity conducts ongoing vulnerability scans and monitors external vulnerability advisories to identify and patch security flaws in third-party software components.",
+            "title": "Monitoring of Configuration Changes and Susceptibility to Newly Discovered Vulnerabilities",
+            "official_ref": "AICPA TSC 2017 CC7.1 (2022 Focus)",
+            "description": "The entity uses detection and monitoring procedures to identify (1) changes to configurations that result in the introduction of new vulnerabilities, and (2) susceptibilities to newly discovered vulnerabilities.",
             "applicability": "Mandatory for SOC 2 Security Category.",
             "enforcement_phase": "IN_FORCE_SUBSTANTIVE",
-            "effective_date": "Active AICPA Criteria",
+            "effective_date": "Active AICPA Published Criteria",
+            "status_display": "Readiness assessment",
             "category": "Vulnerability Management",
             "assessment_questions": [
                 "Are automated dependency vulnerability scans executed on every pull request and continuous build?",
                 "Is there a formal Service Level Agreement (SLA) for patching critical vulnerabilities (e.g. 7 days for CRITICAL)?",
-                "Does the team monitor CISA KEV or national vulnerability databases for zero-day component exploits?"
+                "Does the team monitor CISA KEV or national vulnerability databases for actively exploited component vulnerabilities?"
             ],
             "evidence_requirements": [
                 "TrustAudit Dependency & SBOM Scan report.",
@@ -369,11 +437,12 @@ CONTROLS_DATABASE: Dict[str, List[Dict[str, Any]]] = {
             "control_id": "SOC2-CC8.1",
             "section": "CC8.1",
             "title": "Authorized Change Management & CI/CD Security Gates",
-            "official_ref": "AICPA TSC 2017 CC8.1",
+            "official_ref": "AICPA TSC 2017 CC8.1 (2022 Focus)",
             "description": "The entity authorizes, designs, tests, approves, and documents changes to infrastructure, applications, and configurations prior to production deployment.",
             "applicability": "Mandatory for SOC 2 Security Category.",
             "enforcement_phase": "IN_FORCE_SUBSTANTIVE",
-            "effective_date": "Active AICPA Criteria",
+            "effective_date": "Active AICPA Published Criteria",
+            "status_display": "Readiness assessment",
             "category": "Change Management",
             "assessment_questions": [
                 "Are direct commits to the production branch blocked via branch protection rules?",
@@ -395,7 +464,7 @@ CONTROLS_DATABASE: Dict[str, List[Dict[str, Any]]] = {
     ],
 
     # --------------------------------------------------------------------------
-    # ISO/IEC 27001:2022 ANNEX A CONTROLS
+    # ISO/IEC 27001:2022 ANNEX A CONTROLS (INCLUDING AMD 1:2024)
     # --------------------------------------------------------------------------
     "ISO27001": [
         {
@@ -406,7 +475,8 @@ CONTROLS_DATABASE: Dict[str, List[Dict[str, Any]]] = {
             "description": "Information about technical vulnerabilities of information systems in use shall be obtained, the organization's exposure evaluated, and appropriate measures taken to address the associated risk.",
             "applicability": "Mandatory technical control in Statement of Applicability (SoA).",
             "enforcement_phase": "IN_FORCE_SUBSTANTIVE",
-            "effective_date": "Active ISO Standard",
+            "effective_date": "Active ISO/IEC 27001:2022 Standard",
+            "status_display": "Readiness assessment",
             "category": "Technological Controls",
             "assessment_questions": [
                 "Does the organization conduct continuous static and dynamic vulnerability assessments across all production assets?",
@@ -426,12 +496,13 @@ CONTROLS_DATABASE: Dict[str, List[Dict[str, Any]]] = {
         {
             "control_id": "ISO-A.8.20",
             "section": "Control A.8.20",
-            "title": "Network Security & Boundary Controls",
+            "title": "Networks Security",
             "official_ref": "ISO/IEC 27001:2022 Annex A.8.20",
             "description": "Networks and network devices shall be secured, managed, and controlled to protect the information in systems and applications.",
             "applicability": "Mandatory technical control in SoA.",
             "enforcement_phase": "IN_FORCE_SUBSTANTIVE",
-            "effective_date": "Active ISO Standard",
+            "effective_date": "Active ISO/IEC 27001:2022 Standard",
+            "status_display": "Readiness assessment",
             "category": "Technological Controls",
             "assessment_questions": [
                 "Are public perimeter web servers hardened against cross-origin data theft (CORS) and clickjacking?",
@@ -451,12 +522,13 @@ CONTROLS_DATABASE: Dict[str, List[Dict[str, Any]]] = {
         {
             "control_id": "ISO-A.8.24",
             "section": "Control A.8.24",
-            "title": "Use of Cryptography & Key Management",
+            "title": "Use of Cryptography",
             "official_ref": "ISO/IEC 27001:2022 Annex A.8.24",
             "description": "Rules for the effective use of cryptography, including cryptographic key management, shall be defined and implemented.",
             "applicability": "Mandatory technical control in SoA.",
             "enforcement_phase": "IN_FORCE_SUBSTANTIVE",
-            "effective_date": "Active ISO Standard",
+            "effective_date": "Active ISO/IEC 27001:2022 Standard",
+            "status_display": "Readiness assessment",
             "category": "Technological Controls",
             "assessment_questions": [
                 "Is deprecated cryptography (TLS 1.0/1.1, MD5, SHA-1) phased out across all application endpoints?",
@@ -474,14 +546,41 @@ CONTROLS_DATABASE: Dict[str, List[Dict[str, Any]]] = {
             "technical_scan_checks": ["tls", "secrets"]
         },
         {
-            "control_id": "ISO-A.8.28",
-            "section": "Control A.8.28",
-            "title": "Secure Coding & Application Security",
-            "official_ref": "ISO/IEC 27001:2022 Annex A.8.28",
-            "description": "Secure coding principles shall be applied to software development to prevent injection flaws, unauthorized access, and design defects.",
+            "control_id": "ISO-A.8.25",
+            "section": "Control A.8.25",
+            "title": "Secure Development Life Cycle",
+            "official_ref": "ISO/IEC 27001:2022 Annex A.8.25",
+            "description": "Rules for the secure development of software and systems shall be established and applied to developments within the organization.",
             "applicability": "Mandatory for all software engineering organizations.",
             "enforcement_phase": "IN_FORCE_SUBSTANTIVE",
-            "effective_date": "Active ISO Standard",
+            "effective_date": "Active ISO/IEC 27001:2022 Standard",
+            "status_display": "Readiness assessment",
+            "category": "Technological Controls",
+            "assessment_questions": [
+                "Are security requirements identified and addressed across all phases of the software development lifecycle?",
+                "Are automated security gates enforced in continuous integration and deployment (CI/CD) pipelines?"
+            ],
+            "evidence_requirements": [
+                "Documented Secure Software Development Life Cycle (S-SDLC) policy.",
+                "CI/CD build pipeline logs demonstrating automated security testing gates."
+            ],
+            "recommended_actions": [
+                "Formalize an S-SDLC policy incorporating automated static analysis and vulnerability scans.",
+                "Enforce branch protection rules and automated security gate passing before production deployment."
+            ],
+            "expert_review_required": True,
+            "technical_scan_checks": ["code_security"]
+        },
+        {
+            "control_id": "ISO-A.8.28",
+            "section": "Control A.8.28",
+            "title": "Secure Coding",
+            "official_ref": "ISO/IEC 27001:2022 Annex A.8.28",
+            "description": "Secure coding principles shall be applied to software development.",
+            "applicability": "Mandatory for all software engineering organizations.",
+            "enforcement_phase": "IN_FORCE_SUBSTANTIVE",
+            "effective_date": "Active ISO/IEC 27001:2022 Standard",
+            "status_display": "Readiness assessment",
             "category": "Technological Controls",
             "assessment_questions": [
                 "Are developers provided with secure coding guidelines addressing OWASP Top 10 vulnerabilities?",
@@ -606,15 +705,22 @@ def map_finding_to_compliance_frameworks(finding: Dict[str, Any]) -> List[Dict[s
     if category == "secrets" or any(k in text_corpus for k in ["secret", "token", "api key", "password", "credential", "private key"]):
         mappings.append({
             "framework": "DPDP",
-            "control_id": "DPDP-SEC-08-1",
-            "official_ref": "Section 8(1) - Reasonable Security Safeguards",
+            "control_id": "DPDP-SEC-08-5",
+            "official_ref": "Section 8(5) & Rule 6 - Reasonable Security Safeguards",
             "status": "AT_RISK",
-            "justification": "Exposing production credentials or cryptographic keys in code violates the statutory obligation to implement reasonable safeguards to prevent unauthorized data access."
+            "justification": "Exposing production credentials or cryptographic keys in code violates the statutory obligation to implement reasonable security safeguards to prevent personal data breach."
+        })
+        mappings.append({
+            "framework": "DPDP",
+            "control_id": "DPDP-SEC-08-1",
+            "official_ref": "Section 8(1) - General Data Fiduciary Responsibility",
+            "status": "AT_RISK",
+            "justification": "Exposing production credentials directly compromises the Data Fiduciary's general statutory compliance responsibility under Section 8(1)."
         })
         mappings.append({
             "framework": "SOC2",
             "control_id": "SOC2-CC6.1",
-            "official_ref": "CC6.1 - Logical Access Controls",
+            "official_ref": "CC6.1 - Logical Access Security",
             "status": "AT_RISK",
             "justification": "Hardcoded keys bypass logical access separation and credential rotation controls required under SOC 2 Common Criteria."
         })
@@ -637,22 +743,22 @@ def map_finding_to_compliance_frameworks(finding: Dict[str, Any]) -> List[Dict[s
     elif category in ("tls", "headers", "cookies") or any(k in text_corpus for k in ["hsts", "tls", "ssl", "plaintext", "cors", "cookie", "httponly"]):
         mappings.append({
             "framework": "DPDP",
-            "control_id": "DPDP-SEC-08-1",
-            "official_ref": "Section 8(1) - Reasonable Security Safeguards",
+            "control_id": "DPDP-SEC-08-5",
+            "official_ref": "Section 8(5) & Rule 6 - Reasonable Security Safeguards",
             "status": "AT_RISK",
             "justification": "Unencrypted transit or weak perimeter headers expose user traffic to eavesdropping and data interception."
         })
         mappings.append({
             "framework": "SOC2",
             "control_id": "SOC2-CC6.6",
-            "official_ref": "CC6.6 - Boundary & Perimeter Protection",
+            "official_ref": "CC6.6 - Protection Against Threats Outside System Boundaries",
             "status": "AT_RISK",
             "justification": "Missing perimeter encryption or security headers fails boundary protection controls against network interception."
         })
         mappings.append({
             "framework": "ISO27001",
             "control_id": "ISO-A.8.20",
-            "official_ref": "Control A.8.20 - Network Security",
+            "official_ref": "Control A.8.20 - Networks Security",
             "status": "AT_RISK",
             "justification": "Permissive cross-origin configurations or insecure transit violate network boundary control standards."
         })
@@ -669,9 +775,9 @@ def map_finding_to_compliance_frameworks(finding: Dict[str, Any]) -> List[Dict[s
         mappings.append({
             "framework": "SOC2",
             "control_id": "SOC2-CC7.1",
-            "official_ref": "CC7.1 - Vulnerability Management",
+            "official_ref": "CC7.1 - Vulnerability Detection & Configuration Monitoring",
             "status": "AT_RISK",
-            "justification": "Deploying components with known published vulnerabilities indicates inadequate patch management."
+            "justification": "Deploying components with known published vulnerabilities indicates inadequate configuration monitoring and patch management."
         })
         mappings.append({
             "framework": "ISO27001",
@@ -682,8 +788,8 @@ def map_finding_to_compliance_frameworks(finding: Dict[str, Any]) -> List[Dict[s
         })
         mappings.append({
             "framework": "DPDP",
-            "control_id": "DPDP-SEC-08-1",
-            "official_ref": "Section 8(1) - Reasonable Security Safeguards",
+            "control_id": "DPDP-SEC-08-5",
+            "official_ref": "Section 8(5) & Rule 6 - Reasonable Security Safeguards",
             "status": "AT_RISK",
             "justification": "Known exploitable flaws in third-party libraries present an unacceptable risk of personal data breach."
         })
@@ -693,7 +799,7 @@ def map_finding_to_compliance_frameworks(finding: Dict[str, Any]) -> List[Dict[s
         mappings.append({
             "framework": "SOC2",
             "control_id": "SOC2-CC6.8",
-            "official_ref": "CC6.8 - Malicious Code & Unauthorized Execution",
+            "official_ref": "CC6.8 - Prevention, Detection & Remediation of Unauthorized Software",
             "status": "AT_RISK",
             "justification": "Undisclosed or expanded AI agent permissions enable arbitrary command execution without authorized safeguards."
         })
@@ -705,9 +811,16 @@ def map_finding_to_compliance_frameworks(finding: Dict[str, Any]) -> List[Dict[s
             "justification": "Prompt injection susceptibility and unauthorized tool capabilities violate secure AI engineering standards."
         })
         mappings.append({
+            "framework": "ISO27001",
+            "control_id": "ISO-A.8.25",
+            "official_ref": "Control A.8.25 - Secure Development Life Cycle",
+            "status": "AT_RISK",
+            "justification": "Failure to bound AI agent capabilities in the development lifecycle violates secure design controls."
+        })
+        mappings.append({
             "framework": "DPDP",
-            "control_id": "DPDP-SEC-08-1",
-            "official_ref": "Section 8(1) - Reasonable Security Safeguards",
+            "control_id": "DPDP-SEC-08-5",
+            "official_ref": "Section 8(5) & Rule 6 - Reasonable Security Safeguards",
             "status": "AT_RISK",
             "justification": "Unvalidated AI tool execution exposes personal data records to unauthorized AI-driven data extraction."
         })
@@ -716,22 +829,22 @@ def map_finding_to_compliance_frameworks(finding: Dict[str, Any]) -> List[Dict[s
     elif category in ("exposure", "website_security") or any(k in text_corpus for k in [".git", ".env", "actuator", "exposure", "directory listing"]):
         mappings.append({
             "framework": "DPDP",
-            "control_id": "DPDP-SEC-08-1",
-            "official_ref": "Section 8(1) - Prevention of Personal Data Breach",
+            "control_id": "DPDP-SEC-08-5",
+            "official_ref": "Section 8(5) & Rule 6 - Reasonable Security Safeguards",
             "status": "AT_RISK",
             "justification": "Public exposure of server configuration or internal environment variables enables direct unauthorized system intrusion."
         })
         mappings.append({
             "framework": "SOC2",
             "control_id": "SOC2-CC6.6",
-            "official_ref": "CC6.6 - Perimeter Protection",
+            "official_ref": "CC6.6 - Protection Against Threats Outside System Boundaries",
             "status": "AT_RISK",
             "justification": "Exposing internal files on the public internet breaches boundary isolation requirements."
         })
         mappings.append({
             "framework": "ISO27001",
             "control_id": "ISO-A.8.20",
-            "official_ref": "Control A.8.20 - Network Security",
+            "official_ref": "Control A.8.20 - Networks Security",
             "status": "AT_RISK",
             "justification": "Unrestricted access to administrative configuration files violates access control policies."
         })

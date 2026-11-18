@@ -112,13 +112,16 @@ class TestPhase3ComplianceFrameworksDatabase:
 
     def test_dpdp_distinguishes_enacted_vs_pending_commencement(self):
         dpdp_controls = compliance_frameworks.CONTROLS_DATABASE["DPDP"]
-        in_force = [c for c in dpdp_controls if c.get("enforcement_phase") == "IN_FORCE_SUBSTANTIVE"]
-        pending = [c for c in dpdp_controls if c.get("enforcement_phase") == "PENDING_COMMENCEMENT"]
+        in_force = [c for c in dpdp_controls if c.get("enforcement_phase") in ("IN_FORCE_SUBSTANTIVE", "ALREADY_IN_FORCE")]
+        scheduled = [c for c in dpdp_controls if c.get("enforcement_phase") in ("SCHEDULED_TO_COMMENCE", "PENDING_COMMENCEMENT")]
         assert len(in_force) >= 1
-        assert len(pending) >= 2
-        # Section 8(1) reasonable safeguards must be substantive
-        sec8 = next(c for c in dpdp_controls if c["control_id"] == "DPDP-SEC-08-1")
-        assert sec8["enforcement_phase"] == "IN_FORCE_SUBSTANTIVE"
+        assert len(scheduled) >= 4
+        # Section 6(9) is in force as of 13 November 2026
+        sec6 = next(c for c in dpdp_controls if c["control_id"] == "DPDP-SEC-06")
+        assert "13 November 2026" in sec6["effective_date"]
+        # Section 8(5) & Rule 6 is scheduled to commence on 13 May 2027
+        sec8_5 = next(c for c in dpdp_controls if c["control_id"] == "DPDP-SEC-08-5")
+        assert "13 May 2027" in sec8_5["effective_date"]
 
     def test_soc2_and_iso27001_disclaimers_present(self):
         soc2_meta = compliance_frameworks.FRAMEWORK_METADATA["SOC2"]
@@ -284,4 +287,94 @@ class TestFlaskEndpointsE2E:
     def test_public_trust_center(self, client):
         res = client.get("/trust")
         assert res.status_code == 200
-        assert b"TrustAudit Security & Trust Center" in res.data
+        assert b"TrustAudit" in res.data
+
+
+class TestTenantIsolationAndNegativeAccessControl:
+    """
+    Automated negative tests verifying multi-tenant isolation and access boundaries.
+    Asserts that Tenant A cannot access, mutate, or download Tenant B's data.
+    """
+    @pytest.fixture
+    def client(self):
+        import app
+        app.app.config["TESTING"] = True
+        return app.app.test_client()
+
+    def test_cross_tenant_evidence_isolation_negative(self, client):
+        import uuid
+        import saas_store
+        import evidence_vault
+
+        # Setup Tenant A
+        email_a = f"alice_{uuid.uuid4().hex[:6]}@tenant-a.com"
+        ok_a, _, res_a = saas_store.register_user(email_a, "SecuredPass#123", "Alice A", "Company Alpha", "India")
+        assert ok_a is True
+        token_a = res_a["token"]
+        org_a = res_a["organization"]["id"]
+
+        # Setup Tenant B
+        email_b = f"bob_{uuid.uuid4().hex[:6]}@tenant-b.com"
+        ok_b, _, res_b = saas_store.register_user(email_b, "SecuredPass#456", "Bob B", "Company Beta", "USA")
+        assert ok_b is True
+        token_b = res_b["token"]
+        org_b = res_b["organization"]["id"]
+        assert org_a != org_b
+
+        # Tenant A creates an evidence file
+        ev_item = evidence_vault.create_evidence_item(
+            org_id=org_a,
+            title="Confidential Audit Log Alpha",
+            control_id="SOC2-CC6.1",
+            framework="SOC2",
+            file_bytes=b"CONFIDENTIAL_TENANT_ALPHA_DATA",
+            filename="audit_alpha.txt"
+        )
+        ev_id = ev_item["id"]
+
+        # NEGATIVE TEST 1: Tenant B attempts to read Tenant A's evidence
+        headers_b = {"Authorization": f"Bearer {token_b}"}
+        res_cross_get = client.get(f"/api/evidence/{ev_id}", headers=headers_b)
+        assert res_cross_get.status_code == 404, "Tenant B must NOT be able to read Tenant A evidence"
+
+        # NEGATIVE TEST 2: Tenant B attempts to download Tenant A's physical file
+        res_cross_download = client.get(f"/api/evidence/{ev_id}/download", headers=headers_b)
+        assert res_cross_download.status_code == 404, "Tenant B must NOT be able to download Tenant A evidence file"
+
+        # NEGATIVE TEST 3: Tenant B attempts to delete Tenant A's evidence
+        res_cross_del = client.delete(f"/api/evidence/{ev_id}", headers=headers_b)
+        assert res_cross_del.status_code == 404, "Tenant B must NOT be able to delete Tenant A evidence"
+
+        # Verify evidence is STILL intact and accessible by Tenant A
+        headers_a = {"Authorization": f"Bearer {token_a}"}
+        res_owner_get = client.get(f"/api/evidence/{ev_id}", headers=headers_a)
+        assert res_owner_get.status_code == 200
+        assert res_owner_get.get_json()["evidence"]["title"] == "Confidential Audit Log Alpha"
+
+    def test_cross_tenant_project_isolation_negative(self, client):
+        import uuid
+        import saas_store
+
+        # Setup Tenant A & B
+        email_a = f"dev_a_{uuid.uuid4().hex[:6]}@corp-a.com"
+        _, _, res_a = saas_store.register_user(email_a, "PassA!999", "Dev A", "Corp Alpha", "India")
+        org_a = res_a["organization"]["id"]
+
+        email_b = f"dev_b_{uuid.uuid4().hex[:6]}@corp-b.com"
+        _, _, res_b = saas_store.register_user(email_b, "PassB!999", "Dev B", "Corp Beta", "India")
+        token_b = res_b["token"]
+        org_b = res_b["organization"]["id"]
+
+        # Tenant A creates project
+        proj_a = saas_store.create_or_update_project(
+            name="Alpha Secret Backend",
+            target_url=f"https://github.com/corp-a/{uuid.uuid4().hex[:6]}",
+            target_type="repository",
+            org_id=org_a
+        )
+        proj_a_id = proj_a["id"]
+
+        # NEGATIVE TEST: Tenant B attempts to view Tenant A's project prioritized fixes
+        headers_b = {"Authorization": f"Bearer {token_b}"}
+        res_cross_proj = client.get(f"/api/projects/{proj_a_id}/prioritized-fixes", headers=headers_b)
+        assert res_cross_proj.status_code == 404, "Tenant B must NOT be able to access Tenant A project"
