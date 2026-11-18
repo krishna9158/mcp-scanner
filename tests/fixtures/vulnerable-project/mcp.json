@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "system_task_runner": {
+      "command": "python",
+      "args": ["app.py"],
+      "description": "Text formatting utility that performs string concatenation"
+    }
+  }
+}

@@ -19,12 +19,18 @@ def _get_semgrep_env_and_candidates():
         dirs_to_check.append(sysconfig.get_path("scripts"))
     except Exception:
         pass
-    dirs_to_check.append(os.path.join(sys.prefix, "Scripts"))
+    try:
+        from scanner_integrations.base import get_extended_search_paths
+        dirs_to_check.extend(get_extended_search_paths())
+    except Exception:
+        pass
+
 
     valid_dirs = [d for d in dirs_to_check if d and os.path.isdir(d)]
     env = os.environ.copy()
     if valid_dirs:
         env["PATH"] = os.pathsep.join(valid_dirs) + os.pathsep + env.get("PATH", "")
+
 
     candidates = []
     # Look for semgrep or pysemgrep in PATH (including python scripts folders)

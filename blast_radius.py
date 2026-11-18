@@ -261,15 +261,30 @@ def compute_blast_radius(tool_name, tool_description, capabilities, risk_level="
 def compute_all_blast_radii(tools_analysis):
     """
     Compute blast radius for all tools given the output of
-    tool_analyzer.analyze_all_tools(). Returns a dict keyed by tool name.
+    tool_analyzer.analyze_all_tools() (dict) or compare() (list). Returns a dict keyed by tool name.
     """
     results = {}
-    for tool_name, analysis in tools_analysis.items():
-        caps = analysis.get("actual_capabilities", [])
-        risk = analysis.get("severity", "LOW")
-        results[tool_name] = compute_blast_radius(
-            tool_name, "", caps, risk_level=risk
-        )
+    if not tools_analysis:
+        return results
+    if isinstance(tools_analysis, list):
+        for tool in tools_analysis:
+            if not isinstance(tool, dict):
+                continue
+            tool_name = tool.get("name", "unknown_tool")
+            caps = tool.get("actual_capabilities", tool.get("capabilities", []))
+            risk = tool.get("severity", "LOW")
+            results[tool_name] = compute_blast_radius(
+                tool_name, tool.get("description", ""), caps, risk_level=risk
+            )
+    elif isinstance(tools_analysis, dict):
+        for tool_name, analysis in tools_analysis.items():
+            if not isinstance(analysis, dict):
+                continue
+            caps = analysis.get("actual_capabilities", analysis.get("capabilities", []))
+            risk = analysis.get("severity", "LOW")
+            results[tool_name] = compute_blast_radius(
+                tool_name, analysis.get("description", ""), caps, risk_level=risk
+            )
     return results
 
 
@@ -300,4 +315,9 @@ def get_repo_blast_summary(tools_analysis):
         "total_tools": len(radii),
         "high_risk_tools": high_risk,
         "tools_sorted": sorted_tools,
+        "average_blast_radius_score": int(sum(d["score"] for _, d in sorted_tools) / len(sorted_tools)) if sorted_tools else 0,
     }
+
+
+# Alias for backward compatibility
+calculate_blast_radius_summary = get_repo_blast_summary

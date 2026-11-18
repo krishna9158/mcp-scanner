@@ -1,3 +1,4 @@
+import json
 import re
 import os
 import time
@@ -9,21 +10,11 @@ except ImportError:
     requests = None
 
 OSV_API_URL = "https://api.osv.dev/v1/query"
-
-# Hard cap on how long the WHOLE dependency check step is allowed to run,
-# regardless of how many packages there are. Previously, up to 30 packages
-# were checked one at a time with a 10-second timeout EACH - in the worst
-# case (a slow/unresponsive OSV.dev) that alone could eat the entire
-# scan's time budget, even for a small code repo. Now: checks run in
-# parallel, and this step gives up and returns whatever it has so far once
-# this many seconds have passed, rather than potentially blocking
-# everything else. This is the fix for "any MCP server should scan
-# reliably, big or small" - a repo's dependency list, not its code size,
-# was the hidden variable causing unpredictable timeouts.
 DEPENDENCY_CHECK_TIME_BUDGET_SECONDS = 25
 
 
 def parse_requirements_txt(content):
+    """Parses pinned dependencies from requirements.txt."""
     packages = []
     for line in content.splitlines():
         line = line.strip()
@@ -35,7 +26,40 @@ def parse_requirements_txt(content):
     return packages
 
 
+def parse_package_json(content):
+    """Parses dependencies from package.json or package-lock.json."""
+    packages = []
+    try:
+        data = json.loads(content)
+    except Exception:
+        return packages
+
+    # Check dependencies & devDependencies in package.json
+    for dep_key in ("dependencies", "devDependencies"):
+        deps = data.get(dep_key, {})
+        if isinstance(deps, dict):
+            for name, ver in deps.items():
+                clean_ver = re.sub(r'[\^~>=<]', '', ver).strip()
+                if clean_ver and re.match(r'^\d', clean_ver):
+                    packages.append((name, clean_ver))
+
+    # Check packages in package-lock.json
+    lock_pkgs = data.get("packages", {})
+    if isinstance(lock_pkgs, dict):
+        for pkg_path, meta in lock_pkgs.items():
+            if isinstance(meta, dict) and "version" in meta and meta.get("version"):
+                name = meta.get("name") or pkg_path.replace("node_modules/", "")
+                if name and not name.startswith("node_modules/"):
+                    packages.append((name, meta["version"]))
+
+    return list(dict.fromkeys(packages))  # deduplicate preserving order
+
+
 def check_package_vulnerability(package_name, version, ecosystem="PyPI"):
+    """
+    Queries the OSV.dev database for known CVEs / advisories affecting
+    the specified package version.
+    """
     if requests is None:
         return []
 
@@ -46,17 +70,40 @@ def check_package_vulnerability(package_name, version, ecosystem="PyPI"):
                 "package": {"name": package_name, "ecosystem": ecosystem},
                 "version": version,
             },
-            timeout=5,  # shorter per-call timeout - a slow individual call
-                        # shouldn't be able to eat much of the shared budget
+            timeout=5,
         )
         response.raise_for_status()
         data = response.json()
         vulns = data.get("vulns", [])
         results = []
         for v in vulns:
+            vid = v.get("id", "UNKNOWN")
+            summary = v.get("summary") or v.get("details", "No summary available")
+            
+            # Extract severity
+            severity = "HIGH"
+            if "severity" in v and isinstance(v["severity"], list):
+                for s in v["severity"]:
+                    if isinstance(s, dict) and "score" in s:
+                        severity = s.get("type", "CVSS")
+            
+            # Extract fixed version if available
+            fixed_version = None
+            for aff in v.get("affected", []):
+                for r in aff.get("ranges", []):
+                    for ev in r.get("events", []):
+                        if "fixed" in ev:
+                            fixed_version = ev["fixed"]
+                            break
+
             results.append({
-                "id": v.get("id", "UNKNOWN"),
-                "summary": (v.get("summary") or v.get("details", "No summary available"))[:200],
+                "id": vid,
+                "summary": summary[:300],
+                "severity": severity,
+                "fixed_version": fixed_version,
+                "aliases": v.get("aliases", []),
+                "advisory_url": f"https://osv.dev/vulnerability/{vid}",
+                "recommendation": f"Upgrade {package_name} to version {fixed_version} or latest secure release." if fixed_version else f"Upgrade {package_name} to latest secure release."
             })
         return results
     except Exception:
@@ -67,59 +114,67 @@ def scan_dependencies(folder, max_packages=100):
     findings = []
     checked = 0
     timed_out = False
+    manifest_found = False
 
+    all_targets = []  # list of (name, version, ecosystem)
+
+    # 1. Python: requirements.txt
     req_path = os.path.join(folder, "requirements.txt")
-    if not os.path.exists(req_path):
+    if os.path.exists(req_path):
+        manifest_found = True
+        try:
+            with open(req_path, "r", encoding="utf-8", errors="ignore") as f:
+                py_pkgs = parse_requirements_txt(f.read())
+                for name, ver in py_pkgs:
+                    all_targets.append((name, ver, "PyPI"))
+        except Exception:
+            pass
+
+    # 2. Node.js: package.json / package-lock.json
+    pkg_json_path = os.path.join(folder, "package.json")
+    if os.path.exists(pkg_json_path):
+        manifest_found = True
+        try:
+            with open(pkg_json_path, "r", encoding="utf-8", errors="ignore") as f:
+                js_pkgs = parse_package_json(f.read())
+                for name, ver in js_pkgs:
+                    all_targets.append((name, ver, "npm"))
+        except Exception:
+            pass
+
+    if not manifest_found:
         return {"findings": [], "checked": 0, "skipped_unpinned": 0, "requirements_found": False, "timed_out": False}
 
-    try:
-        with open(req_path, "r", encoding="utf-8", errors="ignore") as f:
-            content = f.read()
-    except Exception:
-        return {"findings": [], "checked": 0, "skipped_unpinned": 0, "requirements_found": False, "timed_out": False}
-
-    packages = parse_requirements_txt(content)[:max_packages]
-
-    if requests is None or not packages:
+    targets = all_targets[:max_packages]
+    if requests is None or not targets:
         return {
             "findings": [], "checked": 0, "skipped_unpinned": 0,
             "requirements_found": True, "timed_out": False,
         }
 
-    # Check all packages concurrently instead of one at a time - this is
-    # the main fix. 30 packages checked in parallel takes roughly as long
-    # as the SLOWEST single check, not the sum of all of them.
-    #
-    # Important: we do NOT use `with ThreadPoolExecutor() as executor:`
-    # here. That context manager waits for every submitted thread to
-    # finish before letting the code continue - including threads we've
-    # already decided to give up on, which would silently defeat the
-    # whole point of this fix. Shutting down with wait=False lets this
-    # function return on time; any already-running background requests
-    # are still bounded by their own 5-second timeout, and this whole
-    # scan already runs inside an isolated, killable process, so nothing
-    # lingers indefinitely.
     executor = ThreadPoolExecutor(max_workers=10)
     future_to_package = {
-        executor.submit(check_package_vulnerability, name, version): (name, version)
-        for name, version in packages
+        executor.submit(check_package_vulnerability, name, version, eco): (name, version, eco)
+        for name, version, eco in targets
     }
 
     try:
         for future in as_completed(future_to_package, timeout=DEPENDENCY_CHECK_TIME_BUDGET_SECONDS):
-            name, version = future_to_package[future]
+            name, version, eco = future_to_package[future]
             try:
                 vulns = future.result(timeout=0)
                 checked += 1
                 if vulns:
-                    findings.append({"package": name, "version": version, "vulnerabilities": vulns})
+                    findings.append({
+                        "package": name,
+                        "version": version,
+                        "ecosystem": eco,
+                        "vulnerabilities": vulns
+                    })
             except Exception:
-                pass  # a single package's check failing shouldn't affect the others
+                pass
     except Exception:
-        # as_completed itself raises a TimeoutError once the overall
-        # `timeout=` is exceeded with futures still pending - that's our
-        # signal to stop waiting and move on with partial results.
-        timed_out = checked < len(packages)
+        timed_out = checked < len(targets)
     finally:
         executor.shutdown(wait=False, cancel_futures=True)
 
@@ -130,3 +185,4 @@ def scan_dependencies(folder, max_packages=100):
         "requirements_found": True,
         "timed_out": timed_out,
     }
+

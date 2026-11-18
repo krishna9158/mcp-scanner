@@ -1,0 +1,197 @@
+{
+  ".": {
+    "repo": ".",
+    "set_at": 1787049272.7796662,
+    "set_at_iso": "2026-08-18 10:34:32 UTC",
+    "score": 50,
+    "grade": "D",
+    "fingerprints": {
+      "repo_url": ".",
+      "created_at": 1787049272.7796652,
+      "tools": {},
+      "tool_count": 0
+    },
+    "tools_count": 0,
+    "secrets_count": 12,
+    "dependencies": {
+      "findings": [
+        {
+          "package": "cryptography",
+          "version": "49.0.0",
+          "ecosystem": "PyPI",
+          "vulnerabilities": [
+            {
+              "id": "GHSA-g6cj-pr64-35w5",
+              "summary": "cryptography: PKCS#7 EnvelopedData decryption exposes a Bleichenbacher oracle through distinguishable errors and timing",
+              "severity": "CVSS_V4",
+              "fixed_version": "50.0.0",
+              "aliases": [
+                "CVE-2026-69247",
+                "PYSEC-2026-3552"
+              ],
+              "advisory_url": "https://osv.dev/vulnerability/GHSA-g6cj-pr64-35w5",
+              "recommendation": "Upgrade cryptography to version 50.0.0 or latest secure release."
+            },
+            {
+              "id": "PYSEC-2026-3552",
+              "summary": "cryptography: PKCS#7 EnvelopedData decryption exposes a Bleichenbacher oracle through distinguishable errors and timing",
+              "severity": "CVSS_V4",
+              "fixed_version": "50.0.0",
+              "aliases": [
+                "CVE-2026-69247",
+                "GHSA-g6cj-pr64-35w5"
+              ],
+              "advisory_url": "https://osv.dev/vulnerability/PYSEC-2026-3552",
+              "recommendation": "Upgrade cryptography to version 50.0.0 or latest secure release."
+            }
+          ]
+        },
+        {
+          "package": "GitPython",
+          "version": "3.1.57",
+          "ecosystem": "PyPI",
+          "vulnerabilities": [
+            {
+              "id": "GHSA-4gmw-gg2m-w46p",
+              "summary": "GitPython: Unguarded git read-tree option forwarding in IndexFile.from_tree/reset/merge_tree enables arbitrary file overwrite",
+              "severity": "CVSS_V3",
+              "fixed_version": "3.1.58",
+              "aliases": [],
+              "advisory_url": "https://osv.dev/vulnerability/GHSA-4gmw-gg2m-w46p",
+              "recommendation": "Upgrade GitPython to version 3.1.58 or latest secure release."
+            },
+            {
+              "id": "GHSA-9rj7-rf2p-w77r",
+              "summary": "GitPython: Unguarded git option forwarding in Repo.init enables arbitrary command execution via --template clone hooks",
+              "severity": "CVSS_V3",
+              "fixed_version": "3.1.58",
+              "aliases": [],
+              "advisory_url": "https://osv.dev/vulnerability/GHSA-9rj7-rf2p-w77r",
+              "recommendation": "Upgrade GitPython to version 3.1.58 or latest secure release."
+            },
+            {
+              "id": "GHSA-hh9p-6wh2-4mfc",
+              "summary": "GitPython: Arbitrary file read via --pathspec-from-file in IndexFile.remove() and Head.checkout()",
+              "severity": "CVSS_V3",
+              "fixed_version": "3.1.58",
+              "aliases": [],
+              "advisory_url": "https://osv.dev/vulnerability/GHSA-hh9p-6wh2-4mfc",
+              "recommendation": "Upgrade GitPython to version 3.1.58 or latest secure release."
+            },
+            {
+              "id": "GHSA-hmq2-w58f-27jc",
+              "summary": "GitPython: Arbitrary Git Repository Creation Outside the Working Tree via Unvalidated .gitmodules Submodule Name in GitPython",
+              "severity": "CVSS_V3",
+              "fixed_version": "3.1.58",
+              "aliases": [],
+              "advisory_url": "https://osv.dev/vulnerability/GHSA-hmq2-w58f-27jc",
+              "recommendation": "Upgrade GitPython to version 3.1.58 or latest secure release."
+            },
+            {
+              "id": "GHSA-jm78-9fvv-mhgr",
+              "summary": "GitPython: git-config OPTION-name injection via =/#/whitespace bypasses name validator, enabling forged core.sshCommand/hooksPath (RCE)",
+              "severity": "CVSS_V3",
+              "fixed_version": "3.1.58",
+              "aliases": [],
+              "advisory_url": "https://osv.dev/vulnerability/GHSA-jm78-9fvv-mhgr",
+              "recommendation": "Upgrade GitPython to version 3.1.58 or latest secure release."
+            },
+            {
+              "id": "GHSA-wvpp-8hx9-p66j",
+              "summary": "GitPython: Unsafe git option guard bypass via split_single_char_options=False short-option token smuggling enables command execution",
+              "severity": "CVSS_V3",
+              "fixed_version": "3.1.58",
+              "aliases": [],
+              "advisory_url": "https://osv.dev/vulnerability/GHSA-wvpp-8hx9-p66j",
+              "recommendation": "Upgrade GitPython to version 3.1.58 or latest secure release."
+            }
+          ]
+        },
+        {
+          "package": "mcp",
+          "version": "1.23.3",
+          "ecosystem": "PyPI",
+          "vulnerabilities": [
+            {
+              "id": "GHSA-hvrp-rf83-w775",
+              "summary": "MCP Python SDK: Experimental task handlers allow any client to access and cancel other clients' tasks",
+              "severity": "CVSS_V3",
+              "fixed_version": "1.27.2",
+              "aliases": [
+                "CVE-2026-52870",
+                "PYSEC-2026-3481"
+              ],
+              "advisory_url": "https://osv.dev/vulnerability/GHSA-hvrp-rf83-w775",
+              "recommendation": "Upgrade mcp to version 1.27.2 or latest secure release."
+            },
+            {
+              "id": "GHSA-jpw9-pfvf-9f58",
+              "summary": "MCP Python SDK: HTTP transports serve session requests without verifying the authenticated principal",
+              "severity": "CVSS_V3",
+              "fixed_version": "1.27.2",
+              "aliases": [
+                "CVE-2026-52869",
+                "PYSEC-2026-3482"
+              ],
+              "advisory_url": "https://osv.dev/vulnerability/GHSA-jpw9-pfvf-9f58",
+              "recommendation": "Upgrade mcp to version 1.27.2 or latest secure release."
+            },
+            {
+              "id": "GHSA-vj7q-gjh5-988w",
+              "summary": "MCP Python SDK: WebSocket server transport does not support Host/Origin validation",
+              "severity": "CVSS_V4",
+              "fixed_version": "1.28.1",
+              "aliases": [
+                "CVE-2026-59950",
+                "PYSEC-2026-3483"
+              ],
+              "advisory_url": "https://osv.dev/vulnerability/GHSA-vj7q-gjh5-988w",
+              "recommendation": "Upgrade mcp to version 1.28.1 or latest secure release."
+            },
+            {
+              "id": "PYSEC-2026-3481",
+              "summary": "MCP Python SDK: Experimental task handlers allow any client to access and cancel other clients' tasks",
+              "severity": "CVSS_V3",
+              "fixed_version": "1.27.2",
+              "aliases": [
+                "CVE-2026-52870",
+                "GHSA-hvrp-rf83-w775"
+              ],
+              "advisory_url": "https://osv.dev/vulnerability/PYSEC-2026-3481",
+              "recommendation": "Upgrade mcp to version 1.27.2 or latest secure release."
+            },
+            {
+              "id": "PYSEC-2026-3482",
+              "summary": "MCP Python SDK: HTTP transports serve session requests without verifying the authenticated principal",
+              "severity": "CVSS_V3",
+              "fixed_version": "1.27.2",
+              "aliases": [
+                "CVE-2026-52869",
+                "GHSA-jpw9-pfvf-9f58"
+              ],
+              "advisory_url": "https://osv.dev/vulnerability/PYSEC-2026-3482",
+              "recommendation": "Upgrade mcp to version 1.27.2 or latest secure release."
+            },
+            {
+              "id": "PYSEC-2026-3483",
+              "summary": "MCP Python SDK: WebSocket server transport does not support Host/Origin validation",
+              "severity": "CVSS_V4",
+              "fixed_version": "1.28.1",
+              "aliases": [
+                "CVE-2026-59950",
+                "GHSA-vj7q-gjh5-988w"
+              ],
+              "advisory_url": "https://osv.dev/vulnerability/PYSEC-2026-3483",
+              "recommendation": "Upgrade mcp to version 1.28.1 or latest secure release."
+            }
+          ]
+        }
+      ],
+      "checked": 50,
+      "skipped_unpinned": 0,
+      "requirements_found": true,
+      "timed_out": true
+    },
+    "attack_paths_count": 1
+  }
+}

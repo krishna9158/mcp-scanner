@@ -1,0 +1,137 @@
+[
+  {
+    "package": "@modelcontextprotocol/server-filesystem",
+    "status": "FLAGGED",
+    "owasp_mcp_category": "MCP01: Insecure Tool Exposure & Path Traversal",
+    "concerns": [
+      "Exposes broad host filesystem read/write operations. If path restrictions are misconfigured or omitted, clients or LLM injections can access sensitive system files or overwrite critical binaries."
+    ],
+    "remediation": "Restrict allowed directory arguments strictly to dedicated, non-sensitive project directories. Never run with root or home directory scope."
+  },
+  {
+    "package": "@modelcontextprotocol/server-postgres",
+    "status": "FLAGGED",
+    "owasp_mcp_category": "MCP02: Arbitrary Query Execution & SQL Injection",
+    "concerns": [
+      "Accepts raw SQL queries directly from LLM agent prompts. An adversarial injection can drop tables, exfiltrate credentials, or bypass row-level security."
+    ],
+    "remediation": "Use a read-only database user account with restricted schema grants. Avoid granting DROP, ALTER, or superuser permissions."
+  },
+  {
+    "package": "@modelcontextprotocol/server-sqlite",
+    "status": "FLAGGED",
+    "owasp_mcp_category": "MCP02: Arbitrary Query Execution & Data Exfiltration",
+    "concerns": [
+      "Allows direct SQLite execution. If pointed at a production database file, malicious agent prompts can overwrite or delete records."
+    ],
+    "remediation": "Enforce read-only URI connection mode (mode=ro) where write access is not strictly necessary."
+  },
+  {
+    "package": "@modelcontextprotocol/server-github",
+    "status": "FLAGGED",
+    "owasp_mcp_category": "MCP04: Excessive Privilege & Scope Exposure",
+    "concerns": [
+      "Requires personal access tokens (PAT). If given full 'repo' scope, prompt injection attacks can commit malicious code, delete branches, or create public pull requests."
+    ],
+    "remediation": "Issue fine-grained GitHub tokens scoped only to specific target repositories with minimal read/issue permissions."
+  },
+  {
+    "package": "@modelcontextprotocol/server-gitlab",
+    "status": "FLAGGED",
+    "owasp_mcp_category": "MCP04: Excessive Token Scope & CI/CD Triggering",
+    "concerns": [
+      "Can trigger CI/CD pipelines and push commits. Compromised agent sessions can inject malicious pipeline configurations."
+    ],
+    "remediation": "Use project-scoped access tokens with read_repository permissions only."
+  },
+  {
+    "package": "@modelcontextprotocol/server-fetch",
+    "status": "FLAGGED",
+    "owasp_mcp_category": "MCP06: Server-Side Request Forgery (SSRF)",
+    "concerns": [
+      "Performs outbound HTTP GET requests specified by the model. Can be weaponized to probe internal cloud metadata endpoints (169.254.169.254) or localhost microservices."
+    ],
+    "remediation": "Implement an IP allowlist and block private IP address ranges (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 169.254.169.254, 127.0.0.1)."
+  },
+  {
+    "package": "@modelcontextprotocol/server-brave-search",
+    "status": "FLAGGED",
+    "owasp_mcp_category": "MCP06: Web Retrieval Indirect Prompt Injection",
+    "concerns": [
+      "Retrieves real-time search snippets from the web that may contain untrusted, adversarial text designed to poison model context and alter downstream agent behavior."
+    ],
+    "remediation": "Sanitize retrieved search snippets and enforce human-in-the-loop confirmation before executing destructive follow-up actions."
+  },
+  {
+    "package": "@modelcontextprotocol/server-puppeteer",
+    "status": "FLAGGED",
+    "owasp_mcp_category": "MCP07: Headless Browser Sandbox Escape & SSRF",
+    "concerns": [
+      "Controls a headless Chrome instance capable of navigating arbitrary URLs, executing JavaScript, and capturing screenshots of internal dashboards."
+    ],
+    "remediation": "Run Puppeteer inside an isolated ephemeral Docker container with network egress filtered and sensitive cookie stores disabled."
+  },
+  {
+    "package": "@modelcontextprotocol/server-slack",
+    "status": "FLAGGED",
+    "owasp_mcp_category": "MCP05: Sensitive Workspace Information Leakage",
+    "concerns": [
+      "Enables reading message history across public and private channels, potentially pulling confidential customer discussions, tokens, or PII into LLM context."
+    ],
+    "remediation": "Restrict Slack bot user membership strictly to designated bot interaction channels."
+  },
+  {
+    "package": "@modelcontextprotocol/server-google-drive",
+    "status": "FLAGGED",
+    "owasp_mcp_category": "MCP05: Bulk Document Ingestion & Indirect Injection",
+    "concerns": [
+      "Accesses Google Workspace documents. Malicious shared documents can embed zero-width font or hidden text instructions that hijack agent tool calls."
+    ],
+    "remediation": "Scope OAuth token to specific shared folders and apply input sanitization to document text."
+  },
+  {
+    "package": "mcp-server-git",
+    "status": "FLAGGED",
+    "owasp_mcp_category": "MCP03: Arbitrary Command Execution via Git Parameters",
+    "concerns": [
+      "Executes local Git CLI commands. Certain argument combinations (e.g. core.pager, external diff commands) can result in local command execution on the host."
+    ],
+    "remediation": "Validate command arguments against a strict allowlist and avoid running git through a system shell."
+  },
+  {
+    "package": "mcp-remote-shell",
+    "status": "FLAGGED",
+    "owasp_mcp_category": "MCP03: Direct Host Remote Code Execution (RCE)",
+    "concerns": [
+      "Explicitly exposes shell execution capabilities (/bin/sh, bash, cmd.exe) to an AI model, presenting immediate critical host takeover risk upon prompt injection."
+    ],
+    "remediation": "Deprecate shell-executing tools in production; replace with strictly typed, domain-specific discrete API functions."
+  },
+  {
+    "package": "mcp-memory",
+    "status": "FLAGGED",
+    "owasp_mcp_category": "MCP10: Persistent State Poisoning",
+    "concerns": [
+      "Maintains long-term knowledge graph across conversations. An injected prompt in one session can write permanent malicious behavioral rules that affect all future sessions."
+    ],
+    "remediation": "Require explicit human verification before committing new behavioral rules to persistent memory."
+  },
+  {
+    "package": "mcp-installer",
+    "status": "FLAGGED",
+    "owasp_mcp_category": "MCP08: Untrusted Package Execution",
+    "concerns": [
+      "Automates downloading and running third-party MCP servers from npm/pypi without verifying package signatures or integrity hashes."
+    ],
+    "remediation": "Require pinned package versions and cryptographic checksum verification for all installed servers."
+  },
+  {
+    "package": "mcp-proxy-unauth",
+    "status": "FLAGGED",
+    "owasp_mcp_category": "MCP09: Unauthenticated Network Access",
+    "concerns": [
+      "Exposes local stdio MCP servers over public HTTP/SSE with zero authentication, turning local tools into open internet endpoints."
+    ],
+    "remediation": "Enforce mandatory mutual TLS or Bearer token authentication on any network-facing MCP bridge."
+  }
+]

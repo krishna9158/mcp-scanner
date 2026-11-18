@@ -79,11 +79,12 @@ def compare(folder, run_semgrep=True, full_scan=False):
     warning = None
 
     if full_scan:
-        tools = scan_folder_for_tools(folder)
-        behavior_flags = scan_folder(folder)
-        js_tools = scan_folder_for_js_tools(folder)
-        js_behavior_flags = scan_js_folder(folder)
+        tools = scan_folder_for_tools(folder, include_tests=True)
+        behavior_flags = scan_folder(folder, include_tests=True)
+        js_tools = scan_folder_for_js_tools(folder, include_tests=True)
+        js_behavior_flags = scan_js_folder(folder, include_tests=True)
     else:
+
         sample_files = find_server_files(folder, max_files=MAX_FILES_FOR_TOOL_SCAN + 1)
         js_sample_files = find_js_ts_files(folder, max_files=MAX_FILES_FOR_TOOL_SCAN + 1)
         py_file_count = len(sample_files)

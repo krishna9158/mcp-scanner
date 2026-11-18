@@ -1,9 +1,27 @@
+"""
+TrustAudit AI & Web Continuous Security Platform - Application Server.
+
+Commercially positioned as:
+"Continuous Security for AI-Coded Applications & MCP"
+"Find, verify, and continuously monitor security risks in AI-built applications and MCP systems."
+
+Features:
+- Public Marketing Landing Page
+- Multi-Tenant SaaS Dashboard with Multi-Project Management
+- Unified Multi-Surface Scanner (GitHub Repositories, Websites & APIs, MCP Servers)
+- Open-Source Security Engine Integrations (Gitleaks, OSV-Scanner, Trivy, Nuclei, Syft)
+- Software Bill of Materials (SBOM) Generation & Visibility
+- Interactive Finding Detail Drawers with Verification Guidance & Lifecycle Tracking
+- Multi-Format Reports (Printable PDF/HTML, Structured JSON)
+- CI/CD Quality Gates, Regression Testing & Baseline Drift Monitoring
+- REST APIs (/api/scan, /api/scans/:id/debug, /api/scans/:id/status, /api/health/scanner, /api/projects)
+- Zero-Exposure Credential Redaction & Security Hardening
+"""
+
 import os
-import shutil
 import tempfile
-import threading
-import uuid
-import multiprocessing
+import json
+import time
 
 try:
     from dotenv import load_dotenv
@@ -11,430 +29,1389 @@ try:
 except ImportError:
     pass
 
-from flask import Flask, request, render_template_string, Response, jsonify
+from flask import Flask, request, render_template_string, Response, jsonify, send_file
 
-from download_repo import download_repo, remove_readonly
 from badge import generate_badge_svg
-from badge_store import save_scan_result, get_last_scan_result
-from scan_worker import run_scan_worker
-from impact_guide import SECRET_IMPACT, DEPENDENCY_IMPACT, TYPOSQUAT_IMPACT
+from badge_store import get_last_scan_result
+from history_store import get_scan_history
+from reports import generate_json_report, generate_html_report, generate_executive_report, generate_technical_report
+from dashboard_template import DASHBOARD_HTML
+from website_scanner import is_github_repo_url
+import saas_store
+import scan_manager
+import scheduler
+import delta_engine
+import prioritizer
+import alerts
+import compliance_engine
+import inventory_engine
+import vuln_intel_sources
+import vuln_intel_store
+import correlation_engine
+import vuln_intel_service
 
 app = Flask(__name__)
 
-# Hard wall-clock cap on the whole scan (download + analysis combined).
-SCAN_TIMEOUT_SECONDS = 300
+@app.after_request
+def add_cache_control_headers(response):
+    """Prevents aggressive browser caching of dashboard JS, CSS, and dynamic scan results."""
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate, max-age=0"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
 
-_scan_semaphore = threading.Semaphore(2)  # at most 2 scans running at once
+# Start continuous security monitoring and vulnerability intelligence workers
+try:
+    scheduler.start_scheduler(poll_interval=30)
+except Exception as e:
+    print(f"[APP] Could not start scheduler: {e}", flush=True)
 
-
-def compute_overall_score(report, secrets, dependencies, typosquats):
-    """
-    Rolls up every finding (tool mismatches, secrets, vulnerable deps,
-    typosquatted packages) into a single overall score for the whole repo -
-    this is what the README badge shows. Worst finding wins: any
-    RED-equivalent issue anywhere makes the whole repo RED, regardless of
-    how many tools are otherwise clean.
-    """
-    if secrets:
-        return "RED"
-    if dependencies and dependencies.get("findings"):
-        return "RED"
-    if typosquats:
-        return "RED"
-    if report:
-        scores = {entry["score"] for entry in report}
-        if "RED" in scores:
-            return "RED"
-        if "YELLOW" in scores:
-            return "YELLOW"
-        return "GREEN"
-    return "UNKNOWN"
+try:
+    vuln_intel_service.start_vulnerability_intelligence_worker()
+except Exception as e:
+    print(f"[APP] Could not start vulnerability intelligence worker: {e}", flush=True)
 
 
-def run_scan_with_hard_timeout(github_url, full_scan):
-    """
-    Spawns the scan in its own process, waits up to SCAN_TIMEOUT_SECONDS,
-    and force-kills it if it's still running. Always cleans up the
-    downloaded repo folder afterwards, whether the scan succeeded, failed,
-    or had to be killed - so a timed-out scan doesn't leave temp files on
-    disk forever.
-    """
-    destination_folder = os.path.join(
-        tempfile.gettempdir(), f"mcp_scan_{uuid.uuid4().hex[:12]}"
-    )
-    result_queue = multiprocessing.Queue()
-    process = multiprocessing.Process(
-        target=run_scan_worker,
-        args=(github_url, full_scan, destination_folder, result_queue),
+def execute_scan(github_url, full_scan=False, auth_confirmed=False):
+    """Executes full repository security audit using scan_manager."""
+    return scan_manager.execute_scan_synchronously(
+        github_url, scan_type="repository", full_scan=full_scan, auth_confirmed=auth_confirmed
     )
 
-    try:
-        process.start()
-        # Read from the queue BEFORE joining the process. If a large report
-        # is put into the queue, the background feeder thread blocks until
-        # the parent drains the pipe. Calling process.join() before result_queue.get()
-        # causes a classic multiprocessing pipe-buffer deadlock.
-        try:
-            status, payload = result_queue.get(timeout=SCAN_TIMEOUT_SECONDS)
-        except Exception:
-            if process.is_alive():
-                process.terminate()
-                process.join(5)
-                if process.is_alive():
-                    process.kill()
-            raise TimeoutError(
-                f"This scan took longer than {SCAN_TIMEOUT_SECONDS} seconds and was stopped "
-                f"to keep the site responsive. This usually means the repo is very large or "
-                f"slow to download. Try a smaller/more focused MCP server repo, or use the "
-                f"'Full scan' option only for repos you know are small."
-            )
 
-        process.join(timeout=10)
-        if process.is_alive():
-            process.terminate()
-            process.join(2)
-
-        if status == "error":
-            raise RuntimeError(payload)
-
-        report, warning, secrets, dependencies, typosquats = payload
-        return report, warning, secrets, dependencies, typosquats
-    finally:
-        if os.path.exists(destination_folder):
-            shutil.rmtree(destination_folder, onerror=remove_readonly, ignore_errors=True)
+def execute_website_scan(target_url, auth_confirmed=True):
+    """Executes safe, non-destructive website security audit using scan_manager."""
+    return scan_manager.execute_scan_synchronously(
+        target_url, scan_type="website", full_scan=False, auth_confirmed=auth_confirmed
+    )
 
 
-def execute_scan(github_url, full_scan):
-    """
-    Runs one full scan (semaphore + hard timeout + scoring + result
-    persistence) and returns a plain dict. Shared by both the HTML form
-    route and the JSON API route so the two never drift out of sync -
-    they should always mean the same thing by "a scan".
-    """
-    with _scan_semaphore:
-        report, warning, secrets, dependencies, typosquats = run_scan_with_hard_timeout(github_url, full_scan)
-
-    overall_score = compute_overall_score(report, secrets, dependencies, typosquats)
-    save_scan_result(github_url, overall_score)
-
-    return {
-        "github_url": github_url,
-        "overall_score": overall_score,
-        "warning": warning,
-        "report": report,
-        "secrets": secrets,
-        "dependencies": dependencies,
-        "typosquats": typosquats,
-    }
+def execute_mcp_scan(target, full_scan=False, auth_confirmed=True):
+    """Executes dedicated Model Context Protocol (MCP) server & tool security scan."""
+    return scan_manager.execute_scan_synchronously(
+        target, scan_type="mcp", full_scan=full_scan, auth_confirmed=auth_confirmed
+    )
 
 
-PAGE = """
-<!doctype html>
-<html>
-<head><title>MCP Server Scanner</title></head>
-<body style="font-family: sans-serif; max-width: 700px; margin: 40px auto;">
-    <h1>MCP Server Security Scanner</h1>
-    <form method="POST">
-        <input type="text" name="github_url" placeholder="Paste a GitHub URL"
-               style="width: 400px; padding: 8px;">
-        <button type="submit" style="padding: 8px;">Scan</button>
-        <br><br>
-        <label style="font-size: 14px; color: #555;">
-            <input type="checkbox" name="full_scan" value="yes">
-            Full scan - no file limit (may be slow on huge repos, use with care)
-        </label>
-    </form>
-    <p style="font-size: 12px; color: #888; margin-top: 8px;">
-        Also available as a JSON API: <code>POST /api/scan</code> with
-        <code>{"github_url": "...", "full_scan": false}</code>
-    </p>
+# ===========================================================================
+# HTML TEMPLATES: LANDING PAGE & SAAS DASHBOARD
+# ===========================================================================
 
-    {% if error %}
-        <h2 style="color: red;">Scan failed</h2>
-        <p>{{ error }}</p>
-    {% endif %}
+LANDING_HTML = """<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrustAudit — Continuous Security for AI-Coded Applications & MCP</title>
+    <meta name="description" content="TrustAudit continuously scans, tests, and monitors AI-coded applications and MCP systems for security vulnerabilities and regressions.">
+    <style>
+        :root {
+            --bg-main: #090d16;
+            --bg-surface: #111827;
+            --bg-subtle: #0f172a;
+            --bg-hover: #1f2937;
+            --border-subtle: #1e293b;
+            --border-focus: #3b82f6;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --text-dim: #64748b;
+            --brand-blue: #3b82f6;
+            --brand-blue-hover: #2563eb;
+            --brand-indigo: #6366f1;
+            --status-green: #22c55e;
+            --status-yellow: #eab308;
+            --status-red: #ef4444;
+            --status-critical: #dc2626;
+            --card-radius: 12px;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--bg-main); color: var(--text-main); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+        a { color: var(--brand-blue); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; font-size: 14px; padding: 10px 20px; border-radius: 8px; cursor: pointer; transition: 0.15s ease; border: none; }
+        .btn-primary { background: var(--brand-blue); color: #fff; }
+        .btn-primary:hover { background: var(--brand-blue-hover); text-decoration: none; }
+        .btn-secondary { background: var(--bg-surface); color: var(--text-main); border: 1px solid var(--border-subtle); }
+        .btn-secondary:hover { background: var(--bg-hover); text-decoration: none; border-color: var(--text-muted); }
+        .badge { display: inline-flex; align-items: center; padding: 3px 8px; font-size: 11px; font-weight: 700; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .badge-CRITICAL { background: #450a0a; color: #f87171; border: 1px solid #7f1d1d; }
+        .badge-HIGH { background: #431407; color: #fb923c; border: 1px solid #7c2d12; }
+        .badge-MEDIUM { background: #422006; color: #facc15; border: 1px solid #713f12; }
+        .badge-LOW { background: #052e16; color: #4ade80; border: 1px solid #14532d; }
+        .card { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--card-radius); padding: 20px; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+        th, td { border: 1px solid var(--border-subtle); padding: 10px 14px; text-align: left; }
+        th { background: var(--bg-subtle); color: var(--text-muted); font-weight: 600; }
+        code { background: #1e293b; color: #38bdf8; padding: 2px 6px; border-radius: 4px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12.5px; }
 
-    {% if warning %}
-        <div style="background: #fff3cd; border: 1px solid #ffc107; padding: 10px; margin: 15px 0;">
-            ⚠ {{ warning }}
-        </div>
-    {% endif %}
+        /* Navbar */
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--border-subtle); }
+        .brand-logo { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+        .brand-logo svg { width: 28px; height: 28px; fill: var(--brand-blue); }
+        .nav-links { display: flex; gap: 24px; align-items: center; font-size: 14px; font-weight: 500; }
+        .nav-links a { color: var(--text-muted); }
+        .nav-links a:hover { color: #fff; text-decoration: none; }
 
-    {% if badge_markdown %}
-        <div style="border: 1px solid #ccc; padding: 10px; margin: 15px 0; background: #f7f7f7;">
-            <b>Add this badge to your README:</b><br>
-            <img src="{{ badge_url }}" alt="MCP Security Badge"><br><br>
-            <code style="font-size: 12px;">{{ badge_markdown }}</code>
-        </div>
-    {% endif %}
+        /* Hero */
+        .hero { text-align: center; padding: 70px 0 50px; }
+        .pill-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: #93c5fd; padding: 6px 14px; border-radius: 9999px; font-size: 13px; font-weight: 600; margin-bottom: 24px; }
+        .hero h1 { font-size: 52px; font-weight: 800; line-height: 1.15; letter-spacing: -1.5px; max-width: 900px; margin: 0 auto 20px; }
+        .hero p { font-size: 19px; color: var(--text-muted); max-width: 720px; margin: 0 auto 36px; line-height: 1.6; }
+        .hero-actions { display: flex; gap: 14px; justify-content: center; margin-bottom: 50px; }
 
-    {% if typosquats %}
-        <h2 style="color: #b30000;">⚠ Possible Typosquatted Packages Found</h2>
-        <div style="background: #f7f7f7; border-left: 3px solid #b30000; padding: 8px 12px; margin-bottom: 10px; font-size: 13px;">
-            <b>Why this matters:</b> {{ typosquat_impact.impact }}<br><br>
-            <b>How to fix it:</b> {{ typosquat_impact.prevention }}
-        </div>
-        {% for t in typosquats %}
-            <div style="border: 1px solid #b30000; padding: 10px; margin: 10px 0; background: #fff5f5;">
-                <b>Package:</b> {{ t.package }}<br>
-                <b>Resembles trusted package:</b> {{ t.resembles }} (edit distance {{ t.distance }})<br>
-                <b>Why:</b> {{ t.reason }}
+        /* Interactive Scan Box */
+        .scan-container { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 28px; max-width: 820px; margin: 0 auto 80px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); text-align: left; }
+        .mode-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+        .mode-tab { flex: 1; padding: 10px; text-align: center; border-radius: 8px; font-size: 13.5px; font-weight: 600; cursor: pointer; background: var(--bg-subtle); border: 1px solid var(--border-subtle); color: var(--text-muted); transition: 0.15s; }
+        .mode-tab.active { background: #1e293b; border-color: var(--brand-blue); color: #fff; }
+        .input-row { display: flex; gap: 10px; }
+        .input-row input { flex: 1; background: var(--bg-subtle); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 14px 18px; color: #fff; font-size: 15px; outline: none; }
+        .input-row input:focus { border-color: var(--brand-blue); }
+
+        /* Live Scanning Progress Overlay */
+        .progress-overlay { display: none; margin-top: 20px; padding: 16px; background: #0b1120; border: 1px solid #1e293b; border-radius: 8px; }
+        .progress-bar-container { height: 6px; background: #1e293b; border-radius: 3px; overflow: hidden; margin-bottom: 12px; }
+        .progress-bar-fill { height: 100%; width: 20%; background: var(--brand-blue); transition: width 0.3s ease; }
+        .progress-stage-text { font-size: 13px; color: #93c5fd; font-weight: 600; }
+
+        /* Section Layouts */
+        .section-header { text-align: center; margin-bottom: 50px; }
+        .section-header h2 { font-size: 36px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 12px; }
+        .section-header p { font-size: 16px; color: var(--text-muted); max-width: 600px; margin: 0 auto; }
+        
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; margin-bottom: 80px; }
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 24px; margin-bottom: 80px; }
+        
+        .feature-card { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 28px; transition: transform 0.2s; }
+        .feature-card:hover { border-color: var(--brand-blue); transform: translateY(-2px); }
+        .feature-icon { width: 44px; height: 44px; border-radius: 10px; background: rgba(59, 130, 246, 0.12); display: flex; align-items: center; justify-content: center; margin-bottom: 18px; color: var(--brand-blue); font-size: 20px; }
+        .feature-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+        .feature-card p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+
+        /* Workflow Step Bar */
+        .workflow-bar { display: flex; justify-content: space-between; position: relative; max-width: 900px; margin: 0 auto 80px; padding: 20px 0; }
+        .workflow-step { text-align: center; position: relative; z-index: 2; }
+        .step-bubble { width: 48px; height: 48px; border-radius: 50%; background: var(--bg-surface); border: 2px solid var(--brand-blue); display: flex; align-items: center; justify-content: center; font-weight: 700; margin: 0 auto 10px; font-size: 15px; color: #fff; }
+        .step-label { font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); }
+
+        /* Pricing Table */
+        .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-bottom: 80px; }
+        .pricing-card { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 32px 24px; position: relative; }
+        .pricing-card.featured { border-color: var(--brand-blue); box-shadow: 0 0 30px rgba(59, 130, 246, 0.15); }
+        .featured-pill { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--brand-blue); color: #fff; font-size: 11px; font-weight: 700; padding: 3px 12px; border-radius: 9999px; text-transform: uppercase; }
+        .price-val { font-size: 40px; font-weight: 800; margin: 16px 0 6px; }
+        .price-val span { font-size: 14px; color: var(--text-muted); font-weight: 400; }
+
+        /* Footer */
+        footer { border-top: 1px solid var(--border-subtle); padding: 50px 0 30px; margin-top: 60px; font-size: 13px; color: var(--text-dim); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <nav>
+            <div class="brand-logo">
+                <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+                TRUSTAUDIT
             </div>
-        {% endfor %}
-    {% endif %}
-
-    {% if dependencies and dependencies.requirements_found %}
-        {% if dependencies.findings %}
-            <h2 style="color: #b30000;">⚠ Vulnerable Dependencies Found</h2>
-            <div style="background: #f7f7f7; border-left: 3px solid #b30000; padding: 8px 12px; margin-bottom: 10px; font-size: 13px;">
-                <b>Why this matters:</b> {{ dependency_impact.impact }}<br><br>
-                <b>How to fix it:</b> {{ dependency_impact.prevention }}
+            <div class="nav-links">
+                <a href="#features">Capabilities</a>
+                <a href="#workflow">How It Works</a>
+                <a href="#findings">Sample Findings</a>
+                <a href="#pricing">Pricing</a>
+                <a href="/dashboard" class="btn btn-secondary" style="padding: 6px 14px;">Open Dashboard</a>
             </div>
-            {% for dep in dependencies.findings %}
-                <div style="border: 1px solid #b30000; padding: 10px; margin: 10px 0; background: #fff5f5;">
-                    <b>Package:</b> {{ dep.package }}=={{ dep.version }}<br>
-                    <b>Known issues:</b>
-                    <ul>
-                    {% for v in dep.vulnerabilities %}
-                        <li>{{ v.id }}: {{ v.summary }}</li>
-                    {% endfor %}
-                    </ul>
+        </nav>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="pill-badge">🛡 Continuous Security for AI-Coded Applications & MCP</div>
+            <h1>Security for AI-Built Applications & Connected Agent Tools</h1>
+            <p>Scan AI-generated code, test deployed applications, secure MCP systems, and continuously detect security regressions with integrated open-source engines (Gitleaks, OSV, Trivy, Nuclei, Syft).</p>
+            <div class="hero-actions">
+                <a href="#scanner-anchor" class="btn btn-primary" style="padding: 14px 28px; font-size: 16px;">Start Free Scan</a>
+                <a href="/dashboard" class="btn btn-secondary" style="padding: 14px 28px; font-size: 16px;">View Demo Console</a>
+            </div>
+
+            <!-- Live Interactive Scan Launcher -->
+            <div id="scanner-anchor" class="scan-container">
+                <div style="font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px;">
+                    Instant Security Audit Launcher
                 </div>
-            {% endfor %}
-        {% else %}
-            <p style="color: #2e7d32;">✓ Checked {{ dependencies.checked }} pinned dependencies against known vulnerabilities - none found.</p>
-            {% if dependencies.timed_out %}
-                <p style="color: #8a7500; font-size: 13px;">⚠ Note: this check ran out of time before checking every dependency - results above may be incomplete.</p>
-            {% endif %}
-        {% endif %}
-    {% endif %}
-
-    {% if secrets %}
-        <h2 style="color: #b30000;">⚠ Possible Hardcoded Secrets Found</h2>
-        <div style="background: #f7f7f7; border-left: 3px solid #b30000; padding: 8px 12px; margin-bottom: 10px; font-size: 13px;">
-            <b>Why this matters:</b> {{ secret_impact.impact }}<br><br>
-            <b>How to fix it:</b> {{ secret_impact.prevention }}
-        </div>
-        {% for s in secrets %}
-            <div style="border: 1px solid #b30000; padding: 10px; margin: 10px 0; background: #fff5f5;">
-                <b>Type:</b> {{ s.type }}<br>
-                <b>File:</b> {{ s.file }}<br>
-                <b>Preview:</b> <code>{{ s.value_preview }}</code><br>
-                <b>Confidence:</b> {{ s.confidence }}<br>
-                <b>Why:</b> {{ s.reason }}
-            </div>
-        {% endfor %}
-    {% endif %}
-
-    {% if report is not none %}
-        <h2>Results</h2>
-        {% if report|length == 0 %}
-            <p>No MCP tool definitions were found in this repo. This scanner recognizes
-               Python (<code>Tool(...)</code> and <code>@mcp.tool</code> patterns) and
-               JS/TypeScript (<code>.tool(...)</code> and <code>.registerTool(...)</code>
-               patterns) - it may not support this repo's language or structure yet.</p>
-        {% endif %}
-        {% for entry in report %}
-            <div style="border: 1px solid #ccc; padding: 10px; margin: 10px 0;">
-                <b>Tool:</b> {{ entry.name }}
-                <span style="font-size: 11px; color: #666; border: 1px solid #ccc; border-radius: 3px; padding: 1px 5px;">{{ entry.language }}</span><br>
-                <b>Claims to do:</b> {{ entry.description[:150] }}<br>
-                {% if entry.injection_findings %}
-                    <div style="background: #ffe0e0; border: 1px solid #b30000; padding: 8px; margin: 8px 0;">
-                        <b style="color: #b30000;">⚠ Possible prompt injection in this tool's description:</b>
-                        <ul>
-                        {% for finding in entry.injection_findings %}
-                            <li>{{ finding.type }}: {{ finding.detail }}</li>
-                        {% endfor %}
-                        </ul>
-                        {% if entry.injection_impact %}
-                            <div style="font-size: 13px; margin-top: 6px;">
-                                <b>Why this matters:</b> {{ entry.injection_impact.impact }}<br><br>
-                                <b>How to fix it:</b> {{ entry.injection_impact.prevention }}
-                            </div>
-                        {% endif %}
+                <form action="/scan" method="POST" id="landing-scan-form" onsubmit="showProgress('landing')">
+                    <div class="mode-tabs">
+                        <div class="mode-tab active" id="tab-repo" onclick="setMode('repository')">📦 GitHub Repository Scan</div>
+                        <div class="mode-tab" id="tab-web" onclick="setMode('website')">🌐 Website / Web App Scan</div>
+                        <div class="mode-tab" id="tab-mcp" onclick="setMode('mcp')">⚡ MCP System Scan</div>
                     </div>
-                {% endif %}
-                {% if entry.shadowing_findings %}
-                    <div style="background: #ffe0e0; border: 1px solid #b30000; padding: 8px; margin: 8px 0;">
-                        <b style="color: #b30000;">⚠ Possible tool-shadowing:</b>
-                        <ul>
-                        {% for finding in entry.shadowing_findings %}
-                            <li>{{ finding.type }}: {{ finding.detail }}</li>
-                        {% endfor %}
-                        </ul>
-                        {% if entry.shadowing_impact %}
-                            <div style="font-size: 13px; margin-top: 6px;">
-                                <b>Why this matters:</b> {{ entry.shadowing_impact.impact }}<br><br>
-                                <b>How to fix it:</b> {{ entry.shadowing_impact.prevention }}
-                            </div>
-                        {% endif %}
+                    <input type="hidden" name="scan_type" id="scan_type_input" value="repository">
+                    <div class="input-row">
+                        <input type="text" name="target" id="target_input" placeholder="https://github.com/owner/repository" required>
+                        <button type="submit" class="btn btn-primary" id="landing-submit-btn">Run Audit</button>
                     </div>
-                {% endif %}
-                <b>Inherent risk:</b>
-                <span style="font-weight: bold; color: {{ '#b30000' if entry.risk_level == 'CRITICAL' else ('#d17b00' if entry.risk_level == 'HIGH' else ('#8a7500' if entry.risk_level == 'MEDIUM' else '#2e7d32')) }};">
-                    {{ entry.risk_level }}
-                </span> - {{ entry.risk_explanation }}
-                {% if entry.risk_prevention %}
-                    <div style="font-size: 13px; color: #555; margin: 4px 0 4px 12px;">
-                        <b>What to do:</b> {{ entry.risk_prevention }}
+                    <div style="display: flex; gap: 20px; margin-top: 14px; font-size: 12px; color: var(--text-muted); flex-wrap: wrap;">
+                        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                            <input type="checkbox" name="full_scan" value="yes"> Deep AST, Gitleaks, OSV & SAST scan
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; color: #93c5fd;">
+                            <input type="checkbox" name="auth_confirmed" value="yes" checked> Explicit target authorization confirmed
+                        </label>
                     </div>
-                {% endif %}
 
-                {# Blast Radius (Feature 2) #}
-                {% if entry.blast_radius %}
-                    <b>Blast radius:</b>
-                    {% set br_score = entry.blast_radius.score %}
-                    {% set br_label = entry.blast_radius.label %}
-                    <span style="font-weight: bold; color: {{ '#b30000' if br_score >= 75 else ('#d17b00' if br_score >= 50 else ('#8a7500' if br_score >= 25 else '#2e7d32')) }};">
-                        {{ br_score }}/100 — {{ br_label }}
-                    </span>
-                    {% if entry.blast_radius.attack_paths %}
-                        <div style="font-size: 13px; color: #555; margin: 4px 0 4px 12px;">
-                            <b>Attack paths:</b>
-                            <ul style="margin: 4px 0 4px 16px; padding: 0;">
-                            {% for ap in entry.blast_radius.attack_paths %}
-                                <li>{{ ap }}</li>
-                            {% endfor %}
-                            </ul>
+                    <div id="landing-progress" class="progress-overlay">
+                        <div class="progress-bar-container">
+                            <div id="landing-bar" class="progress-bar-fill"></div>
                         </div>
-                    {% endif %}
-                {% endif %}
-
-                {# Permission Matrix (Feature 1) #}
-                {% if entry.permission_matrix %}
-                    {% set pm = entry.permission_matrix %}
-                    <b>Permission analysis:</b>
-                    <span style="font-size: 12px; color: {{ '#b30000' if pm.severity == 'HIGH' else ('#d17b00' if pm.severity == 'MEDIUM' else '#555') }};">
-                        severity={{ pm.severity }}
-                    </span>
-                    {% if pm.findings %}
-                        <div style="font-size: 13px; color: #555; margin: 4px 0 4px 12px;">
-                            <b>Findings:</b>
-                            <ul style="margin: 4px 0 4px 16px; padding: 0;">
-                            {% for f in pm.findings %}
-                                <li>[{{ f.severity }}] {{ f.type }}: {{ f.detail }}</li>
-                            {% endfor %}
-                            </ul>
-                        </div>
-                    {% endif %}
-                {% endif %}
-
-                <b>Actual behavior:</b> {{ entry.actual_behavior or "None" }}<br>
-                <b>Mismatches:</b> {{ entry.mismatches or "None" }}<br>
-                {% if entry.mismatch_impacts %}
-                    {% for mi in entry.mismatch_impacts %}
-                        {% if mi.impact %}
-                            <div style="background: #fff8e1; border-left: 3px solid #d17b00; padding: 6px 10px; margin: 6px 0; font-size: 13px;">
-                                <b>{{ mi.category }} - why this matters:</b> {{ mi.impact }}<br><br>
-                                <b>How to fix it:</b> {{ mi.prevention }}
-                            </div>
-                        {% endif %}
-                    {% endfor %}
-                {% endif %}
-                {% if entry.semantic_notes %}
-                    <b>Semantic check notes:</b>
-                    <ul>
-                    {% for note in entry.semantic_notes %}
-                        <li>{{ note.category }}: {{ "covered" if note.covered else "not covered" }} - {{ note.reasoning }}</li>
-                    {% endfor %}
-                    </ul>
-                {% endif %}
-                <b>Semgrep findings:</b>
-                {% if entry.semgrep_findings %}
-                    <ul>
-                    {% for f in entry.semgrep_findings %}
-                        <li>[{{ f.severity }}] Line {{ f.line }}: {{ f.message }}</li>
-                    {% endfor %}
-                    </ul>
-                {% else %}
-                    None
-                {% endif %}<br>
-                <b>Score:</b>
-                <span style="color: {{ 'green' if entry.score == 'GREEN' else ('orange' if entry.score == 'YELLOW' else 'red') }}; font-weight: bold;">
-                    {{ entry.score }}
-                </span>
+                        <div id="landing-stage" class="progress-stage-text">Initializing security scanner...</div>
+                    </div>
+                </form>
             </div>
-        {% endfor %}
-    {% endif %}
+        </section>
+
+        <!-- Problem Statement -->
+        <section style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 40px; margin-bottom: 80px; text-align: center;">
+            <h2 style="font-size: 28px; font-weight: 800; margin-bottom: 12px;">"AI lets teams ship software faster. Security review hasn't become faster."</h2>
+            <p style="font-size: 16px; color: var(--text-muted); max-width: 760px; margin: 0 auto;">
+                AI tools generate functional features rapidly, but frequently introduce subtle tenant boundary bypasses, excessive MCP tool permissions, prompt poisoning risks, and exposed credentials. TrustAudit brings automated continuous verification to AI development.
+            </p>
+        </section>
+
+        <!-- Product Capabilities -->
+        <section id="features">
+            <div class="section-header">
+                <h2>Multi-Engine Security Architecture</h2>
+                <p>Combines proprietary MCP analysis with mature open-source security engines.</p>
+            </div>
+
+            <div class="grid-3">
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Core MCP Security Engine</h3>
+                    <p>Proprietary engine auditing Model Context Protocol tools for hidden capabilities, zero-width steganography prompt injections, tool shadowing, and permission graphs.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔑</div>
+                    <h3>Gitleaks Secret Detection</h3>
+                    <p>Integrated Gitleaks core scanning detecting exposed API keys, cloud credentials, tokens, and private keys with zero secret leakage in logs.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📦</div>
+                    <h3>OSV-Scanner & Trivy</h3>
+                    <p>Dual dependency engines auditing package manifests (npm, pip, go) against the open OSV database and Trivy CVE vulnerability feeds.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <h3>Nuclei Live AppSec</h3>
+                    <p>Safe, non-destructive live application security scanning for authorized targets with SSRF and private-network protections.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📋</div>
+                    <h3>Syft SBOM Generator</h3>
+                    <p>Produces complete Software Bill of Materials tracking runtime dependencies, MCP SDKs, and AI libraries across ecosystems.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <h3>Continuous Monitoring & Drift</h3>
+                    <p>Establishes signed security baselines, continuously monitoring for unauthorized tool expansions and rug-pull events across commits.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing Section -->
+        <section id="pricing">
+            <div class="section-header">
+                <h2>Predictable SaaS Pricing</h2>
+                <p>Tailored for seed to growth-stage startups and teams building applications with AI.</p>
+            </div>
+
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h3 style="font-size: 18px;">Free Community</h3>
+                    <p style="font-size: 13px; color: var(--text-muted);">For individual developers</p>
+                    <div class="price-val">₹0 <span>/ mo ($0)</span></div>
+                    <ul style="font-size: 13px; color: var(--text-muted); margin: 20px 0; padding-left: 18px; line-height: 1.8;">
+                        <li>1 Website &amp; 1 Repository</li>
+                        <li>50 Scans / Month</li>
+                        <li>MCP &amp; AppSec SAST Scan</li>
+                        <li>Executive PDF Reports</li>
+                    </ul>
+                    <a href="/dashboard" class="btn btn-secondary" style="width: 100%;">Get Started</a>
+                </div>
+
+                <div class="pricing-card featured">
+                    <div class="featured-pill">Most Popular for Startups</div>
+                    <h3 style="font-size: 18px; color: #93c5fd;">Startup Starter</h3>
+                    <p style="font-size: 13px; color: var(--text-muted);">For early-stage startups &amp; AI teams</p>
+                    <div class="price-val">₹999 <span>/ mo ($12)</span></div>
+                    <ul style="font-size: 13px; color: #fff; margin: 20px 0; padding-left: 18px; line-height: 1.8;">
+                        <li>Up to 5 Websites &amp; 5 Repositories</li>
+                        <li>Daily Continuous Security Monitoring</li>
+                        <li>Automated 'What Changed?' Delta Engine</li>
+                        <li>'Fix These First' Prioritized Risk Cards</li>
+                        <li>Email Alerts for Critical Risks</li>
+                        <li>Interactive AI Security Advisor</li>
+                    </ul>
+                    <a href="/dashboard" class="btn btn-primary" style="width: 100%;">Get Started</a>
+                </div>
+
+                <div class="pricing-card">
+                    <h3 style="font-size: 18px; color: #c7d2fe;">Growth &amp; Pro</h3>
+                    <p style="font-size: 13px; color: var(--text-muted);">For scaling tech companies</p>
+                    <div class="price-val">₹1,999 <span>/ mo ($24)</span></div>
+                    <ul style="font-size: 13px; color: var(--text-muted); margin: 20px 0; padding-left: 18px; line-height: 1.8;">
+                        <li>Up to 20 Websites &amp; 20 Repositories</li>
+                        <li>Hourly &amp; Daily Continuous Monitoring</li>
+                        <li>Deep AI-Code &amp; MCP Poisoning Scans</li>
+                        <li>1-Click Rescan &amp; Verification Workflow</li>
+                        <li>Slack &amp; Webhook Integration</li>
+                        <li>CI/CD Gate Integration</li>
+                    </ul>
+                    <a href="/dashboard" class="btn btn-secondary" style="width: 100%;">Start Pro</a>
+                </div>
+
+                <div class="pricing-card">
+                    <h3 style="font-size: 18px;">Enterprise</h3>
+                    <p style="font-size: 13px; color: var(--text-muted);">For established organizations</p>
+                    <div class="price-val">Custom</div>
+                    <ul style="font-size: 13px; color: var(--text-muted); margin: 20px 0; padding-left: 18px; line-height: 1.8;">
+                        <li>Unlimited Assets &amp; Repositories</li>
+                        <li>Dedicated VPC / Self-Hosted Runners</li>
+                        <li>Custom Policy Contracts &amp; SLA</li>
+                        <li>Dedicated Security Lead</li>
+                    </ul>
+                    <a href="mailto:sales@trustaudit.io" class="btn btn-secondary" style="width: 100%;">Contact Sales</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+                <div style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: #fff;">
+                    <svg viewBox="0 0 24 24" style="width: 20px; height: 20px; fill: var(--brand-blue);"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+                    TRUSTAUDIT
+                </div>
+                <div>
+                    Continuous Security Verification for AI Applications &bull; &copy; 2026 TrustAudit Platform
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        function setMode(mode) {
+            document.getElementById('tab-repo').classList.remove('active');
+            document.getElementById('tab-web').classList.remove('active');
+            document.getElementById('tab-mcp').classList.remove('active');
+            const targetInput = document.getElementById('target_input');
+            const scanType = document.getElementById('scan_type_input');
+
+            if (mode === 'website') {
+                document.getElementById('tab-web').classList.add('active');
+                targetInput.placeholder = "https://example.com";
+                scanType.value = "website";
+            } else if (mode === 'mcp') {
+                document.getElementById('tab-mcp').classList.add('active');
+                targetInput.placeholder = "https://github.com/modelcontextprotocol/servers";
+                scanType.value = "repository";
+            } else {
+                document.getElementById('tab-repo').classList.add('active');
+                targetInput.placeholder = "https://github.com/owner/repository";
+                scanType.value = "repository";
+            }
+        }
+
+        let landingProgressIv = null;
+        function showProgress(prefix) {
+            const overlay = document.getElementById(prefix + '-progress');
+            const btn = document.getElementById(prefix + '-submit-btn');
+            if (overlay) overlay.style.display = 'block';
+            if (btn) {
+                btn.disabled = true;
+                btn.innerText = 'Scanning...';
+            }
+            const bar = document.getElementById(prefix + '-bar');
+            const stageText = document.getElementById(prefix + '-stage');
+            const scanTypeInput = document.getElementById('scan-type');
+            const scanType = scanTypeInput ? scanTypeInput.value : 'repository';
+
+            let stages = [];
+            if (scanType === 'website') {
+                stages = [
+                    {pct: 15, text: 'Normalizing target URL & resolving DNS (IPv4/IPv6)...'},
+                    {pct: 35, text: 'Probing HTTP/HTTPS connectivity & response headers...'},
+                    {pct: 55, text: 'Inspecting TLS certificate validity & SSL protocol...'},
+                    {pct: 70, text: 'Auditing cookie flags (Secure, HttpOnly, SameSite) & CORS...'},
+                    {pct: 85, text: 'Testing public file exposure & API endpoints...'},
+                    {pct: 95, text: 'Calculating security posture score & generating report...'}
+                ];
+            } else if (scanType === 'mcp') {
+                stages = [
+                    {pct: 20, text: 'Discovering MCP tool schemas & prompt definitions...'},
+                    {pct: 40, text: 'Analyzing tool permissions & prompt injection vectors...'},
+                    {pct: 60, text: 'Executing Gitleaks credential & secret audit...'},
+                    {pct: 80, text: 'Auditing package dependencies against OSV database...'},
+                    {pct: 95, text: 'Synthesizing MCP security score & risk paths...'}
+                ];
+            } else {
+                stages = [
+                    {pct: 20, text: 'Downloading & discovering target files...'},
+                    {pct: 35, text: 'Running Semgrep SAST & AST security analyzers...'},
+                    {pct: 50, text: 'Executing Gitleaks secret and credential audit...'},
+                    {pct: 65, text: 'Querying OSV-Scanner & Trivy vulnerability databases...'},
+                    {pct: 80, text: 'Generating Syft Software Bill of Materials (SBOM)...'},
+                    {pct: 95, text: 'Aggregating normalized score & multi-stage attack paths...'}
+                ];
+            }
+
+            let i = 0;
+            const t0 = Date.now();
+            if (landingProgressIv) clearInterval(landingProgressIv);
+            landingProgressIv = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - t0) / 1000);
+                if (btn) btn.innerText = 'Scanning (' + elapsed + 's)...';
+                if (i < stages.length) {
+                    if (bar) bar.style.width = stages[i].pct + '%';
+                    if (stageText) stageText.innerText = stages[i].text;
+                    i++;
+                } else if (elapsed > 15) {
+                    if (stageText) stageText.innerText = 'Processing comprehensive audit (' + elapsed + 's elapsed)...';
+                }
+            }, 1200);
+        }
+    </script>
 </body>
 </html>
 """
 
+
+# DASHBOARD_HTML is imported from dashboard_template.py
+
+
+# ===========================================================================
+# FLASK ROUTING CONTROLLERS
+# ===========================================================================
+
+@app.route("/dashboard", methods=["GET"])
+def dashboard_view():
+    """Renders the authenticated TrustAudit multi-tenant SaaS dashboard."""
+    projects = saas_store.list_projects_for_org("org-default")
+    tools_health = scan_manager.orchestrator.get_tool_health_records()
+    active_proj = projects[0] if projects else {}
+    last_res = active_proj.get("last_scan_result") if active_proj else None
+    prioritized_fixes = prioritizer.prioritize_findings(
+        (last_res or {}).get("findings", []) if last_res else []
+    )
+    what_changed = active_proj.get("last_delta") or (delta_engine.get_project_what_changed(active_proj.get("id")) if active_proj else None)
+    timeline = delta_engine.get_project_timeline(active_proj.get("id")) if active_proj else []
+    monitoring_summary = scheduler.get_monitoring_summary("org-default")
+    org_info = saas_store.get_organization("org-default")
+    assets = saas_store.get_organization_assets("org-default")
+    team_members = saas_store.list_team_members("org-default")
+    integrations = saas_store.get_integration_settings("org-default")
+    vuln_intel_summary = vuln_intel_store.get_intelligence_sync_summary()
+    affecting_vulnerabilities = correlation_engine.get_vulnerabilities_affecting_customer("org-default")
+    inventory_components = inventory_engine.get_all_inventory_components("org-default")
+    all_intel_vulnerabilities = vuln_intel_store.get_all_vulnerabilities(limit=50)
+
+    return render_template_string(
+        DASHBOARD_HTML,
+        result=last_res,
+        projects=projects,
+        tools_health=tools_health,
+        prioritized_fixes=prioritized_fixes,
+        what_changed=what_changed,
+        timeline=timeline,
+        monitoring_summary=monitoring_summary,
+        org_info=org_info,
+        assets=assets,
+        team_members=team_members,
+        integrations=integrations,
+        vuln_intel_summary=vuln_intel_summary,
+        affecting_vulnerabilities=affecting_vulnerabilities,
+        inventory_components=inventory_components,
+        all_intel_vulnerabilities=all_intel_vulnerabilities,
+        plans=saas_store.PLANS,
+        error=None,
+        warning=None,
+        target=None,
+        scan_type="website",
+        full_scan=False,
+        debug=False,
+    )
+
+
+@app.route("/tools", methods=["GET"])
+def tools_health_view():
+    """Renders the tool health and setup guidance page."""
+    projects = saas_store.list_projects_for_org("org-default")
+    tools_health = scan_manager.orchestrator.get_tool_health_records()
+    return render_template_string(
+        DASHBOARD_HTML,
+        result=None,
+        projects=projects,
+        tools_health=tools_health,
+        error=None,
+        warning=None,
+        target=None,
+        scan_type="repository",
+        full_scan=False,
+        debug=False,
+    )
+
+
 @app.route("/", methods=["GET", "POST"])
-def index():
-    report = None
+@app.route("/scan", methods=["GET", "POST"])
+def scan_endpoint():
+    """Executes target security audit across Website, Repository, or MCP modes."""
+    if request.path == "/" and request.method == "GET" and not any(request.args.get(k) for k in ("target", "repo", "url", "github_url")):
+        return render_template_string(LANDING_HTML)
+
+    result = None
     error = None
     warning = None
-    secrets = None
-    dependencies = None
-    typosquats = None
-    badge_markdown = None
-    badge_url = None
-    if request.method == "POST":
-        github_url = request.form.get("github_url")
-        full_scan = request.form.get("full_scan") == "yes"
-        try:
-            result = execute_scan(github_url, full_scan)
-            report = result["report"]
-            warning = result["warning"]
-            secrets = result["secrets"]
-            dependencies = result["dependencies"]
-            typosquats = result["typosquats"]
-            badge_url = f"{request.host_url.rstrip('/')}/badge?repo={github_url}"
-            badge_markdown = f"[![MCP Security]({badge_url})]({github_url})"
-        except TimeoutError as e:
-            error = str(e)
-        except Exception as e:
-            error = f"Something went wrong while scanning this repo: {e}"
+    target = None
+    scan_type = request.args.get("type") or "repository"
+    full_scan = False
+    debug = request.args.get("debug") == "true" or request.form.get("debug") == "yes"
+    auth_confirmed = request.form.get("auth_confirmed") == "yes" or request.args.get("auth_confirmed") == "true"
+
+    # Handle File Upload (ZIP or project/config file)
+    uploaded_file = request.files.get("project_file") or request.files.get("file")
+    if uploaded_file and uploaded_file.filename:
+        import zipfile
+        from werkzeug.utils import secure_filename
+        filename = secure_filename(uploaded_file.filename)
+        temp_dir = tempfile.mkdtemp(prefix="trustaudit_upload_")
+        save_path = os.path.join(temp_dir, filename)
+        uploaded_file.save(save_path)
+        if filename.lower().endswith(".zip"):
+            with zipfile.ZipFile(save_path, "r") as zip_ref:
+                zip_ref.extractall(temp_dir)
+            target = temp_dir
+        else:
+            target = save_path
+
+    if not target and (request.method == "POST" or request.args.get("target") or request.args.get("repo") or request.args.get("url") or request.args.get("github_url")):
+        target = (
+            request.form.get("target") or
+            request.form.get("github_url") or
+            request.args.get("target") or
+            request.args.get("repo") or
+            request.args.get("url") or
+            request.args.get("github_url")
+        )
+        scan_type = request.form.get("scan_type") or request.args.get("scan_type") or request.args.get("type") or "repository"
+        if request.form.get("full_scan") == "yes" or request.args.get("full_scan") == "true":
+            full_scan = True
+
+    if target:
+        target = target.strip()
+
+        # MODE A: Website Scan Mode
+        if scan_type == "website":
+            try:
+                result = execute_website_scan(target, auth_confirmed=auth_confirmed)
+                if result.get("status") == "DNS_FAILURE":
+                    error = f"Connection Status: [DNS FAILED] Target: '{result.get('hostname')}' | Reason: The hostname could not be resolved by the machine running TrustAudit ({result.get('error')})."
+                elif result.get("status") in ("CONNECTION_ERROR", "TLS_ERROR", "TIMEOUT", "VALIDATION_FAILED"):
+                    error = f"Target Connection Notice ({result.get('status')}): {result.get('error')}"
+                if debug and target and result:
+                    if "diagnostics" not in result or not result.get("diagnostics"):
+                        result["diagnostics"] = run_target_diagnostics(target)
+            except Exception as e:
+                error = f"Website scan failed: {e}. Check target domain connectivity."
+
+        # MODE C: Dedicated MCP Security Scan
+        elif scan_type == "mcp":
+            try:
+                result = execute_mcp_scan(target, full_scan=full_scan, auth_confirmed=auth_confirmed)
+                warning = result.get("warning")
+            except TimeoutError as e:
+                error = str(e)
+            except Exception as e:
+                error = f"MCP scan failed: {e}. Check MCP server/project target."
+
+        # MODE B: Repository / Source Code Scan Mode
+        else:
+            if not is_github_repo_url(target) and not os.path.exists(target) and (target.startswith("http://") or target.startswith("https://") or "github.com" not in target):
+                error = "This looks like a website URL. Select Website / Web Application scan."
+            else:
+                try:
+                    result = execute_scan(target, full_scan=full_scan, auth_confirmed=auth_confirmed)
+                    warning = result.get("warning")
+                except TimeoutError as e:
+                    error = str(e)
+                except Exception as e:
+                    error = f"Repository scan failed: {e}. Check repository URL and permissions."
+
+    projects = saas_store.list_projects_for_org("org-default")
+    tools_health = scan_manager.orchestrator.get_tool_health_records()
+    active_proj = projects[0] if projects else {}
+    prioritized_fixes = prioritizer.prioritize_findings(
+        result.get("findings", []) if result else ((active_proj.get("last_scan_result") or {}).get("findings", []) if active_proj else [])
+    )
+    what_changed = (result.get("last_delta") if result else None) or active_proj.get("last_delta") or (delta_engine.get_project_what_changed(active_proj.get("id")) if active_proj else None)
+    timeline = delta_engine.get_project_timeline(active_proj.get("id")) if active_proj else []
+    monitoring_summary = scheduler.get_monitoring_summary("org-default")
+    org_info = saas_store.get_organization("org-default")
+    assets = saas_store.get_organization_assets("org-default")
+    team_members = saas_store.list_team_members("org-default")
+    integrations = saas_store.get_integration_settings("org-default")
+    vuln_intel_summary = vuln_intel_store.get_intelligence_sync_summary()
+    affecting_vulnerabilities = correlation_engine.get_vulnerabilities_affecting_customer("org-default")
+    inventory_components = inventory_engine.get_all_inventory_components("org-default")
+    all_intel_vulnerabilities = vuln_intel_store.get_all_vulnerabilities(limit=50)
+
     return render_template_string(
-        PAGE, report=report, error=error, warning=warning, secrets=secrets,
-        dependencies=dependencies, typosquats=typosquats,
-        badge_markdown=badge_markdown, badge_url=badge_url,
-        secret_impact=SECRET_IMPACT, dependency_impact=DEPENDENCY_IMPACT,
-        typosquat_impact=TYPOSQUAT_IMPACT
+        DASHBOARD_HTML,
+        result=result,
+        projects=projects,
+        tools_health=tools_health,
+        prioritized_fixes=prioritized_fixes,
+        what_changed=what_changed,
+        timeline=timeline,
+        monitoring_summary=monitoring_summary,
+        org_info=org_info,
+        assets=assets,
+        team_members=team_members,
+        integrations=integrations,
+        vuln_intel_summary=vuln_intel_summary,
+        affecting_vulnerabilities=affecting_vulnerabilities,
+        inventory_components=inventory_components,
+        all_intel_vulnerabilities=all_intel_vulnerabilities,
+        plans=saas_store.PLANS,
+        error=error,
+        warning=warning,
+        target=target,
+        github_url=target,
+        scan_type=scan_type,
+        full_scan=full_scan,
+        debug=debug,
     )
 
 
 @app.route("/badge")
 def badge_endpoint():
-    github_url = request.args.get("repo", "")
-    result = get_last_scan_result(github_url) if github_url else None
+    """Generates TrustAudit SVG status badge."""
+    target = request.args.get("repo") or request.args.get("target") or request.args.get("url") or ""
+    result = get_last_scan_result(target) if target else None
     score = result["score"] if result else "UNKNOWN"
-    svg = generate_badge_svg("MCP Security", score)
+    svg = generate_badge_svg("TrustAudit", score)
     return Response(svg, mimetype="image/svg+xml", headers={"Cache-Control": "no-cache, max-age=0"})
+
 
 @app.route("/api/scan", methods=["POST"])
 def api_scan():
-    """
-    JSON API for programmatic access - e.g. a CI/CD pipeline, a pre-commit
-    hook, or another internal tool that wants scan results as data instead
-    of an HTML page to scrape. Accepts:
-        POST /api/scan
-        { "github_url": "https://github.com/owner/repo", "full_scan": false }
-    Returns the same scan data the web UI shows, as JSON.
-    """
+    """REST API for CI/CD pipeline integration and programmatic scanning across modes."""
     data = request.get_json(silent=True) or {}
-    github_url = data.get("github_url")
+    target = data.get("target") or data.get("github_url") or data.get("url")
+    scan_type = data.get("scan_type") or data.get("type", "auto")
     full_scan = bool(data.get("full_scan", False))
+    auth_confirmed = bool(data.get("auth_confirmed", False) or data.get("authorization_confirmed", False))
+    is_async = bool(data.get("async", False))
 
-    if not github_url:
-        return jsonify({"error": "Missing required field: github_url"}), 400
+    if not target:
+        return jsonify({"error": "Missing required parameter: target or github_url"}), 400
+
+    if scan_type == "auto":
+        scan_type = "repository" if is_github_repo_url(target) or os.path.exists(target) else "website"
+
+    if scan_type == "repository" and not is_github_repo_url(target) and not os.path.exists(target):
+        return jsonify({"error": "This looks like a website URL. Select Website / Web Application scan."}), 400
+
+    if is_async:
+        scan_id, record = scan_manager.submit_async_scan(
+            target, scan_type=scan_type, full_scan=full_scan, auth_confirmed=auth_confirmed
+        )
+        return jsonify({
+            "scanId": scan_id,
+            "status": "PENDING",
+            "target": target,
+            "scanType": scan_type,
+        }), 202
 
     try:
-        result = execute_scan(github_url, full_scan)
+        result = scan_manager.execute_scan_synchronously(
+            target, scan_type=scan_type, full_scan=full_scan, auth_confirmed=auth_confirmed
+        )
         return jsonify(result), 200
     except TimeoutError as e:
-        return jsonify({"error": str(e), "error_type": "timeout"}), 504
+        return jsonify({"error": str(e), "error_type": "timeout", "status": "TIMEOUT"}), 504
     except Exception as e:
-        return jsonify({"error": str(e), "error_type": "scan_failed"}), 500
+        return jsonify({"error": str(e), "error_type": "scan_failed", "status": "FAILED"}), 500
+
+
+@app.route("/api/scans/<scan_id>/debug", methods=["GET"])
+def api_scan_debug(scan_id):
+    """Development diagnostic endpoint returning full scan state and execution telemetry."""
+    record = scan_manager.get_scan_job(scan_id)
+    if not record:
+        return jsonify({"error": f"Scan ID '{scan_id}' not found"}), 404
+    return jsonify({
+        "scanId": record["scanId"],
+        "status": record["status"],
+        "currentStage": record["currentStage"],
+        "startedAt": record["startedAt"],
+        "updatedAt": record["updatedAt"],
+        "duration": record["duration"],
+        "workerStatus": record["workerStatus"],
+        "scannerStatus": record["scannerStatus"],
+        "findingsCount": record["findingsCount"],
+        "error": record["error"],
+        "logs": record.get("logs", []),
+    })
+
+
+@app.route("/api/health/tools", methods=["GET"])
+def api_health_tools():
+    """Returns operational health, versions, paths, and setup instructions for all tools."""
+    return jsonify({"tools": scan_manager.orchestrator.get_tool_health_records()}), 200
+
+
+@app.route("/api/tools/nuclei/diagnose", methods=["GET"])
+@app.route("/api/health/nuclei", methods=["GET"])
+def api_nuclei_diagnose():
+    """Diagnostic endpoint returning Nuclei installation status, executable path, version, and errors."""
+    diag = scan_manager.orchestrator.nuclei.diagnose()
+    return jsonify(diag), (200 if diag.get("installed") else 200)
+
+
+
+@app.route("/api/scans/<scan_id>/cancel", methods=["POST"])
+def api_scan_cancel(scan_id):
+    """Cancels an active scan task."""
+    cancelled = scan_manager.cancel_scan_job(scan_id)
+    if cancelled:
+        return jsonify({"scanId": scan_id, "status": "CANCELLED", "message": "Scan cancelled by user."}), 200
+    record = scan_manager.get_scan_job(scan_id)
+    if not record:
+        return jsonify({"error": f"Scan ID '{scan_id}' not found"}), 404
+    return jsonify({"scanId": scan_id, "status": record.get("status"), "message": "Scan is not in a cancellable state."}), 200
+
+
+@app.route("/api/scans/<scan_id>/status", methods=["GET"])
+def api_scan_status(scan_id):
+    """Polling status endpoint for tracking scan progress and receiving final results."""
+    record = scan_manager.get_scan_job(scan_id)
+    if not record:
+        return jsonify({"error": f"Scan ID '{scan_id}' not found"}), 404
+    return jsonify({
+        "scanId": record["scanId"],
+        "status": record["status"],
+        "currentStage": record["currentStage"],
+        "startedAt": record["startedAt"],
+        "updatedAt": record["updatedAt"],
+        "elapsed_seconds": record.get("elapsed_seconds", 0.0),
+        "duration": record["duration"],
+        "findingsCount": record["findingsCount"],
+        "error": record["error"],
+        "result": record["result"] if record["status"] in ("COMPLETED", "COMPLETED_WITH_WARNINGS") else None,
+    })
+
+
+@app.route("/api/health/scanner", methods=["GET"])
+def api_health_scanner():
+    """Health check endpoint verifying system dependencies, storage, and engines."""
+    db_ok = os.path.exists(os.path.join(os.path.dirname(__file__), "saas_data.json"))
+    temp_ok = os.access(tempfile.gettempdir(), os.W_OK)
+    engine_status = scan_manager.orchestrator.get_engine_status()
+    return jsonify({
+        "backend": "OK",
+        "database": "OK" if db_ok else "DEGRADED",
+        "scanner": "OK" if temp_ok else "ERROR",
+        "worker": "OK",
+        "engines": engine_status,
+    })
+
+
+@app.route("/api/plans", methods=["GET"])
+def api_plans():
+    """Returns configurable startup pricing plans and current organization limits."""
+    org = saas_store.get_organization("org-default")
+    return jsonify({
+        "plans": saas_store.PLANS,
+        "current_organization": org,
+    })
+
+
+@app.route("/api/monitoring/status", methods=["GET"])
+def api_monitoring_status():
+    """Returns continuous monitoring status and upcoming scheduled scans."""
+    summary = scheduler.get_monitoring_summary("org-default")
+    return jsonify(summary)
+
+
+@app.route("/api/monitoring/schedule", methods=["POST"])
+def api_monitoring_schedule():
+    """Updates continuous monitoring schedule for a project."""
+    data = request.get_json(silent=True) or {}
+    project_id = data.get("project_id")
+    frequency = data.get("frequency", "daily")
+    enabled = data.get("enabled", True)
+    if not project_id:
+        return jsonify({"error": "Missing project_id"}), 400
+    res = scheduler.set_project_schedule(project_id, frequency=frequency, enabled=enabled)
+    return jsonify({"status": "success", "schedule": res})
+
+
+@app.route("/api/monitoring/trigger-all", methods=["POST"])
+def api_monitoring_trigger_all():
+    """Triggers immediate continuous monitoring scans across all active projects."""
+    projects = saas_store.list_projects_for_org("org-default")
+    triggered = []
+    for p in projects:
+        if p.get("monitoring_status") == "ACTIVE":
+            sid = scheduler.run_scheduled_project_scan(p)
+            if sid:
+                triggered.append({"project_id": p.get("id"), "scan_id": sid})
+    return jsonify({"status": "success", "triggered_count": len(triggered), "scans": triggered})
+
+
+@app.route("/api/projects", methods=["GET"])
+def api_projects():
+    """Lists projects for organization."""
+    projects = saas_store.list_projects_for_org("org-default")
+    return jsonify({"projects": projects})
+
+
+# ---------------------------------------------------------------------------
+# Vulnerability Intelligence & Software Inventory REST APIs
+# ---------------------------------------------------------------------------
+
+@app.route("/api/intel/status", methods=["GET"])
+def api_intel_status():
+    """Retrieves source health, last sync timestamps, and vulnerability statistics."""
+    summary = vuln_intel_store.get_intelligence_sync_summary()
+    return jsonify(summary)
+
+
+@app.route("/api/intel/sync", methods=["POST"])
+def api_intel_sync():
+    """Triggers an immediate background synchronization across KEV, NVD, and customer correlation."""
+    result = vuln_intel_service.vulnerability_intelligence_sync(org_id="org-default")
+    return jsonify(result)
+
+
+@app.route("/api/intel/vulnerabilities", methods=["GET"])
+def api_intel_vulnerabilities():
+    """Retrieves filtered vulnerability intelligence records."""
+    severity = request.args.get("severity")
+    source = request.args.get("source")
+    ecosystem = request.args.get("ecosystem")
+    q = request.args.get("q")
+    known_exploited_only = request.args.get("known_exploited") == "true"
+    limit = int(request.args.get("limit", 100))
+
+    vulns = vuln_intel_store.get_all_vulnerabilities(
+        limit=limit,
+        severity=severity,
+        source=source,
+        ecosystem=ecosystem,
+        cve_or_keyword=q,
+        known_exploited_only=known_exploited_only,
+    )
+    return jsonify({"vulnerabilities": vulns, "count": len(vulns)})
+
+
+@app.route("/api/intel/vulnerabilities/<vuln_id>", methods=["GET"])
+def api_intel_vulnerability_detail(vuln_id):
+    """Retrieves full metadata and advisory evidence for a specific vulnerability or CVE."""
+    vuln = vuln_intel_store.get_vulnerability_by_id(vuln_id)
+    if not vuln:
+        # Attempt live lookup via OSV if not yet cached
+        vuln = vuln_intel_sources.get_osv_vulnerability_details(vuln_id)
+        if vuln:
+            vuln_intel_store.upsert_vulnerability(vuln)
+    if not vuln:
+        return jsonify({"error": "Vulnerability not found"}), 404
+    return jsonify({"vulnerability": vuln})
+
+
+@app.route("/api/intel/affecting", methods=["GET"])
+def api_intel_affecting():
+    """Retrieves all vulnerabilities affecting or potentially affecting the customer software inventory."""
+    project_id = request.args.get("project_id")
+    include_fixed = request.args.get("include_fixed") == "true"
+    findings = correlation_engine.get_vulnerabilities_affecting_customer(
+        org_id="org-default",
+        project_id=project_id,
+        include_fixed=include_fixed
+    )
+    return jsonify({"affecting_vulnerabilities": findings, "count": len(findings)})
+
+
+@app.route("/api/intel/recheck/<finding_id>", methods=["POST"])
+def api_intel_recheck_finding(finding_id):
+    """
+    Find -> Fix -> Verify workflow:
+    Re-evaluates a specific component or finding against current repository dependencies.
+    """
+    data = request.get_json(silent=True) or {}
+    project_id = data.get("project_id", "proj-demo-1")
+    package_name = data.get("package_name")
+    new_version = data.get("new_version")
+    ecosystem = data.get("ecosystem", "npm")
+
+    if not package_name or not new_version:
+        # Try finding record
+        all_affecting = correlation_engine.get_vulnerabilities_affecting_customer("org-default", include_fixed=True)
+        target_f = next((f for f in all_affecting if f.get("id") == finding_id), None)
+        if target_f:
+            package_name = target_f.get("package_name")
+            new_version = data.get("new_version") or target_f.get("installed_version")
+            ecosystem = target_f.get("ecosystem", "npm")
+            project_id = target_f.get("project_id", project_id)
+
+    if not package_name or not new_version:
+        return jsonify({"error": "Missing package_name or new_version for recheck."}), 400
+
+    res = correlation_engine.verify_component_fix_recheck(
+        project_id=project_id,
+        package_name=package_name,
+        new_version=new_version,
+        ecosystem=ecosystem,
+        org_id="org-default"
+    )
+    return jsonify(res)
+
+
+@app.route("/api/inventory", methods=["GET"])
+def api_inventory():
+    """Retrieves complete customer software component inventory (SBOM)."""
+    project_id = request.args.get("project_id")
+    comps = inventory_engine.get_all_inventory_components(org_id="org-default", project_id=project_id)
+    return jsonify({"components": comps, "count": len(comps)})
+
+
+@app.route("/api/assets", methods=["GET"])
+def api_assets():
+    """Returns aggregated attack surface and asset inventory."""
+    assets = saas_store.get_organization_assets("org-default")
+    return jsonify({"assets": assets})
+
+
+@app.route("/api/compliance", methods=["GET"])
+def api_compliance():
+    """Returns OWASP Top 10, SOC 2, ISO 27001 mapping & 24-point startup checklist."""
+    target = request.args.get("target") or ""
+    result = get_last_scan_result(target) if target else None
+    if not result:
+        projs = saas_store.list_projects_for_org("org-default")
+        if projs and projs[0].get("last_scan_result"):
+            result = projs[0]["last_scan_result"]
+    findings = (result.get("findings") or []) if result else []
+    mapping = compliance_engine.compute_compliance_mapping(findings)
+    checklist = compliance_engine.evaluate_startup_security_checklist(result)
+    return jsonify({"mapping": mapping, "checklist": checklist})
+
+
+@app.route("/api/team/members", methods=["GET", "POST"])
+def api_team_members():
+    """Lists or adds team members."""
+    if request.method == "POST":
+        data = request.get_json(silent=True) or {}
+        name = data.get("name", "Team Member")
+        email = data.get("email", "user@company.com")
+        role = data.get("role", "member")
+        user = saas_store.add_team_member(name, email, role=role)
+        return jsonify({"status": "success", "user": user})
+    members = saas_store.list_team_members("org-default")
+    return jsonify({"team_members": members})
+
+
+@app.route("/api/team/members/<user_id>", methods=["DELETE"])
+def api_team_member_delete(user_id):
+    """Deletes a team member."""
+    ok = saas_store.delete_team_member(user_id, "org-default")
+    return jsonify({"status": "success" if ok else "error"})
+
+
+@app.route("/api/integrations", methods=["GET", "POST"])
+def api_integrations():
+    """Gets or updates webhook & notification integration settings."""
+    if request.method == "POST":
+        data = request.get_json(silent=True) or {}
+        settings = saas_store.update_integration_settings("org-default", data)
+        return jsonify({"status": "success", "settings": settings})
+    settings = saas_store.get_integration_settings("org-default")
+    return jsonify({"settings": settings})
+
+
+@app.route("/api/integrations/test", methods=["POST"])
+def api_integrations_test():
+    """Dispatches a test notification to configured Slack/Teams/Email targets."""
+    data = request.get_json(silent=True) or {}
+    target_url = data.get("target_url")
+    res = alerts.test_alert_integrations(org_id="org-default", target_url=target_url)
+    return jsonify(res)
+
+
+@app.route("/api/finding/<finding_id>/note", methods=["POST"])
+def api_finding_add_note(finding_id):
+    """Appends an audit note to a finding record."""
+    data = request.get_json(silent=True) or {}
+    note = data.get("note", "")
+    author = data.get("author", "Security Team")
+    override = saas_store.add_finding_note(finding_id, note, author=author, org_id="org-default")
+    return jsonify({"status": "success", "override": override})
+
+
+@app.route("/api/finding/<finding_id>/assign", methods=["POST"])
+def api_finding_assign(finding_id):
+    """Assigns a vulnerability finding to a team member."""
+    data = request.get_json(silent=True) or {}
+    assignee = data.get("assigned_to", "Lead Engineer")
+    override = saas_store.assign_finding(finding_id, assignee, org_id="org-default")
+    return jsonify({"status": "success", "override": override})
+
+
+@app.route("/api/projects/<project_id>/what-changed", methods=["GET"])
+def api_project_what_changed(project_id):
+    """Retrieves What Changed delta comparison for a project."""
+    delta = delta_engine.get_project_what_changed(project_id, "org-default")
+    return jsonify(delta)
+
+
+@app.route("/api/projects/<project_id>/timeline", methods=["GET"])
+def api_project_timeline(project_id):
+    """Retrieves chronological security timeline events for a project."""
+    timeline = delta_engine.get_project_timeline(project_id, "org-default")
+    return jsonify({"timeline": timeline})
+
+
+@app.route("/api/projects/<project_id>/prioritized-fixes", methods=["GET"])
+def api_project_prioritized_fixes(project_id):
+    """Retrieves top 3-5 prioritized fix cards for a project."""
+    proj = saas_store.get_project(project_id, "org-default")
+    if not proj:
+        return jsonify({"error": "Project not found"}), 404
+    findings = (proj.get("last_scan_result") or {}).get("findings", [])
+    prioritized_list = prioritizer.prioritize_findings(findings, limit=5)
+    return jsonify({"prioritized_fixes": prioritized_list})
+
+
+@app.route("/api/finding/<finding_id>/status", methods=["POST"])
+def api_finding_status(finding_id):
+    """Updates lifecycle status for a finding."""
+    data = request.get_json(silent=True) or {}
+    status = data.get("status", "acknowledged")
+    override = saas_store.set_finding_status(finding_id, status)
+    return jsonify({"status": "success", "override": override})
+
+
+# ---------------------------------------------------------------------------
+# Phase 2: Trust & Distribution Feature API Endpoints
+# ---------------------------------------------------------------------------
+@app.route("/api/projects/<project_id>/badge", methods=["GET"])
+def api_project_badge_info(project_id):
+    """Returns embeddable markdown and HTML badge snippets for a project."""
+    import trust_features
+    proj = saas_store.get_project(project_id, "org-default")
+    score = (proj.get("last_score") if proj else 100) or 100
+    grade = (proj.get("last_grade") if proj else "A") or "A"
+    base_url = request.host_url.rstrip("/")
+    badge_data = trust_features.generate_badge_markdown(project_id, base_url=base_url, score=score, grade=grade)
+    return jsonify(badge_data)
+
+
+@app.route("/api/badge/<slug>", methods=["GET"])
+@app.route("/api/badge/<slug>.svg", methods=["GET"])
+def api_badge_svg(slug):
+    """Renders dynamic SVG security score badge for GitHub READMEs."""
+    import badge
+    clean_slug = slug.replace(".svg", "")
+    projs = saas_store.list_projects_for_org("org-default")
+    matched = next((p for p in projs if p.get("id") == clean_slug or p.get("name", "").lower().replace(" ", "-") == clean_slug), None)
+    score = matched.get("last_score", 100) if matched else 100
+    grade = matched.get("last_grade", "A") if matched else "A"
+    svg_content = badge.generate_badge_svg(label="TrustAudit", score=score, grade=grade)
+    return Response(svg_content, mimetype="image/svg+xml")
+
+
+@app.route("/api/projects/<project_id>/weekly-digest", methods=["GET"])
+@app.route("/api/digest/weekly", methods=["GET"])
+def api_weekly_digest(project_id=None):
+    """Returns the automated weekly digest data."""
+    import trust_features
+    digest = trust_features.generate_weekly_digest("org-default")
+    return jsonify(digest)
+
+
+@app.route("/api/alerts/weekly-digest", methods=["POST"])
+def api_dispatch_weekly_digest():
+    """Dispatches the weekly digest email."""
+    import trust_features
+    result = trust_features.dispatch_weekly_digest("org-default")
+    return jsonify(result)
+
+
+@app.route("/api/findings/eli5", methods=["POST"])
+def api_finding_eli5():
+    """Generates an ELI5 plain-English explanation for a finding."""
+    import trust_features
+    data = request.get_json(silent=True) or {}
+    explanation = trust_features.generate_eli5_explanation(data)
+    return jsonify({"eli5_explanation": explanation})
+
+
+@app.route("/api/findings/ai-prompt", methods=["POST"])
+def api_finding_ai_prompt():
+    """Generates a ready-to-copy AI fix prompt for Cursor / Claude / Copilot."""
+    import trust_features
+    data = request.get_json(silent=True) or {}
+    prompt = trust_features.generate_ai_fix_prompt(data)
+    return jsonify({"ai_fix_prompt": prompt})
+
+
+# ---------------------------------------------------------------------------
+# Phase 3: MCP-Specific Differentiation API Endpoints
+# ---------------------------------------------------------------------------
+@app.route("/api/mcp/reputation", methods=["GET"])
+def api_mcp_reputation():
+    """Evaluates reputation and registry verification status for an MCP package."""
+    import mcp_intelligence
+    pkg = request.args.get("package") or request.args.get("name") or "@modelcontextprotocol/server-filesystem"
+    rep = mcp_intelligence.lookup_mcp_reputation(pkg)
+    return jsonify(rep)
+
+
+@app.route("/api/mcp/reputation-lookup", methods=["GET"])
+def api_mcp_reputation_lookup():
+    """Basic v1: Searches curated OWASP MCP Top 10 dataset for package reputation and concerns."""
+    import mcp_curated_lookup
+    pkg = request.args.get("package") or request.args.get("name") or ""
+    res = mcp_curated_lookup.lookup_curated_mcp_reputation(pkg)
+    return jsonify(res)
+
+
+@app.route("/api/mcp/typosquat", methods=["POST"])
+def api_mcp_typosquat():
+    """Scans a list of package or tool names for MCP typosquatting attacks."""
+    import mcp_intelligence
+    data = request.get_json(silent=True) or {}
+    packages = data.get("packages") or data.get("tools") or []
+    findings = mcp_intelligence.scan_mcp_manifest_for_typosquatting(packages)
+    return jsonify({"findings": findings, "count": len(findings)})
+
+
+@app.route("/api/mcp/diff-permissions", methods=["POST"])
+def api_mcp_diff_permissions():
+    """Performs deep permission and capability diffing between baseline and current MCP tools."""
+    import mcp_intelligence
+    data = request.get_json(silent=True) or {}
+    baseline_tool = data.get("baseline_tool", {})
+    current_tool = data.get("current_tool", {})
+    diff = mcp_intelligence.diff_tool_permissions(baseline_tool, current_tool)
+    return jsonify(diff)
+
+
+@app.route("/api/finding/<finding_id>/verify", methods=["POST"])
+def api_finding_verify(finding_id):
+    """
+    Find -> Fix -> Verify workflow: Rescans target to verify whether the specified finding was resolved.
+    """
+    data = request.get_json(silent=True) or {}
+    target = data.get("target")
+    scan_type = data.get("scan_type", "website")
+    project_id = data.get("project_id")
+
+    if not target and project_id:
+        proj = saas_store.get_project(project_id, "org-default")
+        if proj:
+            target = proj.get("website_url") or proj.get("repo_url")
+            scan_type = proj.get("target_type", "website")
+
+    if not target:
+        return jsonify({"error": "Target or project_id required for verification rescan."}), 400
+
+    try:
+        if scan_type == "website":
+            res = execute_website_scan(target, auth_confirmed=True)
+        elif scan_type == "mcp":
+            res = execute_mcp_scan(target, full_scan=False, auth_confirmed=True)
+        else:
+            res = execute_scan(target, full_scan=False, auth_confirmed=True)
+
+        # Check if finding still exists
+        remaining_ids = [f.get("id") or f.get("finding_id") for f in res.get("findings", [])]
+        is_fixed = finding_id not in remaining_ids
+
+        if is_fixed:
+            saas_store.set_finding_status(finding_id, "verified")
+            if project_id:
+                delta_engine.compute_and_record_scan_delta(project_id, res, org_id="org-default")
+            alerts.dispatch_security_alert("FIX_VERIFIED", target, f"Finding {finding_id} Verified", "Remediation verified clean via automated rescan.", severity="LOW")
+            return jsonify({
+                "status": "VERIFIED",
+                "message": "Vulnerability verified as resolved. Status updated to VERIFIED.",
+                "is_fixed": True,
+                "score": res.get("score"),
+                "grade": res.get("grade")
+            }), 200
+        else:
+            return jsonify({
+                "status": "STILL_VULNERABLE",
+                "message": "Vulnerability was still detected during verification scan. Please verify code patch.",
+                "is_fixed": False,
+                "score": res.get("score"),
+                "grade": res.get("grade")
+            }), 200
+    except Exception as e:
+        return jsonify({"error": f"Verification scan failed: {e}"}), 500
+
+
+@app.route("/api/finding/<finding_id>/remediate", methods=["GET", "POST"])
+def api_finding_remediate(finding_id):
+    """Returns Fix Center package and Cursor/Claude Code/Copilot prompt for a finding."""
+    data = request.get_json(silent=True) or {}
+    finding_obj = data.get("finding") or {"id": finding_id, "title": "Security Vulnerability", "severity": "HIGH"}
+    card = prioritizer.create_fix_card(finding_obj)
+    override = saas_store.get_finding_override(finding_id)
+    return jsonify({
+        "finding_id": finding_id,
+        "title": card.get("title"),
+        "severity": card.get("severity"),
+        "why_this_matters": card.get("why_this_matters"),
+        "what_to_do": card.get("what_to_do"),
+        "how_to_verify": card.get("how_to_verify"),
+        "ai_fix_prompt": card.get("ai_prompt"),
+        "override": override,
+    })
+
+
+@app.route("/api/advisor/query", methods=["POST"])
+def api_advisor_query():
+    """Interactive AI Security Advisor grounded strictly on real scan findings."""
+    data = request.get_json(silent=True) or {}
+    query = data.get("query", "")
+    target = data.get("target", "")
+    scan_id = data.get("scan_id")
+
+    scan_result = None
+    if scan_id:
+        record = scan_manager.get_scan_job(scan_id)
+        if record and record.get("result"):
+            scan_result = record["result"]
+
+    if not scan_result and target:
+        scan_result = get_last_scan_result(target)
+
+    if not scan_result:
+        # Fallback to first project
+        projs = saas_store.list_projects_for_org("org-default")
+        if projs and projs[0].get("last_scan_result"):
+            scan_result = projs[0]["last_scan_result"]
+
+    if not scan_result:
+        return jsonify({
+            "answer": "No active scan findings found for this target. Please execute a scan first.",
+            "referenced_findings": [],
+        }), 200
+
+    from ai_analyst import query_ai_security_advisor
+    response = query_ai_security_advisor(query, scan_result)
+    return jsonify(response), 200
+
+
+@app.route("/report/html")
+@app.route("/report/technical")
+def report_html_endpoint():
+    """Exports printable TrustAudit HTML/PDF technical security audit report."""
+    target = request.args.get("target") or request.args.get("repo") or request.args.get("url") or ""
+    if not target:
+        projs = saas_store.list_projects_for_org("org-default")
+        if projs and projs[0].get("last_scan_result"):
+            result = projs[0]["last_scan_result"]
+        else:
+            return "Target parameter required (?target=... or ?repo=...)", 400
+    else:
+        if is_github_repo_url(target) or os.path.exists(target):
+            result = execute_scan(target, False)
+        else:
+            result = execute_website_scan(target)
+    html = generate_technical_report(result)
+    return Response(html, mimetype="text/html")
+
+
+@app.route("/report/executive")
+def report_executive_endpoint():
+    """Exports executive summary report designed for founders and management."""
+    target = request.args.get("target") or request.args.get("repo") or request.args.get("url") or ""
+    if not target:
+        projs = saas_store.list_projects_for_org("org-default")
+        if projs and projs[0].get("last_scan_result"):
+            result = projs[0]["last_scan_result"]
+        else:
+            return "Target parameter required (?target=... or ?repo=...)", 400
+    else:
+        if is_github_repo_url(target) or os.path.exists(target):
+            result = execute_scan(target, False)
+        else:
+            result = execute_website_scan(target)
+    html = generate_executive_report(result)
+    return Response(html, mimetype="text/html")
+
+
+@app.route("/api/report/json")
+def report_json_endpoint():
+    """Exports structured JSON security audit report."""
+    target = request.args.get("target") or request.args.get("repo") or request.args.get("url") or ""
+    if not target:
+        return jsonify({"error": "Target parameter required (?target=... or ?repo=...)"}), 400
+    if is_github_repo_url(target) or os.path.exists(target):
+        result = execute_scan(target, False)
+    else:
+        result = execute_website_scan(target)
+    json_data = generate_json_report(result)
+    return jsonify(json_data)
+
+
+@app.route("/api/history")
+def history_endpoint():
+    target = request.args.get("target") or request.args.get("repo") or request.args.get("url") or ""
+    history = get_scan_history(target)
+    return jsonify({"target": target, "history": history})
+
+
+@app.route("/api/baseline", methods=["GET", "POST"])
+def baseline_endpoint():
+    from baseline_store import set_security_baseline, get_security_baseline
+    if request.method == "POST":
+        data = request.get_json(silent=True) or {}
+        github_url = data.get("github_url")
+        if not github_url:
+            return jsonify({"error": "Missing github_url"}), 400
+        scan_result = execute_scan(github_url, False)
+        record = set_security_baseline(github_url, scan_result)
+        return jsonify({"status": "success", "baseline": record}), 200
+    else:
+        github_url = request.args.get("repo", "")
+        baseline = get_security_baseline(github_url)
+        return jsonify({"github_url": github_url, "baseline": baseline})
+
+
+@app.route("/api/webhook/github", methods=["POST"])
+def github_webhook():
+    payload = request.get_json(silent=True) or {}
+    repo_info = payload.get("repository", {})
+    clone_url = repo_info.get("clone_url") or repo_info.get("html_url")
+
+    if not clone_url:
+        return jsonify({"status": "ignored", "reason": "No repository clone_url found"}), 200
+
+    try:
+        result = execute_scan(clone_url, False)
+        return jsonify({
+            "status": "success",
+            "repository": clone_url,
+            "score": result.get("score"),
+            "grade": result.get("grade"),
+        }), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 
 if __name__ == "__main__":
-    # debug=True was turned OFF on purpose: Flask's debug mode exposes an
-    # interactive in-browser console on unhandled errors, which lets
-    # anyone who triggers a crash run arbitrary Python on the server.
-    # Since this app clones and analyzes untrusted, attacker-controlled
-    # repo content, an unexpected crash is a realistic scenario - so this
-    # console must never be reachable, even accidentally.
     app.run(debug=False, threaded=True)

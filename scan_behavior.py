@@ -27,7 +27,7 @@ def scan_file(filepath):
         return []
     return scan_text(content)
 
-def scan_folder(folder, max_files=None):
+def scan_folder(folder, max_files=None, include_tests=False):
     results = {}
     count = 0
     for root, dirs, files in os.walk(folder):
@@ -35,7 +35,7 @@ def scan_folder(folder, max_files=None):
         for file in files:
             if file.endswith(".py"):
                 filepath = os.path.join(root, file)
-                if is_test_path(filepath):
+                if not include_tests and is_test_path(filepath):
                     continue
                 findings = scan_file(filepath)
                 if findings:
@@ -44,6 +44,7 @@ def scan_folder(folder, max_files=None):
                 if max_files is not None and count >= max_files:
                     return results
     return results
+
 
 
 if __name__ == "__main__":

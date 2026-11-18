@@ -21,37 +21,32 @@ JS_TS_EXTENSIONS = (".js", ".ts", ".mjs", ".cjs", ".jsx", ".tsx")
 
 
 def is_test_or_build_path(path):
-    """
-    Skips test files and build/dependency output, which would otherwise
-    flood results with noise or duplicated/vendored code: node_modules is
-    other people's installed packages, not this project's own code, and
-    dist/build is just compiled output of the same source already scanned.
-    """
     normalized = path.replace("\\", "/").lower()
     parts = normalized.split("/")
-    if any(part in ("node_modules", "dist", "build", "test", "tests", "__tests__", ".next", "coverage") for part in parts):
+    if any(part in ("node_modules", "dist", "build", ".next", "coverage") for part in parts):
         return True
     filename = parts[-1]
     return (
         filename.endswith(".test.js") or filename.endswith(".test.ts") or
         filename.endswith(".spec.js") or filename.endswith(".spec.ts") or
-        filename.endswith(".d.ts")  # type declaration files never contain real tool logic
+        filename.endswith(".d.ts")
     )
 
 
-def find_js_ts_files(folder, max_files=None):
+def find_js_ts_files(folder, max_files=None, include_tests=False):
     matches = []
     for root, dirs, files in os.walk(folder):
         dirs[:] = [d for d in dirs if d.lower() not in ("node_modules", "dist", "build", ".next", "coverage", ".git", ".venv", "venv", ".pytest_cache")]
         for file in files:
             if file.endswith(JS_TS_EXTENSIONS):
                 filepath = os.path.join(root, file)
-                if is_test_or_build_path(filepath):
+                if not include_tests and is_test_or_build_path(filepath):
                     continue
                 matches.append(filepath)
                 if max_files is not None and len(matches) >= max_files:
                     return matches
     return matches
+
 
 
 # --- Tool extraction -----------------------------------------------------
@@ -165,9 +160,9 @@ def extract_tools_from_js_file(filepath):
     return tools_found
 
 
-def scan_folder_for_js_tools(folder, max_files=None):
+def scan_folder_for_js_tools(folder, max_files=None, include_tests=False):
     all_tools = []
-    for filepath in find_js_ts_files(folder, max_files=max_files):
+    for filepath in find_js_ts_files(folder, max_files=max_files, include_tests=include_tests):
         all_tools.extend(extract_tools_from_js_file(filepath))
     return all_tools
 
@@ -202,10 +197,10 @@ def scan_js_file(filepath):
     return scan_js_text(content)
 
 
-def scan_js_folder(folder, max_files=None):
+def scan_js_folder(folder, max_files=None, include_tests=False):
     results = {}
     count = 0
-    for filepath in find_js_ts_files(folder, max_files=max_files):
+    for filepath in find_js_ts_files(folder, max_files=max_files, include_tests=include_tests):
         findings = scan_js_file(filepath)
         if findings:
             results[filepath] = findings
@@ -213,6 +208,7 @@ def scan_js_folder(folder, max_files=None):
         if max_files is not None and count >= max_files:
             break
     return results
+
 
 
 

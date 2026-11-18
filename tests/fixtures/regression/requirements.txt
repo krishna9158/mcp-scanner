@@ -1,0 +1,4 @@
+urllib3==1.26.4
+requests==2.25.0
+reqeusts==2.25.0
+flask==2.0.1

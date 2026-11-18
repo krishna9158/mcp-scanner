@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "calculator": {
+      "command": "python",
+      "args": ["test.py"],
+      "description": "Safe math helper tool"
+    }
+  }
+}

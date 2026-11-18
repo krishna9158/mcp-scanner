@@ -5,25 +5,24 @@ import re
 def is_test_path(path):
     normalized = path.replace("\\", "/").lower()
     parts = normalized.split("/")
-    if any(part in ("test", "tests", "testing") for part in parts):
-        return True
     filename = parts[-1]
     return filename.startswith("test_") or filename.endswith("_test.py") or filename == "conftest.py"
 
 
-def find_server_files(folder, max_files=None):
+def find_server_files(folder, max_files=None, include_tests=False):
     matches = []
     for root, dirs, files in os.walk(folder):
         dirs[:] = [d for d in dirs if d.lower() not in (".git", "node_modules", "dist", "build", "vendor", "third_party", ".pytest_cache", ".venv", "venv")]
         for file in files:
             if file.endswith(".py"):
                 filepath = os.path.join(root, file)
-                if is_test_path(filepath):
+                if not include_tests and is_test_path(filepath):
                     continue
                 matches.append(filepath)
                 if max_files is not None and len(matches) >= max_files:
                     return matches
     return matches
+
 
 def build_enum_value_map(content):
     enum_map = {}
@@ -268,9 +267,10 @@ def extract_tools_from_file(filepath):
     return tools_found
 
 
-def scan_folder_for_tools(folder, max_files=None):
+def scan_folder_for_tools(folder, max_files=None, include_tests=False):
     all_tools = []
-    files = find_server_files(folder, max_files=max_files)
+    files = find_server_files(folder, max_files=max_files, include_tests=include_tests)
+
     for filepath in files:
         try:
             with open(filepath, "r", encoding="utf-8", errors="ignore") as f:

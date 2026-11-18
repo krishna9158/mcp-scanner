@@ -61,3 +61,81 @@ def scan_requirements_for_typosquatting(package_names):
         if result:
             findings.append(result)
     return findings
+
+
+# ---------------------------------------------------------------------------
+# Popular Legitimate MCP Servers (17 well-known official & community servers)
+# ---------------------------------------------------------------------------
+POPULAR_MCP_SERVERS = [
+    "@modelcontextprotocol/server-filesystem",
+    "@modelcontextprotocol/server-github",
+    "@modelcontextprotocol/server-postgres",
+    "@modelcontextprotocol/server-sqlite",
+    "@modelcontextprotocol/server-brave-search",
+    "@modelcontextprotocol/server-fetch",
+    "@modelcontextprotocol/server-puppeteer",
+    "@modelcontextprotocol/server-slack",
+    "@modelcontextprotocol/server-gitlab",
+    "@modelcontextprotocol/server-google-drive",
+    "@modelcontextprotocol/server-memory",
+    "@modelcontextprotocol/server-everything",
+    "mcp-server-git",
+    "mcp-server-sqlite",
+    "mcp-server-docker",
+    "mcp-server-fetch",
+    "mcp-server-kubernetes",
+]
+
+
+def check_mcp_typosquatting(package_name):
+    """
+    Checks if an MCP package name closely resembles one of the popular
+    legitimate MCP servers using a similarity-distance check.
+    """
+    if not package_name or not isinstance(package_name, str):
+        return None
+
+    name_clean = package_name.strip().lower()
+
+    # Exact match against popular list is legitimate
+    if name_clean in [s.lower() for s in POPULAR_MCP_SERVERS]:
+        return None
+
+    for popular in POPULAR_MCP_SERVERS:
+        pop_clean = popular.lower()
+
+        # Homoglyphs check (e.g. 0 <-> o, 1 <-> l, rn <-> m)
+        norm_name = name_clean.replace("0", "o").replace("1", "l").replace("rn", "m")
+        norm_pop = pop_clean.replace("0", "o").replace("1", "l").replace("rn", "m")
+        if norm_name == norm_pop and name_clean != pop_clean:
+            return {
+                "package": package_name,
+                "resembles": popular,
+                "distance": 1,
+                "reason": f"'{package_name}' uses visual character substitution to impersonate popular MCP server '{popular}'."
+            }
+
+        if abs(len(name_clean) - len(pop_clean)) > 3:
+            continue
+
+        dist = levenshtein_distance(name_clean, pop_clean)
+        if 0 < dist <= 2:
+            return {
+                "package": package_name,
+                "resembles": popular,
+                "distance": dist,
+                "reason": f"'{package_name}' closely resembles popular MCP server '{popular}' (edit distance {dist}) - possible typosquatting."
+            }
+
+    return None
+
+
+def scan_mcp_packages_for_typosquatting(package_names):
+    """Scans a list of MCP package or tool names for typosquatting."""
+    findings = []
+    for name in package_names:
+        result = check_mcp_typosquatting(name)
+        if result:
+            findings.append(result)
+    return findings
+
