@@ -378,3 +378,152 @@ class TestTenantIsolationAndNegativeAccessControl:
         headers_b = {"Authorization": f"Bearer {token_b}"}
         res_cross_proj = client.get(f"/api/projects/{proj_a_id}/prioritized-fixes", headers=headers_b)
         assert res_cross_proj.status_code == 404, "Tenant B must NOT be able to access Tenant A project"
+
+
+class TestInteractiveTrustCentreAndPublicEndpoints:
+    """
+    Automated verification of the Interactive Security & Compliance Command Centre:
+    - Public /trust page rendering, security disclosures, and interactive component anchors
+    - Public /api/public/trust-status telemetry endpoint (rate-safe, zero leaked PII/tokens)
+    - Public /api/public/trust-pack/download (ZIP and Markdown formats)
+    - Trust Pack builder service document coverage and disclaimers
+    """
+    @pytest.fixture
+    def client(self):
+        import app
+        app.app.config["TESTING"] = True
+        return app.app.test_client()
+
+    def test_public_trust_center_interactive_components(self, client):
+        res = client.get("/trust")
+        assert res.status_code == 200
+        html = res.data.decode("utf-8")
+
+        # Verify page branding and key sections
+        assert "TrustAudit" in html
+        assert "Security, Compliance &amp; Trust Center" in html or "Security, Compliance & Trust Center" in html
+        assert "Verified Security Architecture" in html
+        assert "Framework Explorer & Control Mappings" in html
+        assert "Test Secret Redaction Sandbox" in html
+        assert "Enterprise Security Questionnaire Simulator" in html
+        assert "Interactive Repository Processing Pipeline" in html
+        assert "Download Enterprise Trust Pack" in html
+
+        # Verify statutory legal accuracy (DPDP 2023 & Rules 2025 timeline)
+        assert "Digital Personal Data Protection Act, 2023" in html
+        assert "13 November 2026" in html
+        assert "13 May 2027" in html
+        assert "Section 6(9)" in html
+        assert "Section 8(5)" in html
+
+        # Verify required professional disclaimers
+        assert "does not issue formal regulatory certifications" in html
+        assert "certified SOC 2 Type II reports" in html
+        assert "accredited ISO 27001 certificates" in html
+        assert "registered statutory Consent Manager" in html
+
+        # Verify interactive JS function bindings
+        assert "sandbox-input-val" in html
+        assert "runMaskingDemo" in html
+        assert "runQuestionnaireSimulator" in html
+        assert "inspectNode" in html
+        assert "tele-records" in html
+        assert "openTrustPackModal" in html
+
+    def test_public_trust_status_telemetry_endpoint(self, client):
+        res = client.get("/api/public/trust-status")
+        assert res.status_code == 200
+        assert res.content_type == "application/json"
+        data = res.get_json()
+
+        assert data["status"] == "healthy"
+        assert "timestamp" in data
+
+        # CISA KEV telemetry
+        assert "kev_sync" in data
+        assert data["kev_sync"]["status"] == "Healthy"
+        assert data["kev_sync"]["catalog_entries"] >= 1000
+        assert "CISA" in data["kev_sync"]["source"]
+
+        # Tenant isolation verified test suite
+        assert "tenant_isolation" in data
+        assert data["tenant_isolation"]["tests_executed"] >= 18
+        assert data["tenant_isolation"]["tests_passed"] >= 18
+        assert data["tenant_isolation"]["last_test_status"] == "passed"
+        assert "v2.4-negative-isolation" in data["tenant_isolation"]["test_suite_version"]
+
+        # Security controls
+        assert "security_controls" in data
+        assert "PBKDF2" in data["security_controls"]["password_hashing"]
+        assert "TLS" in data["security_controls"]["encryption_in_transit"]
+
+        # Negative security assert: Zero customer PII, tenant records, or auth secrets exposed
+        raw_json_str = json.dumps(data)
+        assert "user_id" not in raw_json_str
+        assert "secret_key" not in raw_json_str
+        assert "api_key" not in raw_json_str
+        assert "users" not in data
+        assert "organizations" not in data
+        assert "@" not in raw_json_str  # No customer emails leaked
+
+    def test_public_trust_pack_download_zip(self, client):
+        import io
+        import zipfile
+
+        res = client.get("/api/public/trust-pack/download?format=zip")
+        assert res.status_code == 200
+        assert res.content_type == "application/zip"
+        assert "attachment" in res.headers.get("Content-Disposition", "")
+
+        # Verify zip structure
+        zip_buf = io.BytesIO(res.data)
+        with zipfile.ZipFile(zip_buf, "r") as zf:
+            namelist = zf.namelist()
+            assert len(namelist) >= 8
+            assert any("01_TrustAudit_Security_Overview.md" in name for name in namelist)
+            assert any("02_DPDP_2023_Readiness_Mapping.md" in name for name in namelist)
+            assert any("03_SOC2_Control_Mapping.md" in name for name in namelist)
+            assert any("04_ISO27001_Control_Mapping.md" in name for name in namelist)
+
+            # Check that disclaimer is inside security overview
+            overview_content = zf.read([n for n in namelist if "01_TrustAudit_Security_Overview" in n][0]).decode("utf-8")
+            assert "TrustAudit" in overview_content
+            assert "Notice & Disclaimer" in overview_content or "DISCLAIMER" in overview_content
+
+    def test_public_trust_pack_download_markdown(self, client):
+        res = client.get("/api/public/trust-pack/download?format=markdown")
+        assert res.status_code == 200
+        assert "text/markdown" in res.content_type
+        md_text = res.data.decode("utf-8")
+
+        assert "# TrustAudit Enterprise Trust Pack Bundle" in md_text
+        assert "Digital Personal Data Protection Act, 2023" in md_text
+        assert "13 November 2026" in md_text
+        assert "13 May 2027" in md_text
+        assert "SOC 2" in md_text
+        assert "ISO/IEC 27001:2022" in md_text
+
+    def test_trust_pack_service_unit(self):
+        import trust_pack_service
+
+        docs = trust_pack_service.APPROVED_DOCUMENTS
+        assert len(docs) == 8
+        doc_ids = list(docs.keys())
+        assert "overview" in doc_ids
+        assert "dpdp" in doc_ids
+        assert "soc2" in doc_ids
+        assert "iso27001" in doc_ids
+        assert "retention" in doc_ids
+        assert "subprocessors" in doc_ids
+        assert "disclosure" in doc_ids
+        assert "architecture" in doc_ids
+
+        # Test markdown builder with subset
+        subset_md = trust_pack_service.build_trust_pack_consolidated_markdown(["overview"])
+        assert "Security Overview & Posture Statement" in subset_md
+        assert "DPDP Act 2023 & DPDP Rules 2025 Readiness Mapping" not in subset_md
+
+        # Test zip builder
+        zip_bytes = trust_pack_service.build_trust_pack_zip(["overview", "dpdp"])
+        assert len(zip_bytes) > 500
+
