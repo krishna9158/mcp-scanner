@@ -272,6 +272,7 @@ DPDP_LANDING_HTML = """<!doctype html>
                 <span class="logo-badge">DPDP Platform</span>
             </a>
             <ul class="nav-links">
+                <li><a href="/dashboard#scanner" style="color: var(--brand-primary); font-weight: 700;">Website Scanner <span style="font-size: 10px; background: #dcfce7; color: #15803d; padding: 2px 6px; border-radius: 9999px;">NEW</span></a></li>
                 <li><a href="#pillars">Core Pillars</a></li>
                 <li><a href="#modules">Product Modules</a></li>
                 <li><a href="#industries">Industries</a></li>
@@ -303,8 +304,12 @@ DPDP_LANDING_HTML = """<!doctype html>
                         <span>Start Free Assessment</span>
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                     </button>
+                    <a href="/dashboard#scanner" class="btn btn-secondary" style="border-color: var(--brand-primary); color: var(--brand-primary); font-weight: 700;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/></svg>
+                        <span>Scan Your Website &rarr;</span>
+                    </a>
                     <a href="#experience" class="btn btn-secondary">
-                        <span>Explore the Platform</span>
+                        <span>Explore Platform</span>
                     </a>
                 </div>
                 <div class="hero-trust-strip">
@@ -508,7 +513,19 @@ DPDP_LANDING_HTML = """<!doctype html>
             </div>
 
             <div class="bento-grid">
-                <!-- 01 -->
+                <!-- 00 WEBSITE SCANNER -->
+                <div class="bento-item" style="border-color: #38bdf8; background: linear-gradient(180deg, #ffffff 0%, #f0f9ff 100%);">
+                    <div class="bento-icon" style="background: #e0f2fe; color: #0284c7;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg></div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                        <h4 style="margin-bottom: 0;">01. DPDP Website Scanner</h4>
+                        <span style="font-size: 10px; font-weight: 800; background: #0284c7; color: #ffffff; padding: 2px 7px; border-radius: 9999px;">NEW FEATURE</span>
+                    </div>
+                    <p>Passive perimeter discovery engine. Inspects public pages, evaluates Section 5 privacy notices, flags pre-ticked consent checkboxes, and audits third-party tracking scripts.</p>
+                    <div class="bento-preview">Observation: Notice &bull; Forms &bull; Trackers &bull; Grievance Redressal</div>
+                    <a href="/dashboard#scanner" class="bento-link" style="color: #0284c7;">Launch Website Scanner &rarr;</a>
+                </div>
+
+                <!-- 01 ASSESSMENT -->
                 <div class="bento-item">
                     <div class="bento-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
                     <h4>01. DPDP Assessment Engine</h4>

@@ -1788,6 +1788,117 @@ def api_dpdp_assistant():
     res = dpdp_engine.query_dpdp_assistant(query)
     return jsonify(res), 200
 
+
+# ==============================================================================
+# DPDP WEBSITE SCANNER & GAP DETECTION API
+# ==============================================================================
+
+@app.route("/api/dpdp/scanner/start", methods=["POST"])
+def api_dpdp_start_website_scan():
+    """Starts a safe, non-invasive DPDP website compliance scan."""
+    org_id, _ = get_current_tenant_and_user()
+    org_id = org_id or "org-default"
+    data = request.get_json(silent=True) or {}
+
+    target_url = data.get("website_url", "").strip()
+    business_name = data.get("business_name", "").strip() or "Organisation"
+    industry = data.get("industry", "healthcare").strip()
+    country = data.get("country", "India").strip()
+    business_type = data.get("business_type", "Clinic / Healthcare Provider").strip()
+    website_purpose = data.get("website_purpose", "Healthcare Services & Appointments").strip()
+    collects_personal_info = bool(data.get("collects_personal_info", True))
+    children_data_processed = bool(data.get("children_data_processed", False))
+    known_data_types = data.get("known_data_types", [])
+    authorization_confirmed = bool(data.get("authorization_confirmed", False))
+    is_demo = bool(data.get("is_demo", False)) or "example" in target_url.lower()
+
+    if not authorization_confirmed:
+        return jsonify({
+            "status": "error",
+            "message": "Explicit authorization or ownership confirmation is required prior to initiating a DPDP website scan."
+        }), 400
+
+    if not target_url:
+        return jsonify({"status": "error", "message": "Website URL is required."}), 400
+
+    # If demo mode requested or simulated URL
+    if is_demo:
+        import dpdp_website_scanner
+        scan_report = dpdp_website_scanner.generate_demo_website_scan(
+            business_name=business_name,
+            target_url=target_url,
+            industry=industry
+        )
+        dpdp_store.save_website_scan(org_id, scan_report)
+        return jsonify({"status": "success", "scan": scan_report}), 200
+
+    # Real scan execution
+    import dpdp_website_scanner
+    scanner = dpdp_website_scanner.DPDPWebsiteScanner(
+        target_url=target_url,
+        business_name=business_name,
+        industry=industry,
+        country=country,
+        business_type=business_type,
+        website_purpose=website_purpose,
+        collects_personal_info=collects_personal_info,
+        children_data_processed=children_data_processed,
+        known_data_types=known_data_types,
+        authorization_confirmed=authorization_confirmed,
+        max_pages=20
+    )
+    scan_report = scanner.run_scan()
+    dpdp_store.save_website_scan(org_id, scan_report)
+    return jsonify({"status": "success", "scan": scan_report}), 200
+
+
+@app.route("/api/dpdp/scanner/history", methods=["GET"])
+def api_dpdp_scanner_history():
+    """Retrieves all past DPDP website scans for the active organization."""
+    org_id, _ = get_current_tenant_and_user()
+    org_id = org_id or "org-default"
+    scans = dpdp_store.get_website_scans(org_id)
+    return jsonify({"status": "success", "scans": scans, "count": len(scans)}), 200
+
+
+@app.route("/api/dpdp/scanner/results/<scan_id>", methods=["GET"])
+def api_dpdp_scanner_results(scan_id):
+    """Retrieves a specific website scan report by ID."""
+    org_id, _ = get_current_tenant_and_user()
+    org_id = org_id or "org-default"
+    scan = dpdp_store.get_website_scan_by_id(org_id, scan_id)
+    if not scan:
+        return jsonify({"status": "error", "message": "Scan report not found."}), 404
+    return jsonify({"status": "success", "scan": scan}), 200
+
+
+@app.route("/api/dpdp/scanner/<scan_id>", methods=["DELETE"])
+def api_dpdp_scanner_delete(scan_id):
+    """Permanently deletes a scan report for tenant privacy and data minimization."""
+    org_id, _ = get_current_tenant_and_user()
+    org_id = org_id or "org-default"
+    deleted = dpdp_store.delete_website_scan(org_id, scan_id)
+    return jsonify({"status": "success", "deleted": deleted}), 200
+
+
+@app.route("/api/dpdp/scanner/convert-task", methods=["POST"])
+def api_dpdp_scanner_convert_task():
+    """Converts a website scan finding into an internal remediation task."""
+    org_id, _ = get_current_tenant_and_user()
+    org_id = org_id or "org-default"
+    data = request.get_json(silent=True) or {}
+    scan_id = data.get("scan_id")
+    finding_id = data.get("finding_id")
+    assignee = data.get("assignee", "Privacy Lead")
+
+    if not scan_id or not finding_id:
+        return jsonify({"status": "error", "message": "scan_id and finding_id are required."}), 400
+
+    task = dpdp_store.convert_scan_finding_to_remediation_task(org_id, scan_id, finding_id, assignee)
+    if not task:
+        return jsonify({"status": "error", "message": "Finding not found or conversion failed."}), 404
+    return jsonify({"status": "success", "task": task}), 201
+
 # ==============================================================================
 # PUBLIC TRUST, SECURITY & PRIVACY PORTAL
 # ==============================================================================

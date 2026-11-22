@@ -128,6 +128,36 @@ DASHBOARD_HTML = """<!doctype html>
         .chat-bubble { padding: 12px 14px; border-radius: var(--radius-md); font-size: 13px; line-height: 1.5; }
         .chat-user { background: var(--brand-primary); color: #ffffff; align-self: flex-end; max-width: 80%; }
         .chat-ai { background: var(--bg-card); border: 1px solid var(--border-color); color: #f1f5f9; align-self: flex-start; max-width: 90%; }
+
+        /* WEBSITE SCANNER STYLES & RADAR MOTION */
+        .scanner-hero { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 24px; margin-bottom: 24px; }
+        @media (max-width: 960px) { .scanner-hero { grid-template-columns: 1fr; } }
+        .radar-box { position: relative; width: 150px; height: 150px; border-radius: 50%; border: 2px solid rgba(56, 189, 248, 0.3); display: flex; align-items: center; justify-content: center; background: radial-gradient(circle, rgba(56, 189, 248, 0.1) 0%, transparent 70%); margin: 0 auto; }
+        .radar-ring { position: absolute; inset: 18px; border-radius: 50%; border: 1px dashed rgba(56, 189, 248, 0.25); }
+        .radar-sweep { position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(from 0deg, transparent 0deg, transparent 270deg, rgba(56, 189, 248, 0.45) 360deg); animation: radarRotate 2.2s linear infinite; }
+        .radar-center-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--brand-accent); box-shadow: 0 0 14px var(--brand-accent); z-index: 2; }
+        @keyframes radarRotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .scanner-visual-card { background: linear-gradient(145deg, #0f172a, #0b1120); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+        .scanner-node-tag { position: absolute; font-size: 10.5px; font-weight: 700; padding: 4px 8px; border-radius: 6px; background: rgba(15, 23, 42, 0.85); border: 1px solid var(--border-color); backdrop-filter: blur(4px); color: var(--text-muted); }
+        .node-tag-1 { top: 18px; left: 18px; color: #38bdf8; border-color: rgba(56, 189, 248, 0.3); }
+        .node-tag-2 { bottom: 20px; left: 20px; color: #34d399; border-color: rgba(52, 211, 153, 0.3); }
+        .node-tag-3 { top: 22px; right: 18px; color: #fbbf24; border-color: rgba(251, 191, 36, 0.3); }
+        .node-tag-4 { bottom: 22px; right: 20px; color: #f87171; border-color: rgba(248, 113, 113, 0.3); }
+
+        .progress-stage-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px; }
+        @media (max-width: 800px) { .progress-stage-grid { grid-template-columns: 1fr; } }
+        .stage-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; color: var(--text-muted); transition: all 0.2s; }
+        .stage-item.stage-active { border-color: var(--brand-accent); color: #ffffff; background: rgba(56, 189, 248, 0.12); }
+        .stage-item.stage-done { border-color: var(--brand-emerald); color: var(--brand-emerald); background: rgba(16, 185, 129, 0.1); }
+
+        .finding-card { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-lg); margin-bottom: 14px; overflow: hidden; transition: border-color 0.15s; }
+        .finding-card:hover { border-color: var(--border-subtle); }
+        .finding-header { padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none; }
+        .finding-header:hover { background: rgba(255, 255, 255, 0.02); }
+        .finding-body { padding: 0 20px 20px 20px; display: none; border-top: 1px solid var(--border-color); margin-top: 4px; padding-top: 16px; font-size: 13px; }
+        .finding-body.expanded { display: block; animation: fadeIn 0.2s ease; }
+        .filter-btn { padding: 6px 12px; font-size: 12px; font-weight: 600; border-radius: 9999px; background: var(--bg-card); color: var(--text-muted); border: 1px solid var(--border-color); cursor: pointer; }
+        .filter-btn.active { background: var(--brand-primary); color: #ffffff; border-color: var(--brand-primary); }
     </style>
 </head>
 <body>
@@ -146,6 +176,11 @@ DASHBOARD_HTML = """<!doctype html>
                 <a href="#overview" onclick="navTo('overview', this)" class="nav-item active">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
                     <span>Overview</span>
+                </a>
+                <a href="#scanner" onclick="navTo('scanner', this)" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg>
+                    <span>DPDP Website Scanner</span>
+                    <span class="nav-pill nav-pill-emerald">NEW</span>
                 </a>
                 <a href="#assessment" onclick="navTo('assessment', this)" class="nav-item">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
@@ -343,9 +378,252 @@ DASHBOARD_HTML = """<!doctype html>
                 </div>
 
                 <!-- ============================================================== -->
-                <!-- SECTION 2: DPDP ASSESSMENT                                     -->
+                <!-- SECTION: DPDP WEBSITE SCANNER                                  -->
                 <!-- ============================================================== -->
-                <div id="section-assessment" class="dash-section">
+                <div id="section-scanner" class="dash-section">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">DPDP Website Scanner &amp; Gap Detection</h1>
+                            <p class="page-subtitle">Scan your publicly accessible website for observable DPDP privacy gaps, trackers, form disclosures, and consent practices.</p>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button onclick="triggerWebsiteScan(true)" class="btn btn-secondary">Run Demo Scan</button>
+                            <a href="#history" onclick="document.getElementById('scanner-history-card').scrollIntoView({behavior: 'smooth'})" class="btn btn-secondary">Scan History</a>
+                        </div>
+                    </div>
+
+                    <!-- HERO SCANNER CONFIGURATION BENTO -->
+                    <div class="scanner-hero">
+                        <!-- LEFT: FORM INPUTS -->
+                        <div class="card" style="margin-bottom: 0;">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg>
+                                    <span>Target Website &amp; Business Profile</span>
+                                </div>
+                                <span class="badge-pill badge-emerald">Safe &bull; Passive Only</span>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                                <div class="form-group" style="grid-column: span 2;">
+                                    <label class="form-label">Website URL <span style="color: var(--brand-red);">*</span></label>
+                                    <input type="url" id="scanner-url" class="form-control" placeholder="https://exampleclinic.in" value="https://arogyaclinic.example.in">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Business Name</label>
+                                    <input type="text" id="scanner-biz-name" class="form-control" placeholder="e.g. Arogya Diagnostics Clinic" value="Arogya Diagnostics Clinic">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Industry <span style="color: var(--brand-red);">*</span></label>
+                                    <select id="scanner-industry" class="form-control" onchange="adaptIndustryChecks()">
+                                        <option value="healthcare" selected>Healthcare / Clinic / Diagnostics</option>
+                                        <option value="clinics">Speciality Clinics</option>
+                                        <option value="diagnostic centres">Diagnostic Laboratories</option>
+                                        <option value="hospitals">Hospitals &amp; Daycare Centres</option>
+                                        <option value="education">Education &amp; EdTech</option>
+                                        <option value="saas">SaaS &amp; Software Products</option>
+                                        <option value="ecommerce">E-Commerce &amp; Retail</option>
+                                        <option value="professional services">Professional Services</option>
+                                        <option value="other">Other Businesses</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Business Type</label>
+                                    <input type="text" id="scanner-biz-type" class="form-control" value="Diagnostic &amp; Healthcare Clinic">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Primary Website Purpose</label>
+                                    <input type="text" id="scanner-purpose" class="form-control" value="Patient Consultations, Test Bookings &amp; Telehealth">
+                                </div>
+                            </div>
+
+                            <!-- INDUSTRY SPECIFIC TOGGLES -->
+                            <div style="background: var(--bg-card); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); margin-bottom: 16px;">
+                                <div style="font-size: 11.5px; font-weight: 700; color: var(--brand-accent); text-transform: uppercase; margin-bottom: 10px;">Tailored DPDP Scope Checks</div>
+                                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12.5px;">
+                                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                        <input type="checkbox" id="scanner-collects-pii" checked>
+                                        <span>Website Collects Personal Data (Names, Mobile Numbers, Enquiries, Appointments)</span>
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                        <input type="checkbox" id="scanner-children-data" checked>
+                                        <span id="label-children-data">Processes Children's / Minor Data (Section 9 Verifiable Parental Consent Required)</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- MANDATORY AUTHORIZATION CHECKBOX -->
+                            <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 18px;">
+                                <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer; font-size: 12px; color: #f1f5f9;">
+                                    <input type="checkbox" id="scanner-auth-confirm" checked style="margin-top: 2px;">
+                                    <span><strong>Authorization Confirmation:</strong> I confirm that I own this website or have explicit authorization to assess its DPDP compliance readiness. The scan performs safe, non-invasive passive observation only.</span>
+                                </label>
+                            </div>
+
+                            <div style="display: flex; gap: 12px;">
+                                <button id="btn-start-scan" onclick="triggerWebsiteScan(false)" class="btn btn-primary" style="flex: 1; padding: 11px;">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                    <span>Start DPDP Website Scan</span>
+                                </button>
+                                <button id="btn-demo-scan" onclick="triggerWebsiteScan(true)" class="btn btn-secondary" style="padding: 11px 18px;">
+                                    <span>Instant Demo Scan</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- RIGHT: CERTINAL-STYLE RADAR VISUAL -->
+                        <div class="scanner-visual-card">
+                            <div class="scanner-node-tag node-tag-1">Section 5 &bull; Itemised Notice</div>
+                            <div class="scanner-node-tag node-tag-2">Section 6 &bull; Unpreselected Consent</div>
+                            <div class="scanner-node-tag node-tag-3">Section 8(2) &bull; Third-Party Trackers</div>
+                            <div class="scanner-node-tag node-tag-4">Section 13 &bull; Grievance Officer</div>
+
+                            <div class="radar-box">
+                                <div class="radar-ring"></div>
+                                <div class="radar-sweep"></div>
+                                <div class="radar-center-dot"></div>
+                            </div>
+
+                            <div style="text-align: center; margin-top: 24px;">
+                                <div style="font-size: 15px; font-weight: 800; color: #ffffff;">Automated Perimeter Audit</div>
+                                <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px; max-width: 280px;">Observes publicly published notices, form inputs, analytics scripts, and security headers without intrusive testing.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PROGRESS STAGES PANEL (VISIBLE WHEN RUNNING) -->
+                    <div id="scanner-progress-panel" class="card" style="display: none;">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <span class="spinner" style="display: inline-block; width: 14px; height: 14px; border: 2px solid #38bdf8; border-top-color: transparent; border-radius: 50%; animation: radarRotate 0.8s linear infinite;"></span>
+                                <span id="progress-status-text">Scanning Website: Connecting &amp; SSRF Verification...</span>
+                            </div>
+                            <span class="badge-pill badge-sky" id="progress-percent-badge">10%</span>
+                        </div>
+
+                        <div style="background: var(--bg-card); height: 8px; border-radius: 9999px; overflow: hidden; margin-bottom: 20px;">
+                            <div id="progress-bar-fill" style="width: 10%; height: 100%; background: linear-gradient(90deg, var(--brand-accent), var(--brand-emerald)); transition: width 0.3s ease;"></div>
+                        </div>
+
+                        <div class="progress-stage-grid">
+                            <div id="stage-01" class="stage-item stage-active">01 &bull; Connecting &amp; SSRF</div>
+                            <div id="stage-02" class="stage-item">02 &bull; Discovering Public Pages</div>
+                            <div id="stage-03" class="stage-item">03 &bull; Detecting Form Inputs</div>
+                            <div id="stage-04" class="stage-item">04 &bull; Analysing Privacy Notice</div>
+                            <div id="stage-05" class="stage-item">05 &bull; Inspecting Consent Checkboxes</div>
+                            <div id="stage-06" class="stage-item">06 &bull; Detecting Third-Party Trackers</div>
+                            <div id="stage-07" class="stage-item">07 &bull; Checking Rights &amp; Grievances</div>
+                            <div id="stage-08" class="stage-item">08 &bull; Mapping DPDP Penalties</div>
+                            <div id="stage-09" class="stage-item">09 &bull; Assembling Findings</div>
+                        </div>
+
+                        <div style="background: #090e17; border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 12px; font-family: monospace; font-size: 11px; color: #94a3b8; max-height: 120px; overflow-y: auto;" id="scanner-terminal-log">
+                            <div>[INFO] Initializing passive scanner worker...</div>
+                        </div>
+                    </div>
+
+                    <!-- RESULTS DASHBOARD (VISIBLE WHEN COMPLETE) -->
+                    <div id="scanner-results-panel" style="display: none;">
+                        <!-- TOP KPI METRICS -->
+                        <div class="grid-kpi">
+                            <div class="kpi-card">
+                                <div class="kpi-title">Pages Inspected</div>
+                                <div class="kpi-val" id="res-pages-count">0</div>
+                                <div class="kpi-sub" id="res-domain-sub">Target Domain</div>
+                            </div>
+                            <div class="kpi-card">
+                                <div class="kpi-title">Forms Discovered</div>
+                                <div class="kpi-val" id="res-forms-count">0</div>
+                                <div class="kpi-sub">Public Data Intakes</div>
+                            </div>
+                            <div class="kpi-card">
+                                <div class="kpi-title">Third-Party Services</div>
+                                <div class="kpi-val" id="res-trackers-count">0</div>
+                                <div class="kpi-sub">External Scripts &amp; Pixels</div>
+                            </div>
+                            <div class="kpi-card">
+                                <div class="kpi-title">DPDP Readiness Index</div>
+                                <div class="kpi-val" style="color: var(--brand-accent);" id="res-score-val">0%</div>
+                                <div class="kpi-sub" id="res-score-sub">Perimeter Readiness Score</div>
+                            </div>
+                        </div>
+
+                        <!-- FINDINGS CONTAINER -->
+                        <div class="card">
+                            <div class="card-header" style="flex-wrap: wrap; gap: 12px;">
+                                <div>
+                                    <div class="card-title" id="findings-title">Observed DPDP Compliance Gaps &amp; Safeguards</div>
+                                    <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Click any finding to inspect evidence, legal references, and potential statutory exposure.</div>
+                                </div>
+                                <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="findings-filter-bar">
+                                    <button class="filter-btn active" onclick="filterFindings('ALL')">All (<span id="count-all">0</span>)</button>
+                                    <button class="filter-btn" onclick="filterFindings('HIGH')">High (<span id="count-high">0</span>)</button>
+                                    <button class="filter-btn" onclick="filterFindings('MEDIUM')">Medium (<span id="count-med">0</span>)</button>
+                                    <button class="filter-btn" onclick="filterFindings('FUTURE')">Future Readiness</button>
+                                </div>
+                            </div>
+
+                            <!-- FINDINGS LIST -->
+                            <div id="findings-list-wrap">
+                                <!-- Cards injected dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- STATUTORY DISCLAIMER BANNER -->
+                        <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: var(--radius-md); padding: 18px 22px; margin-bottom: 24px; font-size: 12.5px; color: #f1f5f9; line-height: 1.6;">
+                            <strong style="color: #fbbf24; display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                                <span>Statutory Legal Notice &amp; Scope Limitation</span>
+                            </strong>
+                            A public website scan evaluates observable perimeter disclosures, forms, cookies, and technical headers. It does not establish complete legal compliance or non-compliance under the Digital Personal Data Protection Act, 2023. Internal controls such as employee access permissions, encryption at rest, and purpose-based retention schedules cannot be observed from a public website. Penalty amounts cited in findings reflect statutory maximum ceilings under the Schedule to the Act, not predicted or automatic fines.
+                        </div>
+
+                        <!-- BRIDGE TO FULL INTERNAL ASSESSMENT -->
+                        <div class="card" style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.9)); border: 1px solid var(--border-subtle);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+                                <div>
+                                    <h3 style="font-size: 16px; font-weight: 800; color: #ffffff;">Ready to Complete Your Full DPDP Compliance Journey?</h3>
+                                    <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Transition from public website discovery to comprehensive internal assessment, RoPA inventory, and evidence vault management.</p>
+                                </div>
+                                <button onclick="navTo('assessment')" class="btn btn-primary" style="padding: 10px 20px;">
+                                    <span>Continue With Full DPDP Assessment &rarr;</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SCAN HISTORY CARD -->
+                    <div class="card" id="scanner-history-card">
+                        <div class="card-header">
+                            <div class="card-title">Past Website Compliance Scans</div>
+                            <span class="badge-pill badge-sky" id="history-scans-count">0 Recorded</span>
+                        </div>
+                        <div class="table-wrap">
+                            <table class="dash-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date &amp; Time</th>
+                                        <th>Target Website</th>
+                                        <th>Industry</th>
+                                        <th>Pages Inspected</th>
+                                        <th>Observable Gaps</th>
+                                        <th>Readiness Score</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="scanner-history-tbody">
+                                    <tr>
+                                        <td colspan="7" style="text-align: center; color: var(--text-dim); padding: 24px;">No website scans recorded yet. Enter a URL above and click "Start DPDP Website Scan".</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
                     <div class="page-header">
                         <div>
                             <h1 class="page-title">DPDP Statutory Requirements Assessment</h1>
@@ -930,6 +1208,9 @@ DASHBOARD_HTML = """<!doctype html>
                     const evis = await eviRes.json();
                     renderEvidence(evis.evidence || []);
                 }
+
+                // 10. Load Website Scan History
+                await loadWebsiteScanHistory();
             } catch (err) {
                 console.warn('Backend DPDP data fetch fallback:', err);
             }
@@ -1236,6 +1517,398 @@ DASHBOARD_HTML = """<!doctype html>
                     headers: { 'Content-Type': 'application/json' }
                 });
                 await loadAllDpdpData();
+            }
+        }
+
+        // ==============================================================================
+        // DPDP WEBSITE SCANNER FUNCTIONS
+        // ==============================================================================
+        let activeScanReport = null;
+        let activeFilter = 'ALL';
+
+        function adaptIndustryChecks() {
+            const ind = (document.getElementById('scanner-industry').value || '').toLowerCase();
+            const childToggle = document.getElementById('scanner-children-data');
+            const childLabel = document.getElementById('label-children-data');
+            const purposeInput = document.getElementById('scanner-purpose');
+            const typeInput = document.getElementById('scanner-biz-type');
+
+            if (ind.includes('health') || ind.includes('clinic') || ind.includes('diag') || ind.includes('hosp')) {
+                if (childToggle) childToggle.checked = true;
+                if (childLabel) childLabel.textContent = "Processes Pediatric / Minor Patient Data (Section 9 Parental Consent)";
+                if (purposeInput) purposeInput.value = "Patient Consultations, Test Bookings & Telehealth";
+                if (typeInput) typeInput.value = "Diagnostic & Healthcare Clinic";
+            } else if (ind.includes('educat')) {
+                if (childToggle) childToggle.checked = true;
+                if (childLabel) childLabel.textContent = "Processes Student / Minor Records under 18 (Section 9 Verifiable Consent)";
+                if (purposeInput) purposeInput.value = "Student Admissions, Online Learning & Academic Enquiries";
+                if (typeInput) typeInput.value = "Educational Institution / EdTech";
+            } else if (ind.includes('saas')) {
+                if (childToggle) childToggle.checked = false;
+                if (childLabel) childLabel.textContent = "Children / Minor Data Processed (Toggle if intended for minors)";
+                if (purposeInput) purposeInput.value = "B2B SaaS Platform User Onboarding & Subscription Management";
+                if (typeInput) typeInput.value = "SaaS / Technology Company";
+            } else if (ind.includes('ecom')) {
+                if (childToggle) childToggle.checked = false;
+                if (purposeInput) purposeInput.value = "E-Commerce Shopping, Customer Orders & Deliveries";
+                if (typeInput) typeInput.value = "Online Retail Store";
+            }
+        }
+
+        async function triggerWebsiteScan(isDemo) {
+            const urlInput = document.getElementById('scanner-url');
+            const url = urlInput.value.trim();
+            const authConfirmed = document.getElementById('scanner-auth-confirm').checked;
+
+            if (!authConfirmed) {
+                alert('Please confirm website ownership or scan authorization before proceeding.');
+                return;
+            }
+
+            if (!url) {
+                alert('Please enter a target website URL.');
+                urlInput.focus();
+                return;
+            }
+
+            const btnStart = document.getElementById('btn-start-scan');
+            const btnDemo = document.getElementById('btn-demo-scan');
+            const progressPanel = document.getElementById('scanner-progress-panel');
+            const resultsPanel = document.getElementById('scanner-results-panel');
+            const progressBar = document.getElementById('progress-bar-fill');
+            const statusText = document.getElementById('progress-status-text');
+            const percentBadge = document.getElementById('progress-percent-badge');
+            const terminalLog = document.getElementById('scanner-terminal-log');
+
+            btnStart.disabled = true;
+            btnDemo.disabled = true;
+            resultsPanel.style.display = 'none';
+            progressPanel.style.display = 'block';
+            progressPanel.scrollIntoView({ behavior: 'smooth' });
+
+            terminalLog.innerHTML = `<div>[${new Date().toLocaleTimeString()}] Initializing DPDP passive scanner worker...</div>`;
+
+            // Stage animation simulation while backend runs
+            const stages = [
+                { id: 'stage-01', text: '01 · Connecting & SSRF Verification', pct: 15 },
+                { id: 'stage-02', text: '02 · Discovering Public Pages & Sitemaps', pct: 28 },
+                { id: 'stage-03', text: '03 · Detecting Personal Data Forms', pct: 40 },
+                { id: 'stage-04', text: '04 · Analysing Privacy Notice Disclosures', pct: 52 },
+                { id: 'stage-05', text: '05 · Inspecting Consent Checkboxes', pct: 64 },
+                { id: 'stage-06', text: '06 · Detecting Third-Party Trackers', pct: 75 },
+                { id: 'stage-07', text: '07 · Checking Rights & Grievance Information', pct: 85 },
+                { id: 'stage-08', text: '08 · Mapping DPDP Statutory Penalties', pct: 93 },
+                { id: 'stage-09', text: '09 · Generating Comprehensive Report', pct: 100 }
+            ];
+
+            let stageIdx = 0;
+            const stageTimer = setInterval(() => {
+                if (stageIdx < stages.length) {
+                    const st = stages[stageIdx];
+                    progressBar.style.width = st.pct + '%';
+                    percentBadge.textContent = st.pct + '%';
+                    statusText.textContent = st.text;
+                    document.querySelectorAll('.stage-item').forEach(el => el.classList.remove('stage-active'));
+                    const curEl = document.getElementById(st.id);
+                    if (curEl) {
+                        curEl.classList.add('stage-active');
+                        if (stageIdx > 0) {
+                            const prevEl = document.getElementById(stages[stageIdx - 1].id);
+                            if (prevEl) prevEl.classList.add('stage-done');
+                        }
+                    }
+                    terminalLog.innerHTML += `<div>[${new Date().toLocaleTimeString()}] ${st.text}... OK</div>`;
+                    terminalLog.scrollTop = terminalLog.scrollHeight;
+                    stageIdx++;
+                }
+            }, 600);
+
+            try {
+                const payload = {
+                    website_url: url,
+                    business_name: document.getElementById('scanner-biz-name').value.trim(),
+                    industry: document.getElementById('scanner-industry').value,
+                    business_type: document.getElementById('scanner-biz-type').value.trim(),
+                    website_purpose: document.getElementById('scanner-purpose').value.trim(),
+                    collects_personal_info: document.getElementById('scanner-collects-pii').checked,
+                    children_data_processed: document.getElementById('scanner-children-data').checked,
+                    authorization_confirmed: true,
+                    is_demo: isDemo
+                };
+
+                const res = await fetch('/api/dpdp/scanner/start', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                clearInterval(stageTimer);
+                const data = await res.json();
+
+                if (res.ok && data.status === 'success') {
+                    // Mark all stages done
+                    document.querySelectorAll('.stage-item').forEach(el => {
+                        el.classList.remove('stage-active');
+                        el.classList.add('stage-done');
+                    });
+                    progressBar.style.width = '100%';
+                    percentBadge.textContent = '100%';
+                    statusText.textContent = 'Scan Complete!';
+                    terminalLog.innerHTML += `<div>[${new Date().toLocaleTimeString()}] Report generated successfully. Ready to review.</div>`;
+
+                    setTimeout(() => {
+                        progressPanel.style.display = 'none';
+                        renderWebsiteScanResults(data.scan);
+                        resultsPanel.style.display = 'block';
+                        resultsPanel.scrollIntoView({ behavior: 'smooth' });
+                        loadWebsiteScanHistory();
+                    }, 500);
+                } else {
+                    progressPanel.style.display = 'none';
+                    alert(data.message || 'Website scan failed. Check URL or SSRF boundary.');
+                }
+            } catch (err) {
+                clearInterval(stageTimer);
+                progressPanel.style.display = 'none';
+                alert('Website scan request error: ' + err.message);
+            } finally {
+                btnStart.disabled = false;
+                btnDemo.disabled = false;
+            }
+        }
+
+        function renderWebsiteScanResults(scan) {
+            activeScanReport = scan;
+            const metrics = scan.summary_metrics || {};
+
+            document.getElementById('res-pages-count').textContent = metrics.pages_scanned_count || 0;
+            document.getElementById('res-forms-count').textContent = metrics.forms_discovered_count || 0;
+            document.getElementById('res-trackers-count').textContent = metrics.third_party_services_count || 0;
+            document.getElementById('res-score-val').textContent = (metrics.readiness_score || 0) + '%';
+            document.getElementById('res-domain-sub').textContent = scan.target_url || 'Target Domain';
+
+            // Filter counts
+            const findings = scan.findings || [];
+            document.getElementById('count-all').textContent = findings.length;
+            document.getElementById('count-high').textContent = findings.filter(f => f.severity === 'CRITICAL' || f.severity === 'HIGH').length;
+            document.getElementById('count-med').textContent = findings.filter(f => f.severity === 'MEDIUM').length;
+
+            renderFindingsList(findings);
+        }
+
+        function renderFindingsList(findings) {
+            const wrap = document.getElementById('findings-list-wrap');
+            if (!findings || findings.length === 0) {
+                wrap.innerHTML = `<div style="text-align: center; padding: 30px; color: var(--text-dim);">No compliance gaps detected matching current filter.</div>`;
+                return;
+            }
+
+            wrap.innerHTML = findings.map((f, i) => {
+                const sevBadge = f.severity === 'CRITICAL' ? 'badge-red' :
+                                 (f.severity === 'HIGH' ? 'badge-amber' :
+                                 (f.severity === 'MEDIUM' ? 'badge-sky' : 'badge-emerald'));
+
+                const effBadge = f.effective_status === 'SCHEDULED_MAY_2027' ?
+                    '<span class="badge-pill badge-sky" style="font-size: 10px;">Future Readiness: Scheduled 13 May 2027</span>' :
+                    '<span class="badge-pill badge-emerald" style="font-size: 10px;">In Force</span>';
+
+                return `
+                    <div class="finding-card" id="finding-card-${f.id}">
+                        <div class="finding-header" onclick="toggleFindingCard('${f.id}')">
+                            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                                <span class="badge-pill ${sevBadge}">${escapeHtml(f.severity)}</span>
+                                <strong style="font-size: 13.5px; color: #ffffff;">${escapeHtml(f.title)}</strong>
+                                <span style="font-size: 11px; color: var(--brand-accent);">${escapeHtml(f.legal_reference)}</span>
+                                ${effBadge}
+                            </div>
+                            <svg id="arrow-${f.id}" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                        </div>
+
+                        <div class="finding-body" id="body-${f.id}">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                                <div>
+                                    <div style="font-size: 11px; font-weight: 700; color: var(--text-dim); text-transform: uppercase;">Observation</div>
+                                    <div style="color: #f1f5f9; margin-top: 4px;">${escapeHtml(f.observation || '')}</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 11px; font-weight: 700; color: var(--text-dim); text-transform: uppercase;">Affected Component &amp; Page</div>
+                                    <div style="color: var(--brand-accent); margin-top: 4px; font-family: monospace; font-size: 11.5px;">${escapeHtml(f.affected_component || '')} &bull; ${escapeHtml(f.affected_page || '')}</div>
+                                </div>
+                            </div>
+
+                            <div style="margin-bottom: 14px;">
+                                <div style="font-size: 11px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; margin-bottom: 4px;">Technical Evidence Snippet</div>
+                                <div style="background: #090e17; border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 10px; font-family: monospace; font-size: 11.5px; color: #94a3b8; overflow-x: auto;">
+                                    ${escapeHtml(f.evidence_snippet || 'Observed via passive inspection')}
+                                </div>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                                <div>
+                                    <div style="font-size: 11px; font-weight: 700; color: var(--text-dim); text-transform: uppercase;">Why This Matters</div>
+                                    <div style="color: #cbd5e1; margin-top: 4px; line-height: 1.5;">${escapeHtml(f.why_it_matters || '')}</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 11px; font-weight: 700; color: var(--text-dim); text-transform: uppercase;">Recommended Remediation Action</div>
+                                    <div style="color: #34d399; margin-top: 4px; line-height: 1.5;">${escapeHtml(f.recommended_action || '')}</div>
+                                </div>
+                            </div>
+
+                            <!-- STATUTORY PENALTY EXPOSURE -->
+                            <div style="background: rgba(239, 68, 68, 0.06); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 16px; font-size: 12px;">
+                                <div style="font-weight: 700; color: #f87171; display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+                                    <span>Potential Statutory Penalty Ceiling (Schedule to DPDP Act):</span>
+                                    <span>${escapeHtml(f.penalty_ceiling_text || 'Up to ₹50 crore')}</span>
+                                </div>
+                                <div style="color: var(--text-muted); font-size: 11px;">
+                                    ${escapeHtml(f.statutory_disclaimer || '')}
+                                </div>
+                            </div>
+
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 14px;">
+                                <div style="font-size: 11px; color: var(--text-dim);">
+                                    Confidence: <strong style="color: #ffffff;">${escapeHtml(f.confidence || 'HIGH')}</strong> &bull; Required Evidence: <em>${escapeHtml(f.required_evidence || 'Documented procedure')}</em>
+                                </div>
+                                <button id="btn-fix-${f.id}" onclick="convertFindingToTask('${activeScanReport.scan_id}', '${f.id}')" class="btn btn-primary btn-sm">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                                    <span>FIX THIS ISSUE &rarr; Create Remediation Task</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function toggleFindingCard(id) {
+            const body = document.getElementById('body-' + id);
+            const arrow = document.getElementById('arrow-' + id);
+            if (!body) return;
+            if (body.classList.contains('expanded')) {
+                body.classList.remove('expanded');
+                if (arrow) arrow.style.transform = 'rotate(0deg)';
+            } else {
+                body.classList.add('expanded');
+                if (arrow) arrow.style.transform = 'rotate(180deg)';
+            }
+        }
+
+        function filterFindings(type) {
+            activeFilter = type;
+            document.querySelectorAll('#findings-filter-bar .filter-btn').forEach(b => b.classList.remove('active'));
+            if (event && event.target) event.target.classList.add('active');
+
+            if (!activeScanReport) return;
+            const all = activeScanReport.findings || [];
+            let filtered = all;
+
+            if (type === 'HIGH') {
+                filtered = all.filter(f => f.severity === 'CRITICAL' || f.severity === 'HIGH');
+            } else if (type === 'MEDIUM') {
+                filtered = all.filter(f => f.severity === 'MEDIUM');
+            } else if (type === 'FUTURE') {
+                filtered = all.filter(f => f.effective_status === 'SCHEDULED_MAY_2027');
+            }
+            renderFindingsList(filtered);
+        }
+
+        async function convertFindingToTask(scanId, findingId) {
+            const btn = document.getElementById('btn-fix-' + findingId);
+            if (btn) btn.disabled = true;
+
+            try {
+                const res = await fetch('/api/dpdp/scanner/convert-task', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ scan_id: scanId, finding_id: findingId, assignee: 'Privacy Lead' })
+                });
+                const data = await res.json();
+                if (res.ok && data.status === 'success') {
+                    if (btn) {
+                        btn.classList.remove('btn-primary');
+                        btn.classList.add('btn-secondary');
+                        btn.innerHTML = '<span>Task Added to Remediation Centre &#10003;</span>';
+                    }
+                    const gapEl = document.getElementById('kpi-gaps-count');
+                    if (gapEl) gapEl.textContent = (parseInt(gapEl.textContent) || 0) + 1;
+                } else {
+                    alert('Could not convert finding: ' + (data.message || 'Error'));
+                    if (btn) btn.disabled = false;
+                }
+            } catch (err) {
+                alert('Request failed: ' + err.message);
+                if (btn) btn.disabled = false;
+            }
+        }
+
+        async function loadWebsiteScanHistory() {
+            try {
+                const res = await fetch('/api/dpdp/scanner/history');
+                if (!res.ok) return;
+                const data = await res.json();
+                const scans = data.scans || [];
+                const tbody = document.getElementById('scanner-history-tbody');
+                const badge = document.getElementById('history-scans-count');
+
+                if (badge) badge.textContent = `${scans.length} Recorded`;
+                if (!tbody) return;
+
+                if (scans.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-dim); padding: 24px;">No website scans recorded yet. Enter a URL above and click "Start DPDP Website Scan".</td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = scans.map(s => {
+                    const dt = s.scanned_at ? new Date(s.scanned_at).toLocaleString() : 'Recent';
+                    const score = s.summary_metrics?.readiness_score || 0;
+                    const gaps = s.findings?.length || 0;
+                    const pages = s.summary_metrics?.pages_scanned_count || 1;
+
+                    return `
+                        <tr>
+                            <td>${escapeHtml(dt)}</td>
+                            <td><strong style="color: #ffffff;">${escapeHtml(s.target_url || '')}</strong><br><span style="font-size: 11px; color: var(--text-dim);">${escapeHtml(s.business_name || '')}</span></td>
+                            <td><span class="badge-pill badge-sky">${escapeHtml(s.industry || 'healthcare')}</span></td>
+                            <td>${pages} Pages</td>
+                            <td><span class="badge-pill ${gaps > 0 ? 'badge-amber' : 'badge-emerald'}">${gaps} Observable Gaps</span></td>
+                            <td><strong style="color: var(--brand-accent);">${score}%</strong></td>
+                            <td>
+                                <button onclick="viewPastScan('${s.scan_id}')" class="btn btn-secondary btn-sm" style="margin-right: 6px;">View Report</button>
+                                <button onclick="deletePastScan('${s.scan_id}')" style="background: none; color: var(--brand-red); font-size: 11px;">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (err) {
+                console.error('Error loading scan history:', err);
+            }
+        }
+
+        async function viewPastScan(scanId) {
+            try {
+                const res = await fetch('/api/dpdp/scanner/results/' + scanId);
+                if (res.ok) {
+                    const data = await res.json();
+                    renderWebsiteScanResults(data.scan);
+                    const panel = document.getElementById('scanner-results-panel');
+                    panel.style.display = 'block';
+                    panel.scrollIntoView({ behavior: 'smooth' });
+                }
+            } catch (err) {
+                alert('Could not load past scan: ' + err.message);
+            }
+        }
+
+        async function deletePastScan(scanId) {
+            if (confirm('Permanently delete this scan report and associated technical observations?')) {
+                try {
+                    const res = await fetch('/api/dpdp/scanner/' + scanId, { method: 'DELETE' });
+                    if (res.ok) {
+                        await loadWebsiteScanHistory();
+                    }
+                } catch (err) {
+                    alert('Delete failed: ' + err.message);
+                }
             }
         }
 

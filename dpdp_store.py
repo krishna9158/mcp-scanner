@@ -42,7 +42,8 @@ def _load_dpdp_store() -> Dict[str, Any]:
             "retention_schedules": {},
             "breach_incidents": {},
             "remediation_tasks": {},
-            "onboarding_profiles": {}
+            "onboarding_profiles": {},
+            "website_scans": {}
         }
         with open(DPDP_DATA_FILE, "w", encoding="utf-8") as f:
             json.dump(initial, f, indent=2)
@@ -63,7 +64,8 @@ def _load_dpdp_store() -> Dict[str, Any]:
             "retention_schedules": {},
             "breach_incidents": {},
             "remediation_tasks": {},
-            "onboarding_profiles": {}
+            "onboarding_profiles": {},
+            "website_scans": {}
         }
 
 def _save_dpdp_store(data: Dict[str, Any]) -> None:
@@ -710,3 +712,99 @@ def update_remediation_task(org_id: str, task_id: str, status: str, notes: str =
             _save_dpdp_store(store)
             return t
     return None
+
+# ==============================================================================
+# DPDP WEBSITE SCANNER STORE
+# ==============================================================================
+
+def save_website_scan(org_id: str, scan_data: Dict[str, Any]) -> Dict[str, Any]:
+    """Stores a DPDP website scan report under the isolated tenant organisation."""
+    store = _load_dpdp_store()
+    store.setdefault("website_scans", {})
+    store["website_scans"].setdefault(org_id, [])
+    
+    # Store or update
+    existing = store["website_scans"][org_id]
+    scan_id = scan_data.get("scan_id")
+    replaced = False
+    for i, s in enumerate(existing):
+        if s.get("scan_id") == scan_id:
+            existing[i] = scan_data
+            replaced = True
+            break
+    if not replaced:
+        existing.insert(0, scan_data)
+        
+    # Cap stored scan history at 20 per tenant to prevent unbounded growth
+    if len(existing) > 20:
+        store["website_scans"][org_id] = existing[:20]
+        
+    _save_dpdp_store(store)
+    return scan_data
+
+def get_website_scans(org_id: str) -> List[Dict[str, Any]]:
+    """Retrieves all past DPDP website scans for the organization."""
+    store = _load_dpdp_store()
+    return store.get("website_scans", {}).get(org_id, [])
+
+def get_website_scan_by_id(org_id: str, scan_id: str) -> Optional[Dict[str, Any]]:
+    """Retrieves a specific website scan by its unique scan ID."""
+    scans = get_website_scans(org_id)
+    for s in scans:
+        if s.get("scan_id") == scan_id:
+            return s
+    return None
+
+def delete_website_scan(org_id: str, scan_id: str) -> bool:
+    """Permanently deletes a scan record for tenant privacy and data minimization."""
+    store = _load_dpdp_store()
+    scans = store.get("website_scans", {}).get(org_id, [])
+    initial_len = len(scans)
+    filtered = [s for s in scans if s.get("scan_id") != scan_id]
+    if len(filtered) < initial_len:
+        store["website_scans"][org_id] = filtered
+        _save_dpdp_store(store)
+        return True
+    return False
+
+def convert_scan_finding_to_remediation_task(org_id: str, scan_id: str, finding_id: str, assignee: str = "Privacy Lead") -> Optional[Dict[str, Any]]:
+    """Converts an observable website gap directly into an actionable remediation task."""
+    scan = get_website_scan_by_id(org_id, scan_id)
+    if not scan:
+        return None
+        
+    target_finding = None
+    for f in scan.get("findings", []):
+        if f.get("id") == finding_id:
+            target_finding = f
+            break
+            
+    if not target_finding:
+        return None
+        
+    store = _load_dpdp_store()
+    assessment = get_assessment(org_id)
+    now = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    
+    # Priority mapping
+    sev = target_finding.get("severity", "MEDIUM")
+    priority = "HIGH" if sev in ("CRITICAL", "HIGH") else ("MEDIUM" if sev == "MEDIUM" else "LOW")
+    
+    new_task = {
+        "id": f"TASK-SCAN-{uuid.uuid4().hex[:6]}",
+        "requirement_id": target_finding.get("legal_reference", "DPDP-SEC-08"),
+        "title": f"Fix Website Gap: {target_finding.get('title')}",
+        "description": target_finding.get("why_it_matters", "") + "\n\nRecommended: " + target_finding.get("recommended_action", ""),
+        "priority": priority,
+        "status": "OPEN",
+        "assignee": assignee,
+        "due_date": (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=14)).strftime("%Y-%m-%d"),
+        "source": f"Website Scan: {scan.get('target_url')}",
+        "created_at": now,
+        "updated_at": now
+    }
+    
+    assessment.setdefault("remediation_tasks", []).append(new_task)
+    store.setdefault("assessments", {})[org_id] = assessment
+    _save_dpdp_store(store)
+    return new_task
