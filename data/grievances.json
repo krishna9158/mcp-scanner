@@ -118,5 +118,105 @@
         "details": "Category: Consent Withdrawal Inquiry"
       }
     ]
+  },
+  {
+    "reference_id": "GRV-1795374028-56F1",
+    "name": "Jane Principal",
+    "email": "jane@data-principal.in",
+    "company": "Data Subject Rights",
+    "category": "Consent Withdrawal Inquiry",
+    "description": "Requesting confirmation of stop-processing instruction.",
+    "submission_date": "2026-11-22 19:00:28 UTC",
+    "status": "RECEIVED",
+    "assigned_to": "Privacy & Grievance Contact",
+    "investigation_notes": "Ticket logged via public Trust Centre. Acknowledged.",
+    "resolution_date": null,
+    "audit_history": [
+      {
+        "timestamp": "2026-11-22 19:00:28 UTC",
+        "action": "Ticket Created",
+        "details": "Category: Consent Withdrawal Inquiry"
+      }
+    ]
+  },
+  {
+    "reference_id": "GRV-1795374099-2060",
+    "name": "Jane Principal",
+    "email": "jane@data-principal.in",
+    "company": "Data Subject Rights",
+    "category": "Consent Withdrawal Inquiry",
+    "description": "Requesting confirmation of stop-processing instruction.",
+    "submission_date": "2026-11-22 19:01:39 UTC",
+    "status": "RECEIVED",
+    "assigned_to": "Privacy & Grievance Contact",
+    "investigation_notes": "Ticket logged via public Trust Centre. Acknowledged.",
+    "resolution_date": null,
+    "audit_history": [
+      {
+        "timestamp": "2026-11-22 19:01:39 UTC",
+        "action": "Ticket Created",
+        "details": "Category: Consent Withdrawal Inquiry"
+      }
+    ]
+  },
+  {
+    "reference_id": "GRV-1795374172-8EF2",
+    "name": "Jane Principal",
+    "email": "jane@data-principal.in",
+    "company": "Data Subject Rights",
+    "category": "Consent Withdrawal Inquiry",
+    "description": "Requesting confirmation of stop-processing instruction.",
+    "submission_date": "2026-11-22 19:02:52 UTC",
+    "status": "RECEIVED",
+    "assigned_to": "Privacy & Grievance Contact",
+    "investigation_notes": "Ticket logged via public Trust Centre. Acknowledged.",
+    "resolution_date": null,
+    "audit_history": [
+      {
+        "timestamp": "2026-11-22 19:02:52 UTC",
+        "action": "Ticket Created",
+        "details": "Category: Consent Withdrawal Inquiry"
+      }
+    ]
+  },
+  {
+    "reference_id": "GRV-1795374199-1DC6",
+    "name": "Jane Principal",
+    "email": "jane@data-principal.in",
+    "company": "Data Subject Rights",
+    "category": "Consent Withdrawal Inquiry",
+    "description": "Requesting confirmation of stop-processing instruction.",
+    "submission_date": "2026-11-22 19:03:19 UTC",
+    "status": "RECEIVED",
+    "assigned_to": "Privacy & Grievance Contact",
+    "investigation_notes": "Ticket logged via public Trust Centre. Acknowledged.",
+    "resolution_date": null,
+    "audit_history": [
+      {
+        "timestamp": "2026-11-22 19:03:19 UTC",
+        "action": "Ticket Created",
+        "details": "Category: Consent Withdrawal Inquiry"
+      }
+    ]
+  },
+  {
+    "reference_id": "GRV-1795374260-4538",
+    "name": "Jane Principal",
+    "email": "jane@data-principal.in",
+    "company": "Data Subject Rights",
+    "category": "Consent Withdrawal Inquiry",
+    "description": "Requesting confirmation of stop-processing instruction.",
+    "submission_date": "2026-11-22 19:04:20 UTC",
+    "status": "RECEIVED",
+    "assigned_to": "Privacy & Grievance Contact",
+    "investigation_notes": "Ticket logged via public Trust Centre. Acknowledged.",
+    "resolution_date": null,
+    "audit_history": [
+      {
+        "timestamp": "2026-11-22 19:04:20 UTC",
+        "action": "Ticket Created",
+        "details": "Category: Consent Withdrawal Inquiry"
+      }
+    ]
   }
 ]

@@ -292,7 +292,10 @@ DASHBOARD_HTML = """<!doctype html>
                     <div class="nav-sub-items">
                         <a href="#inventory" onclick="navTo('inventory', this)" class="nav-sub-item">
                             <span>Data Inventory</span>
-                            <span class="nav-pill nav-pill-emerald" id="nav-inv-count">18</span>
+                            <span class="nav-pill nav-pill-emerald" id="nav-inv-count">0</span>
+                        </a>
+                        <a href="#dataflow" onclick="navTo('dataflow', this)" class="nav-sub-item">
+                            <span>Data Flow Map</span>
                         </a>
                         <a href="#vendors" onclick="navTo('vendors', this)" class="nav-sub-item">
                             <span>Vendor Management</span>
@@ -383,7 +386,7 @@ DASHBOARD_HTML = """<!doctype html>
                     </div>
                     <div class="readiness-chip">
                         <span>DPDP Readiness:</span>
-                        <strong id="topbar-readiness-val">82%</strong>
+                        <strong id="topbar-readiness-val">--%</strong>
                         <span style="font-size: 10.5px; opacity: 0.85;">(Self-Attested &amp; Verified)</span>
                     </div>
                 </div>
@@ -421,6 +424,33 @@ DASHBOARD_HTML = """<!doctype html>
                         </div>
                     </div>
 
+                    <!-- DEMO MODE BANNER -->
+                    <div id="demo-mode-banner" style="display: none; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 14px 18px; margin-bottom: 20px; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span style="font-size: 22px;">⚠️</span>
+                            <div>
+                                <strong style="color: #92400e; font-size: 13.5px;">DEMO MODE — Viewing Sample Compliance Posture</strong>
+                                <p style="color: #b45309; font-size: 12px; margin: 2px 0 0 0;">This workspace displays simulated attestation and demo records. Configure your organisation or run an assessment to start your verified DPDP journey.</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button onclick="navTo('assessment')" class="btn btn-secondary btn-sm" style="border-color: #f59e0b; color: #92400e; background: #fff;">Run Assessment</button>
+                            <button onclick="openOnboardingModal()" class="btn btn-primary btn-sm">Configure Org</button>
+                        </div>
+                    </div>
+
+                    <!-- UNASSESSED MODE BANNER -->
+                    <div id="unassessed-mode-banner" style="display: none; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 14px 18px; margin-bottom: 20px; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span style="font-size: 22px;">ℹ️</span>
+                            <div>
+                                <strong style="color: #1e40af; font-size: 13.5px;">Organisation Assessment Pending</strong>
+                                <p style="color: #3b82f6; font-size: 12px; margin: 2px 0 0 0;">Your organisation is currently unassessed (0% score). Answer the statutory questionnaire or upload policy evidence to calculate your genuine compliance readiness.</p>
+                            </div>
+                        </div>
+                        <button onclick="navTo('assessment')" class="btn btn-primary btn-sm">Start Assessment Now</button>
+                    </div>
+
                     <!-- 4-QUADRANT LAYOUT -->
                     <div class="overview-quad-grid">
                         
@@ -435,18 +465,18 @@ DASHBOARD_HTML = """<!doctype html>
                                     <span class="badge-pill badge-emerald">Active Posture</span>
                                 </div>
                                 <div style="display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px;">
-                                    <div style="font-size: 40px; font-weight: 850; color: var(--brand-primary); line-height: 1;" id="kpi-readiness">82%</div>
+                                    <div style="font-size: 40px; font-weight: 850; color: var(--brand-primary); line-height: 1;" id="kpi-readiness">--%</div>
                                     <div style="font-size: 13px; font-weight: 600; color: var(--text-secondary);">DPDP Compliance Readiness</div>
                                 </div>
                                 <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 14px;">12 of 15 statutory requirement controls self-attested or verified with technical proof.</p>
 
                                 <div class="progress-stat-row">
                                     <div class="stat-box">
-                                        <div class="stat-box-val" id="kpi-evidence-count" style="color: var(--brand-emerald);">7</div>
+                                        <div class="stat-box-val" id="kpi-evidence-count" style="color: var(--brand-emerald);">0</div>
                                         <div class="stat-box-lbl">Evidence Verified</div>
                                     </div>
                                     <div class="stat-box">
-                                        <div class="stat-box-val" id="kpi-gaps-count" style="color: var(--brand-amber);">3</div>
+                                        <div class="stat-box-val" id="kpi-gaps-count" style="color: var(--brand-amber);">0</div>
                                         <div class="stat-box-lbl">Open Actions</div>
                                     </div>
                                     <div class="stat-box">
@@ -470,33 +500,16 @@ DASHBOARD_HTML = """<!doctype html>
                                     </div>
                                     <span class="badge-pill badge-amber">3 High Priority</span>
                                 </div>
-                                <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 14px;">Fix these top 3 pending items to rapidly improve your DPDP readiness score.</p>
+                                <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 14px;">Fix these top pending statutory action items to improve your DPDP readiness score.</p>
 
-                                <!-- Top Action 1 -->
-                                <div class="action-item-card">
-                                    <div class="action-item-info">
-                                        <h4>Add Section 5 Notice to Patient Form</h4>
-                                        <p>Public appointment form is missing grievance contact &amp; specific processing purposes.</p>
+                                <div id="top-actions-container">
+                                    <div class="action-item-card">
+                                        <div class="action-item-info">
+                                            <h4>Publish DPDP-Compliant Privacy Notice</h4>
+                                            <p>Notice must specify purposes and DPO contacts in English and scheduled Indian languages.</p>
+                                        </div>
+                                        <button onclick="navTo('privacy')" class="btn btn-primary btn-sm" style="flex-shrink: 0;">View and Fix</button>
                                     </div>
-                                    <button onclick="navTo('privacy')" class="btn btn-primary btn-sm" style="flex-shrink: 0;">View and Fix</button>
-                                </div>
-
-                                <!-- Top Action 2 -->
-                                <div class="action-item-card">
-                                    <div class="action-item-info">
-                                        <h4>Review Diagnostic Cloud Processor DPA</h4>
-                                        <p>DPA contract with cloud storage vendor is missing mandatory Section 8(2) clauses.</p>
-                                    </div>
-                                    <button onclick="navTo('vendors')" class="btn btn-primary btn-sm" style="flex-shrink: 0;">View and Fix</button>
-                                </div>
-
-                                <!-- Top Action 3 -->
-                                <div class="action-item-card">
-                                    <div class="action-item-info">
-                                        <h4>Document Data Retention &amp; Erasure Schedule</h4>
-                                        <p>Establish automated purge triggers when diagnostic processing purpose is completed.</p>
-                                    </div>
-                                    <button onclick="navTo('retention')" class="btn btn-primary btn-sm" style="flex-shrink: 0;">View and Fix</button>
                                 </div>
                             </div>
                         </div>
@@ -515,34 +528,34 @@ DASHBOARD_HTML = """<!doctype html>
 
                                 <div class="biz-data-grid">
                                     <div class="biz-item">
-                                        <div class="biz-val" id="kpi-inventory-count">18</div>
+                                        <div class="biz-val" id="kpi-inventory-count">0</div>
                                         <div class="biz-lbl">Data Streams</div>
                                         <div class="biz-sub">Cataloged in RoPA</div>
                                     </div>
                                     <div class="biz-item">
-                                        <div class="biz-val">6</div>
+                                        <div class="biz-val" id="kpi-categories-count">0</div>
                                         <div class="biz-lbl">Categories</div>
-                                        <div class="biz-sub">Health, ID, Financial</div>
+                                        <div class="biz-sub">Personal Data Types</div>
                                     </div>
                                     <div class="biz-item">
-                                        <div class="biz-val">4</div>
+                                        <div class="biz-val" id="kpi-vendors-count">0</div>
                                         <div class="biz-lbl">Vendors</div>
                                         <div class="biz-sub">External Processors</div>
                                     </div>
                                     <div class="biz-item">
-                                        <div class="biz-val">2</div>
+                                        <div class="biz-val" id="kpi-notices-count">0</div>
                                         <div class="biz-lbl">Privacy Notices</div>
                                         <div class="biz-sub">Section 5 Compliant</div>
                                     </div>
                                     <div class="biz-item">
-                                        <div class="biz-val">3</div>
+                                        <div class="biz-val" id="kpi-requests-count">0</div>
                                         <div class="biz-lbl">User Requests</div>
                                         <div class="biz-sub">Access &amp; Erasure</div>
                                     </div>
                                     <div class="biz-item">
-                                        <div class="biz-val" style="color: var(--brand-emerald);">0</div>
+                                        <div class="biz-val" id="kpi-breaches-count" style="color: var(--brand-emerald);">0</div>
                                         <div class="biz-lbl">Data Breaches</div>
-                                        <div class="biz-sub">Zero Incidents</div>
+                                        <div class="biz-sub">Logged Incidents</div>
                                     </div>
                                 </div>
                             </div>
@@ -930,6 +943,36 @@ DASHBOARD_HTML = """<!doctype html>
                                     <!-- Populated dynamically via JS -->
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================================== -->
+                <!-- SECTION: INTERACTIVE DATA FLOW MAP                            -->
+                <!-- ============================================================== -->
+                <div id="section-dataflow" class="dash-section">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">Personal Data Flow Map</h1>
+                            <p class="page-subtitle">Track the lifecycle of personal data from data principal collection to primary databases, CRM, external processors, and analytics.</p>
+                        </div>
+                        <button onclick="loadDataFlowMap()" class="btn btn-secondary">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                            <span>Refresh Flow</span>
+                        </button>
+                    </div>
+
+                    <!-- 6-STAGE PIPELINE CARDS -->
+                    <div id="data-flow-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 24px;">
+                        <!-- Rendered by JS -->
+                    </div>
+
+                    <!-- STATUTORY SUMMARY -->
+                    <div class="table-card" style="padding: 24px;">
+                        <h3 style="font-size: 16px; font-weight: 750; color: var(--text-main); margin-bottom: 8px;">Statutory Safeguards &amp; Processor Governance</h3>
+                        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">Under Section 8(5), Data Fiduciaries must implement reasonable technical safeguards (TLS 1.3, AES-256) across all transmission paths. Under Section 8(2), engaging data processors without executed DPAs is strictly prohibited.</p>
+                        <div id="data-flow-summary" style="display: flex; gap: 20px; flex-wrap: wrap;">
+                            <!-- Flow summary metrics -->
                         </div>
                     </div>
                 </div>
@@ -1455,6 +1498,9 @@ DASHBOARD_HTML = """<!doctype html>
 
                 // 10. Load Website Scan History
                 await loadWebsiteScanHistory();
+
+                // 11. Load Data Flow Map
+                await loadDataFlowMap();
             } catch (err) {
                 console.warn('Backend DPDP data fetch fallback:', err);
             }
@@ -1495,10 +1541,54 @@ DASHBOARD_HTML = """<!doctype html>
             const topRead = document.getElementById('topbar-readiness-val');
             const kpiGaps = document.getElementById('kpi-gaps-count');
             const navGaps = document.getElementById('nav-gaps-count');
-            if (kpiRead) kpiRead.innerText = (assessment.readiness_score || 82) + '%';
-            if (topRead) topRead.innerText = (assessment.readiness_score || 82) + '%';
+            
+            const scoreVal = (assessment.readiness_score !== undefined && assessment.readiness_score !== null)
+                ? assessment.readiness_score
+                : 0;
+            if (kpiRead) kpiRead.innerText = scoreVal + '%';
+            if (topRead) topRead.innerText = scoreVal + '%';
             if (kpiGaps) kpiGaps.innerText = assessment.gaps_count || 0;
             if (navGaps) navGaps.innerText = assessment.gaps_count || 0;
+
+            // Handle Demo / Unassessed Banners
+            const isDemo = assessment.is_demo === true;
+            const demoBanner = document.getElementById('demo-mode-banner');
+            const unassessedBanner = document.getElementById('unassessed-mode-banner');
+            if (demoBanner && unassessedBanner) {
+                if (isDemo) {
+                    demoBanner.style.display = 'flex';
+                    unassessedBanner.style.display = 'none';
+                } else if (scoreVal === 0) {
+                    demoBanner.style.display = 'none';
+                    unassessedBanner.style.display = 'flex';
+                } else {
+                    demoBanner.style.display = 'none';
+                    unassessedBanner.style.display = 'none';
+                }
+            }
+
+            // Update Top Actions in Quadrant 2
+            const actionsContainer = document.getElementById('top-actions-container');
+            if (actionsContainer) {
+                const gaps = assessment.gaps || [];
+                if (!gaps.length) {
+                    actionsContainer.innerHTML = '<div style="color: var(--text-dim); text-align: center; padding: 24px;">No open compliance gaps. Excellent posture!</div>';
+                } else {
+                    const top3 = gaps.slice(0, 3);
+                    actionsContainer.innerHTML = top3.map(g => `
+                        <div class="action-item-card">
+                            <div class="action-item-info">
+                                <h4>${escapeHtml(g.title || '')}</h4>
+                                <p>${escapeHtml(g.why_it_matters || '')}</p>
+                                <div style="font-size: 11px; color: #b45309; margin-top: 4px; font-weight: 600;">
+                                    Statutory Ceiling: ${escapeHtml(g.statutory_penalty || 'Up to ₹50 crore')} &bull; Target: ${escapeHtml(g.commencement_date || '13 May 2027')}
+                                </div>
+                            </div>
+                            <button onclick="navTo('remediation')" class="btn btn-primary btn-sm" style="flex-shrink: 0;">Remediate</button>
+                        </div>
+                    `).join('');
+                }
+            }
 
             tbody.innerHTML = controls.map(ctrl => {
                 const isGap = ctrl.status === 'GAP_IDENTIFIED';
@@ -2204,6 +2294,56 @@ DASHBOARD_HTML = """<!doctype html>
             if (confirm('Are you sure you want to request permanent erasure of all organization records? This deletes user accounts, evidence artifacts, and compliance logs per DPDP Section 8(7).')) {
                 fetch('/api/account/delete', { method: 'POST', headers: { 'Content-Type': 'application/json' } })
                     .then(() => { alert('Account deletion submitted.'); window.location.href = '/'; });
+            }
+        }
+        async function loadDataFlowMap() {
+            const container = document.getElementById('data-flow-container');
+            const summary = document.getElementById('data-flow-summary');
+            if (!container) return;
+            try {
+                const res = await fetch('/api/dpdp/data-flow');
+                if (!res.ok) return;
+                const data = await res.json();
+                const flow = data.data_flow || {};
+                const stages = flow.stages || [];
+                
+                container.innerHTML = stages.map(s => `
+                    <div style="background: #ffffff; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 18px; box-shadow: var(--shadow-xs);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <span style="font-size: 11px; font-weight: 700; color: var(--brand-primary); text-transform: uppercase;">Stage ${s.stage_number}</span>
+                            <span class="badge-pill ${s.status === 'VERIFIED' ? 'badge-emerald' : 'badge-amber'}">${escapeHtml(s.status || 'ACTIVE')}</span>
+                        </div>
+                        <h4 style="font-size: 15px; font-weight: 750; color: var(--text-main); margin-bottom: 6px;">${escapeHtml(s.stage_name || '')}</h4>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">${escapeHtml(s.description || '')}</p>
+                        <div style="font-size: 11.5px; background: var(--bg-base); border: 1px solid var(--border-color); border-radius: 6px; padding: 10px; margin-bottom: 10px;">
+                            <div><strong>Components:</strong> ${escapeHtml((s.components || []).join(', '))}</div>
+                            <div style="margin-top: 4px;"><strong>Data Types:</strong> ${escapeHtml((s.data_types || []).join(', '))}</div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-dim);">
+                            <span>${escapeHtml(s.encryption_status || 'TLS 1.3 / AES-256')}</span>
+                            <span style="color: var(--brand-emerald); font-weight: 600;">${escapeHtml(s.statutory_basis || '')}</span>
+                        </div>
+                    </div>
+                `).join('');
+
+                if (summary) {
+                    summary.innerHTML = `
+                        <div style="background: var(--bg-base); border-radius: 8px; padding: 12px 18px; flex: 1; min-width: 200px;">
+                            <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Data Streams in Pipeline</div>
+                            <div style="font-size: 22px; font-weight: 800; color: var(--brand-primary);">${flow.total_streams_mapped || 0}</div>
+                        </div>
+                        <div style="background: var(--bg-base); border-radius: 8px; padding: 12px 18px; flex: 1; min-width: 200px;">
+                            <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Third-Party Processors</div>
+                            <div style="font-size: 22px; font-weight: 800; color: #0284c7;">${flow.third_party_processors_count || 0}</div>
+                        </div>
+                        <div style="background: var(--bg-base); border-radius: 8px; padding: 12px 18px; flex: 1; min-width: 200px;">
+                            <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Cross-Border Transfers</div>
+                            <div style="font-size: 22px; font-weight: 800; color: #059669;">${flow.cross_border_transfers ? 'Permitted Territory' : 'Domestic Only'}</div>
+                        </div>
+                    `;
+                }
+            } catch (e) {
+                console.warn('Error loading data flow map:', e);
             }
         }
     </script>

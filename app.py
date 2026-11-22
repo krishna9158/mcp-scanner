@@ -1742,6 +1742,23 @@ def api_dpdp_vendors():
     return jsonify({"status": "success", "items": vendors}), 200
 
 
+@app.route("/api/dpdp/vendors/<vendor_id>", methods=["PUT", "DELETE"])
+def api_dpdp_vendor_detail(vendor_id):
+    """Updates or deletes a vendor under Section 8(2)."""
+    org_id, _ = get_current_tenant_and_user()
+    org_id = org_id or "org-default"
+    if request.method == "DELETE":
+        deleted = dpdp_store.delete_vendor(org_id, vendor_id)
+        if deleted:
+            return jsonify({"status": "success", "message": "Vendor deleted"}), 200
+        return jsonify({"status": "error", "message": "Vendor not found"}), 404
+    data = request.get_json(silent=True) or {}
+    updated = dpdp_store.update_vendor(org_id, vendor_id, data)
+    if updated:
+        return jsonify({"status": "success", "vendor": updated}), 200
+    return jsonify({"status": "error", "message": "Vendor not found"}), 404
+
+
 @app.route("/api/dpdp/retention", methods=["GET", "POST"])
 def api_dpdp_retention():
     """Manages Rule 8 retention schedules."""
@@ -1753,6 +1770,122 @@ def api_dpdp_retention():
         return jsonify({"status": "success", "schedule": sched}), 201
     schedules = dpdp_store.get_retention_schedules(org_id)
     return jsonify({"status": "success", "items": schedules}), 200
+
+
+@app.route("/api/dpdp/retention/<schedule_id>", methods=["PUT", "DELETE"])
+def api_dpdp_retention_detail(schedule_id):
+    """Updates or deletes a retention schedule."""
+    org_id, _ = get_current_tenant_and_user()
+    org_id = org_id or "org-default"
+    if request.method == "DELETE":
+        deleted = dpdp_store.delete_retention_schedule(org_id, schedule_id)
+        if deleted:
+            return jsonify({"status": "success", "message": "Retention schedule deleted"}), 200
+        return jsonify({"status": "error", "message": "Retention schedule not found"}), 404
+    data = request.get_json(silent=True) or {}
+    updated = dpdp_store.update_retention_schedule(org_id, schedule_id, data)
+    if updated:
+        return jsonify({"status": "success", "schedule": updated}), 200
+    return jsonify({"status": "error", "message": "Retention schedule not found"}), 404
+
+
+@app.route("/api/dpdp/erasure-tasks", methods=["GET", "POST"])
+def api_dpdp_erasure_tasks():
+    """Manages Section 8(7) erasure execution and cryptographic verification tasks."""
+    org_id, _ = get_current_tenant_and_user()
+    org_id = org_id or "org-default"
+    if request.method == "POST":
+        data = request.get_json(silent=True) or {}
+        task = dpdp_store.create_erasure_task(org_id, data)
+        return jsonify({"status": "success", "task": task}), 201
+    tasks = dpdp_store.get_erasure_tasks(org_id)
+    return jsonify({"status": "success", "items": tasks}), 200
+
+
+@app.route("/api/dpdp/erasure-tasks/<task_id>", methods=["POST", "PUT"])
+def api_dpdp_update_erasure_task(task_id):
+    """Updates status and cryptographic proof hash of an erasure task."""
+    org_id, user = get_current_tenant_and_user()
+    org_id = org_id or "org-default"
+    data = request.get_json(silent=True) or {}
+    status = data.get("status", "VERIFIED_ERASED")
+    proof_hash = data.get("proof_hash")
+    verified_by = data.get("verified_by") or (user.get("email") if user else "Compliance Officer")
+    notes = data.get("notes", "")
+    task = dpdp_store.update_erasure_task(org_id, task_id, status, proof_hash, verified_by, notes)
+    if task:
+        return jsonify({"status": "success", "task": task}), 200
+    return jsonify({"status": "error", "message": "Task not found"}), 404
+
+
+@app.route("/api/dpdp/data-flow", methods=["GET"])
+def api_dpdp_data_flow():
+    """Returns dynamic 6-stage data flow graph for the organization."""
+    org_id, _ = get_current_tenant_and_user()
+    org_id = org_id or "org-default"
+    import data_discovery
+    flow_map = data_discovery.generate_data_flow_map(org_id)
+    return jsonify({"status": "success", "data_flow": flow_map}), 200
+
+
+@app.route("/api/dpdp/discovery/inspect", methods=["POST"])
+def api_dpdp_discovery_inspect():
+    """Metadata-only heuristic column analyzer for sensitive personal data detection."""
+    data = request.get_json(silent=True) or {}
+    table_name = data.get("table_name", "")
+    column_names = data.get("column_names", [])
+    import data_discovery
+    analysis = data_discovery.inspect_schema_metadata(table_name, column_names)
+    return jsonify({"status": "success", "analysis": analysis}), 200
+
+
+@app.route("/api/dpdp/discovery/starter-template", methods=["POST"])
+def api_dpdp_discovery_starter_template():
+    """Returns tailored baseline data inventory templates by sector."""
+    data = request.get_json(silent=True) or {}
+    sector = data.get("sector", "healthcare")
+    import data_discovery
+    templates = data_discovery.get_starter_inventory_templates(sector)
+    return jsonify({"status": "success", "sector": sector, "templates": templates}), 200
+
+
+@app.route("/api/dpdp/readiness/dynamic", methods=["GET"])
+def api_dpdp_dynamic_readiness():
+    """Returns dynamic readiness score separating enforceable from forward-looking obligations."""
+    org_id, _ = get_current_tenant_and_user()
+    org_id = org_id or "org-default"
+    readiness = dpdp_store.calculate_dynamic_readiness(org_id)
+    return jsonify({"status": "success", "readiness": readiness}), 200
+
+
+@app.route("/api/dpdp/penalties/matrix", methods=["GET"])
+def api_dpdp_penalties_matrix():
+    """Central statutory penalty schedule matrix under Section 33."""
+    import dpdp_penalties
+    section = request.args.get("section")
+    if section:
+        return jsonify({"status": "success", "penalty": dpdp_penalties.map_statutory_penalty(section)}), 200
+    return jsonify({
+        "status": "success",
+        "version": dpdp_penalties.PENALTY_ENGINE_VERSION,
+        "penalties": dpdp_penalties.DPDP_STATUTORY_PENALTIES,
+        "disclaimer": dpdp_penalties.STATUTORY_DISCLAIMER
+    }), 200
+
+
+@app.route("/api/dpdp/commencement/registry", methods=["GET"])
+def api_dpdp_commencement_registry():
+    """Authoritative phased commencement tracker for the DPDP Act & Rules."""
+    import dpdp_commencement
+    section = request.args.get("section")
+    if section:
+        return jsonify({"status": "success", "commencement": dpdp_commencement.get_statutory_commencement(section)}), 200
+    return jsonify({
+        "status": "success",
+        "version": dpdp_commencement.COMMENCEMENT_ENGINE_VERSION,
+        "milestones": dpdp_commencement.COMMENCEMENT_MILESTONES,
+        "sources": dpdp_commencement.OFFICIAL_SOURCES
+    }), 200
 
 
 @app.route("/api/dpdp/breaches", methods=["GET", "POST"])
@@ -1780,12 +1913,15 @@ def api_dpdp_authorize_breach(incident_id):
 
 @app.route("/api/dpdp/assistant", methods=["POST"])
 def api_dpdp_assistant():
-    """AI DPDP grounded query assistant."""
+    """AI DPDP grounded query assistant with tenant awareness and statutory source retrieval."""
+    org_id, _ = get_current_tenant_and_user()
+    org_id = org_id or "org-default"
     data = request.get_json(silent=True) or {}
     query = data.get("query", "").strip()
     if not query:
         return jsonify({"status": "error", "message": "Query required"}), 400
-    res = dpdp_engine.query_dpdp_assistant(query)
+    import ai_dpdp_assistant
+    res = ai_dpdp_assistant.query_ai_dpdp_assistant(query, org_id=org_id)
     return jsonify(res), 200
 
 

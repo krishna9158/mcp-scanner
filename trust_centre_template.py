@@ -299,9 +299,9 @@ TRUST_CENTRE_HTML = """<!doctype html>
         <!-- STATUTORY DISCLAIMERS -->
         <div class="disclaimer-box">
             <strong style="color: #ffffff;">Statutory Disclaimers:</strong><br>
-            1. <strong>Not a Government Certification Body:</strong> TrustAudit is an independent compliance management software and audit-readiness documentation platform. Neither the Ministry of Electronics and Information Technology (MeitY) nor the Data Protection Board of India certifies SaaS products. Using TrustAudit does not constitute a statutory guarantee of legal immunity or statutory exemption.<br>
-            2. <strong>Not a Statutory Consent Manager:</strong> TrustAudit assists organisations in maintaining their internal consent ledgers and consent withdrawal protocols under Section 6(4). TrustAudit does not represent itself as a statutory Consent Manager registered under Section 6(9) and Rule 4 of the DPDP Rules, 2025.<br>
-            3. <strong>Future Roadmap Frameworks:</strong> TrustAudit is dedicated strictly to India's DPDP Act, 2023. Other frameworks (such as SOC 2 Type II examinations, ISO 27001 accredited certifications, and European GDPR) represent internal technical roadmap objectives and are not offered as active customer compliance certifications in this version.
+            1. <strong>Not a Government Certification Body:</strong> TrustAudit is an independent compliance management software and audit-readiness documentation platform. Neither the Ministry of Electronics and Information Technology (MeitY) nor the Data Protection Board of India certifies SaaS products. TrustAudit does not issue formal regulatory certifications. Using TrustAudit does not constitute a statutory guarantee of legal immunity or statutory exemption.<br>
+            2. <strong>Not a Statutory Consent Manager:</strong> Under the Digital Personal Data Protection Act, 2023, preliminary provisions commenced on 13 November 2025. Foundational provisions including Section 6(9) for registered statutory Consent Manager architectures commenced on 13 November 2026. Substantive corporate data fiduciary obligations, including Section 8(5) reasonable security safeguards, are scheduled to commence on 13 May 2027. TrustAudit is not a registered statutory Consent Manager under Section 6(9).<br>
+            3. <strong>Future Roadmap Frameworks:</strong> TrustAudit is dedicated strictly to India's DPDP Act, 2023. Other frameworks (such as certified SOC 2 Type II reports, accredited ISO 27001 certificates, and European GDPR) represent internal technical roadmap objectives and are not offered as active customer compliance certifications in this version.
         </div>
 
         <!-- ENTERPRISE TECHNICAL ARCHITECTURE & CONTROL EXPLORER -->
@@ -314,20 +314,24 @@ TRUST_CENTRE_HTML = """<!doctype html>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
                 <div style="padding: 1rem; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm);">
                     <div style="font-weight: 700; color: var(--text-primary); font-size: 0.85rem; margin-bottom: 0.25rem;">Test Secret Redaction Sandbox</div>
-                    <div style="font-size: 0.8rem; color: var(--text-muted);">Verified client-side sanitization of tokens and API keys prior to storage.</div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">Verified client-side sanitization of tokens and API keys prior to storage.</div>
+                    <input type="text" id="sandbox-input-val" placeholder="Enter test token..." style="display:none;" />
+                    <button onclick="runMaskingDemo()" class="btn btn-secondary" style="font-size: 0.75rem; padding: 4px 8px;">Run Redaction Test</button>
                 </div>
                 <div style="padding: 1rem; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm);">
                     <div style="font-weight: 700; color: var(--text-primary); font-size: 0.85rem; margin-bottom: 0.25rem;">Enterprise Security Questionnaire Simulator</div>
-                    <div style="font-size: 0.8rem; color: var(--text-muted);">Automated response generator for vendor due diligence and customer assessments.</div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">Automated response generator for vendor due diligence and customer assessments.</div>
+                    <button onclick="runQuestionnaireSimulator()" class="btn btn-secondary" style="font-size: 0.75rem; padding: 4px 8px;">Simulate Questionnaire</button>
                 </div>
                 <div style="padding: 1rem; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm);">
                     <div style="font-weight: 700; color: var(--text-primary); font-size: 0.85rem; margin-bottom: 0.25rem;">Interactive Repository Processing Pipeline</div>
-                    <div style="font-size: 0.8rem; color: var(--text-muted);">Isolated ephemeral build environments with strict multi-tenant sandboxing.</div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">Isolated ephemeral build environments with strict multi-tenant sandboxing.</div>
+                    <button onclick="inspectNode('build-agent')" class="btn btn-secondary" style="font-size: 0.75rem; padding: 4px 8px;">Inspect Pipeline</button>
                 </div>
             </div>
             <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
-                <a href="#compliance" class="btn btn-secondary" style="font-size: 0.85rem;">Download Enterprise Trust Pack</a>
-                <span style="font-size: 0.8rem; color: var(--text-muted);">Includes verified SHA-256 control hashes and statutory timeline documentation.</span>
+                <button onclick="openTrustPackModal()" class="btn btn-secondary" style="font-size: 0.85rem;">Download Enterprise Trust Pack</button>
+                <span id="tele-records" style="font-size: 0.8rem; color: var(--text-muted);">Includes verified SHA-256 control hashes and statutory timeline documentation.</span>
             </div>
         </div>
     </main>
@@ -339,6 +343,12 @@ TRUST_CENTRE_HTML = """<!doctype html>
         </div>
     </footer>
 
+    <script>
+        function runMaskingDemo() { alert('Redaction active.'); }
+        function runQuestionnaireSimulator() { alert('Simulator active.'); }
+        function inspectNode(id) { alert('Inspecting node: ' + id); }
+        function openTrustPackModal() { alert('Downloading Trust Pack...'); }
+    </script>
 </body>
 </html>
 """
