@@ -5,20 +5,21 @@ Digital Personal Data Protection Act, 2023 (Act No. 22 of 2023)
 Digital Personal Data Protection Rules, 2025 (G.S.R. / Gazette Notifications)
 Updated with October 2026 Removal of Difficulties Order & Current Statutory Timelines.
 
-Legal Status Definitions:
-- IN_FORCE: Commenced on 13 November 2025 (Initial provisions & Board framework)
-- COMMENCED_NOV_2026: Commenced on 13 November 2026 (Section 6(9) & Rule 4 Consent Managers)
-- SCHEDULED_MAY_2027: Scheduled to commence on 13 May 2027 (Substantive Data Fiduciary obligations)
-- CONDITIONAL: Applies conditionally upon designation (e.g. Significant Data Fiduciary)
-- EXEMPT_CONDITIONAL: Applies conditionally upon exemption criteria (Section 17 / Rule 13)
+Legal Status / Commencement Status Definitions:
+- In force (IN_FORCE): Commenced on 13 November 2025 (Preliminary & Board framework)
+- In force (COMMENCED_NOV_2026): Commenced on 13 November 2026 (Section 6(9) & Rule 4 Consent Managers)
+- Scheduled (SCHEDULED_MAY_2027): Scheduled to commence on 13 May 2027 (Substantive Data Fiduciary obligations)
+- Not yet commenced: General provisions not yet formally notified with dates
+- Not applicable: Provisions exempted under Section 17 / Rule 13
+- Requires legal review: Sector-specific or Significant Data Fiduciary conditionally evaluated
 """
 
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any, Optional, Tuple
 import datetime
 import re
 
-LEGAL_DATABASE_VERSION = "2026.11.2"
-LAST_LEGAL_REVIEW = "2026-11-20"
+LEGAL_DATABASE_VERSION = "2026.11.3"
+LAST_LEGAL_REVIEW = "2026-11-22"
 
 STATUTORY_TIMELINE = [
     {
@@ -59,21 +60,31 @@ STATUTORY_TIMELINE = [
 ]
 
 # ==============================================================================
-# STRUCTURED DPDP LEGAL REQUIREMENTS DATABASE
+# STRUCTURED DPDP LEGAL REQUIREMENTS DATABASE (FULL PHASE 4 SCHEMA)
 # ==============================================================================
 
 DPDP_REQUIREMENTS: List[Dict[str, Any]] = [
     {
         "id": "DPDP-SEC-03",
+        "rule_id": "DPDP-SEC-03",
         "section": "Section 3",
+        "legal_reference": "Section 3, Rule 2",
         "rule_ref": "Rule 2",
         "title": "Applicability & Material Scope",
+        "rule_title": "Applicability & Material Scope",
         "description": "Processing of digital personal data within the territory of India where collected in digital form or digitised subsequently; and processing outside India if in connection with offering goods or services to Data Principals within India.",
+        "explanation": "Establishes territorial and material applicability under the DPDP Act 2023. Governs all digital personal records collected online, via mobile apps, or converted from paper files into software databases.",
         "applicability_conditions": ["processes_digital_personal_data"],
-        "industry_conditions": ["all"],
+        "industry_conditions": ["all", "hospitals", "clinics", "diagnostic_centres", "saas", "ecommerce", "professional_services", "education"],
         "effective_date": "13 November 2025",
+        "commencement_status": "In force",
         "legal_status": "IN_FORCE",
+        "obligation_type": "Current legal obligation",
+        "category": "Lawful processing",
         "readiness_category": "Governance & Scoping",
+        "severity": "CRITICAL",
+        "confidence": "HIGH",
+        "detection_method": "ORGANISATIONAL_ASSESSMENT",
         "assessment_questions": [
             {
                 "qid": "q_sec3_scope",
@@ -93,515 +104,645 @@ DPDP_REQUIREMENTS: List[Dict[str, Any]] = [
             "Personal Data Inventory & Asset Register",
             "Applicability Assessment Sign-off"
         ],
+        "recommended_action": "Establish a documented perimeter defining all digital personal data collected, stored, or processed across your applications, clinics, billing desks, and third-party vendors.",
         "remediation_guidance": "Establish a documented perimeter defining all digital personal data collected, stored, or processed across your applications, clinics, billing desks, and third-party vendors.",
-        "source_document": "DPDP Act 2023, Section 3",
+        "verification_procedure": "Verify that all systems processing Indian resident data are cataloged with clear processing perimeters.",
+        "last_reviewed_date": "2026-11-22",
+        "rule_version": "v2.1",
+        "official_source_reference": "The Digital Personal Data Protection Act, 2023 (Act No. 22 of 2023), Section 3; S.O. 5064(E)",
         "expert_review_required": False
     },
     {
         "id": "DPDP-SEC-04-06",
+        "rule_id": "DPDP-SEC-04-06",
         "section": "Sections 4 & 6",
+        "legal_reference": "Sections 4 & 6, Rule 3",
         "rule_ref": "Rules 3 & 4",
-        "title": "Valid Consent & Itemised Consent Architecture",
-        "description": "Personal data may only be processed for a lawful purpose with free, specific, informed, unconditional, and unambiguous consent with a clear affirmative action, limited to necessary personal data.",
-        "applicability_conditions": ["collects_personal_data"],
+        "title": "Valid Consent & Itemised Architecture",
+        "rule_title": "Valid Consent & Itemised Consent Architecture",
+        "description": "Personal data may be processed only for lawful purposes with affirmative, unbundled, free, specific, informed, and unconditional consent of the Data Principal.",
+        "explanation": "Prohibits pre-ticked consent checkboxes, bundled terms of service, and conditional service access. Consent must be granular, itemised by purpose, and explicitly affirmed.",
+        "applicability_conditions": ["relies_on_consent"],
         "industry_conditions": ["all"],
         "effective_date": "13 May 2027",
+        "commencement_status": "Scheduled",
         "legal_status": "SCHEDULED_MAY_2027",
-        "readiness_category": "Consent & Notices",
+        "obligation_type": "Upcoming obligation",
+        "category": "Consent management",
+        "readiness_category": "Consent Architecture",
+        "severity": "CRITICAL",
+        "confidence": "HIGH",
+        "detection_method": "HYBRID",
         "assessment_questions": [
             {
                 "qid": "q_sec6_affirmative",
-                "question": "Is consent collected via an explicit affirmative action (e.g. unticked checkbox, signed registration form) rather than pre-selected boxes or silence?",
+                "question": "Are all consent checkboxes un-ticked by default on your public forms and apps?",
                 "type": "boolean",
                 "weight": "critical"
             },
             {
-                "qid": "q_sec6_purpose_limit",
-                "question": "Is consent strictly limited to the specified purpose and not bundled with unrelated service terms or conditioned on excessive data?",
-                "type": "boolean",
-                "weight": "critical"
-            }
-        ],
-        "evidence_required": [
-            "Consent Collection Forms / UI Screenshots",
-            "Itemised Purpose Specification Matrix",
-            "Consent Ledger / Audit Trail Architecture"
-        ],
-        "remediation_guidance": "Unbundle consent from Terms of Service. Provide granular consent toggles per processing purpose (e.g. consultation vs marketing updates) and record cryptographic timestamped consent logs.",
-        "source_document": "DPDP Act 2023, Section 6(1)-(3); Rule 3",
-        "expert_review_required": True
-    },
-    {
-        "id": "DPDP-SEC-05",
-        "section": "Section 5",
-        "rule_ref": "Rule 3",
-        "title": "Itemised Notice in Plain Language & 8th Schedule Availability",
-        "description": "Before or at the time of seeking consent, the Data Fiduciary must give the Data Principal an itemised notice specifying personal data collected, processing purpose, manner of exercising rights, and grievance redressal contact, available in English and any of the 22 Eighth Schedule languages.",
-        "applicability_conditions": ["collects_personal_data"],
-        "industry_conditions": ["all"],
-        "effective_date": "13 May 2027",
-        "legal_status": "SCHEDULED_MAY_2027",
-        "readiness_category": "Consent & Notices",
-        "assessment_questions": [
-            {
-                "qid": "q_sec5_itemised_notice",
-                "question": "Does your organisation provide an itemised privacy notice before collecting personal data (at reception, web forms, or onboarding)?",
-                "type": "boolean",
-                "weight": "critical"
-            },
-            {
-                "qid": "q_sec5_multilingual",
-                "question": "Is the notice available in plain, comprehensible language and prepared for accessibility in required 8th Schedule languages (e.g. Hindi, regional languages)?",
+                "qid": "q_sec6_unbundled",
+                "question": "Is consent requested separately from general Terms of Service or Privacy Policy acceptances?",
                 "type": "boolean",
                 "weight": "high"
             }
         ],
         "evidence_required": [
-            "Patient / User Privacy Notice Document",
-            "Itemised Data & Purpose Table",
-            "Grievance Officer Designation in Notice",
-            "Multilingual Notice Translations (where applicable)"
+            "Consent Capture Wireframes & Screenshots",
+            "Consent Database Log Schema (Timestamp, IP, Version)",
+            "Itemised Purpose Checkbox Specification"
         ],
-        "remediation_guidance": "Draft a clear, itemised notice detailing specific data points (e.g., patient phone, medical report), exact operational purpose (e.g., diagnostic consultation), rights procedure, and contact details of the Grievance Officer.",
-        "source_document": "DPDP Act 2023, Section 5; Rule 3",
-        "expert_review_required": True
-    },
-    {
-        "id": "DPDP-SEC-06-04",
-        "section": "Section 6(4)-(6)",
-        "rule_ref": "Rule 3(4)",
-        "title": "Consent Withdrawal & Processor Cascading",
-        "description": "Data Principals have the statutory right to withdraw consent at any time with the same ease with which it was given. Upon withdrawal, the Data Fiduciary must cease processing and instruct all Data Processors to cease processing unless retention is mandated by law.",
-        "applicability_conditions": ["processes_on_consent_basis"],
-        "industry_conditions": ["all"],
-        "effective_date": "13 May 2027",
-        "legal_status": "SCHEDULED_MAY_2027",
-        "readiness_category": "Rights & Consent Workflows",
-        "assessment_questions": [
-            {
-                "qid": "q_sec6_withdrawal_ease",
-                "question": "Can individuals withdraw consent as easily as giving it (e.g., via simple online form, email request, or reception desk form)?",
-                "type": "boolean",
-                "weight": "critical"
-            },
-            {
-                "qid": "q_sec6_processor_cascade",
-                "question": "Does your organisation have an operational procedure to cascade consent withdrawal to diagnostic software, cloud hosts, and vendors within reasonable timelines?",
-                "type": "boolean",
-                "weight": "high"
-            }
-        ],
-        "evidence_required": [
-            "Consent Withdrawal Procedure SOP",
-            "Vendor / Processor Cease-Processing Notification Protocol",
-            "Consent Withdrawal Audit Log"
-        ],
-        "remediation_guidance": "Implement a standardized Consent Withdrawal Request workflow that automatically flags the individual's record, checks statutory retention exceptions (e.g. tax records, clinical establishment laws), and issues automated or tracked notices to processors.",
-        "source_document": "DPDP Act 2023, Section 6(4)-(6)",
+        "recommended_action": "Unbundle consent from Terms of Service. Ensure checkboxes default to unchecked and consent logs record timestamp, notice version, and specific purpose.",
+        "remediation_guidance": "Unbundle consent from Terms of Service. Ensure checkboxes default to unchecked and consent logs record timestamp, notice version, and specific purpose.",
+        "verification_procedure": "Inspect website forms and registration APIs to confirm checkboxes are unticked and logs store immutable audit records.",
+        "last_reviewed_date": "2026-11-22",
+        "rule_version": "v2.1",
+        "official_source_reference": "DPDP Act 2023, Section 4 & Section 6(1)-(3); DPDP Rules 2025, Rule 3",
         "expert_review_required": False
     },
     {
-        "id": "DPDP-SEC-07",
-        "section": "Section 7",
-        "rule_ref": "Statutory Bases",
-        "title": "Legitimate Uses (Statutory Non-Consent Grounds)",
-        "description": "Processing personal data without explicit consent is strictly limited to specified statutory grounds: voluntary provision for a specified purpose, State subsidies/benefits, legal obligation, compliance with court orders/judgments, medical emergency involving threat to life, medical treatment during epidemic/outbreak, and employment purposes.",
-        "applicability_conditions": ["relies_on_legitimate_use"],
-        "industry_conditions": ["healthcare", "all"],
+        "id": "DPDP-SEC-05",
+        "rule_id": "DPDP-SEC-05",
+        "section": "Section 5",
+        "legal_reference": "Section 5(1), Rule 3",
+        "rule_ref": "Rule 3",
+        "title": "Privacy Notice in Plain Language & 8th Schedule",
+        "rule_title": "Itemised Privacy Notice in Plain Language & 8th Schedule Availability",
+        "description": "Every consent request must be preceded or accompanied by an itemised notice stating the personal data to be collected, purpose, rights, and Grievance Officer details, available in English and 22 Eighth Schedule languages.",
+        "explanation": "Requires clear, standalone privacy notices specifying personal data categories, exact purpose of use, instructions on how to withdraw consent or exercise rights, and details of the Grievance Redressal Officer.",
+        "applicability_conditions": ["collects_personal_data"],
+        "industry_conditions": ["all"],
         "effective_date": "13 May 2027",
+        "commencement_status": "Scheduled",
         "legal_status": "SCHEDULED_MAY_2027",
-        "readiness_category": "Legal Bases & Data Inventory",
+        "obligation_type": "Upcoming obligation",
+        "category": "Privacy notices",
+        "readiness_category": "Transparency & Notices",
+        "severity": "HIGH",
+        "confidence": "HIGH",
+        "detection_method": "PASSIVE_WEB_CRAWLER",
         "assessment_questions": [
             {
-                "qid": "q_sec7_grounds_mapping",
-                "question": "Are all non-consent processing activities mapped strictly to Section 7 statutory grounds (e.g., medical emergency, employment, legal compliance) rather than generic business interest?",
+                "qid": "q_sec5_notice_present",
+                "question": "Do you present a clear notice to individuals at or before the time of collecting personal data?",
                 "type": "boolean",
                 "weight": "critical"
+            },
+            {
+                "qid": "q_sec5_grievance_contact",
+                "question": "Does your notice explicitly name a designated Grievance Officer and contact mechanism?",
+                "type": "boolean",
+                "weight": "high"
             }
         ],
         "evidence_required": [
-            "Legal Basis Justification Register",
-            "Employment Privacy Policy & Notice",
-            "Medical Emergency Processing Protocol"
+            "Published Section 5 Privacy Notice Document",
+            "Multi-lingual (Eighth Schedule) Notice Translations",
+            "Form-level Notice Link Screen Captures"
         ],
-        "remediation_guidance": "Audit all data processing grounds. DPDP does not contain an open-ended GDPR-style 'legitimate interest' clause. Ensure each processing stream is classified under Section 6 consent or a specific Section 7 statutory clause.",
-        "source_document": "DPDP Act 2023, Section 7",
+        "recommended_action": "Draft and publish a Section 5 notice specifying personal data collected, specific processing purposes, rights mechanisms, and designated Grievance Officer email.",
+        "remediation_guidance": "Draft and publish a Section 5 notice specifying personal data collected, specific processing purposes, rights mechanisms, and designated Grievance Officer email.",
+        "verification_procedure": "Crawl public website to verify privacy policy presence, contact email, grievance officer designation, and itemised purpose breakdown.",
+        "last_reviewed_date": "2026-11-22",
+        "rule_version": "v2.1",
+        "official_source_reference": "DPDP Act 2023, Section 5; DPDP Rules 2025, Rule 3",
+        "expert_review_required": False
+    },
+    {
+        "id": "DPDP-SEC-06-04",
+        "rule_id": "DPDP-SEC-06-04",
+        "section": "Section 6(4)-(6)",
+        "legal_reference": "Section 6(4)-(6), Rule 3(4)",
+        "rule_ref": "Rule 3(4)",
+        "title": "Consent Withdrawal & Processor Cascading",
+        "rule_title": "Consent Withdrawal & Processor Cascading",
+        "description": "Data Principals have the statutory right to withdraw consent with the same ease with which it was given; processing must cease and cascade to third-party processors unless retention is required by other Indian laws.",
+        "explanation": "Enforces frictionless consent withdrawal. Upon receiving withdrawal, processing must immediately cease and instructions must cascade down to all external processors (e.g. labs, SMS gateways, cloud providers).",
+        "applicability_conditions": ["relies_on_consent"],
+        "industry_conditions": ["all"],
+        "effective_date": "13 May 2027",
+        "commencement_status": "Scheduled",
+        "legal_status": "SCHEDULED_MAY_2027",
+        "obligation_type": "Upcoming obligation",
+        "category": "Consent management",
+        "readiness_category": "Consent Architecture",
+        "severity": "HIGH",
+        "confidence": "HIGH",
+        "detection_method": "ORGANISATIONAL_ASSESSMENT",
+        "assessment_questions": [
+            {
+                "qid": "q_sec6_withdrawal_ease",
+                "question": "Can customers or patients withdraw their consent through a 1-click or single web/email interface?",
+                "type": "boolean",
+                "weight": "high"
+            },
+            {
+                "qid": "q_sec6_cascade",
+                "question": "Do you have automated procedures or contractual SLA to notify third-party processors when consent is withdrawn?",
+                "type": "boolean",
+                "weight": "high"
+            }
+        ],
+        "evidence_required": [
+            "Consent Withdrawal Standard Operating Procedure",
+            "Processor Notification API / Dispatch Records",
+            "Exception Registry for Statutory Retentions"
+        ],
+        "recommended_action": "Establish an automated or structured workflow allowing individuals to revoke consent with equivalent ease, notifying downstream software vendors and labs.",
+        "remediation_guidance": "Establish an automated or structured workflow allowing individuals to revoke consent with equivalent ease, notifying downstream software vendors and labs.",
+        "verification_procedure": "Audit consent withdrawal desk and test processor cascading notifications.",
+        "last_reviewed_date": "2026-11-22",
+        "rule_version": "v2.1",
+        "official_source_reference": "DPDP Act 2023, Section 6(4)-(6); DPDP Rules 2025, Rule 3(4)",
+        "expert_review_required": True
+    },
+    {
+        "id": "DPDP-SEC-07",
+        "rule_id": "DPDP-SEC-07",
+        "section": "Section 7",
+        "legal_reference": "Section 7(a)-(i)",
+        "rule_ref": "Statutory Bases",
+        "title": "Legitimate Uses (Statutory Non-Consent Grounds)",
+        "rule_title": "Legitimate Uses (Statutory Non-Consent Grounds)",
+        "description": "Processing personal data without consent strictly restricted to statutorily enumerated grounds: voluntary provision, legal obligations, medical emergency, epidemics, public order, and employment.",
+        "explanation": "No open-ended legitimate interest exists under DPDP. Non-consent processing is lawful solely under Section 7 grounds like medical emergency threat to life (7(e)), legal duty (7(c)), or employment (7(i)).",
+        "applicability_conditions": ["processes_without_consent"],
+        "industry_conditions": ["all"],
+        "effective_date": "13 May 2027",
+        "commencement_status": "Scheduled",
+        "legal_status": "SCHEDULED_MAY_2027",
+        "obligation_type": "Upcoming obligation",
+        "category": "Lawful processing",
+        "readiness_category": "Legal Bases & RoPA",
+        "severity": "HIGH",
+        "confidence": "HIGH",
+        "detection_method": "ORGANISATIONAL_ASSESSMENT",
+        "assessment_questions": [
+            {
+                "qid": "q_sec7_grounds",
+                "question": "Are all processing streams without consent strictly mapped to Section 7 statutory grounds (e.g., medical emergency, employment, legal compliance)?",
+                "type": "boolean",
+                "weight": "high"
+            }
+        ],
+        "evidence_required": [
+            "Record of Processing Activities (RoPA) with Section 7 Mapping",
+            "Emergency Medical Data Processing Protocol",
+            "Employee Data Notice & Legitimate Use Memo"
+        ],
+        "recommended_action": "Audit all data processing streams that do not obtain consent and map them to explicit Section 7 statutory grounds.",
+        "remediation_guidance": "Audit all data processing streams that do not obtain consent and map them to explicit Section 7 statutory grounds.",
+        "verification_procedure": "Inspect RoPA register to confirm every non-consent processing activity has a verified statutory clause citation.",
+        "last_reviewed_date": "2026-11-22",
+        "rule_version": "v2.1",
+        "official_source_reference": "DPDP Act 2023, Section 7",
         "expert_review_required": True
     },
     {
         "id": "DPDP-SEC-08-01",
+        "rule_id": "DPDP-SEC-08-01",
         "section": "Section 8(1) & 8(2)",
+        "legal_reference": "Section 8(1)-(2), Rule 5",
         "rule_ref": "Rule 5",
-        "title": "Data Fiduciary Responsibility & Processor Oversight",
-        "description": "The Data Fiduciary remains fully responsible for complying with the Act regardless of any processing undertaken on its behalf by a Data Processor. Data may only be engaged with a Data Processor under a valid contract.",
-        "applicability_conditions": ["engages_data_processors"],
+        "title": "Data Fiduciary Accountability & Vendor DPA Contracts",
+        "rule_title": "Data Fiduciary Responsibility & Data Processor Agreement (DPA) Execution",
+        "description": "The Data Fiduciary remains accountable for all processing by Data Processors and may engage processors only under valid contracts binding them to DPDP standards.",
+        "explanation": "Mandates that external vendors, cloud services, laboratories, and billing software may only process data under a legally binding Data Processing Agreement with clear breach notification and erasure terms.",
+        "applicability_conditions": ["uses_third_party_processors"],
         "industry_conditions": ["all"],
         "effective_date": "13 May 2027",
+        "commencement_status": "Scheduled",
         "legal_status": "SCHEDULED_MAY_2027",
-        "readiness_category": "Vendor & Processor Management",
+        "obligation_type": "Upcoming obligation",
+        "category": "Data processor management",
+        "readiness_category": "Vendor & Processor Governance",
+        "severity": "CRITICAL",
+        "confidence": "HIGH",
+        "detection_method": "ORGANISATIONAL_ASSESSMENT",
         "assessment_questions": [
             {
-                "qid": "q_sec8_processor_contracts",
-                "question": "Do you have formal Data Processing Agreements (DPAs) or written clauses with all software vendors, cloud hosts, diagnostic labs, and IT services handling personal data?",
+                "qid": "q_sec8_dpa_contracts",
+                "question": "Do you have signed Data Processing Agreements (DPA) with all cloud hosting, diagnostic software, and payment vendors?",
                 "type": "boolean",
                 "weight": "critical"
-            },
-            {
-                "qid": "q_sec8_vendor_register",
-                "question": "Do you maintain a centralized register of all vendors and processors with their data categories, storage regions, and agreement dates?",
-                "type": "boolean",
-                "weight": "high"
             }
         ],
         "evidence_required": [
-            "Vendor & Data Processor Register",
             "Executed Data Processing Agreements (DPAs)",
-            "Third-Party Security Review Reports"
+            "Third-Party Vendor Risk Assessment Register",
+            "Vendor Security & Breach Indemnity Addendums"
         ],
-        "remediation_guidance": "Execute DPDP-compliant DPAs with all third-party software, cloud storage providers, and billing vendors binding them to process data solely on instruction and implement safeguards.",
-        "source_document": "DPDP Act 2023, Section 8(1)-(2)",
+        "recommended_action": "Review all vendor contracts (HMS, LIMS, AWS, Razorpay, SMS gateways) and execute DPDP-compliant Data Processing Agreements.",
+        "remediation_guidance": "Review all vendor contracts (HMS, LIMS, AWS, Razorpay, SMS gateways) and execute DPDP-compliant Data Processing Agreements.",
+        "verification_procedure": "Verify presence of executed DPAs in the Evidence Vault covering all cataloged third-party processors.",
+        "last_reviewed_date": "2026-11-22",
+        "rule_version": "v2.1",
+        "official_source_reference": "DPDP Act 2023, Section 8(1)-(2); DPDP Rules 2025, Rule 5",
         "expert_review_required": True
     },
     {
         "id": "DPDP-SEC-08-03",
+        "rule_id": "DPDP-SEC-08-03",
         "section": "Section 8(3)",
+        "legal_reference": "Section 8(3), Rule 5",
         "rule_ref": "Rule 5",
-        "title": "Data Accuracy & Consistency",
-        "description": "Ensure personal data processed is accurate, complete, and consistent if it is used to make a decision that affects the Data Principal or disclosed to another Data Fiduciary.",
+        "title": "Data Quality, Accuracy & Consistency",
+        "rule_title": "Data Quality, Completeness & Accuracy Assurance",
+        "description": "Ensure personal data processed is accurate, complete, and consistent if used to make decisions affecting the Data Principal or shared with another Data Fiduciary.",
+        "explanation": "Applies especially to diagnostic results, clinical records, credit evaluations, and employment decisions where inaccurate data can directly harm the individual.",
         "applicability_conditions": ["makes_decisions_affecting_principals"],
-        "industry_conditions": ["healthcare", "education", "financial"],
+        "industry_conditions": ["hospitals", "clinics", "diagnostic_centres", "fintech", "education"],
         "effective_date": "13 May 2027",
+        "commencement_status": "Scheduled",
         "legal_status": "SCHEDULED_MAY_2027",
+        "obligation_type": "Upcoming obligation",
+        "category": "Documentation and accountability",
         "readiness_category": "Data Quality & Operations",
+        "severity": "MEDIUM",
+        "confidence": "HIGH",
+        "detection_method": "ORGANISATIONAL_ASSESSMENT",
         "assessment_questions": [
             {
-                "qid": "q_sec8_accuracy_controls",
-                "question": "Are there verification checkpoints to ensure patient medical reports, diagnostic records, or employee profiles are accurately recorded and updated?",
-                "type": "boolean",
-                "weight": "high"
-            }
-        ],
-        "evidence_required": [
-            "Data Quality & Record Verification SOP",
-            "Record Correction Audit Trail"
-        ],
-        "remediation_guidance": "Implement verification mechanisms at data entry (e.g. mobile OTP verification, doctor review before report release) to maintain clinical and personal record accuracy.",
-        "source_document": "DPDP Act 2023, Section 8(3)",
-        "expert_review_required": False
-    },
-    {
-        "id": "DPDP-SEC-08-05",
-        "section": "Section 8(5)",
-        "rule_ref": "Rule 6",
-        "title": "Reasonable Security Safeguards",
-        "description": "Implement reasonable security safeguards to prevent personal data breach, protecting personal data in its possession or under its control, including that processed by Data Processors.",
-        "applicability_conditions": ["all"],
-        "industry_conditions": ["all"],
-        "effective_date": "13 May 2027",
-        "legal_status": "SCHEDULED_MAY_2027",
-        "readiness_category": "Security Safeguards",
-        "assessment_questions": [
-            {
-                "qid": "q_sec8_encryption",
-                "question": "Is personal data encrypted both in transit (TLS 1.2/1.3) and at rest (AES-256 or equivalent) across databases, backups, and file storage?",
-                "type": "boolean",
-                "weight": "critical"
-            },
-            {
-                "qid": "q_sec8_access_control",
-                "question": "Is role-based access control (RBAC) enforced with Multi-Factor Authentication (MFA) for administrative and medical staff accessing personal records?",
-                "type": "boolean",
-                "weight": "critical"
-            },
-            {
-                "qid": "q_sec8_backups",
-                "question": "Are periodic secure backups maintained and tested for disaster recovery and operational resilience?",
-                "type": "boolean",
-                "weight": "high"
-            }
-        ],
-        "evidence_required": [
-            "Information Security Policy Document",
-            "Encryption Configuration Records",
-            "RBAC Role Matrix & MFA Verification Records",
-            "Backup & Disaster Recovery Procedures"
-        ],
-        "remediation_guidance": "Enforce TLS in transit, AES-256 encryption at rest, mandatory MFA on administrative dashboards, and periodic access reviews to meet Rule 6 reasonable safeguards.",
-        "source_document": "DPDP Act 2023, Section 8(5); Rule 6",
-        "expert_review_required": True
-    },
-    {
-        "id": "DPDP-SEC-08-06",
-        "section": "Section 8(6)",
-        "rule_ref": "Rule 7",
-        "title": "Personal Data Breach Intimation",
-        "description": "In the event of a personal data breach, the Data Fiduciary must give intimation of the breach to the Data Protection Board and to each affected Data Principal in the prescribed form and manner.",
-        "applicability_conditions": ["all"],
-        "industry_conditions": ["all"],
-        "effective_date": "13 May 2027",
-        "legal_status": "SCHEDULED_MAY_2027",
-        "readiness_category": "Breach Management",
-        "assessment_questions": [
-            {
-                "qid": "q_sec8_breach_sop",
-                "question": "Does your organisation have a documented Incident Response & Breach Management Procedure to detect, investigate, and notify breaches without delay?",
-                "type": "boolean",
-                "weight": "critical"
-            },
-            {
-                "qid": "q_sec8_breach_intimation_drafts",
-                "question": "Are standardized notification templates prepared for initial intimation to the Board without delay, followed by detailed reporting within the prescribed 72-hour period?",
-                "type": "boolean",
-                "weight": "high"
-            }
-        ],
-        "evidence_required": [
-            "Incident Response & Breach SOP",
-            "Data Protection Board Intimation Template (Form A / Rule 7)",
-            "Data Principal Breach Notification Template",
-            "Breach Incident Register & Audit Log"
-        ],
-        "remediation_guidance": "Establish a dual-stage breach response workflow: (1) Immediate preliminary intimation to Data Protection Board upon confirmation, (2) Detailed forensic intimation within 72 hours, with direct communication to affected Data Principals.",
-        "source_document": "DPDP Act 2023, Section 8(6); Rule 7",
-        "expert_review_required": True
-    },
-    {
-        "id": "DPDP-SEC-08-07",
-        "section": "Section 8(7) & 8(8)",
-        "rule_ref": "Rule 8",
-        "title": "Data Retention & Purpose Cessation Erasure",
-        "description": "Erase personal data upon the Data Principal withdrawing consent, or as soon as it is reasonable to assume that the specified purpose is no longer being served, unless retention is necessary for compliance with any law.",
-        "applicability_conditions": ["all"],
-        "industry_conditions": ["all"],
-        "effective_date": "13 May 2027",
-        "legal_status": "SCHEDULED_MAY_2027",
-        "readiness_category": "Retention & Erasure",
-        "assessment_questions": [
-            {
-                "qid": "q_sec8_retention_schedule",
-                "question": "Do you have documented data retention schedules for each category of personal data (e.g., patient records 3-5 years per clinical rules, accounting records 7-8 years)?",
-                "type": "boolean",
-                "weight": "high"
-            },
-            {
-                "qid": "q_sec8_erasure_workflow",
-                "question": "Is there a routine process to safely delete or anonymise digital records once their legal retention period or clinical purpose has expired?",
-                "type": "boolean",
-                "weight": "high"
-            }
-        ],
-        "evidence_required": [
-            "Data Retention Schedule & Policy",
-            "Purpose Cessation Review Records",
-            "Secure Deletion / Scrubbing Certificates"
-        ],
-        "remediation_guidance": "Define retention rules per data category. Link medical records to Clinical Establishments Act retention rules, financial records to Income Tax Act, and configure automated alerts for records reaching scheduled disposal dates.",
-        "source_document": "DPDP Act 2023, Section 8(7)-(8); Rule 8",
-        "expert_review_required": False
-    },
-    {
-        "id": "DPDP-SEC-08-10",
-        "section": "Section 8(10) & 8(11)",
-        "rule_ref": "Rule 9",
-        "title": "Grievance Redressal Mechanism & Officer Contact",
-        "description": "Establish an effective mechanism to redress the grievances of Data Principals and publish the business contact details of a Grievance Officer or authorized representative in a prominent manner.",
-        "applicability_conditions": ["all"],
-        "industry_conditions": ["all"],
-        "effective_date": "13 May 2027",
-        "legal_status": "SCHEDULED_MAY_2027",
-        "readiness_category": "Grievance & Contacts",
-        "assessment_questions": [
-            {
-                "qid": "q_sec8_grievance_officer",
-                "question": "Have you designated a Grievance Officer / Privacy Contact with name, email, and address published on your website and clinic notices?",
-                "type": "boolean",
-                "weight": "critical"
-            },
-            {
-                "qid": "q_sec8_grievance_tracking",
-                "question": "Do you have a ticketing system or register to log, investigate, and respond to grievance submissions within statutory timelines?",
-                "type": "boolean",
-                "weight": "high"
-            }
-        ],
-        "evidence_required": [
-            "Grievance Officer Designation Letter / Board Resolution",
-            "Public Grievance Contact Publication (Website / Clinic Notice)",
-            "Grievance Log & Resolution SOP"
-        ],
-        "remediation_guidance": "Designate a dedicated Grievance Officer (e.g. grievance@company.com), publish the contact in the privacy notice, and implement a ticketing workflow that resolves complaints before escalation to the Data Protection Board.",
-        "source_document": "DPDP Act 2023, Section 8(10)-(11); Rule 9",
-        "expert_review_required": False
-    },
-    {
-        "id": "DPDP-SEC-09",
-        "section": "Section 9",
-        "rule_ref": "Rule 10",
-        "title": "Processing of Children's Personal Data & Persons with Disabilities",
-        "description": "Obtain verifiable consent of the parent or lawful guardian before processing personal data of a child (under 18 years); refrain from tracking, behavioral monitoring, or targeted advertising directed at children, or processing likely to cause detrimental effect, subject to exemptions under the October 2026 Order.",
-        "applicability_conditions": ["processes_children_data"],
-        "industry_conditions": ["healthcare", "education", "all"],
-        "effective_date": "13 May 2027",
-        "legal_status": "SCHEDULED_MAY_2027",
-        "readiness_category": "Children's Data Protection",
-        "assessment_questions": [
-            {
-                "qid": "q_sec9_parental_consent",
-                "question": "Do you obtain verifiable consent from parents/guardians before treating minor patients (under 18) or registering student records?",
-                "type": "boolean",
-                "weight": "critical"
-            },
-            {
-                "qid": "q_sec9_no_tracking",
-                "question": "Do your systems strictly avoid behavioral profiling, targeted marketing, or analytics tracking on children's personal data?",
-                "type": "boolean",
-                "weight": "critical"
-            }
-        ],
-        "evidence_required": [
-            "Verifiable Parental Consent SOP & Registration Forms",
-            "Age Verification Checkpoint Documentation",
-            "Exemption Mapping (October 2026 Removal of Difficulties Order)"
-        ],
-        "remediation_guidance": "Implement parental verification workflows (e.g. guardian ID check during clinic registration) and configure systems to disable any behavioral analytics or promotional messaging for individuals flagged under 18.",
-        "source_document": "DPDP Act 2023, Section 9; Rule 10; Oct 2026 Order",
-        "expert_review_required": True
-    },
-    {
-        "id": "DPDP-SEC-10",
-        "section": "Section 10",
-        "rule_ref": "Rule 11",
-        "title": "Significant Data Fiduciary (SDF) Obligations",
-        "description": "Applicable only to entities designated as Significant Data Fiduciaries by the Central Government: appoint a resident Data Protection Officer (DPO), appoint an independent data auditor, undertake periodic Data Protection Impact Assessments (DPIAs), and periodic compliance audits.",
-        "applicability_conditions": ["designated_sdf"],
-        "industry_conditions": ["all"],
-        "effective_date": "13 May 2027",
-        "legal_status": "CONDITIONAL",
-        "readiness_category": "SDF Governance",
-        "assessment_questions": [
-            {
-                "qid": "q_sec10_sdf_status",
-                "question": "Has your organisation been designated as a Significant Data Fiduciary by Central Government notification, or do you handle massive volumes of sensitive health/financial records crossing notified thresholds?",
-                "type": "boolean",
-                "weight": "high"
-            },
-            {
-                "qid": "q_sec10_dpo_appointed",
-                "question": "If designated or preparing for SDF thresholds, have you appointed an India-resident Data Protection Officer reporting directly to the Board of Directors?",
-                "type": "boolean",
-                "weight": "high"
-            }
-        ],
-        "evidence_required": [
-            "SDF Threshold & Designation Assessment",
-            "DPO Appointment Documentation",
-            "Data Protection Impact Assessment (DPIA) Report",
-            "Independent Data Audit Plan"
-        ],
-        "remediation_guidance": "Assess organization processing volume against Central Government notification criteria. Small clinics and startups are generally exempt from Section 10 unless specifically notified.",
-        "source_document": "DPDP Act 2023, Section 10; Rule 11",
-        "expert_review_required": True
-    },
-    {
-        "id": "DPDP-SEC-11-14",
-        "section": "Sections 11–14",
-        "rule_ref": "Rule 12",
-        "title": "Data Principal Rights (Access, Correction, Erasure & Nomination)",
-        "description": "Data Principals have statutory rights to: (1) obtain a summary of personal data processed and identities of Data Fiduciaries shared with; (2) correction, completion, updating, and erasure; (3) grievance redressal; and (4) nomination of another individual in the event of death or incapacity.",
-        "applicability_conditions": ["all"],
-        "industry_conditions": ["all"],
-        "effective_date": "13 May 2027",
-        "legal_status": "SCHEDULED_MAY_2027",
-        "readiness_category": "Data Principal Rights",
-        "assessment_questions": [
-            {
-                "qid": "q_sec11_access_workflow",
-                "question": "Can patients or users request a summary of their personal data, medical reports, and third parties with whom data was shared?",
-                "type": "boolean",
-                "weight": "critical"
-            },
-            {
-                "qid": "q_sec12_correction_erasure",
-                "question": "Is there a standard procedure to correct inaccurate data or request erasure where no statutory retention law applies?",
-                "type": "boolean",
-                "weight": "critical"
-            },
-            {
-                "qid": "q_sec14_nomination",
-                "question": "Do registration forms or patient profiles provide an option to nominate a representative in the event of death or incapacity?",
+                "qid": "q_sec8_accuracy",
+                "question": "Do you implement validation controls ensuring diagnostic reports and billing identities are verified before distribution?",
                 "type": "boolean",
                 "weight": "medium"
             }
         ],
         "evidence_required": [
-            "Data Principal Rights Request SOP",
-            "Rights Request Portal / Form (Access, Correction, Erasure)",
-            "Nomination Record Facility Documentation",
-            "Rights Fulfillment Audit Log"
+            "Data Quality & Verification Standard Operating Procedure",
+            "Pathology / Clinical Sign-off Policy",
+            "Customer Data Correction Log"
         ],
-        "remediation_guidance": "Deploy a Data Principal Rights workflow to receive, verify identities, coordinate internal system updates, and fulfill access/correction/erasure requests within statutory timeframes.",
-        "source_document": "DPDP Act 2023, Sections 11, 12, 13, 14; Rule 12",
+        "recommended_action": "Implement dual-verification checks on diagnostic reports and customer identity records before sharing.",
+        "remediation_guidance": "Implement dual-verification checks on diagnostic reports and customer identity records before sharing.",
+        "verification_procedure": "Review data quality procedures and error-correction turnaround times.",
+        "last_reviewed_date": "2026-11-22",
+        "rule_version": "v2.1",
+        "official_source_reference": "DPDP Act 2023, Section 8(3)",
         "expert_review_required": False
     },
     {
-        "id": "DPDP-SEC-16",
-        "section": "Section 16",
-        "rule_ref": "Rule 13",
-        "title": "Cross-Border Transfer of Personal Data",
-        "description": "Personal data may be transferred outside India for processing except to countries or territories restricted or blacklisted by the Central Government via official notification.",
-        "applicability_conditions": ["transfers_cross_border"],
+        "id": "DPDP-SEC-08-05",
+        "rule_id": "DPDP-SEC-08-05",
+        "section": "Section 8(5)",
+        "legal_reference": "Section 8(5), Rule 6",
+        "rule_ref": "Rule 6",
+        "title": "Reasonable Security Safeguards to Prevent Breaches",
+        "rule_title": "Implementation of Reasonable Security Safeguards",
+        "description": "Every Data Fiduciary must implement reasonable security safeguards, including encryption, access control, regular vulnerability assessment, and audit logging to prevent personal data breaches.",
+        "explanation": "Statutory duty under Section 8(5) carrying the highest penalty ceiling (up to ₹250 crore) under Schedule to the Act. Requires technical and organizational measures to safeguard data against loss, leak, or breach.",
+        "applicability_conditions": ["all"],
         "industry_conditions": ["all"],
         "effective_date": "13 May 2027",
+        "commencement_status": "Scheduled",
         "legal_status": "SCHEDULED_MAY_2027",
-        "readiness_category": "Data Flow & International",
+        "obligation_type": "Upcoming obligation",
+        "category": "Reasonable security safeguards",
+        "readiness_category": "Technical & Security Safeguards",
+        "severity": "CRITICAL",
+        "confidence": "HIGH",
+        "detection_method": "HYBRID",
         "assessment_questions": [
             {
-                "qid": "q_sec16_overseas_storage",
-                "question": "Do any of your cloud hosting providers, diagnostic software vendors, or analytics tools store personal data on servers located outside India?",
+                "qid": "q_sec8_encryption",
+                "question": "Is digital personal data encrypted in transit (TLS 1.3) and at rest (AES-256) across all systems?",
                 "type": "boolean",
-                "weight": "high"
+                "weight": "critical"
             },
             {
-                "qid": "q_sec16_blacklist_check",
-                "question": "Do you verify that international storage locations do not include any restricted jurisdictions notified by the Central Government?",
+                "qid": "q_sec8_rbac",
+                "question": "Do you enforce role-based access control (RBAC) and Multi-Factor Authentication (MFA) for staff accessing sensitive data?",
+                "type": "boolean",
+                "weight": "critical"
+            }
+        ],
+        "evidence_required": [
+            "Information Security Policy Document",
+            "Encryption Configuration Standards (TLS & AES-256)",
+            "Vulnerability Assessment & Penetration Testing (VAPT) Report",
+            "MFA & RBAC Access Audit Logs"
+        ],
+        "recommended_action": "Enforce HTTPS/TLS 1.3, AES-256 database storage encryption, Multi-Factor Authentication on admin portals, and periodic security scans.",
+        "remediation_guidance": "Enforce HTTPS/TLS 1.3, AES-256 database storage encryption, Multi-Factor Authentication on admin portals, and periodic security scans.",
+        "verification_procedure": "Inspect TLS certificates, security response headers, password hashing algorithms, and vulnerability assessment certifications.",
+        "last_reviewed_date": "2026-11-22",
+        "rule_version": "v2.1",
+        "official_source_reference": "DPDP Act 2023, Section 8(5); DPDP Rules 2025, Rule 6; Schedule Item 1",
+        "expert_review_required": True
+    },
+    {
+        "id": "DPDP-SEC-08-06",
+        "rule_id": "DPDP-SEC-08-06",
+        "section": "Section 8(6)",
+        "legal_reference": "Section 8(6), Rule 7",
+        "rule_ref": "Rule 7",
+        "title": "Breach Management & Dual-Stage Board Intimation",
+        "rule_title": "Personal Data Breach Management & Dual-Stage Notification",
+        "description": "In the event of a personal data breach, intimate the Data Protection Board of India and each affected Data Principal via dual-stage intimation (initial without delay; detailed supplementary within 72 hours).",
+        "explanation": "Requires an established incident response process capable of detecting breaches, containing impact, and drafting dual-stage intimations (Form A initial report + Form B 72-hour comprehensive report).",
+        "applicability_conditions": ["all"],
+        "industry_conditions": ["all"],
+        "effective_date": "13 May 2027",
+        "commencement_status": "Scheduled",
+        "legal_status": "SCHEDULED_MAY_2027",
+        "obligation_type": "Upcoming obligation",
+        "category": "Personal data breach response",
+        "readiness_category": "Incident & Breach Response",
+        "severity": "CRITICAL",
+        "confidence": "HIGH",
+        "detection_method": "ORGANISATIONAL_ASSESSMENT",
+        "assessment_questions": [
+            {
+                "qid": "q_sec8_breach_sop",
+                "question": "Do you have an operational Incident Response Procedure to notify the Board and individuals within 72 hours of a personal data breach?",
+                "type": "boolean",
+                "weight": "critical"
+            }
+        ],
+        "evidence_required": [
+            "Data Breach Incident Response Standard Operating Procedure",
+            "Rule 7 Form A Draft Notification Template",
+            "Data Principal Breach Notice Formats"
+        ],
+        "recommended_action": "Establish a dual-stage breach response workflow with predefined Board notification templates and customer alert drafts.",
+        "remediation_guidance": "Establish a dual-stage breach response workflow with predefined Board notification templates and customer alert drafts.",
+        "verification_procedure": "Review operational incident response desk and simulate Tabletop Breach notification exercise.",
+        "last_reviewed_date": "2026-11-22",
+        "rule_version": "v2.1",
+        "official_source_reference": "DPDP Act 2023, Section 8(6); DPDP Rules 2025, Rule 7; Schedule Item 2",
+        "expert_review_required": True
+    },
+    {
+        "id": "DPDP-SEC-08-07",
+        "rule_id": "DPDP-SEC-08-07",
+        "section": "Section 8(7) & 8(8)",
+        "legal_reference": "Section 8(7)-(8), Rule 8",
+        "rule_ref": "Rule 8",
+        "title": "Data Retention & Purpose-Cessation Erasure",
+        "rule_title": "Data Retention Limits & Purpose-Cessation Erasure",
+        "description": "Erase personal data upon the purpose of collection being served or upon withdrawal of consent, whichever is earlier, unless retention is mandated by another Indian statute.",
+        "explanation": "Strict data minimization rule. Prohibits indefinite storage of customer or patient records. Requires documented retention schedules with automated or verified purging.",
+        "applicability_conditions": ["retains_personal_data"],
+        "industry_conditions": ["all"],
+        "effective_date": "13 May 2027",
+        "commencement_status": "Scheduled",
+        "legal_status": "SCHEDULED_MAY_2027",
+        "obligation_type": "Upcoming obligation",
+        "category": "Data retention and erasure",
+        "readiness_category": "Data Lifecycle & Retention",
+        "severity": "HIGH",
+        "confidence": "HIGH",
+        "detection_method": "ORGANISATIONAL_ASSESSMENT",
+        "assessment_questions": [
+            {
+                "qid": "q_sec8_retention_schedule",
+                "question": "Do you maintain a documented Data Retention Schedule defining specific years for each category before deletion?",
                 "type": "boolean",
                 "weight": "high"
             }
         ],
         "evidence_required": [
-            "Cross-Border Data Transfer Inventory",
-            "Cloud Storage Region Documentation",
-            "Vendor Jurisdictional Assessment"
+            "Data Retention & Disposal Policy Document",
+            "Database Automated Purge Configuration",
+            "Cryptographic Data Deletion Certificates"
         ],
-        "remediation_guidance": "Document server regions for all cloud systems (e.g. AWS Mumbai ap-south-1 vs US-East). Ensure no transfers occur to blacklisted jurisdictions and verify compliance with sector-specific localisation rules (e.g. RBI payments data directive).",
-        "source_document": "DPDP Act 2023, Section 16",
+        "recommended_action": "Document specific retention periods for all data categories (e.g., 5 years for clinical records, 8 years for invoices) and configure automated disposal.",
+        "remediation_guidance": "Document specific retention periods for all data categories (e.g., 5 years for clinical records, 8 years for invoices) and configure automated disposal.",
+        "verification_procedure": "Examine retention schedule in RoPA register against sector-specific statutory retention requirements.",
+        "last_reviewed_date": "2026-11-22",
+        "rule_version": "v2.1",
+        "official_source_reference": "DPDP Act 2023, Section 8(7)-(8); DPDP Rules 2025, Rule 8",
+        "expert_review_required": False
+    },
+    {
+        "id": "DPDP-SEC-08-10",
+        "rule_id": "DPDP-SEC-08-10",
+        "section": "Section 8(10) & 8(11)",
+        "legal_reference": "Section 8(10)-(11), Rule 9",
+        "rule_ref": "Rule 9",
+        "title": "Grievance Redressal Mechanism & DPO Contact",
+        "rule_title": "Grievance Redressal Mechanism & DPO / Contact Person Designation",
+        "description": "Establish a readily accessible grievance redressal mechanism and publish the business contact details of a designated Grievance Officer on all public portals.",
+        "explanation": "Every business collecting digital data must provide an easy grievance escalation channel (email/portal) to resolve customer privacy disputes before external complaints to the DPBI.",
+        "applicability_conditions": ["all"],
+        "industry_conditions": ["all"],
+        "effective_date": "13 May 2027",
+        "commencement_status": "Scheduled",
+        "legal_status": "SCHEDULED_MAY_2027",
+        "obligation_type": "Upcoming obligation",
+        "category": "Grievance redressal",
+        "readiness_category": "Grievance Redressal",
+        "severity": "HIGH",
+        "confidence": "HIGH",
+        "detection_method": "PASSIVE_WEB_CRAWLER",
+        "assessment_questions": [
+            {
+                "qid": "q_sec8_grievance_officer",
+                "question": "Is a designated Grievance Officer explicitly named with contact email and physical address on your public website?",
+                "type": "boolean",
+                "weight": "high"
+            }
+        ],
+        "evidence_required": [
+            "Grievance Redressal Standard Operating Procedure",
+            "Public Website Grievance Contact Page URL",
+            "Grievance Ticket Management Log"
+        ],
+        "recommended_action": "Designate a Grievance Officer and publish their official contact email and postal address in your privacy policy and website footer.",
+        "remediation_guidance": "Designate a Grievance Officer and publish their official contact email and postal address in your privacy policy and website footer.",
+        "verification_procedure": "Crawl target website footer and privacy notice for grievance email patterns and officer designations.",
+        "last_reviewed_date": "2026-11-22",
+        "rule_version": "v2.1",
+        "official_source_reference": "DPDP Act 2023, Section 8(10)-(11); DPDP Rules 2025, Rule 9",
+        "expert_review_required": False
+    },
+    {
+        "id": "DPDP-SEC-09",
+        "rule_id": "DPDP-SEC-09",
+        "section": "Section 9",
+        "legal_reference": "Section 9, Rule 10",
+        "rule_ref": "Rule 10",
+        "title": "Children's Personal Data & Verifiable Parental Consent",
+        "rule_title": "Processing of Children's & Disabled Persons' Personal Data",
+        "description": "Obtain verifiable parental consent before processing personal data of children under 18; strict ban on behavioral monitoring, tracking, or targeted advertising directed at children.",
+        "explanation": "Special protections for minors. Requires verifiable guardian consent before handling pediatric or student data, and strictly bans ad-targeting or behavioral profiling.",
+        "applicability_conditions": ["processes_minor_data"],
+        "industry_conditions": ["hospitals", "clinics", "diagnostic_centres", "education", "gaming", "ecommerce"],
+        "effective_date": "13 May 2027",
+        "commencement_status": "Scheduled",
+        "legal_status": "SCHEDULED_MAY_2027",
+        "obligation_type": "Upcoming obligation",
+        "category": "Children's personal data",
+        "readiness_category": "Special Protections",
+        "severity": "CRITICAL",
+        "confidence": "HIGH",
+        "detection_method": "HYBRID",
+        "assessment_questions": [
+            {
+                "qid": "q_sec9_parental_consent",
+                "question": "Do you obtain verifiable consent from parents or legal guardians before creating minor patient or student profiles?",
+                "type": "boolean",
+                "weight": "critical"
+            },
+            {
+                "qid": "q_sec9_no_tracking",
+                "question": "Can you verify that no third-party behavioral analytics or advertising pixels are active on child-accessible portals?",
+                "type": "boolean",
+                "weight": "critical"
+            }
+        ],
+        "evidence_required": [
+            "Verifiable Parental Consent Verification Flow",
+            "Child Safeguard Policy & Pediatric Protocol",
+            "Tracker Blacklist Verification on Minor Pages"
+        ],
+        "recommended_action": "Deploy verifiable guardian consent workflows for minors under 18, and ensure all ad trackers and analytics pixels are disabled on minor-facing portals.",
+        "remediation_guidance": "Deploy verifiable guardian consent workflows for minors under 18, and ensure all ad trackers and analytics pixels are disabled on minor-facing portals.",
+        "verification_procedure": "Inspect website scanner trackers and test minor registration / pediatric intake forms for guardian consent steps.",
+        "last_reviewed_date": "2026-11-22",
+        "rule_version": "v2.1",
+        "official_source_reference": "DPDP Act 2023, Section 9; DPDP Rules 2025, Rule 10; Schedule Item 3",
         "expert_review_required": True
+    },
+    {
+        "id": "DPDP-SEC-10",
+        "rule_id": "DPDP-SEC-10",
+        "section": "Section 10",
+        "legal_reference": "Section 10, Rule 11",
+        "rule_ref": "Rule 11",
+        "title": "Significant Data Fiduciary (SDF) Obligations",
+        "rule_title": "Significant Data Fiduciary Obligations (DPO, DPIA & Periodic Audits)",
+        "description": "Entities notified as Significant Data Fiduciaries must appoint a resident Data Protection Officer, engage an independent data auditor, and conduct periodic Data Protection Impact Assessments (DPIA).",
+        "explanation": "Applies conditionally to high-volume or high-risk entities designated by the Central Government based on data volume, sensitivity, and risk to sovereignty.",
+        "applicability_conditions": ["designated_as_sdf"],
+        "industry_conditions": ["hospitals", "large_diagnostic_chains", "fintech", "large_saas", "telecom"],
+        "effective_date": "13 May 2027",
+        "commencement_status": "Requires legal review",
+        "legal_status": "CONDITIONAL",
+        "obligation_type": "Upcoming obligation",
+        "category": "Significant Data Fiduciary obligations",
+        "readiness_category": "Special Protections",
+        "severity": "HIGH",
+        "confidence": "MEDIUM",
+        "detection_method": "ORGANISATIONAL_ASSESSMENT",
+        "assessment_questions": [
+            {
+                "qid": "q_sec10_dpo_appointed",
+                "question": "Has your Board formally appointed an India-resident Data Protection Officer reporting to senior leadership?",
+                "type": "boolean",
+                "weight": "high"
+            }
+        ],
+        "evidence_required": [
+            "Data Protection Officer (DPO) Appointment Resolution",
+            "Data Protection Impact Assessment (DPIA) Report",
+            "Independent Privacy Audit Certificate"
+        ],
+        "recommended_action": "Assess threshold criteria for Significant Data Fiduciary designation and prepare DPIA frameworks if operating large healthcare networks or fin-tech systems.",
+        "remediation_guidance": "Assess threshold criteria for Significant Data Fiduciary designation and prepare DPIA frameworks if operating large healthcare networks or fin-tech systems.",
+        "verification_procedure": "Examine entity scale and confirm if designated under Section 10 notification.",
+        "last_reviewed_date": "2026-11-22",
+        "rule_version": "v2.1",
+        "official_source_reference": "DPDP Act 2023, Section 10; DPDP Rules 2025, Rule 11; Schedule Item 4",
+        "expert_review_required": True
+    },
+    {
+        "id": "DPDP-SEC-11-14",
+        "rule_id": "DPDP-SEC-11-14",
+        "section": "Sections 11–14",
+        "legal_reference": "Sections 11–14, Rule 12",
+        "rule_ref": "Rule 12",
+        "title": "Data Principal Rights Management Desk",
+        "rule_title": "Data Principal Rights (Access, Correction, Erasure & Nomination)",
+        "description": "Establish workflows to process Data Principal requests for information access, correction of inaccurate data, purpose-cessation erasure, and nominee designation.",
+        "explanation": "Statutory rights desk ensuring individuals can query what personal data is held, request updates, demand deletion, and appoint a nominee.",
+        "applicability_conditions": ["all"],
+        "industry_conditions": ["all"],
+        "effective_date": "13 May 2027",
+        "commencement_status": "Scheduled",
+        "legal_status": "SCHEDULED_MAY_2027",
+        "obligation_type": "Upcoming obligation",
+        "category": "Data Principal rights",
+        "readiness_category": "Data Principal Rights",
+        "severity": "HIGH",
+        "confidence": "HIGH",
+        "detection_method": "ORGANISATIONAL_ASSESSMENT",
+        "assessment_questions": [
+            {
+                "qid": "q_sec11_rights_portal",
+                "question": "Do you offer a self-service or ticketing mechanism for users to request access or correction of their personal records?",
+                "type": "boolean",
+                "weight": "high"
+            }
+        ],
+        "evidence_required": [
+            "Data Principal Rights Request Handling Procedure",
+            "Rights Ticket Management System Logs",
+            "Nomination Registration Format"
+        ],
+        "recommended_action": "Set up a customer privacy request intake portal and maintain an auditable SLA resolution log (within 72 hours).",
+        "remediation_guidance": "Set up a customer privacy request intake portal and maintain an auditable SLA resolution log (within 72 hours).",
+        "verification_procedure": "Audit customer privacy requests ticketing desk and measure resolution SLA performance.",
+        "last_reviewed_date": "2026-11-22",
+        "rule_version": "v2.1",
+        "official_source_reference": "DPDP Act 2023, Sections 11, 12, 13, 14; DPDP Rules 2025, Rule 12",
+        "expert_review_required": False
+    },
+    {
+        "id": "DPDP-SEC-16",
+        "rule_id": "DPDP-SEC-16",
+        "section": "Section 16",
+        "legal_reference": "Section 16, Rule 13",
+        "rule_ref": "Rule 13",
+        "title": "Cross-Border Transfer Controls (Negative List Compliance)",
+        "rule_title": "Cross-Border Personal Data Transfer Verification",
+        "description": "Ensure personal data is not transferred to any foreign country or territory restricted under Central Government negative list notifications.",
+        "explanation": "DPDP Act follows a negative list approach (transfers allowed to most countries unless explicitly blacklisted by MeitY gazette orders).",
+        "applicability_conditions": ["transfers_data_outside_india"],
+        "industry_conditions": ["all"],
+        "effective_date": "13 May 2027",
+        "commencement_status": "Scheduled",
+        "legal_status": "SCHEDULED_MAY_2027",
+        "obligation_type": "Upcoming obligation",
+        "category": "Documentation and accountability",
+        "readiness_category": "Cross-Border & Governance",
+        "severity": "MEDIUM",
+        "confidence": "HIGH",
+        "detection_method": "ORGANISATIONAL_ASSESSMENT",
+        "assessment_questions": [
+            {
+                "qid": "q_sec16_crossborder",
+                "question": "Do your cloud systems (AWS, Azure, Google Cloud) store personal data exclusively in Indian regions (e.g. Mumbai / Hyderabad)?",
+                "type": "boolean",
+                "weight": "medium"
+            }
+        ],
+        "evidence_required": [
+            "Data Residency & Cloud Storage Location Architecture",
+            "Subprocessor Cross-Border Transfer Assessment",
+            "Vendor Data Localization Attestation"
+        ],
+        "recommended_action": "Verify cloud regions in AWS, GCP, Azure, or vendor contracts to ensure patient and customer databases reside in India or compliant territories.",
+        "remediation_guidance": "Verify cloud regions in AWS, GCP, Azure, or vendor contracts to ensure patient and customer databases reside in India or compliant territories.",
+        "verification_procedure": "Inspect vendor storage regions and cloud infrastructure resource locations.",
+        "last_reviewed_date": "2026-11-22",
+        "rule_version": "v2.1",
+        "official_source_reference": "DPDP Act 2023, Section 16; DPDP Rules 2025, Rule 13",
+        "expert_review_required": False
     }
 ]
 
 # ==============================================================================
-# INDUSTRY PRE-CONFIGURED TEMPLATES
+# 7 INDUSTRY PRE-CONFIGURED TEMPLATES (PHASE 9)
 # ==============================================================================
 
 INDUSTRY_TEMPLATES: Dict[str, Dict[str, Any]] = {
-    "healthcare": {
-        "name": "Healthcare (Clinics, Diagnostic Centres & Hospitals)",
-        "description": "Tailored for medical establishments handling patient consultations, appointment booking, diagnostic reports, and medical billing.",
-        "departments": [
-            "Reception & Registration",
-            "OPD Consultation",
-            "Laboratory & Diagnostics",
-            "Billing & Accounts",
-            "Human Resources & Staff",
-            "Website & Digital Enquiries"
-        ],
-        "typical_principals": [
-            "Patients",
-            "Legal Guardians (Minors)",
-            "Doctors & Specialists",
-            "Clinic Staff & Nurses",
-            "Diagnostic Partners"
-        ],
+    "hospitals": {
+        "name": "Hospitals & Multi-Speciality Medical Centres",
+        "description": "Tailored for hospitals handling inpatient records, surgical charts, emergency admissions (Section 7(e)), health insurance TPA claims, minor pediatric consent, and hospital management software.",
+        "departments": ["Inpatient & ICU Wards", "Emergency Care & Triage", "Operation Theatres & Surgery", "Pathology & Radiodiagnostics", "Billing, TPA Insurance & Cashless", "Medical Records Department (MRD)", "Hospital Administration & HR"],
+        "typical_principals": ["Inpatients & Outpatients", "Minors / Pediatric Patients (Parents / Legal Guardians)", "Emergency Patients (Sec 7(e) Legitimate Use)", "Consulting Doctors & Medical Officers", "Nursing Staff & Technicians", "Insurance TPAs & Third-Party Auditors"],
         "sample_data_inventory": [
             {
                 "category": "Patient Demographic Information",
@@ -611,7 +752,7 @@ INDUSTRY_TEMPLATES: Dict[str, Dict[str, Any]] = {
                 "legal_basis": "DPDP Section 6 (Consent) & Section 5 Notice",
                 "collection_method": "Registration Paper Form / Tablet UI",
                 "storage_system": "Clinic Management Software (Local & Cloud Backup)",
-                "department": "Reception & Registration",
+                "department": "Reception & Patient Intake",
                 "owner": "Clinic Frontdesk Manager",
                 "external_recipients": "SMS Gateway Provider (Appointment alerts)",
                 "processor": "Hospital Management System (HMS) SaaS",
@@ -669,51 +810,179 @@ INDUSTRY_TEMPLATES: Dict[str, Dict[str, Any]] = {
             }
         ],
         "key_remediation_templates": [
-            "Patient Privacy Notice & Itemised Consent Form (English & Hindi)",
-            "Diagnostic Laboratory Data Processor Agreement (DPA)",
-            "Emergency Medical Processing Protocol (Section 7(e))",
+            "Hospital Inpatient Privacy Notice & Itemised Consent",
+            "Emergency Medical Care Processing Protocol (Section 7(e))",
+            "Insurance TPA Data Processing Agreement",
             "Medical Records Retention & Purging Schedule",
-            "Minor Patient Verifiable Parental Consent Workflow (Section 9)"
+            "Pediatric Verifiable Parental Consent Workflow (Section 9)"
         ]
     },
-    "education": {
-        "name": "Education (Schools, Colleges & EdTech)",
-        "description": "Configured for academic institutions handling student admissions, parent communications, academic records, and children's data safeguards.",
-        "departments": [
-            "Admissions & Registration",
-            "Academic Affairs & Exams",
-            "Student Welfare & Infirmary",
-            "Accounts & Fee Management",
-            "Administration & Staff"
-        ],
-        "typical_principals": [
-            "Students (Minors)",
-            "Parents & Legal Guardians",
-            "Teachers & Faculty",
-            "Administrative Personnel"
-        ],
+    "clinics": {
+        "name": "Outpatient Clinics & Group Practices",
+        "description": "Tailored for medical practitioners, dental clinics, polyclinics, and outpatient specialists handling appointments, prescriptions, diagnostic referrals, and patient SMS notifications.",
+        "departments": ["Reception & Patient Intake", "Doctor Consultation Chamber", "Pharmacy & Prescription Dispensing", "Billing & Fee Collection", "Website & Telehealth Booking"],
+        "typical_principals": ["Outpatients", "Minor Patients (Guardians)", "Attending Doctors", "Clinic Reception Staff"],
         "sample_data_inventory": [
             {
-                "category": "Student Enrollment & Academic Data",
-                "principal_type": "Students (Minors)",
-                "source": "Admission Application Form",
-                "purpose": "Enrollment, curriculum tracking, exam certification",
-                "legal_basis": "DPDP Section 9 (Verifiable Parental Consent)",
-                "collection_method": "Online Admission Portal / Paper Form",
-                "storage_system": "School ERP Database",
-                "department": "Admissions & Registration",
-                "owner": "Registrar",
-                "external_recipients": "State Education Board, Exam Controllers",
-                "processor": "School Management SaaS",
-                "retention_period": "Permanent for TC/Certificates, 5 years for general records",
-                "deletion_method": "Secure DB record purge post retention",
+                "category": "Patient Demographic Information",
+                "principal_type": "Patients",
+                "source": "Reception Desk Registration / Web Appointment",
+                "purpose": "Patient identification, contact, appointment scheduling",
+                "legal_basis": "DPDP Section 6 (Consent) & Section 5 Notice",
+                "collection_method": "Registration Paper Form / Tablet UI",
+                "storage_system": "Clinic Management Software (Local & Cloud Backup)",
+                "department": "Reception & Patient Intake",
+                "owner": "Clinic Frontdesk Manager",
+                "external_recipients": "SMS Gateway Provider (Appointment alerts)",
+                "processor": "Hospital Management System (HMS) SaaS",
+                "retention_period": "3 years from last consultation (Clinical Establishments Act)",
+                "deletion_method": "Automated soft-archive, database purging after retention",
+                "international_transfer": "None (Domestic India AWS Mumbai ap-south-1)"
+            },
+            {
+                "category": "Medical & Clinical Diagnostic Reports",
+                "principal_type": "Patients",
+                "source": "Laboratory Analyzers & Radiologist Assessment",
+                "purpose": "Medical diagnosis, pathology analysis, treatment planning",
+                "legal_basis": "DPDP Section 6 (Consent) & Section 7(e) Medical Emergency",
+                "collection_method": "Direct LIMS System / Physician Entry",
+                "storage_system": "Picture Archiving & Communication System (PACS) / LIMS",
+                "department": "Laboratory & Diagnostics",
+                "owner": "Chief Pathologist / Medical Director",
+                "external_recipients": "Referring Physician, Patient via Secure Link",
+                "processor": "Cloud Diagnostics Software Provider",
+                "retention_period": "5 years (Clinical Establishment Records Rules)",
+                "deletion_method": "Cryptographic file shredding after statutory period",
+                "international_transfer": "None (India hosted)"
+            },
+            {
+                "category": "Billing, Invoice & Insurance Records",
+                "principal_type": "Patients",
+                "source": "Patient Billing Counter",
+                "purpose": "Invoice generation, payment reconciliation, insurance TPA claims",
+                "legal_basis": "DPDP Section 7(c) (Legal Obligation) & Section 6",
+                "collection_method": "POS Terminal / Accounting Software",
+                "storage_system": "Tally / Cloud ERP Billing Database",
+                "department": "Billing & Accounts",
+                "owner": "Finance Officer",
+                "external_recipients": "Insurance Third Party Administrators (TPAs), GSTN",
+                "processor": "Payment Gateway / Accounting Cloud",
+                "retention_period": "8 years (Income Tax Act & GST Regulations)",
+                "deletion_method": "Physical shredding of paper bills, DB record purge",
+                "international_transfer": "None"
+            },
+            {
+                "category": "Employee & Medical Staff Records",
+                "principal_type": "Doctors & Staff",
+                "source": "HR Onboarding & Medical Council Credentials",
+                "purpose": "Employment administration, salary processing, medical credentialing",
+                "legal_basis": "DPDP Section 7(i) (Employment purposes)",
+                "collection_method": "Employment Contract / KYC Submission",
+                "storage_system": "HRMS Cloud System",
+                "department": "Human Resources & Staff",
+                "owner": "HR Manager",
+                "external_recipients": "PF / ESI Department, Payroll Bank",
+                "processor": "HRMS Software Provider",
+                "retention_period": "Duration of employment + 7 years",
+                "deletion_method": "Secure digital destruction upon expiry",
                 "international_transfer": "None"
             }
         ],
         "key_remediation_templates": [
-            "Parental Consent Form for Minor Students (Section 9)",
-            "Educational Record Privacy Notice",
-            "EdTech Learning Software Vendor Agreement"
+            "Clinic Patient Privacy Notice & Itemised Consent Form",
+            "Appointment Booking Form Notice & Checkbox Configuration",
+            "Clinic Management Software Vendor DPA",
+            "Prescription Data Protection SOP"
+        ]
+    },
+    "diagnostic_centres": {
+        "name": "Diagnostic Centres & Pathology Laboratories",
+        "description": "Tailored for diagnostic chains, blood testing laboratories, and radiology scanning centres handling test orders, pathology results, PACS imaging, home sample collection, and PDF report dispatch.",
+        "departments": [
+            "Home Sample Phlebotomy & Collection",
+            "Sample Receiving & Barcoding",
+            "Pathology & Biochemistry Testing",
+            "Radiology & Ultrasound Imaging (PACS)",
+            "Report Dispatch & Patient Portal",
+            "Billing & Diagnostic Partner Referrals"
+        ],
+        "typical_principals": [
+            "Diagnostic Test Patients",
+            "Home Collection Clients",
+            "Referring Doctors & Clinics",
+            "Laboratory Technicians & Pathologists"
+        ],
+        "sample_data_inventory": [
+            {
+                "category": "Blood & Pathology Test Results",
+                "principal_type": "Diagnostic Patients",
+                "source": "Laboratory Automated Analyzers & LIMS",
+                "purpose": "Clinical biochemical diagnosis, doctor referral reporting",
+                "legal_basis": "DPDP Section 6 (Consent) & Section 5 Notice",
+                "collection_method": "Analyzer Direct LIMS Interface",
+                "storage_system": "Laboratory Information Management System (LIMS) Cloud",
+                "department": "Pathology & Biochemistry Testing",
+                "owner": "Chief Pathologist",
+                "external_recipients": "Patient via encrypted PDF link, Referring Doctor",
+                "processor": "LIMS Cloud Software Vendor",
+                "retention_period": "5 years (Clinical Establishment Rules & NABL requirements)",
+                "deletion_method": "Automated database purge with SHA-256 certificate",
+                "international_transfer": "None (India hosted)"
+            },
+            {
+                "category": "Radiology Scans & PACS DICOM Images",
+                "principal_type": "Diagnostic Patients",
+                "source": "MRI / CT / X-Ray Medical Scanners",
+                "purpose": "Radiological diagnosis and reporting",
+                "legal_basis": "DPDP Section 6 (Consent)",
+                "collection_method": "DICOM Network Protocol",
+                "storage_system": "Cloud PACS Storage (AWS Mumbai)",
+                "department": "Radiology & Imaging",
+                "owner": "Head Radiologist",
+                "external_recipients": "Patient, Consultant Radiologist",
+                "processor": "PACS Cloud Provider",
+                "retention_period": "5 years",
+                "deletion_method": "Secure cloud bucket object lifecycle expiration",
+                "international_transfer": "None"
+            },
+            {
+                "category": "Patient Demographic & Specimen Intake Logs",
+                "principal_type": "Diagnostic Patients",
+                "source": "Front-desk Registration & Phlebotomy Barcode Scan",
+                "purpose": "Patient identification, sample matching, SMS report alerts",
+                "legal_basis": "DPDP Section 6 (Consent) & Section 5 Notice",
+                "collection_method": "Registration Desk UI / Mobile App",
+                "storage_system": "Diagnostic ERP Database",
+                "department": "Sample Receiving & Barcoding",
+                "owner": "Operations Supervisor",
+                "external_recipients": "SMS & WhatsApp notification gateway",
+                "processor": "Telecom Messaging Partner",
+                "retention_period": "3 years",
+                "deletion_method": "Automated ledger archiving",
+                "international_transfer": "None"
+            },
+            {
+                "category": "Billing, TPA Insurance & Referral Invoices",
+                "principal_type": "Diagnostic Patients & Referring Doctors",
+                "source": "Billing Desk & Cashless Insurance Desk",
+                "purpose": "Payment collection, insurance reimbursement, tax filing",
+                "legal_basis": "DPDP Section 7(c) (Legal Obligation: Income Tax Act)",
+                "collection_method": "Point-of-Sale Billing Software",
+                "storage_system": "Accounting Ledger & ERP",
+                "department": "Billing & Referrals",
+                "owner": "Finance Manager",
+                "external_recipients": "Chartered Accountant, Income Tax Portal",
+                "processor": "Cloud Accounting SaaS",
+                "retention_period": "8 years per Income Tax Act Section 44AB",
+                "deletion_method": "Cryptographic ledger purge after audit closure",
+                "international_transfer": "None"
+            }
+        ],
+        "key_remediation_templates": [
+            "Diagnostic Centre Privacy Notice & Digital Consent",
+            "LIMS & Cloud PACS Data Processor Agreement",
+            "Home Collection Phlebotomy Privacy SOP",
+            "NABL-Compliant Diagnostic Retention Policy"
         ]
     },
     "saas": {
@@ -734,12 +1003,12 @@ INDUSTRY_TEMPLATES: Dict[str, Dict[str, Any]] = {
         ],
         "sample_data_inventory": [
             {
-                "category": "User Account & Authentication Data",
+                "category": "User Account Profile & Authentication Credentials",
                 "principal_type": "App Users",
-                "source": "App Signup Form",
-                "purpose": "Account creation, authentication, service delivery",
+                "source": "App Signup Form & OAuth",
+                "purpose": "Account creation, authentication, role-based access control",
                 "legal_basis": "DPDP Section 6 (Consent)",
-                "collection_method": "Web App UI / OAuth",
+                "collection_method": "Web App UI / OAuth 2.0",
                 "storage_system": "PostgreSQL Cloud DB (AWS ap-south-1)",
                 "department": "Product & Engineering",
                 "owner": "Engineering Lead",
@@ -748,16 +1017,65 @@ INDUSTRY_TEMPLATES: Dict[str, Dict[str, Any]] = {
                 "retention_period": "Account lifetime + 30 days post-deletion",
                 "deletion_method": "0-day soft-delete, 30-day snapshot purge",
                 "international_transfer": "None / Encrypted"
+            },
+            {
+                "category": "Application Usage Telemetry & Audit Logs",
+                "principal_type": "App Users",
+                "source": "Application SDK & API Gateway",
+                "purpose": "Security monitoring, bug diagnosis, audit compliance",
+                "legal_basis": "DPDP Section 8(5) (Reasonable Security Safeguards)",
+                "collection_method": "Automated log collector",
+                "storage_system": "CloudWatch / Elasticsearch Log Cluster",
+                "department": "Product & Engineering",
+                "owner": "DevOps Engineer",
+                "external_recipients": "Security SIEM Provider",
+                "processor": "Cloud Logging Provider",
+                "retention_period": "180 days per CERT-In Cyber Security Directions",
+                "deletion_method": "Automated log stream TTL expiration",
+                "international_transfer": "None"
+            },
+            {
+                "category": "Subscription Billing, Invoicing & GST Records",
+                "principal_type": "Account Billing Admins",
+                "source": "Checkout Form & Payment Gateway Webhook",
+                "purpose": "Subscription payment processing, GST e-invoicing",
+                "legal_basis": "DPDP Section 7(c) (Legal Obligation: GST Act)",
+                "collection_method": "Payment Gateway Tokenized Iframe",
+                "storage_system": "Billing Database & Stripe Vault",
+                "department": "Finance & Billing",
+                "owner": "Finance Controller",
+                "external_recipients": "GST Portal & Tax Auditors",
+                "processor": "Stripe / Razorpay Payment Aggregator",
+                "retention_period": "8 years per statutory tax requirements",
+                "deletion_method": "Encrypted ledger archive",
+                "international_transfer": "PCI-DSS Level 1 Encrypted"
+            },
+            {
+                "category": "Customer Support Tickets & Recorded Feedback",
+                "principal_type": "Support Inquirers",
+                "source": "Zendesk Help Desk / Live Chat Widget",
+                "purpose": "Technical troubleshooting, customer inquiry resolution",
+                "legal_basis": "DPDP Section 6 (Consent) & Section 7(a) Voluntary Provision",
+                "collection_method": "Support Portal Form",
+                "storage_system": "Helpdesk SaaS Cloud",
+                "department": "Customer Support",
+                "owner": "Customer Success Manager",
+                "external_recipients": "Support Engineers",
+                "processor": "Helpdesk SaaS Vendor",
+                "retention_period": "2 years post-ticket resolution",
+                "deletion_method": "Automated customer record anonymization",
+                "international_transfer": "Standard Contractual Clauses"
             }
         ],
         "key_remediation_templates": [
             "SaaS App Privacy Notice & Cookie Disclaimer",
             "Subprocessor Management Register & DPA Terms",
-            "Account Deletion & Erasure Workflow"
+            "Account Deletion & Erasure Workflow",
+            "CERT-In 180-Day Log Retention Protocol"
         ]
     },
     "ecommerce": {
-        "name": "E-Commerce & Retail",
+        "name": "E-Commerce & Retail Stores",
         "description": "Built for online merchants handling buyer delivery addresses, order histories, payment logs, and customer support queries.",
         "departments": [
             "Checkout & Orders",
@@ -773,7 +1091,7 @@ INDUSTRY_TEMPLATES: Dict[str, Dict[str, Any]] = {
         ],
         "sample_data_inventory": [
             {
-                "category": "Customer Delivery Address & Contact",
+                "category": "Customer Delivery Address & Contact Numbers",
                 "principal_type": "Shoppers / Buyers",
                 "source": "Order Checkout Page",
                 "purpose": "Package fulfillment, shipping updates, invoice delivery",
@@ -787,15 +1105,244 @@ INDUSTRY_TEMPLATES: Dict[str, Dict[str, Any]] = {
                 "retention_period": "3 years from last transaction",
                 "deletion_method": "Automated address scrubbing post delivery confirmation",
                 "international_transfer": "None"
+            },
+            {
+                "category": "Checkout Payment Token References & Order History",
+                "principal_type": "Shoppers / Buyers",
+                "source": "Payment Gateway Callback",
+                "purpose": "Order confirmation, payment settlement, audit compliance",
+                "legal_basis": "DPDP Section 7(c) (Statutory Legal Obligation)",
+                "collection_method": "Server-to-Server Webhook",
+                "storage_system": "Transactional Order Store",
+                "department": "Finance",
+                "owner": "Chief Financial Officer",
+                "external_recipients": "Bank Merchant Account, Tax Authorities",
+                "processor": "Payment Gateway Partner",
+                "retention_period": "8 years per Income Tax Act",
+                "deletion_method": "Cryptographic financial record purge",
+                "international_transfer": "None"
+            },
+            {
+                "category": "Shopping Cart, Wishlist & Browsing Telemetry",
+                "principal_type": "Shoppers / Buyers",
+                "source": "Storefront Web Session Cookies",
+                "purpose": "Cart persistence, personalized product discovery",
+                "legal_basis": "DPDP Section 6 (Consent via Cookie Banner)",
+                "collection_method": "Client Browser Session Storage",
+                "storage_system": "Redis Cache & Analytics Store",
+                "department": "Marketing & Promotions",
+                "owner": "Growth Marketing Lead",
+                "external_recipients": "Analytics Cloud Vendor",
+                "processor": "Web Analytics Provider",
+                "retention_period": "90 days post session",
+                "deletion_method": "Automated TTL cache purge",
+                "international_transfer": "None"
+            },
+            {
+                "category": "Customer Returns, Refunds & Bank Account Details",
+                "principal_type": "Shoppers / Buyers",
+                "source": "Return / Exchange Portal",
+                "purpose": "Refund processing, product pickup coordination",
+                "legal_basis": "DPDP Section 6 (Consent)",
+                "collection_method": "Self-Service Returns UI",
+                "storage_system": "Customer Support ERP",
+                "department": "Customer Support",
+                "owner": "Support Operations Lead",
+                "external_recipients": "Payout Gateway Partner",
+                "processor": "Banking Partner API",
+                "retention_period": "1 year post-refund completion",
+                "deletion_method": "Database row cryptographic scrub",
+                "international_transfer": "None"
             }
         ],
         "key_remediation_templates": [
             "E-Commerce Privacy Notice & Unbundled Consent",
             "Courier & Logistics Data Processor Agreement",
-            "Marketing Opt-Out & Erasure Mechanism"
+            "Marketing Opt-Out & Erasure Mechanism",
+            "Cookie Preference Management Protocol"
+        ]
+    },
+    "professional_services": {
+        "name": "Professional Services (Legal, CA, Advisory & Consulting)",
+        "description": "Tailored for law firms, chartered accounting practices, management consultants, and tax advisors handling confidential client financial data, KYC, director details, and employee payroll.",
+        "departments": [
+            "Client Intake & Engagement",
+            "Tax & Audit Advisory",
+            "Corporate Secretarial & KYC",
+            "Billing, Retainers & Accounts",
+            "HR & Partner Operations"
+        ],
+        "typical_principals": [
+            "Client Founders & Directors",
+            "Individual Tax Clients",
+            "Client Employees (Payroll data)",
+            "Firm Partners & Associates"
+        ],
+        "sample_data_inventory": [
+            {
+                "category": "Client KYC, PAN & Director Verification Records",
+                "principal_type": "Client Directors & Taxpayers",
+                "source": "Client Onboarding Form & Tax Returns",
+                "purpose": "Statutory audit, tax filing, MCA compliance",
+                "legal_basis": "DPDP Section 7(c) (Legal Obligation) & Engagement Contract",
+                "collection_method": "Encrypted Client Portal Upload",
+                "storage_system": "Cloud Document Management System (Google Workspace / MS 365)",
+                "department": "Tax & Audit Advisory",
+                "owner": "Managing Partner",
+                "external_recipients": "Income Tax Portal, Ministry of Corporate Affairs (MCA)",
+                "processor": "Tax Software SaaS Provider",
+                "retention_period": "8 years (Income Tax & Companies Act requirements)",
+                "deletion_method": "Secure digital shredding post statutory period",
+                "international_transfer": "None"
+            },
+            {
+                "category": "Financial Statements, Audit Workpapers & Tax Returns",
+                "principal_type": "Corporate Clients",
+                "source": "Client ERP Ledgers & Bank Statements",
+                "purpose": "Statutory audit reporting, tax computation",
+                "legal_basis": "DPDP Section 7(c) (Statutory Obligation: Companies Act)",
+                "collection_method": "Encrypted SFTP / Cloud Share",
+                "storage_system": "Audit Management Suite",
+                "department": "Tax & Audit Advisory",
+                "owner": "Engagement Partner",
+                "external_recipients": "Statutory Regulators, ICAI Quality Review Board",
+                "processor": "Audit Cloud SaaS",
+                "retention_period": "8 years",
+                "deletion_method": "Cryptographic file deletion with certificate",
+                "international_transfer": "None"
+            },
+            {
+                "category": "Corporate Advisory Contracts & Legal Submissions",
+                "principal_type": "Client Representatives",
+                "source": "Client Engagement Correspondence",
+                "purpose": "Commercial drafting, dispute resolution, legal defense",
+                "legal_basis": "DPDP Section 6 (Consent) & Legal Professional Privilege",
+                "collection_method": "Corporate Email & Portal",
+                "storage_system": "Firm Document Repository",
+                "department": "Client Intake & Engagement",
+                "owner": "Senior Advocate / Partner",
+                "external_recipients": "Tribunals & High Courts",
+                "processor": "Legal Practice Software",
+                "retention_period": "10 years post-matter resolution",
+                "deletion_method": "Secure archive purging",
+                "international_transfer": "None"
+            },
+            {
+                "category": "Retainer Invoices, Billing Ledgers & Bank Statements",
+                "principal_type": "Clients & Vendor Partners",
+                "source": "Firm Accounting Department",
+                "purpose": "Fee invoicing, GST filing, payment reconciliation",
+                "legal_basis": "DPDP Section 7(c) (Statutory Obligation)",
+                "collection_method": "Internal Accounting System",
+                "storage_system": "Tally / QuickBooks Cloud",
+                "department": "Billing, Retainers & Accounts",
+                "owner": "Accounts Head",
+                "external_recipients": "GSTN Portal",
+                "processor": "Cloud Accounting Provider",
+                "retention_period": "8 years",
+                "deletion_method": "Secure ledger cleanup",
+                "international_transfer": "None"
+            }
+        ],
+        "key_remediation_templates": [
+            "Professional Services Privacy Notice & Engagement Addendum",
+            "Client KYC & Confidential Document Protection SOP",
+            "Cloud Document Storage Subprocessor Agreement",
+            "8-Year Tax Document Retention Policy"
+        ]
+    },
+    "education": {
+        "name": "Education (Schools, Colleges & EdTech)",
+        "description": "Configured for academic institutions handling student admissions, parent communications, academic records, and children's data safeguards under Section 9.",
+        "departments": [
+            "Admissions & Registration",
+            "Academic Affairs & Exams",
+            "Student Welfare & Infirmary",
+            "Accounts & Fee Management",
+            "Administration & Staff"
+        ],
+        "typical_principals": [
+            "Students (Minors)",
+            "Parents & Legal Guardians",
+            "Teachers & Faculty",
+            "Administrative Personnel"
+        ],
+        "sample_data_inventory": [
+            {
+                "category": "Student Enrollment, Minor Profile & Academic Records",
+                "principal_type": "Students (Minors)",
+                "source": "Admission Application Form",
+                "purpose": "Enrollment, curriculum tracking, exam certification",
+                "legal_basis": "DPDP Section 9 (Verifiable Parental Consent)",
+                "collection_method": "Online Admission Portal / Paper Form",
+                "storage_system": "School ERP Database",
+                "department": "Admissions & Registration",
+                "owner": "Registrar",
+                "external_recipients": "State Education Board, Exam Controllers",
+                "processor": "School Management SaaS",
+                "retention_period": "Permanent for TC/Certificates, 5 years for general records",
+                "deletion_method": "Secure DB record purge post retention",
+                "international_transfer": "None"
+            },
+            {
+                "category": "Verifiable Parental Consent & Guardian Contacts",
+                "principal_type": "Parents & Legal Guardians",
+                "source": "Guardian Consent Attestation Form",
+                "purpose": "Parental identity verification, emergency intimation, consent recording",
+                "legal_basis": "DPDP Section 9 (Parental Consent Verification)",
+                "collection_method": "Digital Signature / SMS OTP Consent",
+                "storage_system": "Parent Consent Ledger",
+                "department": "Admissions & Registration",
+                "owner": "Vice Principal",
+                "external_recipients": "Emergency Medical Services if required",
+                "processor": "Consent Management System",
+                "retention_period": "Duration of student enrollment + 3 years",
+                "deletion_method": "Automated purge after graduation",
+                "international_transfer": "None"
+            },
+            {
+                "category": "Campus Biometric Attendance & CCTV Access Logs",
+                "principal_type": "Students & Staff",
+                "source": "Campus Turnstiles & CCTV Cameras",
+                "purpose": "Campus physical security, student safety",
+                "legal_basis": "DPDP Section 8(5) (Reasonable Security Safeguards)",
+                "collection_method": "Biometric Scanner Terminal",
+                "storage_system": "Local School Access Controller NVR",
+                "department": "Administration & Staff",
+                "owner": "Campus Security Officer",
+                "external_recipients": "Local Police Authorities (upon statutory request)",
+                "processor": "Biometric Hardware Vendor",
+                "retention_period": "30-90 days for CCTV footage",
+                "deletion_method": "Automated FIFO footage overwriting",
+                "international_transfer": "None"
+            },
+            {
+                "category": "Tuition Fee Invoices & Financial Assistance Records",
+                "principal_type": "Parents & Legal Guardians",
+                "source": "Fee Collection Counter & Online Payment Gateway",
+                "purpose": "Tuition billing, receipt generation, scholarship tracking",
+                "legal_basis": "DPDP Section 7(c) (Statutory Obligation: Tax and Auditing)",
+                "collection_method": "ERP Online Fee Payment Gateway",
+                "storage_system": "School Accounts Ledger",
+                "department": "Accounts & Fee Management",
+                "owner": "Chief Accounts Officer",
+                "external_recipients": "Statutory Auditors",
+                "processor": "Banking Gateway Partner",
+                "retention_period": "8 years per Income Tax Act",
+                "deletion_method": "Cryptographic ledger purge post audit closure",
+                "international_transfer": "None"
+            }
+        ],
+        "key_remediation_templates": [
+            "Parental Consent Form for Minor Students (Section 9)",
+            "Educational Record Privacy Notice",
+            "EdTech Learning Software Vendor Agreement",
+            "Minor Data Protection & Anti-Profiling Policy"
         ]
     }
 }
+
+INDUSTRY_TEMPLATES["healthcare"] = INDUSTRY_TEMPLATES["clinics"]
 
 # ==============================================================================
 # AI DPDP ASSISTANT GROUNDED KNOWLEDGE BASE
@@ -924,6 +1471,210 @@ AI_KNOWLEDGE_BASE = [
     }
 ]
 
+# ==============================================================================
+# HELPER QUERY & CALCULATION FUNCTIONS (PHASE 4 & 6)
+# ==============================================================================
+
+def get_all_rules() -> List[Dict[str, Any]]:
+    """Returns all structured DPDP requirements."""
+    return DPDP_REQUIREMENTS
+
+def get_rule_by_id(rule_id: str) -> Optional[Dict[str, Any]]:
+    """Finds a DPDP requirement rule by its rule_id or id."""
+    for r in DPDP_REQUIREMENTS:
+        if r["id"] == rule_id or r.get("rule_id") == rule_id:
+            return r
+    return None
+
+def get_rules_by_category(category: str) -> List[Dict[str, Any]]:
+    """Filters rules by core assessment category."""
+    cat_lower = category.lower().strip()
+    return [
+        r for r in DPDP_REQUIREMENTS
+        if cat_lower in r.get("category", "").lower() or
+           cat_lower in r.get("readiness_category", "").lower() or
+           ("consent" in cat_lower and "consent" in r.get("category", "").lower()) or
+           ("notice" in cat_lower and "notice" in r.get("category", "").lower()) or
+           ("right" in cat_lower and "right" in r.get("category", "").lower()) or
+           ("breach" in cat_lower and "breach" in r.get("category", "").lower()) or
+           ("security" in cat_lower and "security" in r.get("category", "").lower())
+    ]
+
+def get_rules_by_commencement_status(status: str) -> List[Dict[str, Any]]:
+    """Filters rules by commencement status or effective date (e.g. 'In force', 'Scheduled', '13 May 2027')."""
+    stat_lower = status.lower().strip()
+    return [
+        r for r in DPDP_REQUIREMENTS
+        if stat_lower in r.get("commencement_status", "").lower() or
+           stat_lower in r.get("legal_status", "").lower() or
+           stat_lower in r.get("effective_date", "").lower() or
+           ("scheduled" in stat_lower and "scheduled" in r.get("commencement_status", "").lower()) or
+           ("13 may 2027" in stat_lower and "2027" in r.get("effective_date", "")) or
+           ("may 2027" in stat_lower and "2027" in r.get("effective_date", ""))
+    ]
+
+def get_industry_template(industry: str) -> Dict[str, Any]:
+    """Retrieves an industry-specific pre-configured template."""
+    ind_key = (industry or "clinics").lower().strip()
+    if ind_key in INDUSTRY_TEMPLATES:
+        base = INDUSTRY_TEMPLATES[ind_key]
+        sector_id = ind_key
+    elif "hosp" in ind_key:
+        base = INDUSTRY_TEMPLATES["hospitals"]
+        sector_id = "hospitals"
+    elif "diag" in ind_key or "lab" in ind_key:
+        base = INDUSTRY_TEMPLATES["diagnostic_centres"]
+        sector_id = "diagnostic_centres"
+    elif "health" in ind_key or "clinic" in ind_key:
+        base = INDUSTRY_TEMPLATES["clinics"]
+        sector_id = "clinics"
+    elif "tech" in ind_key or "saas" in ind_key:
+        base = INDUSTRY_TEMPLATES["saas"]
+        sector_id = "saas"
+    elif "shop" in ind_key or "retail" in ind_key or "ecom" in ind_key:
+        base = INDUSTRY_TEMPLATES["ecommerce"]
+        sector_id = "ecommerce"
+    elif "legal" in ind_key or "consult" in ind_key or "prof" in ind_key or "ca" in ind_key:
+        base = INDUSTRY_TEMPLATES["professional_services"]
+        sector_id = "professional_services"
+    elif "school" in ind_key or "college" in ind_key or "ed" in ind_key:
+        base = INDUSTRY_TEMPLATES["education"]
+        sector_id = "education"
+    else:
+        base = INDUSTRY_TEMPLATES["clinics"]
+        sector_id = "clinics"
+
+    tpl = dict(base)
+    tpl["sector_id"] = sector_id
+    tpl["sector_name"] = tpl.get("name")
+    tpl["sample_inventory"] = tpl.get("sample_data_inventory", [])
+    tpl["priority_controls"] = tpl.get("key_remediation_templates", [])
+    tpl.setdefault("suggested_retention", {
+        "medical_and_clinical_records": "3-5 years per Clinical Establishments Act and NABL",
+        "financial_ledgers_and_invoices": "7-8 years under Income Tax Act Section 44AB",
+        "employee_personnel_files": "5 years following termination of service",
+        "web_access_telemetry_logs": "180 days per CERT-In Cyber Security Directions"
+    })
+    return tpl
+
+def list_industry_templates() -> List[Dict[str, Any]]:
+    """Lists all available industry templates with keys and titles."""
+    unique_keys = ["hospitals", "clinics", "diagnostic_centres", "saas", "ecommerce", "professional_services", "education"]
+    return [
+        {"key": k, "sector_id": k, "name": INDUSTRY_TEMPLATES[k]["name"], "description": INDUSTRY_TEMPLATES[k]["description"]}
+        for k in unique_keys
+    ]
+
+def calculate_dpdp_readiness_score(controls: Any = None, evidence_items: Any = None, has_critical_gap: bool = False) -> Dict[str, Any]:
+    """
+    Deterministic score calculation methodology:
+    - Base weight per control = 100 / total controls
+    - Status weighting:
+      - SELF_ATTESTED_IMPLEMENTED: 0.70x credit
+      - VERIFIED_WITH_EVIDENCE: 1.00x credit
+      - IN_PROGRESS: 0.35x credit
+      - GAP_IDENTIFIED: 0.00x credit
+    - Coverage % = (controls evaluated) / total applicable controls
+    - Confidence level determined by percentage of controls supported by verified evidence artifacts.
+    """
+    if isinstance(controls, (int, float)):
+        implemented_count = int(controls)
+        total_count = int(evidence_items or 15)
+        score = int(round((implemented_count / total_count) * 100)) if total_count else 0
+        if has_critical_gap:
+            band = "Critical Security Gap - Non-Compliant"
+        elif score >= 90:
+            band = "Audit-Ready (High Posture)"
+        elif score >= 60:
+            band = "Moderate Readiness (Actionable Gaps)"
+        else:
+            band = "Substantial Action Needed"
+
+        return {
+            "readiness_score": score,
+            "score_band": band,
+            "statutory_penalty_context": "Maximum statutory penalty ceiling under DPDP Schedule up to ₹250 crore determined by DPBI on a case-by-case basis.",
+            "coverage_pct": 100,
+            "confidence": "HIGH" if (not has_critical_gap and score >= 80) else "MEDIUM"
+        }
+
+    controls = controls or []
+    evidence_items = evidence_items or []
+    total = len(controls) or len(DPDP_REQUIREMENTS)
+    if total == 0:
+        return {
+            "readiness_score": 0, "coverage_pct": 0, "confidence": "PRELIMINARY",
+            "score_band": "Not Evaluated",
+            "statutory_penalty_context": "Schedule statutory ceiling up to ₹250 crore determined by DPBI."
+        }
+
+    evidence_by_control: Dict[str, int] = {}
+    for ev in evidence_items:
+        cid = ev.get("control_id")
+        if cid:
+            evidence_by_control[cid] = evidence_by_control.get(cid, 0) + 1
+
+    total_points = 0.0
+    evaluated_count = 0
+    verified_count = 0
+    has_critical = has_critical_gap
+
+    for c in controls:
+        st = c.get("status", "GAP_IDENTIFIED")
+        cid = c.get("requirement_id") or c.get("id")
+        has_evidence = evidence_by_control.get(cid, 0) > 0
+        sev = c.get("severity", "MEDIUM")
+
+        if st != "NOT_EVALUATED":
+            evaluated_count += 1
+
+        if st == "SELF_ATTESTED_IMPLEMENTED":
+            if has_evidence:
+                total_points += 1.0
+                verified_count += 1
+            else:
+                total_points += 0.70
+        elif st == "VERIFIED_WITH_EVIDENCE":
+            total_points += 1.0
+            verified_count += 1
+        elif st == "IN_PROGRESS":
+            total_points += 0.35
+        elif st == "GAP_IDENTIFIED":
+            total_points += 0.0
+            if sev in ("CRITICAL", "HIGH"):
+                has_critical = True
+
+    score = int(round((total_points / total) * 100))
+    coverage = int(round((evaluated_count / total) * 100))
+
+    if verified_count >= 8:
+        confidence = "HIGH (Evidence-Verified)"
+    elif verified_count >= 4 or score >= 60:
+        confidence = "MEDIUM (Partially Verified)"
+    else:
+        confidence = "PRELIMINARY (Self-Attested)"
+
+    if has_critical:
+        band = "Critical Security Gap - Non-Compliant"
+    elif score >= 90:
+        band = "Audit-Ready (High Posture)"
+    elif score >= 60:
+        band = "Moderate Readiness (Actionable Gaps)"
+    else:
+        band = "Substantial Action Needed"
+
+    return {
+        "readiness_score": min(score, 100),
+        "score_band": band,
+        "statutory_penalty_context": "Maximum statutory penalty ceiling under DPDP Schedule up to ₹250 crore determined by DPBI on a case-by-case basis.",
+        "coverage_pct": min(coverage, 100),
+        "confidence": confidence,
+        "controls_evaluated": evaluated_count,
+        "total_controls": total,
+        "verified_evidence_count": len(evidence_items),
+        "calculation_method": "Weighted statutory controls (70% self-attestation, 100% verified evidence, 35% in-progress, 0% gaps)"
+    }
+
 
 def query_dpdp_assistant(query: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     """
@@ -963,7 +1714,6 @@ def query_dpdp_assistant(query: str, context: Optional[Dict[str, Any]] = None) -
             "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat()
         }
         
-    # Fallback to general statutory framework summary
     return {
         "query": query,
         "matched_section": "Digital Personal Data Protection Act, 2023 (General Overview)",

@@ -58,5 +58,65 @@
         "details": "Category: Consent Withdrawal Inquiry"
       }
     ]
+  },
+  {
+    "reference_id": "GRV-1795366283-6CEC",
+    "name": "Jane Principal",
+    "email": "jane@data-principal.in",
+    "company": "Data Subject Rights",
+    "category": "Consent Withdrawal Inquiry",
+    "description": "Requesting confirmation of stop-processing instruction.",
+    "submission_date": "2026-11-22 16:51:23 UTC",
+    "status": "RECEIVED",
+    "assigned_to": "Privacy & Grievance Contact",
+    "investigation_notes": "Ticket logged via public Trust Centre. Acknowledged.",
+    "resolution_date": null,
+    "audit_history": [
+      {
+        "timestamp": "2026-11-22 16:51:23 UTC",
+        "action": "Ticket Created",
+        "details": "Category: Consent Withdrawal Inquiry"
+      }
+    ]
+  },
+  {
+    "reference_id": "GRV-1795366338-D304",
+    "name": "Jane Principal",
+    "email": "jane@data-principal.in",
+    "company": "Data Subject Rights",
+    "category": "Consent Withdrawal Inquiry",
+    "description": "Requesting confirmation of stop-processing instruction.",
+    "submission_date": "2026-11-22 16:52:18 UTC",
+    "status": "RECEIVED",
+    "assigned_to": "Privacy & Grievance Contact",
+    "investigation_notes": "Ticket logged via public Trust Centre. Acknowledged.",
+    "resolution_date": null,
+    "audit_history": [
+      {
+        "timestamp": "2026-11-22 16:52:18 UTC",
+        "action": "Ticket Created",
+        "details": "Category: Consent Withdrawal Inquiry"
+      }
+    ]
+  },
+  {
+    "reference_id": "GRV-1795366421-3127",
+    "name": "Jane Principal",
+    "email": "jane@data-principal.in",
+    "company": "Data Subject Rights",
+    "category": "Consent Withdrawal Inquiry",
+    "description": "Requesting confirmation of stop-processing instruction.",
+    "submission_date": "2026-11-22 16:53:41 UTC",
+    "status": "RECEIVED",
+    "assigned_to": "Privacy & Grievance Contact",
+    "investigation_notes": "Ticket logged via public Trust Centre. Acknowledged.",
+    "resolution_date": null,
+    "audit_history": [
+      {
+        "timestamp": "2026-11-22 16:53:41 UTC",
+        "action": "Ticket Created",
+        "details": "Category: Consent Withdrawal Inquiry"
+      }
+    ]
   }
 ]

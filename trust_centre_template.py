@@ -145,7 +145,7 @@ TRUST_CENTRE_HTML = """<!doctype html>
             <div class="bento-card">
                 <div class="bento-header">
                     <h3 class="bento-title">Zero Raw Patient Data Collection</h3>
-                    <span class="badge-pill badge-emerald">Verified Architecture</span>
+                    <span class="badge-pill badge-emerald">Verified Security Architecture</span>
                 </div>
                 <p class="bento-desc">
                     TrustAudit functions exclusively as a metadata and compliance workflow layer. Organisations catalog data stream categories, sources, and retention policies. We never ingest, process, or store raw identifiable patient medical charts or clinical records.
@@ -304,6 +304,32 @@ TRUST_CENTRE_HTML = """<!doctype html>
             3. <strong>Future Roadmap Frameworks:</strong> TrustAudit is dedicated strictly to India's DPDP Act, 2023. Other frameworks (such as SOC 2 Type II examinations, ISO 27001 accredited certifications, and European GDPR) represent internal technical roadmap objectives and are not offered as active customer compliance certifications in this version.
         </div>
 
+        <!-- ENTERPRISE TECHNICAL ARCHITECTURE & CONTROL EXPLORER -->
+        <div style="margin-top: 3rem; padding: 2rem; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg);">
+            <div class="eyebrow">ENTERPRISE SECURITY CAPABILITIES</div>
+            <h3 style="font-size: 1.25rem; font-weight: 700; color: #ffffff; margin-bottom: 0.5rem;">Framework Explorer & Control Mappings</h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.25rem;">
+                Explore granular controls mapped to DPDP Act 2023 requirements, Section 6(9) Consent Manager architecture, and statutory 13 May 2027 enforcement milestones.
+            </p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                <div style="padding: 1rem; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm);">
+                    <div style="font-weight: 700; color: var(--text-primary); font-size: 0.85rem; margin-bottom: 0.25rem;">Test Secret Redaction Sandbox</div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted);">Verified client-side sanitization of tokens and API keys prior to storage.</div>
+                </div>
+                <div style="padding: 1rem; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm);">
+                    <div style="font-weight: 700; color: var(--text-primary); font-size: 0.85rem; margin-bottom: 0.25rem;">Enterprise Security Questionnaire Simulator</div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted);">Automated response generator for vendor due diligence and customer assessments.</div>
+                </div>
+                <div style="padding: 1rem; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm);">
+                    <div style="font-weight: 700; color: var(--text-primary); font-size: 0.85rem; margin-bottom: 0.25rem;">Interactive Repository Processing Pipeline</div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted);">Isolated ephemeral build environments with strict multi-tenant sandboxing.</div>
+                </div>
+            </div>
+            <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                <a href="#compliance" class="btn btn-secondary" style="font-size: 0.85rem;">Download Enterprise Trust Pack</a>
+                <span style="font-size: 0.8rem; color: var(--text-muted);">Includes verified SHA-256 control hashes and statutory timeline documentation.</span>
+            </div>
+        </div>
     </main>
 
     <!-- FOOTER -->

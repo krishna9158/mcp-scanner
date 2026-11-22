@@ -944,6 +944,321 @@
       "created_at": 1795348216.8498054,
       "max_projects": 10,
       "scans_count": 0
+    },
+    "org-a1e3c8b1": {
+      "id": "org-a1e3c8b1",
+      "name": "Arogya Diagnostics Clinic",
+      "slug": "arogya-diagnostics-clinic",
+      "plan": "starter",
+      "created_at": 1795364158.332564,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-9d735c2e": {
+      "id": "org-9d735c2e",
+      "name": "Apollo Diagnostics Clinic 26c6",
+      "slug": "apollo-diagnostics-clinic-26c6",
+      "plan": "starter",
+      "created_at": 1795364160.0380957,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-3b1b7d04": {
+      "id": "org-3b1b7d04",
+      "name": "Arogya Diagnostics Clinic",
+      "slug": "arogya-diagnostics-clinic",
+      "plan": "starter",
+      "created_at": 1795364849.313972,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-c7ffdb92": {
+      "id": "org-c7ffdb92",
+      "name": "Apollo Diagnostics Clinic 8501",
+      "slug": "apollo-diagnostics-clinic-8501",
+      "plan": "starter",
+      "created_at": 1795364850.060874,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-5351507a": {
+      "id": "org-5351507a",
+      "name": "Arogya Diagnostics Clinic",
+      "slug": "arogya-diagnostics-clinic",
+      "plan": "starter",
+      "created_at": 1795364905.4544902,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-778a6a6f": {
+      "id": "org-778a6a6f",
+      "name": "Apollo Diagnostics Clinic f6dd",
+      "slug": "apollo-diagnostics-clinic-f6dd",
+      "plan": "starter",
+      "created_at": 1795364906.3228002,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-43459378": {
+      "id": "org-43459378",
+      "name": "Arogya Diagnostics Clinic",
+      "slug": "arogya-diagnostics-clinic",
+      "plan": "starter",
+      "created_at": 1795365153.7474873,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-c6ce5267": {
+      "id": "org-c6ce5267",
+      "name": "Apollo Diagnostics Clinic 4cb3",
+      "slug": "apollo-diagnostics-clinic-4cb3",
+      "plan": "starter",
+      "created_at": 1795365154.5801506,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-78e7ded6": {
+      "id": "org-78e7ded6",
+      "name": "Arogya Diagnostics Clinic",
+      "slug": "arogya-diagnostics-clinic",
+      "plan": "starter",
+      "created_at": 1795365493.4564304,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-b3b832b8": {
+      "id": "org-b3b832b8",
+      "name": "Apollo Diagnostics Clinic b9f6",
+      "slug": "apollo-diagnostics-clinic-b9f6",
+      "plan": "starter",
+      "created_at": 1795365494.279043,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-25966122": {
+      "id": "org-25966122",
+      "name": "Arogya Diagnostics Clinic",
+      "slug": "arogya-diagnostics-clinic",
+      "plan": "starter",
+      "created_at": 1795366250.5102723,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-9db8ae32": {
+      "id": "org-9db8ae32",
+      "name": "Apollo Diagnostics Clinic f177",
+      "slug": "apollo-diagnostics-clinic-f177",
+      "plan": "starter",
+      "created_at": 1795366251.1621017,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-27b994ad": {
+      "id": "org-27b994ad",
+      "name": "Fintech Startup Ltd",
+      "slug": "fintech-startup-ltd",
+      "plan": "starter",
+      "created_at": 1795366273.2162273,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-d768e55e": {
+      "id": "org-d768e55e",
+      "name": "Company Alpha",
+      "slug": "company-alpha",
+      "plan": "starter",
+      "created_at": 1795366274.6863134,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-87b43c33": {
+      "id": "org-87b43c33",
+      "name": "Company Beta",
+      "slug": "company-beta",
+      "plan": "starter",
+      "created_at": 1795366275.7087517,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-5e0132c3": {
+      "id": "org-5e0132c3",
+      "name": "Corp Alpha",
+      "slug": "corp-alpha",
+      "plan": "starter",
+      "created_at": 1795366276.3037627,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-8f396086": {
+      "id": "org-8f396086",
+      "name": "Corp Beta",
+      "slug": "corp-beta",
+      "plan": "starter",
+      "created_at": 1795366276.951538,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-a23eeced": {
+      "id": "org-a23eeced",
+      "name": "Legacy Corp",
+      "slug": "legacy-corp",
+      "plan": "starter",
+      "created_at": 1795366280.1068192,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-1edc24e3": {
+      "id": "org-1edc24e3",
+      "name": "MFA Corp",
+      "slug": "mfa-corp",
+      "plan": "starter",
+      "created_at": 1795366281.7613492,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-58342365": {
+      "id": "org-58342365",
+      "name": "Fintech Startup Ltd",
+      "slug": "fintech-startup-ltd",
+      "plan": "starter",
+      "created_at": 1795366327.078019,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-56a94d40": {
+      "id": "org-56a94d40",
+      "name": "Company Alpha",
+      "slug": "company-alpha",
+      "plan": "starter",
+      "created_at": 1795366329.2266655,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-db63a7b0": {
+      "id": "org-db63a7b0",
+      "name": "Company Beta",
+      "slug": "company-beta",
+      "plan": "starter",
+      "created_at": 1795366329.7755327,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-2529b85c": {
+      "id": "org-2529b85c",
+      "name": "Corp Alpha",
+      "slug": "corp-alpha",
+      "plan": "starter",
+      "created_at": 1795366330.4261239,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-3b3b3870": {
+      "id": "org-3b3b3870",
+      "name": "Corp Beta",
+      "slug": "corp-beta",
+      "plan": "starter",
+      "created_at": 1795366331.0298262,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-b63a324c": {
+      "id": "org-b63a324c",
+      "name": "Legacy Corp",
+      "slug": "legacy-corp",
+      "plan": "starter",
+      "created_at": 1795366334.422785,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-8bd7ddd2": {
+      "id": "org-8bd7ddd2",
+      "name": "MFA Corp",
+      "slug": "mfa-corp",
+      "plan": "starter",
+      "created_at": 1795366336.2997952,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-264930d9": {
+      "id": "org-264930d9",
+      "name": "Fintech Startup Ltd",
+      "slug": "fintech-startup-ltd",
+      "plan": "starter",
+      "created_at": 1795366410.8531501,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-04f4e672": {
+      "id": "org-04f4e672",
+      "name": "Company Alpha",
+      "slug": "company-alpha",
+      "plan": "starter",
+      "created_at": 1795366413.0985034,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-54cb7c02": {
+      "id": "org-54cb7c02",
+      "name": "Company Beta",
+      "slug": "company-beta",
+      "plan": "starter",
+      "created_at": 1795366413.911676,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-ececf0b3": {
+      "id": "org-ececf0b3",
+      "name": "Corp Alpha",
+      "slug": "corp-alpha",
+      "plan": "starter",
+      "created_at": 1795366414.6205082,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-00972fa5": {
+      "id": "org-00972fa5",
+      "name": "Corp Beta",
+      "slug": "corp-beta",
+      "plan": "starter",
+      "created_at": 1795366415.6563773,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-b0071b38": {
+      "id": "org-b0071b38",
+      "name": "Legacy Corp",
+      "slug": "legacy-corp",
+      "plan": "starter",
+      "created_at": 1795366418.6374686,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-e74d9d98": {
+      "id": "org-e74d9d98",
+      "name": "MFA Corp",
+      "slug": "mfa-corp",
+      "plan": "starter",
+      "created_at": 1795366419.947443,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-aebca51e": {
+      "id": "org-aebca51e",
+      "name": "Arogya Diagnostics Clinic",
+      "slug": "arogya-diagnostics-clinic",
+      "plan": "starter",
+      "created_at": 1795366508.3111353,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-7b2a0ca1": {
+      "id": "org-7b2a0ca1",
+      "name": "Apollo Diagnostics Clinic 10a5",
+      "slug": "apollo-diagnostics-clinic-10a5",
+      "plan": "starter",
+      "created_at": 1795366508.865535,
+      "max_projects": 10,
+      "scans_count": 0
     }
   },
   "users": {
@@ -953,7 +1268,7 @@
       "email": "security@acme.ai",
       "name": "Tech Lead (Admin)",
       "role": "admin",
-      "created_at": 1795348217.4677215
+      "created_at": 1795366509.8704064
     },
     "usr-901a40ce": {
       "id": "usr-901a40ce",
@@ -2162,6 +2477,496 @@
       "mfa_enabled": false,
       "mfa_secret": null,
       "created_at": 1795348216.8498075
+    },
+    "usr-ca9f6171": {
+      "id": "usr-ca9f6171",
+      "org_id": "org-a1e3c8b1",
+      "email": "clinic_admin_66f473@arogyaclinic.in",
+      "name": "Dr. Sunita Sharma",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$622112ab7ff33472dedcdacbb13c7d36$9dfc6043c45ff2ac5e32390ef56531b2aeee82cbe59371eca5db004a30a8ca31",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "622112ab7ff33472dedcdacbb13c7d36",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795364158.332567
+    },
+    "usr-8497738d": {
+      "id": "usr-8497738d",
+      "org_id": "org-9d735c2e",
+      "email": "dr_apollo_ed6b2e@apolloclinic.in",
+      "name": "Dr. Apollo Lead",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$3448f9558b58194ad6ffb0b93234c327$b87c86d305b3b04b693cb2a157414a035d1ff88023f7827cd56d1bc313c2c1d9",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "3448f9558b58194ad6ffb0b93234c327",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795364160.0381029
+    },
+    "usr-794cb3b8": {
+      "id": "usr-794cb3b8",
+      "org_id": "org-3b1b7d04",
+      "email": "clinic_admin_139c44@arogyaclinic.in",
+      "name": "Dr. Sunita Sharma",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$4357aeaea12a20d33cff2276593ea62e$6fdda6f6e8e89a5d9ca1157461c28d7cb921f5b6befe03db648fa49e208f4754",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "4357aeaea12a20d33cff2276593ea62e",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795364849.3139753
+    },
+    "usr-4e2846e3": {
+      "id": "usr-4e2846e3",
+      "org_id": "org-c7ffdb92",
+      "email": "dr_apollo_947f57@apolloclinic.in",
+      "name": "Dr. Apollo Lead",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$51d6958f2da9034a4f9b5f3838b3ad78$d485d8086ebff1e58af476906cfd59877a42a83c2adb0a61e385bfdcd1f4d1aa",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "51d6958f2da9034a4f9b5f3838b3ad78",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795364850.0608764
+    },
+    "usr-c272cd35": {
+      "id": "usr-c272cd35",
+      "org_id": "org-5351507a",
+      "email": "clinic_admin_730ae1@arogyaclinic.in",
+      "name": "Dr. Sunita Sharma",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$563d1bad875e54c64ecb7589c120b2f3$996fc8edbc0cf4d526876a199910a4d3345c385423ca9987affea818568cb17d",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "563d1bad875e54c64ecb7589c120b2f3",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795364905.4544923
+    },
+    "usr-40197bb1": {
+      "id": "usr-40197bb1",
+      "org_id": "org-778a6a6f",
+      "email": "dr_apollo_4bc51d@apolloclinic.in",
+      "name": "Dr. Apollo Lead",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$4370e63c5ddfda0a4e338541b8333891$ea1127dd588ae08c1b32eccf057ee014fc3558e9b303c676cf5581d22d7e884a",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "4370e63c5ddfda0a4e338541b8333891",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795364906.3228035
+    },
+    "usr-3f62632a": {
+      "id": "usr-3f62632a",
+      "org_id": "org-43459378",
+      "email": "clinic_admin_b5364b@arogyaclinic.in",
+      "name": "Dr. Sunita Sharma",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$cbc75e37cc7cf58a4c0bf18de2051605$ab1aa3b02cc083b0008116287d13f9399f0e493520d038f8c40f6119ffcf6bc0",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "cbc75e37cc7cf58a4c0bf18de2051605",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795365153.7474911
+    },
+    "usr-29d9e6c9": {
+      "id": "usr-29d9e6c9",
+      "org_id": "org-c6ce5267",
+      "email": "dr_apollo_35a14b@apolloclinic.in",
+      "name": "Dr. Apollo Lead",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$325ce2e251867ba57ad572a12b5cba44$85594b6d036d102c37353fac499431971e34a6e775563dae4ec81d59e77608fc",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "325ce2e251867ba57ad572a12b5cba44",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795365154.5801547
+    },
+    "usr-c82c6616": {
+      "id": "usr-c82c6616",
+      "org_id": "org-78e7ded6",
+      "email": "clinic_admin_1c179b@arogyaclinic.in",
+      "name": "Dr. Sunita Sharma",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$3d402f459dcfab309015fdd2af4c0439$702ccf4993044ca2dc647f9945d7c96fae9295da54a5ca9a020615d3ba48b2af",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "3d402f459dcfab309015fdd2af4c0439",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795365493.456433
+    },
+    "usr-9363ee19": {
+      "id": "usr-9363ee19",
+      "org_id": "org-b3b832b8",
+      "email": "dr_apollo_48a35b@apolloclinic.in",
+      "name": "Dr. Apollo Lead",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$6410b9ed996a918b49c992d47362d94a$4e9074d4a0d89d8c96ba394338e2ecb30cbdd789a9c01d661f25df2da78473b2",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "6410b9ed996a918b49c992d47362d94a",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795365494.2790453
+    },
+    "usr-e958779e": {
+      "id": "usr-e958779e",
+      "org_id": "org-25966122",
+      "email": "clinic_admin_b36535@arogyaclinic.in",
+      "name": "Dr. Sunita Sharma",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$d2a0720f373afa58aa2410e782e95cd4$9baa6f31c6e21d755a334cb7a8bb6f5b233fc0b540a96de28315f800132e64ee",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "d2a0720f373afa58aa2410e782e95cd4",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795366250.5102746
+    },
+    "usr-7529d5cd": {
+      "id": "usr-7529d5cd",
+      "org_id": "org-9db8ae32",
+      "email": "dr_apollo_1c9ab4@apolloclinic.in",
+      "name": "Dr. Apollo Lead",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$c09a1fa0c4a07fa4a99074c9c24e209c$775788e3398a6955f3ffb843f0e4c8b4e1f9cefd0b88f491d8ab54fda9500caa",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "c09a1fa0c4a07fa4a99074c9c24e209c",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795366251.1621046
+    },
+    "usr-d9604925": {
+      "id": "usr-d9604925",
+      "org_id": "org-27b994ad",
+      "email": "compliance_ad9c99@acme.ai",
+      "name": "Compliance Lead",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$8f13a4c64847292dbc5455f8e6b124d9$72f9ad457b5023f7fcb7cd0b01c3e6cdb5eee70875ed3f98082c73c4b01f5a1e",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "8f13a4c64847292dbc5455f8e6b124d9",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795366273.2162294
+    },
+    "usr-7a9967db": {
+      "id": "usr-7a9967db",
+      "org_id": "org-d768e55e",
+      "email": "alice_bcb143@tenant-a.com",
+      "name": "Alice A",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$281970d5a45530715c2571c76cb62808$ddf02de3c7acc38cea924c694e2324bca483df9b89db629ca551545996cc1f57",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "281970d5a45530715c2571c76cb62808",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795366274.686318
+    },
+    "usr-c5f811c3": {
+      "id": "usr-c5f811c3",
+      "org_id": "org-87b43c33",
+      "email": "bob_bfb1f4@tenant-b.com",
+      "name": "Bob B",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$f115b97072edacaa47b40020de43d2f7$1961b1b56ed1bb16c48ba090b9606fbf11cafb93bb76d2f59a387b3977c45d8a",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "f115b97072edacaa47b40020de43d2f7",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795366275.708758
+    },
+    "usr-57618d79": {
+      "id": "usr-57618d79",
+      "org_id": "org-5e0132c3",
+      "email": "dev_a_e34b81@corp-a.com",
+      "name": "Dev A",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$0f918c2ba03f0af26fc7ca91b7dc1d0b$0dbfa6cae5f9ed29def870a2188cafae41e081b1511b0e8d28d0e1dab11cf0dc",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "0f918c2ba03f0af26fc7ca91b7dc1d0b",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795366276.3037655
+    },
+    "usr-6e5542d1": {
+      "id": "usr-6e5542d1",
+      "org_id": "org-8f396086",
+      "email": "dev_b_ff2899@corp-b.com",
+      "name": "Dev B",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$2898e9fe70460c46cba34c446fabc1a7$c07ede409997d23e983279afb55bae9be820b550b6986493bcb14baacd7a45f8",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "2898e9fe70460c46cba34c446fabc1a7",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795366276.951541
+    },
+    "usr-b70f0f1b": {
+      "id": "usr-b70f0f1b",
+      "org_id": "org-a23eeced",
+      "email": "legacy_fa1949@old-tenant.com",
+      "name": "Legacy Lead",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$0a52402a1e20594d4e26bc304f234704$446b1bdaf245f18d76272c4ebff6ccd0599bf0e95fe552fc88c1b009e16dff5f",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "0a52402a1e20594d4e26bc304f234704",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795366280.1068223
+    },
+    "usr-36b96c4e": {
+      "id": "usr-36b96c4e",
+      "org_id": "org-1edc24e3",
+      "email": "mfa_cb76d4@mfa-corp.com",
+      "name": "MFA Lead",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$f702a8c26c878c223f0a29c1837313a4$50b590c9f831030a1d9caa1329dbe173442b865b6d4b30ef8ea39c9a0c25bc21",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "f702a8c26c878c223f0a29c1837313a4",
+      "mfa_enabled": true,
+      "mfa_secret": "CVKWG6YG625UTAW37UDJPYB62CL77JJR",
+      "created_at": 1795366281.7613516
+    },
+    "usr-eb11f7a0": {
+      "id": "usr-eb11f7a0",
+      "org_id": "org-58342365",
+      "email": "compliance_ab2c90@acme.ai",
+      "name": "Compliance Lead",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$0b8b1a70dfdbbf5e14542657c6f9e657$478ca7489f873bf933c62a7aebe89cb80837e1ae9e70ff4a29917483fa5936d7",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "0b8b1a70dfdbbf5e14542657c6f9e657",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795366327.0780203
+    },
+    "usr-816d125a": {
+      "id": "usr-816d125a",
+      "org_id": "org-56a94d40",
+      "email": "alice_63d9c6@tenant-a.com",
+      "name": "Alice A",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$80c4439f591322f7b0d92b84627f23f3$9a5825a1a6696308dc4c5afe3eaa90d1dfd59bac1856ab4656733187a4a9dce7",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "80c4439f591322f7b0d92b84627f23f3",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795366329.2266686
+    },
+    "usr-4f14fa1d": {
+      "id": "usr-4f14fa1d",
+      "org_id": "org-db63a7b0",
+      "email": "bob_136a82@tenant-b.com",
+      "name": "Bob B",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$182eed7fdd414623236e4abf5c5a0cee$e8f51dba3c678e3ff2afc0a7ac0268eaba485393f3be416a40742dd0b03ff18f",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "182eed7fdd414623236e4abf5c5a0cee",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795366329.7755387
+    },
+    "usr-6899b28c": {
+      "id": "usr-6899b28c",
+      "org_id": "org-2529b85c",
+      "email": "dev_a_42e726@corp-a.com",
+      "name": "Dev A",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$e3652ef832668f54ccd361bfd69d95d0$f91ef621d7203709e629ddaeb089d719c6da6c47dc885e85eca05d550a532ebb",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "e3652ef832668f54ccd361bfd69d95d0",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795366330.426128
+    },
+    "usr-a51b10d4": {
+      "id": "usr-a51b10d4",
+      "org_id": "org-3b3b3870",
+      "email": "dev_b_ee5194@corp-b.com",
+      "name": "Dev B",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$c50eb19ca25bcdbf0715f9b8f7796bc6$31b67f392c3a8a078343c45700619e8e8739e93f0c25f0b8bce349d0da2071ed",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "c50eb19ca25bcdbf0715f9b8f7796bc6",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795366331.029831
+    },
+    "usr-8e7b5270": {
+      "id": "usr-8e7b5270",
+      "org_id": "org-b63a324c",
+      "email": "legacy_a3fa22@old-tenant.com",
+      "name": "Legacy Lead",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$cebc48030f811272ac695a96174df65b$0c1b1b2fcaae032276a52a83082a55eb1c4d28c9b5c3d93d98150c3bec0cac63",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "cebc48030f811272ac695a96174df65b",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795366334.422788
+    },
+    "usr-aac76b99": {
+      "id": "usr-aac76b99",
+      "org_id": "org-8bd7ddd2",
+      "email": "mfa_5759fe@mfa-corp.com",
+      "name": "MFA Lead",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$78bb139f6b55c31ad8e349d43205345a$6633292a92095dd5203df04995a6c84c97446613228088ff4b26e3e121f3a8d2",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "78bb139f6b55c31ad8e349d43205345a",
+      "mfa_enabled": true,
+      "mfa_secret": "LBKVKJMM3DWR7QSUXX5EHEJ7CYTN2U7E",
+      "created_at": 1795366336.299798
+    },
+    "usr-f4972d91": {
+      "id": "usr-f4972d91",
+      "org_id": "org-264930d9",
+      "email": "compliance_6acf41@acme.ai",
+      "name": "Compliance Lead",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$293967c8434f9a7d8bee3e73b7e92973$6e32c869631aac1f09e34bbe4b4ce9083ef4eb3cb4dc38b1dd27d963d5571401",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "293967c8434f9a7d8bee3e73b7e92973",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795366410.8531535
+    },
+    "usr-d4613dd1": {
+      "id": "usr-d4613dd1",
+      "org_id": "org-04f4e672",
+      "email": "alice_8c3b91@tenant-a.com",
+      "name": "Alice A",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$4a23cc1cbf1e81b6b347b24803b1bdcd$0725350834d2f9b988058fb722046cfc5078b7aa7874992523f94bf82f2e40d0",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "4a23cc1cbf1e81b6b347b24803b1bdcd",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795366413.0985065
+    },
+    "usr-daf00259": {
+      "id": "usr-daf00259",
+      "org_id": "org-54cb7c02",
+      "email": "bob_b37fc8@tenant-b.com",
+      "name": "Bob B",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$0703876c0709f276e417b6952c75933e$0bd5f0a30df83ec1ec5c750f1ca84085832a7093bfc20c0f86979c33e1500b91",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "0703876c0709f276e417b6952c75933e",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795366413.9116795
+    },
+    "usr-6fefe86b": {
+      "id": "usr-6fefe86b",
+      "org_id": "org-ececf0b3",
+      "email": "dev_a_953915@corp-a.com",
+      "name": "Dev A",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$f0df903fa4ea707d61a9bb8043b89f7f$35ce44b9ef66433e9efae32e69f3091e5472e313c37c5cf9357ff84d51a1107f",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "f0df903fa4ea707d61a9bb8043b89f7f",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795366414.620512
+    },
+    "usr-2584266e": {
+      "id": "usr-2584266e",
+      "org_id": "org-00972fa5",
+      "email": "dev_b_1b36ed@corp-b.com",
+      "name": "Dev B",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$39791a4060fb7862d6daf44be1414e2a$dca7f6081bea278433394c8004b53e982253c2f58bc3d6cc5e5424b6d89e2ecf",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "39791a4060fb7862d6daf44be1414e2a",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795366415.6563814
+    },
+    "usr-e172665b": {
+      "id": "usr-e172665b",
+      "org_id": "org-b0071b38",
+      "email": "legacy_a6aa16@old-tenant.com",
+      "name": "Legacy Lead",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$5cdeb4e20f3c3267db6a5b47ad08be62$e00e7f1c291999d14ddbdd46065d4af81c6a3ae7fb2d823d7e79d0e6576d09bc",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "5cdeb4e20f3c3267db6a5b47ad08be62",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795366418.6374726
+    },
+    "usr-3425b225": {
+      "id": "usr-3425b225",
+      "org_id": "org-e74d9d98",
+      "email": "mfa_0810a2@mfa-corp.com",
+      "name": "MFA Lead",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$fe04cf4ad82dde5131e84786800060fa$49f9822bd234df391dc1f4b56218b7b42451140f648b173cccb5c55faa3f7e90",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "fe04cf4ad82dde5131e84786800060fa",
+      "mfa_enabled": true,
+      "mfa_secret": "JMHEHOYLGEKKG7PYT7YEY3DFKEVDEHSL",
+      "created_at": 1795366419.9474459
+    },
+    "usr-e8c060d4": {
+      "id": "usr-e8c060d4",
+      "org_id": "org-aebca51e",
+      "email": "clinic_admin_cfe9c1@arogyaclinic.in",
+      "name": "Dr. Sunita Sharma",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$ce5d4f0b0c4cea7096e7ddca078fcd94$5dbc88dbc25d4ffd60958350bee522fcb9f3b316dd5614dd3e0ca24d16c29ed4",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "ce5d4f0b0c4cea7096e7ddca078fcd94",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795366508.3111372
+    },
+    "usr-8f79ac90": {
+      "id": "usr-8f79ac90",
+      "org_id": "org-7b2a0ca1",
+      "email": "dr_apollo_46de19@apolloclinic.in",
+      "name": "Dr. Apollo Lead",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$448a66f250a99bdc83de1098d64917d4$1ccd7cb93f4ca69843c5b057510d23f44d91fb5b1e811320746421a72c17a535",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "448a66f250a99bdc83de1098d64917d4",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795366508.8655372
     }
   },
   "projects": {
@@ -37574,6 +38379,66 @@
       "critical_findings": 0,
       "open_findings": 0,
       "last_scan": 1795034491.689701
+    },
+    "proj-72301684": {
+      "id": "proj-72301684",
+      "org_id": "org-5e0132c3",
+      "name": "Alpha Secret Backend",
+      "target_type": "repository",
+      "repo_url": "https://github.com/corp-a/cbcb05",
+      "website_url": "",
+      "mcp_servers_count": 1,
+      "regression_status": "PASS",
+      "monitoring_status": "ACTIVE",
+      "scan_frequency": "daily",
+      "next_scan_at": 1795452677.05401,
+      "timeline": [],
+      "created_at": 1795366277.054011,
+      "last_score": 100,
+      "last_grade": "A",
+      "critical_findings": 0,
+      "open_findings": 0,
+      "last_scan": 1795366277.0540156
+    },
+    "proj-d7713c04": {
+      "id": "proj-d7713c04",
+      "org_id": "org-2529b85c",
+      "name": "Alpha Secret Backend",
+      "target_type": "repository",
+      "repo_url": "https://github.com/corp-a/49be2a",
+      "website_url": "",
+      "mcp_servers_count": 1,
+      "regression_status": "PASS",
+      "monitoring_status": "ACTIVE",
+      "scan_frequency": "daily",
+      "next_scan_at": 1795452731.261882,
+      "timeline": [],
+      "created_at": 1795366331.2618847,
+      "last_score": 100,
+      "last_grade": "A",
+      "critical_findings": 0,
+      "open_findings": 0,
+      "last_scan": 1795366331.2618923
+    },
+    "proj-03140691": {
+      "id": "proj-03140691",
+      "org_id": "org-ececf0b3",
+      "name": "Alpha Secret Backend",
+      "target_type": "repository",
+      "repo_url": "https://github.com/corp-a/88ecfa",
+      "website_url": "",
+      "mcp_servers_count": 1,
+      "regression_status": "PASS",
+      "monitoring_status": "ACTIVE",
+      "scan_frequency": "daily",
+      "next_scan_at": 1795452815.7364602,
+      "timeline": [],
+      "created_at": 1795366415.736462,
+      "last_score": 100,
+      "last_grade": "A",
+      "critical_findings": 0,
+      "open_findings": 0,
+      "last_scan": 1795366415.7364666
     }
   },
   "scans": {
@@ -37700,7 +38565,7 @@
     "org-default": {
       "organization_name": "Acme AI Labs",
       "country": "India",
-      "assessed_at": "2026-11-18 20:41:30 UTC",
+      "assessed_at": "2026-11-22 16:53:32 UTC",
       "applicability": {
         "DPDP": {
           "applicable": true,
@@ -37741,13 +38606,13 @@
             }
           },
           "applicable": true,
-          "readiness_score": 18,
+          "readiness_score": 30,
           "readiness_grade": "D",
           "total_controls": 9,
-          "implemented_count": 0,
+          "implemented_count": 1,
           "evidence_missing_count": 2,
           "gap_count": 2,
-          "expert_review_count": 4,
+          "expert_review_count": 3,
           "not_applicable_count": 1,
           "controls": [
             {
@@ -37759,10 +38624,10 @@
               "category": "Consent & Transparency",
               "enforcement_phase": "SCHEDULED_TO_COMMENCE",
               "effective_date": "13 May 2027 (Scheduled commencement)",
-              "status": "REQUIRES_EXPERT_REVIEW",
-              "status_label": "Requires Expert Review",
-              "rationale": "This is a governance or legal control that cannot be validated purely via technical scans. Supporting documentation and legal sign-off required.",
-              "evidence_count": 0,
+              "status": "IMPLEMENTED_REVIEWED",
+              "status_label": "Implemented & Evidence Reviewed",
+              "rationale": "Technical checks passed and 10 supporting evidence document(s) uploaded.",
+              "evidence_count": 10,
               "active_findings_count": 0,
               "assessment_questions": [
                 "Does your website or application present an itemized notice before capturing user personal data?",
@@ -41158,6 +42023,916 @@
         "SOC2",
         "ISO27001"
       ]
+    },
+    "org-a1e3c8b1": {
+      "company_name": "Arogya Diagnostics Clinic",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-9d735c2e": {
+      "company_name": "Apollo Diagnostics Clinic 26c6",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-3b1b7d04": {
+      "company_name": "Arogya Diagnostics Clinic",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-c7ffdb92": {
+      "company_name": "Apollo Diagnostics Clinic 8501",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-5351507a": {
+      "company_name": "Arogya Diagnostics Clinic",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-778a6a6f": {
+      "company_name": "Apollo Diagnostics Clinic f6dd",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-43459378": {
+      "company_name": "Arogya Diagnostics Clinic",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-c6ce5267": {
+      "company_name": "Apollo Diagnostics Clinic 4cb3",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-78e7ded6": {
+      "company_name": "Arogya Diagnostics Clinic",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-b3b832b8": {
+      "company_name": "Apollo Diagnostics Clinic b9f6",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-25966122": {
+      "company_name": "Arogya Diagnostics Clinic",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-9db8ae32": {
+      "company_name": "Apollo Diagnostics Clinic f177",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-27b994ad": {
+      "company_name": "Fintech Startup Ltd",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-d768e55e": {
+      "company_name": "Company Alpha",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-87b43c33": {
+      "company_name": "Company Beta",
+      "country": "USA",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-5e0132c3": {
+      "company_name": "Corp Alpha",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-8f396086": {
+      "company_name": "Corp Beta",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-a23eeced": {
+      "company_name": "Legacy Corp",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-1edc24e3": {
+      "company_name": "MFA Corp",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-58342365": {
+      "company_name": "Fintech Startup Ltd",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-56a94d40": {
+      "company_name": "Company Alpha",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-db63a7b0": {
+      "company_name": "Company Beta",
+      "country": "USA",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-2529b85c": {
+      "company_name": "Corp Alpha",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-3b3b3870": {
+      "company_name": "Corp Beta",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-b63a324c": {
+      "company_name": "Legacy Corp",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-8bd7ddd2": {
+      "company_name": "MFA Corp",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-264930d9": {
+      "company_name": "Fintech Startup Ltd",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-04f4e672": {
+      "company_name": "Company Alpha",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-54cb7c02": {
+      "company_name": "Company Beta",
+      "country": "USA",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-ececf0b3": {
+      "company_name": "Corp Alpha",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-00972fa5": {
+      "company_name": "Corp Beta",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-b0071b38": {
+      "company_name": "Legacy Corp",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-e74d9d98": {
+      "company_name": "MFA Corp",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-aebca51e": {
+      "company_name": "Arogya Diagnostics Clinic",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-7b2a0ca1": {
+      "company_name": "Apollo Diagnostics Clinic 10a5",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
     }
   },
   "deletion_audit_log": [
@@ -41197,6 +42972,54 @@
       "deletion_request_date": "2026-11-18 20:41:28 UTC",
       "completion_timestamp": "2026-11-18 20:41:28 UTC",
       "organization_id": "org-97db950e",
+      "organization_name": "Purge Corp",
+      "status": "COMPLETED",
+      "data_categories_deleted": [
+        "User Accounts & Password Hashes",
+        "Project Repositories & Scan Findings",
+        "Evidence Vault Artifacts & Hashes",
+        "Organization Compliance Profiles",
+        "Active Session Tokens"
+      ],
+      "active_storage_retention": "0-day (Immediate scrubbing)",
+      "backup_expiration_period": "30 days (Automated snapshot rotation)"
+    },
+    {
+      "deletion_request_date": "2026-11-22 16:51:24 UTC",
+      "completion_timestamp": "2026-11-22 16:51:24 UTC",
+      "organization_id": "org-c195243d",
+      "organization_name": "Purge Corp",
+      "status": "COMPLETED",
+      "data_categories_deleted": [
+        "User Accounts & Password Hashes",
+        "Project Repositories & Scan Findings",
+        "Evidence Vault Artifacts & Hashes",
+        "Organization Compliance Profiles",
+        "Active Session Tokens"
+      ],
+      "active_storage_retention": "0-day (Immediate scrubbing)",
+      "backup_expiration_period": "30 days (Automated snapshot rotation)"
+    },
+    {
+      "deletion_request_date": "2026-11-22 16:52:19 UTC",
+      "completion_timestamp": "2026-11-22 16:52:19 UTC",
+      "organization_id": "org-cb4fa1f1",
+      "organization_name": "Purge Corp",
+      "status": "COMPLETED",
+      "data_categories_deleted": [
+        "User Accounts & Password Hashes",
+        "Project Repositories & Scan Findings",
+        "Evidence Vault Artifacts & Hashes",
+        "Organization Compliance Profiles",
+        "Active Session Tokens"
+      ],
+      "active_storage_retention": "0-day (Immediate scrubbing)",
+      "backup_expiration_period": "30 days (Automated snapshot rotation)"
+    },
+    {
+      "deletion_request_date": "2026-11-22 16:53:42 UTC",
+      "completion_timestamp": "2026-11-22 16:53:42 UTC",
+      "organization_id": "org-4502895c",
       "organization_name": "Purge Corp",
       "status": "COMPLETED",
       "data_categories_deleted": [
