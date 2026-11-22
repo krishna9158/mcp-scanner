@@ -122,7 +122,7 @@ TRUST_CENTRE_HTML = """<!doctype html>
         <div class="container">
             <div class="eyebrow">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                TRUSTAUDIT PRIVACY &amp; SECURITY POSTURE
+                TRUSTAUDIT &bull; Security, Compliance &amp; Trust Center
             </div>
             <h1 class="hero-title">Security You Can Inspect.<br><span class="gradient-text">Privacy You Can Verify.</span></h1>
             <p class="hero-desc">

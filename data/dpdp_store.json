@@ -912,6 +912,145 @@
         "created_at": "2026-11-22T11:18:11.712420+00:00",
         "updated_at": "2026-11-22T11:18:11.712420+00:00"
       }
+    ],
+    "org-a9b831": [
+      {
+        "id": "inv-a7919242",
+        "category": "Patient Demographic Information",
+        "principal_type": "Patients",
+        "source": "Reception Desk Registration / Web Appointment",
+        "purpose": "Patient identification, contact, appointment scheduling",
+        "legal_basis": "DPDP Section 6 (Consent) & Section 5 Notice",
+        "collection_method": "Registration Paper Form / Tablet UI",
+        "storage_system": "Clinic Management Software (Local & Cloud Backup)",
+        "department": "Reception & Registration",
+        "owner": "Clinic Frontdesk Manager",
+        "external_recipients": "SMS Gateway Provider (Appointment alerts)",
+        "processor": "Hospital Management System (HMS) SaaS",
+        "retention_period": "3 years from last consultation (Clinical Establishments Act)",
+        "deletion_method": "Automated soft-archive, database purging after retention",
+        "international_transfer": "None (Domestic India AWS Mumbai ap-south-1)",
+        "created_at": "2026-11-22T11:50:16.954444+00:00",
+        "updated_at": "2026-11-22T11:50:16.954444+00:00"
+      },
+      {
+        "id": "inv-afc653e2",
+        "category": "Medical & Clinical Diagnostic Reports",
+        "principal_type": "Patients",
+        "source": "Laboratory Analyzers & Radiologist Assessment",
+        "purpose": "Medical diagnosis, pathology analysis, treatment planning",
+        "legal_basis": "DPDP Section 6 (Consent) & Section 7(e) Medical Emergency",
+        "collection_method": "Direct LIMS System / Physician Entry",
+        "storage_system": "Picture Archiving & Communication System (PACS) / LIMS",
+        "department": "Laboratory & Diagnostics",
+        "owner": "Chief Pathologist / Medical Director",
+        "external_recipients": "Referring Physician, Patient via Secure Link",
+        "processor": "Cloud Diagnostics Software Provider",
+        "retention_period": "5 years (Clinical Establishment Records Rules)",
+        "deletion_method": "Cryptographic file shredding after statutory period",
+        "international_transfer": "None (India hosted)",
+        "created_at": "2026-11-22T11:50:16.975360+00:00",
+        "updated_at": "2026-11-22T11:50:16.975360+00:00"
+      },
+      {
+        "id": "inv-abe0eaef",
+        "category": "Billing, Invoice & Insurance Records",
+        "principal_type": "Patients",
+        "source": "Patient Billing Counter",
+        "purpose": "Invoice generation, payment reconciliation, insurance TPA claims",
+        "legal_basis": "DPDP Section 7(c) (Legal Obligation) & Section 6",
+        "collection_method": "POS Terminal / Accounting Software",
+        "storage_system": "Tally / Cloud ERP Billing Database",
+        "department": "Billing & Accounts",
+        "owner": "Finance Officer",
+        "external_recipients": "Insurance Third Party Administrators (TPAs), GSTN",
+        "processor": "Payment Gateway / Accounting Cloud",
+        "retention_period": "8 years (Income Tax Act & GST Regulations)",
+        "deletion_method": "Physical shredding of paper bills, DB record purge",
+        "international_transfer": "None",
+        "created_at": "2026-11-22T11:50:16.990358+00:00",
+        "updated_at": "2026-11-22T11:50:16.990358+00:00"
+      },
+      {
+        "id": "inv-97b58c58",
+        "category": "Employee & Medical Staff Records",
+        "principal_type": "Doctors & Staff",
+        "source": "HR Onboarding & Medical Council Credentials",
+        "purpose": "Employment administration, salary processing, medical credentialing",
+        "legal_basis": "DPDP Section 7(i) (Employment purposes)",
+        "collection_method": "Employment Contract / KYC Submission",
+        "storage_system": "HRMS Cloud System",
+        "department": "Human Resources & Staff",
+        "owner": "HR Manager",
+        "external_recipients": "PF / ESI Department, Payroll Bank",
+        "processor": "HRMS Software Provider",
+        "retention_period": "Duration of employment + 7 years",
+        "deletion_method": "Secure digital destruction upon expiry",
+        "international_transfer": "None",
+        "created_at": "2026-11-22T11:50:17.014754+00:00",
+        "updated_at": "2026-11-22T11:50:17.014754+00:00"
+      }
+    ],
+    "org-dfd08d": [
+      {
+        "id": "inv-e0a5da25",
+        "category": "Patient Blood Pathology Results",
+        "principal_type": "Patients",
+        "source": "Diagnostic Laboratory Analyzer",
+        "purpose": "Clinical Pathology Assessment",
+        "legal_basis": "DPDP Section 6 (Consent) & Section 7(e) Medical Emergency",
+        "collection_method": "Web Form / Registration",
+        "storage_system": "LIMS Cloud (AWS ap-south-1)",
+        "department": "Operations",
+        "owner": "Data Protection Lead",
+        "external_recipients": "None",
+        "processor": "None",
+        "retention_period": "5 Years",
+        "deletion_method": "Database Purge",
+        "international_transfer": "None (India hosted)",
+        "created_at": "2026-11-22T11:50:17.042634+00:00",
+        "updated_at": "2026-11-22T11:50:17.042634+00:00"
+      },
+      {
+        "id": "inv-d340aed5",
+        "category": "Patient Blood Pathology Results",
+        "principal_type": "Patients",
+        "source": "Diagnostic Laboratory Analyzer",
+        "purpose": "Clinical Pathology Assessment",
+        "legal_basis": "DPDP Section 6 (Consent) & Section 7(e) Medical Emergency",
+        "collection_method": "Web Form / Registration",
+        "storage_system": "LIMS Cloud (AWS ap-south-1)",
+        "department": "Operations",
+        "owner": "Data Protection Lead",
+        "external_recipients": "None",
+        "processor": "None",
+        "retention_period": "5 Years",
+        "deletion_method": "Database Purge",
+        "international_transfer": "None (India hosted)",
+        "created_at": "2026-11-22T11:50:17.070422+00:00",
+        "updated_at": "2026-11-22T11:50:17.070422+00:00"
+      }
+    ],
+    "org-a-baec": [
+      {
+        "id": "inv-eac8a09b",
+        "category": "Org A Patient Secret",
+        "principal_type": "Customers / Users",
+        "source": "Direct Registration",
+        "purpose": "Service Delivery",
+        "legal_basis": "DPDP Section 6 (Consent)",
+        "collection_method": "Web Form / Registration",
+        "storage_system": "Primary Database",
+        "department": "Operations",
+        "owner": "Data Protection Lead",
+        "external_recipients": "None",
+        "processor": "None",
+        "retention_period": "3 Years",
+        "deletion_method": "Database Purge",
+        "international_transfer": "None (India hosted)",
+        "created_at": "2026-11-22T11:50:17.378000+00:00",
+        "updated_at": "2026-11-22T11:50:17.378000+00:00"
+      }
     ]
   },
   "assessments": {
@@ -1496,6 +1635,19 @@
           "source": "Website Scan: https://medicare.example.in/",
           "created_at": "2026-11-22T11:18:10.204062+00:00",
           "updated_at": "2026-11-22T11:18:10.204062+00:00"
+        },
+        {
+          "id": "TASK-SCAN-f86b43",
+          "requirement_id": "Section 5 & Rule 3 (Subject to Commencement)",
+          "title": "Fix Website Gap: Privacy Notice Not Detected on Public Pages",
+          "description": "Under Section 5, every Data Fiduciary must give Data Principals an itemised notice before or at the time of requesting personal data, stating the personal data categories, processing purpose, manner of exercising rights, and grievance details.\n\nRecommended: Draft and publish a clear, standalone, business-specific Privacy Notice compliant with Section 5 and Rule 3 itemised notice standards.",
+          "priority": "HIGH",
+          "status": "OPEN",
+          "assignee": "Compliance DPO",
+          "due_date": "2026-12-06",
+          "source": "Website Scan: https://medicare.example.in/",
+          "created_at": "2026-11-22T11:50:17.771015+00:00",
+          "updated_at": "2026-11-22T11:50:17.771015+00:00"
         }
       ],
       "created_at": "2026-11-22T10:40:58.920258+00:00",
@@ -4872,6 +5024,568 @@
       ],
       "created_at": "2026-11-22T11:18:11.649605+00:00",
       "updated_at": "2026-11-22T11:18:11.649605+00:00"
+    },
+    "org-768e4a": {
+      "org_id": "org-768e4a",
+      "readiness_score": 80,
+      "readiness_label": "In Progress (Self-Attested)",
+      "controls_total": 15,
+      "controls_implemented": 12,
+      "gaps_count": 3,
+      "controls": [
+        {
+          "requirement_id": "DPDP-SEC-03",
+          "section": "Section 3",
+          "title": "Applicability & Material Scope",
+          "category": "Governance & Scoping",
+          "effective_date": "13 November 2025",
+          "legal_status": "IN_FORCE",
+          "status": "SELF_ATTESTED_IMPLEMENTED",
+          "evidence_count": 0,
+          "verification_status": "Self-Attested (Pending Human Verification)",
+          "last_assessed": "2026-11-22T11:50:17.087938+00:00"
+        },
+        {
+          "requirement_id": "DPDP-SEC-04-06",
+          "section": "Sections 4 & 6",
+          "title": "Valid Consent & Itemised Consent Architecture",
+          "category": "Consent & Notices",
+          "effective_date": "13 May 2027",
+          "legal_status": "SCHEDULED_MAY_2027",
+          "status": "SELF_ATTESTED_IMPLEMENTED",
+          "evidence_count": 0,
+          "verification_status": "Self-Attested (Pending Human Verification)",
+          "last_assessed": "2026-11-22T11:50:17.087938+00:00"
+        },
+        {
+          "requirement_id": "DPDP-SEC-05",
+          "section": "Section 5",
+          "title": "Itemised Notice in Plain Language & 8th Schedule Availability",
+          "category": "Consent & Notices",
+          "effective_date": "13 May 2027",
+          "legal_status": "SCHEDULED_MAY_2027",
+          "status": "GAP_IDENTIFIED",
+          "evidence_count": 0,
+          "verification_status": "Self-Attested (Pending Human Verification)",
+          "last_assessed": "2026-11-22T11:50:17.087938+00:00"
+        },
+        {
+          "requirement_id": "DPDP-SEC-06-04",
+          "section": "Section 6(4)-(6)",
+          "title": "Consent Withdrawal & Processor Cascading",
+          "category": "Rights & Consent Workflows",
+          "effective_date": "13 May 2027",
+          "legal_status": "SCHEDULED_MAY_2027",
+          "status": "SELF_ATTESTED_IMPLEMENTED",
+          "evidence_count": 0,
+          "verification_status": "Self-Attested (Pending Human Verification)",
+          "last_assessed": "2026-11-22T11:50:17.087938+00:00"
+        },
+        {
+          "requirement_id": "DPDP-SEC-07",
+          "section": "Section 7",
+          "title": "Legitimate Uses (Statutory Non-Consent Grounds)",
+          "category": "Legal Bases & Data Inventory",
+          "effective_date": "13 May 2027",
+          "legal_status": "SCHEDULED_MAY_2027",
+          "status": "SELF_ATTESTED_IMPLEMENTED",
+          "evidence_count": 0,
+          "verification_status": "Self-Attested (Pending Human Verification)",
+          "last_assessed": "2026-11-22T11:50:17.087938+00:00"
+        },
+        {
+          "requirement_id": "DPDP-SEC-08-01",
+          "section": "Section 8(1) & 8(2)",
+          "title": "Data Fiduciary Responsibility & Processor Oversight",
+          "category": "Vendor & Processor Management",
+          "effective_date": "13 May 2027",
+          "legal_status": "SCHEDULED_MAY_2027",
+          "status": "GAP_IDENTIFIED",
+          "evidence_count": 0,
+          "verification_status": "Self-Attested (Pending Human Verification)",
+          "last_assessed": "2026-11-22T11:50:17.087938+00:00"
+        },
+        {
+          "requirement_id": "DPDP-SEC-08-03",
+          "section": "Section 8(3)",
+          "title": "Data Accuracy & Consistency",
+          "category": "Data Quality & Operations",
+          "effective_date": "13 May 2027",
+          "legal_status": "SCHEDULED_MAY_2027",
+          "status": "SELF_ATTESTED_IMPLEMENTED",
+          "evidence_count": 0,
+          "verification_status": "Self-Attested (Pending Human Verification)",
+          "last_assessed": "2026-11-22T11:50:17.087938+00:00"
+        },
+        {
+          "requirement_id": "DPDP-SEC-08-05",
+          "section": "Section 8(5)",
+          "title": "Reasonable Security Safeguards",
+          "category": "Security Safeguards",
+          "effective_date": "13 May 2027",
+          "legal_status": "SCHEDULED_MAY_2027",
+          "status": "SELF_ATTESTED_IMPLEMENTED",
+          "evidence_count": 0,
+          "verification_status": "Self-Attested (Pending Human Verification)",
+          "last_assessed": "2026-11-22T11:50:17.087938+00:00"
+        },
+        {
+          "requirement_id": "DPDP-SEC-08-06",
+          "section": "Section 8(6)",
+          "title": "Personal Data Breach Intimation",
+          "category": "Breach Management",
+          "effective_date": "13 May 2027",
+          "legal_status": "SCHEDULED_MAY_2027",
+          "status": "GAP_IDENTIFIED",
+          "evidence_count": 0,
+          "verification_status": "Self-Attested (Pending Human Verification)",
+          "last_assessed": "2026-11-22T11:50:17.087938+00:00"
+        },
+        {
+          "requirement_id": "DPDP-SEC-08-07",
+          "section": "Section 8(7) & 8(8)",
+          "title": "Data Retention & Purpose Cessation Erasure",
+          "category": "Retention & Erasure",
+          "effective_date": "13 May 2027",
+          "legal_status": "SCHEDULED_MAY_2027",
+          "status": "SELF_ATTESTED_IMPLEMENTED",
+          "evidence_count": 0,
+          "verification_status": "Self-Attested (Pending Human Verification)",
+          "last_assessed": "2026-11-22T11:50:17.087938+00:00"
+        },
+        {
+          "requirement_id": "DPDP-SEC-08-10",
+          "section": "Section 8(10) & 8(11)",
+          "title": "Grievance Redressal Mechanism & Officer Contact",
+          "category": "Grievance & Contacts",
+          "effective_date": "13 May 2027",
+          "legal_status": "SCHEDULED_MAY_2027",
+          "status": "SELF_ATTESTED_IMPLEMENTED",
+          "evidence_count": 0,
+          "verification_status": "Self-Attested (Pending Human Verification)",
+          "last_assessed": "2026-11-22T11:50:17.087938+00:00"
+        },
+        {
+          "requirement_id": "DPDP-SEC-09",
+          "section": "Section 9",
+          "title": "Processing of Children's Personal Data & Persons with Disabilities",
+          "category": "Children's Data Protection",
+          "effective_date": "13 May 2027",
+          "legal_status": "SCHEDULED_MAY_2027",
+          "status": "SELF_ATTESTED_IMPLEMENTED",
+          "evidence_count": 0,
+          "verification_status": "Self-Attested (Pending Human Verification)",
+          "last_assessed": "2026-11-22T11:50:17.087938+00:00"
+        },
+        {
+          "requirement_id": "DPDP-SEC-10",
+          "section": "Section 10",
+          "title": "Significant Data Fiduciary (SDF) Obligations",
+          "category": "SDF Governance",
+          "effective_date": "13 May 2027",
+          "legal_status": "CONDITIONAL",
+          "status": "SELF_ATTESTED_IMPLEMENTED",
+          "evidence_count": 0,
+          "verification_status": "Self-Attested (Pending Human Verification)",
+          "last_assessed": "2026-11-22T11:50:17.087938+00:00"
+        },
+        {
+          "requirement_id": "DPDP-SEC-11-14",
+          "section": "Sections 11\u201314",
+          "title": "Data Principal Rights (Access, Correction, Erasure & Nomination)",
+          "category": "Data Principal Rights",
+          "effective_date": "13 May 2027",
+          "legal_status": "SCHEDULED_MAY_2027",
+          "status": "SELF_ATTESTED_IMPLEMENTED",
+          "evidence_count": 0,
+          "verification_status": "Self-Attested (Pending Human Verification)",
+          "last_assessed": "2026-11-22T11:50:17.087938+00:00"
+        },
+        {
+          "requirement_id": "DPDP-SEC-16",
+          "section": "Section 16",
+          "title": "Cross-Border Transfer of Personal Data",
+          "category": "Data Flow & International",
+          "effective_date": "13 May 2027",
+          "legal_status": "SCHEDULED_MAY_2027",
+          "status": "SELF_ATTESTED_IMPLEMENTED",
+          "evidence_count": 0,
+          "verification_status": "Self-Attested (Pending Human Verification)",
+          "last_assessed": "2026-11-22T11:50:17.087938+00:00"
+        }
+      ],
+      "gaps": [
+        {
+          "id": "gap-1535eb",
+          "requirement_id": "DPDP-SEC-05",
+          "section": "Section 5",
+          "title": "Compliance Gap: Itemised Notice in Plain Language & 8th Schedule Availability",
+          "applicability": "Applicable to all Data Fiduciaries",
+          "condition_identified": "Missing documented operational process for Itemised Notice in Plain Language & 8th Schedule Availability.",
+          "why_it_matters": "Section Section 5 mandates verifiable controls. Non-compliance exposes the organisation to penalties under the DPDP Act.",
+          "evidence_required": "Patient / User Privacy Notice Document",
+          "recommended_solution": "Draft a clear, itemised notice detailing specific data points (e.g., patient phone, medical report), exact operational purpose (e.g., diagnostic consultation), rights procedure, and contact details of the Grievance Officer.",
+          "priority": "HIGH",
+          "owner": "Compliance Lead",
+          "deadline": "2027-04-30",
+          "verification_status": "Open \u2014 Needs Remediation"
+        },
+        {
+          "id": "gap-aeb535",
+          "requirement_id": "DPDP-SEC-08-01",
+          "section": "Section 8(1) & 8(2)",
+          "title": "Compliance Gap: Data Fiduciary Responsibility & Processor Oversight",
+          "applicability": "Applicable to all Data Fiduciaries",
+          "condition_identified": "Missing documented operational process for Data Fiduciary Responsibility & Processor Oversight.",
+          "why_it_matters": "Section Section 8(1) & 8(2) mandates verifiable controls. Non-compliance exposes the organisation to penalties under the DPDP Act.",
+          "evidence_required": "Vendor & Data Processor Register",
+          "recommended_solution": "Execute DPDP-compliant DPAs with all third-party software, cloud storage providers, and billing vendors binding them to process data solely on instruction and implement safeguards.",
+          "priority": "HIGH",
+          "owner": "Compliance Lead",
+          "deadline": "2027-04-30",
+          "verification_status": "Open \u2014 Needs Remediation"
+        },
+        {
+          "id": "gap-541925",
+          "requirement_id": "DPDP-SEC-08-06",
+          "section": "Section 8(6)",
+          "title": "Compliance Gap: Personal Data Breach Intimation",
+          "applicability": "Applicable to all Data Fiduciaries",
+          "condition_identified": "Missing documented operational process for Personal Data Breach Intimation.",
+          "why_it_matters": "Section Section 8(6) mandates verifiable controls. Non-compliance exposes the organisation to penalties under the DPDP Act.",
+          "evidence_required": "Incident Response & Breach SOP",
+          "recommended_solution": "Establish a dual-stage breach response workflow: (1) Immediate preliminary intimation to Data Protection Board upon confirmation, (2) Detailed forensic intimation within 72 hours, with direct communication to affected Data Principals.",
+          "priority": "HIGH",
+          "owner": "Compliance Lead",
+          "deadline": "2027-04-30",
+          "verification_status": "Open \u2014 Needs Remediation"
+        }
+      ],
+      "remediation_tasks": [
+        {
+          "id": "rem-20f346",
+          "gap_id": "gap-1535eb",
+          "requirement_id": "DPDP-SEC-05",
+          "title": "Draft & Implement Itemised Notice in Plain Language & 8th Schedule Availability Procedure",
+          "category": "Consent & Notices",
+          "status": "OPEN",
+          "priority": "HIGH",
+          "owner": "Compliance Lead",
+          "deadline": "2027-04-30",
+          "guidance": "Draft a clear, itemised notice detailing specific data points (e.g., patient phone, medical report), exact operational purpose (e.g., diagnostic consultation), rights procedure, and contact details of the Grievance Officer.",
+          "created_at": "2026-11-22T11:50:17.087938+00:00"
+        },
+        {
+          "id": "rem-d990b3",
+          "gap_id": "gap-aeb535",
+          "requirement_id": "DPDP-SEC-08-01",
+          "title": "Draft & Implement Data Fiduciary Responsibility & Processor Oversight Procedure",
+          "category": "Vendor & Processor Management",
+          "status": "OPEN",
+          "priority": "HIGH",
+          "owner": "Compliance Lead",
+          "deadline": "2027-04-30",
+          "guidance": "Execute DPDP-compliant DPAs with all third-party software, cloud storage providers, and billing vendors binding them to process data solely on instruction and implement safeguards.",
+          "created_at": "2026-11-22T11:50:17.087938+00:00"
+        },
+        {
+          "id": "rem-cb3eb9",
+          "gap_id": "gap-541925",
+          "requirement_id": "DPDP-SEC-08-06",
+          "title": "Draft & Implement Personal Data Breach Intimation Procedure",
+          "category": "Breach Management",
+          "status": "OPEN",
+          "priority": "HIGH",
+          "owner": "Compliance Lead",
+          "deadline": "2027-04-30",
+          "guidance": "Establish a dual-stage breach response workflow: (1) Immediate preliminary intimation to Data Protection Board upon confirmation, (2) Detailed forensic intimation within 72 hours, with direct communication to affected Data Principals.",
+          "created_at": "2026-11-22T11:50:17.087938+00:00"
+        }
+      ],
+      "created_at": "2026-11-22T11:50:17.087938+00:00",
+      "updated_at": "2026-11-22T11:50:17.087938+00:00"
+    },
+    "org-e8d3a2": {
+      "org_id": "org-e8d3a2",
+      "readiness_score": 80,
+      "readiness_label": "In Progress (Self-Attested)",
+      "controls_total": 15,
+      "controls_implemented": 12,
+      "gaps_count": 3,
+      "controls": [
+        {
+          "requirement_id": "DPDP-SEC-03",
+          "section": "Section 3",
+          "title": "Applicability & Material Scope",
+          "category": "Governance & Scoping",
+          "effective_date": "13 November 2025",
+          "legal_status": "IN_FORCE",
+          "status": "SELF_ATTESTED_IMPLEMENTED",
+          "evidence_count": 0,
+          "verification_status": "Self-Attested (Pending Human Verification)",
+          "last_assessed": "2026-11-22T11:50:17.308749+00:00"
+        },
+        {
+          "requirement_id": "DPDP-SEC-04-06",
+          "section": "Sections 4 & 6",
+          "title": "Valid Consent & Itemised Consent Architecture",
+          "category": "Consent & Notices",
+          "effective_date": "13 May 2027",
+          "legal_status": "SCHEDULED_MAY_2027",
+          "status": "SELF_ATTESTED_IMPLEMENTED",
+          "evidence_count": 0,
+          "verification_status": "Self-Attested (Pending Human Verification)",
+          "last_assessed": "2026-11-22T11:50:17.308749+00:00"
+        },
+        {
+          "requirement_id": "DPDP-SEC-05",
+          "section": "Section 5",
+          "title": "Itemised Notice in Plain Language & 8th Schedule Availability",
+          "category": "Consent & Notices",
+          "effective_date": "13 May 2027",
+          "legal_status": "SCHEDULED_MAY_2027",
+          "status": "GAP_IDENTIFIED",
+          "evidence_count": 0,
+          "verification_status": "Self-Attested (Pending Human Verification)",
+          "last_assessed": "2026-11-22T11:50:17.308749+00:00"
+        },
+        {
+          "requirement_id": "DPDP-SEC-06-04",
+          "section": "Section 6(4)-(6)",
+          "title": "Consent Withdrawal & Processor Cascading",
+          "category": "Rights & Consent Workflows",
+          "effective_date": "13 May 2027",
+          "legal_status": "SCHEDULED_MAY_2027",
+          "status": "SELF_ATTESTED_IMPLEMENTED",
+          "evidence_count": 0,
+          "verification_status": "Self-Attested (Pending Human Verification)",
+          "last_assessed": "2026-11-22T11:50:17.308749+00:00"
+        },
+        {
+          "requirement_id": "DPDP-SEC-07",
+          "section": "Section 7",
+          "title": "Legitimate Uses (Statutory Non-Consent Grounds)",
+          "category": "Legal Bases & Data Inventory",
+          "effective_date": "13 May 2027",
+          "legal_status": "SCHEDULED_MAY_2027",
+          "status": "SELF_ATTESTED_IMPLEMENTED",
+          "evidence_count": 0,
+          "verification_status": "Self-Attested (Pending Human Verification)",
+          "last_assessed": "2026-11-22T11:50:17.308749+00:00"
+        },
+        {
+          "requirement_id": "DPDP-SEC-08-01",
+          "section": "Section 8(1) & 8(2)",
+          "title": "Data Fiduciary Responsibility & Processor Oversight",
+          "category": "Vendor & Processor Management",
+          "effective_date": "13 May 2027",
+          "legal_status": "SCHEDULED_MAY_2027",
+          "status": "GAP_IDENTIFIED",
+          "evidence_count": 0,
+          "verification_status": "Self-Attested (Pending Human Verification)",
+          "last_assessed": "2026-11-22T11:50:17.308749+00:00"
+        },
+        {
+          "requirement_id": "DPDP-SEC-08-03",
+          "section": "Section 8(3)",
+          "title": "Data Accuracy & Consistency",
+          "category": "Data Quality & Operations",
+          "effective_date": "13 May 2027",
+          "legal_status": "SCHEDULED_MAY_2027",
+          "status": "SELF_ATTESTED_IMPLEMENTED",
+          "evidence_count": 0,
+          "verification_status": "Self-Attested (Pending Human Verification)",
+          "last_assessed": "2026-11-22T11:50:17.308749+00:00"
+        },
+        {
+          "requirement_id": "DPDP-SEC-08-05",
+          "section": "Section 8(5)",
+          "title": "Reasonable Security Safeguards",
+          "category": "Security Safeguards",
+          "effective_date": "13 May 2027",
+          "legal_status": "SCHEDULED_MAY_2027",
+          "status": "SELF_ATTESTED_IMPLEMENTED",
+          "evidence_count": 0,
+          "verification_status": "Self-Attested (Pending Human Verification)",
+          "last_assessed": "2026-11-22T11:50:17.308749+00:00"
+        },
+        {
+          "requirement_id": "DPDP-SEC-08-06",
+          "section": "Section 8(6)",
+          "title": "Personal Data Breach Intimation",
+          "category": "Breach Management",
+          "effective_date": "13 May 2027",
+          "legal_status": "SCHEDULED_MAY_2027",
+          "status": "GAP_IDENTIFIED",
+          "evidence_count": 0,
+          "verification_status": "Self-Attested (Pending Human Verification)",
+          "last_assessed": "2026-11-22T11:50:17.308749+00:00"
+        },
+        {
+          "requirement_id": "DPDP-SEC-08-07",
+          "section": "Section 8(7) & 8(8)",
+          "title": "Data Retention & Purpose Cessation Erasure",
+          "category": "Retention & Erasure",
+          "effective_date": "13 May 2027",
+          "legal_status": "SCHEDULED_MAY_2027",
+          "status": "SELF_ATTESTED_IMPLEMENTED",
+          "evidence_count": 0,
+          "verification_status": "Self-Attested (Pending Human Verification)",
+          "last_assessed": "2026-11-22T11:50:17.308749+00:00"
+        },
+        {
+          "requirement_id": "DPDP-SEC-08-10",
+          "section": "Section 8(10) & 8(11)",
+          "title": "Grievance Redressal Mechanism & Officer Contact",
+          "category": "Grievance & Contacts",
+          "effective_date": "13 May 2027",
+          "legal_status": "SCHEDULED_MAY_2027",
+          "status": "SELF_ATTESTED_IMPLEMENTED",
+          "evidence_count": 0,
+          "verification_status": "Self-Attested (Pending Human Verification)",
+          "last_assessed": "2026-11-22T11:50:17.308749+00:00"
+        },
+        {
+          "requirement_id": "DPDP-SEC-09",
+          "section": "Section 9",
+          "title": "Processing of Children's Personal Data & Persons with Disabilities",
+          "category": "Children's Data Protection",
+          "effective_date": "13 May 2027",
+          "legal_status": "SCHEDULED_MAY_2027",
+          "status": "SELF_ATTESTED_IMPLEMENTED",
+          "evidence_count": 0,
+          "verification_status": "Self-Attested (Pending Human Verification)",
+          "last_assessed": "2026-11-22T11:50:17.308749+00:00"
+        },
+        {
+          "requirement_id": "DPDP-SEC-10",
+          "section": "Section 10",
+          "title": "Significant Data Fiduciary (SDF) Obligations",
+          "category": "SDF Governance",
+          "effective_date": "13 May 2027",
+          "legal_status": "CONDITIONAL",
+          "status": "SELF_ATTESTED_IMPLEMENTED",
+          "evidence_count": 0,
+          "verification_status": "Self-Attested (Pending Human Verification)",
+          "last_assessed": "2026-11-22T11:50:17.308749+00:00"
+        },
+        {
+          "requirement_id": "DPDP-SEC-11-14",
+          "section": "Sections 11\u201314",
+          "title": "Data Principal Rights (Access, Correction, Erasure & Nomination)",
+          "category": "Data Principal Rights",
+          "effective_date": "13 May 2027",
+          "legal_status": "SCHEDULED_MAY_2027",
+          "status": "SELF_ATTESTED_IMPLEMENTED",
+          "evidence_count": 0,
+          "verification_status": "Self-Attested (Pending Human Verification)",
+          "last_assessed": "2026-11-22T11:50:17.308749+00:00"
+        },
+        {
+          "requirement_id": "DPDP-SEC-16",
+          "section": "Section 16",
+          "title": "Cross-Border Transfer of Personal Data",
+          "category": "Data Flow & International",
+          "effective_date": "13 May 2027",
+          "legal_status": "SCHEDULED_MAY_2027",
+          "status": "SELF_ATTESTED_IMPLEMENTED",
+          "evidence_count": 0,
+          "verification_status": "Self-Attested (Pending Human Verification)",
+          "last_assessed": "2026-11-22T11:50:17.308749+00:00"
+        }
+      ],
+      "gaps": [
+        {
+          "id": "gap-d8116c",
+          "requirement_id": "DPDP-SEC-05",
+          "section": "Section 5",
+          "title": "Compliance Gap: Itemised Notice in Plain Language & 8th Schedule Availability",
+          "applicability": "Applicable to all Data Fiduciaries",
+          "condition_identified": "Missing documented operational process for Itemised Notice in Plain Language & 8th Schedule Availability.",
+          "why_it_matters": "Section Section 5 mandates verifiable controls. Non-compliance exposes the organisation to penalties under the DPDP Act.",
+          "evidence_required": "Patient / User Privacy Notice Document",
+          "recommended_solution": "Draft a clear, itemised notice detailing specific data points (e.g., patient phone, medical report), exact operational purpose (e.g., diagnostic consultation), rights procedure, and contact details of the Grievance Officer.",
+          "priority": "HIGH",
+          "owner": "Compliance Lead",
+          "deadline": "2027-04-30",
+          "verification_status": "Open \u2014 Needs Remediation"
+        },
+        {
+          "id": "gap-533d74",
+          "requirement_id": "DPDP-SEC-08-01",
+          "section": "Section 8(1) & 8(2)",
+          "title": "Compliance Gap: Data Fiduciary Responsibility & Processor Oversight",
+          "applicability": "Applicable to all Data Fiduciaries",
+          "condition_identified": "Missing documented operational process for Data Fiduciary Responsibility & Processor Oversight.",
+          "why_it_matters": "Section Section 8(1) & 8(2) mandates verifiable controls. Non-compliance exposes the organisation to penalties under the DPDP Act.",
+          "evidence_required": "Vendor & Data Processor Register",
+          "recommended_solution": "Execute DPDP-compliant DPAs with all third-party software, cloud storage providers, and billing vendors binding them to process data solely on instruction and implement safeguards.",
+          "priority": "HIGH",
+          "owner": "Compliance Lead",
+          "deadline": "2027-04-30",
+          "verification_status": "Open \u2014 Needs Remediation"
+        },
+        {
+          "id": "gap-bcdf41",
+          "requirement_id": "DPDP-SEC-08-06",
+          "section": "Section 8(6)",
+          "title": "Compliance Gap: Personal Data Breach Intimation",
+          "applicability": "Applicable to all Data Fiduciaries",
+          "condition_identified": "Missing documented operational process for Personal Data Breach Intimation.",
+          "why_it_matters": "Section Section 8(6) mandates verifiable controls. Non-compliance exposes the organisation to penalties under the DPDP Act.",
+          "evidence_required": "Incident Response & Breach SOP",
+          "recommended_solution": "Establish a dual-stage breach response workflow: (1) Immediate preliminary intimation to Data Protection Board upon confirmation, (2) Detailed forensic intimation within 72 hours, with direct communication to affected Data Principals.",
+          "priority": "HIGH",
+          "owner": "Compliance Lead",
+          "deadline": "2027-04-30",
+          "verification_status": "Open \u2014 Needs Remediation"
+        }
+      ],
+      "remediation_tasks": [
+        {
+          "id": "rem-246c3d",
+          "gap_id": "gap-d8116c",
+          "requirement_id": "DPDP-SEC-05",
+          "title": "Draft & Implement Itemised Notice in Plain Language & 8th Schedule Availability Procedure",
+          "category": "Consent & Notices",
+          "status": "COMPLETED",
+          "priority": "HIGH",
+          "owner": "Compliance Lead",
+          "deadline": "2027-04-30",
+          "guidance": "Draft a clear, itemised notice detailing specific data points (e.g., patient phone, medical report), exact operational purpose (e.g., diagnostic consultation), rights procedure, and contact details of the Grievance Officer.",
+          "created_at": "2026-11-22T11:50:17.308749+00:00",
+          "notes": "Multi-lingual notice published.",
+          "updated_at": "2026-11-22T11:50:17.333257+00:00"
+        },
+        {
+          "id": "rem-e76062",
+          "gap_id": "gap-533d74",
+          "requirement_id": "DPDP-SEC-08-01",
+          "title": "Draft & Implement Data Fiduciary Responsibility & Processor Oversight Procedure",
+          "category": "Vendor & Processor Management",
+          "status": "OPEN",
+          "priority": "HIGH",
+          "owner": "Compliance Lead",
+          "deadline": "2027-04-30",
+          "guidance": "Execute DPDP-compliant DPAs with all third-party software, cloud storage providers, and billing vendors binding them to process data solely on instruction and implement safeguards.",
+          "created_at": "2026-11-22T11:50:17.308749+00:00"
+        },
+        {
+          "id": "rem-0a8908",
+          "gap_id": "gap-bcdf41",
+          "requirement_id": "DPDP-SEC-08-06",
+          "title": "Draft & Implement Personal Data Breach Intimation Procedure",
+          "category": "Breach Management",
+          "status": "OPEN",
+          "priority": "HIGH",
+          "owner": "Compliance Lead",
+          "deadline": "2027-04-30",
+          "guidance": "Establish a dual-stage breach response workflow: (1) Immediate preliminary intimation to Data Protection Board upon confirmation, (2) Detailed forensic intimation within 72 hours, with direct communication to affected Data Principals.",
+          "created_at": "2026-11-22T11:50:17.308749+00:00"
+        }
+      ],
+      "created_at": "2026-11-22T11:50:17.308749+00:00",
+      "updated_at": "2026-11-22T11:50:17.308749+00:00"
     }
   },
   "privacy_notices": {
@@ -4993,6 +5707,23 @@
         "created_at": "2026-11-22T11:18:11.476749+00:00",
         "updated_at": "2026-11-22T11:18:11.476749+00:00"
       }
+    ],
+    "org-6e81ec": [
+      {
+        "id": "not-52a0eb",
+        "title": "Sanjeevani Clinic Customer & Patient Privacy Notice",
+        "version": "v1.0",
+        "status": "APPROVED_PUBLISHED",
+        "content": "ITEMISED PRIVACY NOTICE\nDigital Personal Data Protection Act, 2023 (Section 5 read with Rule 3)\n\n1. Identity of Data Fiduciary:\nSanjeevani Clinic (Address: Koramangala, Bengaluru)\n\n2. Personal Data Collected & Processing Purposes:\nWe collect and process digital personal data solely for specified lawful purposes:\n\u2022 Patient/Customer Records: Service fulfillment, medical consultation, and operational communication (DPDP Section 6 Consent).\n\n3. Your Statutory Rights as Data Principal (Sections 11\u201314):\nYou possess statutory rights to:\n\u2022 Right to Access: Obtain a summary of your personal data and third parties shared with.\n\u2022 Right to Correction & Updating: Request correction of inaccurate or incomplete records.\n\u2022 Right to Erasure: Request erasure where statutory clinical or legal retention does not mandate preservation.\n\u2022 Right to Withdraw Consent: Withdraw consent at any time with the same ease as provided (Section 6(4)).\n\u2022 Right to Nominate: Nominate a representative in the event of death or incapacity (Section 14).\n\n4. Grievance Redressal Mechanism (Section 8(10) & Rule 9):\nIf you have any questions, rights requests, or grievances regarding your personal data:\nGrievance Officer: Dr. K. Rao\nEmail: grievance@sanjeevaniclinic.com\nAddress: Koramangala, Bengaluru\nWe endeavor to investigate and redress all grievances within thirty (30) business days.\n\n5. Multilingual Availability:\nThis notice is prepared in English and is available in Hindi and other Eighth Schedule languages upon request at our reception desk or customer support portal.",
+        "languages_supported": [
+          "English",
+          "Hindi"
+        ],
+        "grievance_officer": "Dr. K. Rao",
+        "grievance_email": "grievance@sanjeevaniclinic.com",
+        "created_at": "2026-11-22T11:50:17.100108+00:00",
+        "updated_at": "2026-11-22T11:50:17.100108+00:00"
+      }
     ]
   },
   "consent_records": {
@@ -5085,6 +5816,19 @@
         "status": "WITHDRAWN",
         "timestamp": "2026-11-22T11:18:11.493006+00:00",
         "withdrawn_at": "2026-11-22T11:18:11.505665+00:00"
+      }
+    ],
+    "org-99a04a": [
+      {
+        "id": "cst-70cc34e2",
+        "data_principal_ref": "DP-9921",
+        "data_category": "Patient Diagnostic Information",
+        "purpose": "Clinical Pathology Review",
+        "notice_version": "v1.0",
+        "collection_channel": "Web Form / Registration",
+        "status": "WITHDRAWN",
+        "timestamp": "2026-11-22T11:50:17.116646+00:00",
+        "withdrawn_at": "2026-11-22T11:50:17.128079+00:00"
       }
     ]
   },
@@ -5254,6 +5998,30 @@
           "2026-11-22T11:18:11.505665+00:00: Identity of Data Principal verified",
           "2026-11-22T11:18:11.505665+00:00: Data processors instructed to cease operational processing",
           "2026-11-22T11:18:11.505665+00:00: Audit record generated"
+        ]
+      }
+    ],
+    "org-99a04a": [
+      {
+        "id": "wth-e6762792",
+        "data_principal_ref": "DP-9921",
+        "category": "All Consented Categories",
+        "requested_at": "2026-11-22T11:50:17.128079+00:00",
+        "processing_halt_status": "RESTRICTED_ARCHIVE_ONLY",
+        "processor_notified": true,
+        "processors_notified_list": [
+          "Cloud HMS Software",
+          "SMS Gateway",
+          "Local Storage"
+        ],
+        "statutory_exception_applies": true,
+        "exception_reason": "Clinical case sheets must be preserved for 3 years under Clinical Establishments Rules.",
+        "status": "COMPLETED",
+        "audit_trail": [
+          "2026-11-22T11:50:17.128079+00:00: Withdrawal request registered under DPDP Section 6(4)",
+          "2026-11-22T11:50:17.128079+00:00: Identity of Data Principal verified",
+          "2026-11-22T11:50:17.128079+00:00: Data processors instructed to cease operational processing",
+          "2026-11-22T11:50:17.128079+00:00: Audit record generated"
         ]
       }
     ]
@@ -5426,6 +6194,30 @@
           "2026-11-22T11:18:11.531146+00:00: Status updated to COMPLETED. Note: Address updated in HMS."
         ]
       }
+    ],
+    "org-db8504": [
+      {
+        "id": "dpr-00c17631",
+        "type": "CORRECTION",
+        "principal_name": "Ananya Sen",
+        "principal_contact": "contact@domain.com",
+        "description": "Update residential address and contact number on patient chart.",
+        "received_at": "2026-11-22T11:50:17.142946+00:00",
+        "assigned_to": "Privacy Grievance Officer",
+        "status": "COMPLETED",
+        "sla_deadline": "2026-12-22",
+        "systems_involved": [
+          "HMS Database",
+          "Billing ERP",
+          "Cloud Storage"
+        ],
+        "response_summary": "Address updated in HMS.",
+        "closed_at": "2026-11-22T11:50:17.155488+00:00",
+        "audit_logs": [
+          "2026-11-22T11:50:17.142946+00:00: Rights request received and ticket generated.",
+          "2026-11-22T11:50:17.155488+00:00: Status updated to COMPLETED. Note: Address updated in HMS."
+        ]
+      }
     ]
   },
   "vendors": {
@@ -5518,6 +6310,21 @@
         "risk_rating": "LOW",
         "created_at": "2026-11-22T11:18:11.541554+00:00"
       }
+    ],
+    "org-7e6e6f": [
+      {
+        "id": "vnd-792aca",
+        "name": "MedCloud Diagnostics SaaS",
+        "service": "Picture Archiving & Radiology Cloud",
+        "personal_data_processed": "Patient X-Ray and MRI Scans",
+        "storage_location": "AWS Asia Pacific (Mumbai) ap-south-1",
+        "dpa_status": "EXECUTED",
+        "agreement_expiry": "2027-12-31",
+        "security_documentation": "ISO 27001 / SOC 2 Report on File",
+        "breach_notification_clause": "24-Hour Notice Required",
+        "risk_rating": "LOW",
+        "created_at": "2026-11-22T11:50:17.168163+00:00"
+      }
     ]
   },
   "retention_schedules": {
@@ -5603,6 +6410,20 @@
         "next_review_date": "2027-06-30",
         "status": "ACTIVE",
         "created_at": "2026-11-22T11:18:11.607039+00:00"
+      }
+    ],
+    "org-1a8ee5": [
+      {
+        "id": "ret-db8bac",
+        "category": "Patient Consultation Records",
+        "purpose": "Clinical care and follow-up",
+        "statutory_basis": "Clinical Establishments Act & DPDP Section 8(7)",
+        "period_years": 3,
+        "end_of_purpose_trigger": "3 years from last consultation",
+        "deletion_method": "Cryptographic DB scrub",
+        "next_review_date": "2027-06-30",
+        "status": "ACTIVE",
+        "created_at": "2026-11-22T11:50:17.256705+00:00"
       }
     ]
   },
@@ -5732,6 +6553,27 @@
         "authorized_by": "Medical Director",
         "submitted_at": "2026-11-22T11:18:11.634029+00:00"
       }
+    ],
+    "org-9a966a": [
+      {
+        "id": "brc-1edfb9",
+        "title": "Unauthorized Access Attempt to Frontdesk PC",
+        "severity": "MEDIUM",
+        "detected_at": "2026-11-22T11:50:17.269078+00:00",
+        "affected_data_categories": [
+          "Patient Registration Logs"
+        ],
+        "estimated_individuals_affected": 45,
+        "containment_status": "CONTAINED",
+        "board_notification_status": "AUTHORIZED_SUBMITTED",
+        "board_initial_intimation_draft": "INITIAL INTIMATION OF PERSONAL DATA BREACH (Rule 7, DPDP Rules 2025)\nTo: Data Protection Board of India\nFrom: org-9a966a (Data Fiduciary)\nDate of Incident: 2026-11-22T11:50:17.269078+00:00\nDescription: Unauthorized Access Attempt to Frontdesk PC\nImmediate Containment Steps: Access revoked, affected endpoint isolated, forensic log preserved.\nStatus: Forensic analysis underway; detailed 72-hour report to follow.",
+        "board_72h_detailed_intimation_draft": "DETAILED FOLLOW-UP INTIMATION (72-Hour Statutory Requirement)\nAffected Categories: Patient Registration Logs\nEstimated Count: 45\nForensic Conclusion: Root cause addressed. Remedial measures deployed.",
+        "principal_notification_draft": "NOTICE OF DATA SECURITY INCIDENT\nDear Data Principal,\nWe are writing to inform you of a recent security incident involving Unauthorized Access Attempt to Frontdesk PC.\nOur security safeguards prevented unauthorized modification. For inquiries, please contact our Grievance Officer at grievance@company.com.",
+        "customer_authorized_to_send": true,
+        "created_at": "2026-11-22T11:50:17.269078+00:00",
+        "authorized_by": "Medical Director",
+        "submitted_at": "2026-11-22T11:50:17.283701+00:00"
+      }
     ]
   },
   "remediation_tasks": {},
@@ -5827,10 +6669,897 @@
       "org_id": "org-43aceb",
       "updated_at": "2026-11-22T11:18:11.364504+00:00",
       "created_at": "2026-11-22T11:18:11.364504+00:00"
+    },
+    "org-a9b831": {
+      "business_name": "City Care Diagnostic Center",
+      "industry": "healthcare",
+      "locations": "Bengaluru, Indiranagar",
+      "employee_count": "15-50",
+      "customer_types": [
+        "Patients",
+        "Corporate Health Checkups"
+      ],
+      "children_data_processed": true,
+      "org_id": "org-a9b831",
+      "updated_at": "2026-11-22T11:50:16.927836+00:00",
+      "created_at": "2026-11-22T11:50:16.927836+00:00"
     }
   },
   "website_scans": {
     "org-default": [
+      {
+        "scan_id": "dpdp-scan-9314a1a3f0",
+        "business_name": "MediCare Clinic",
+        "target_url": "https://medicare.example.in/",
+        "industry": "healthcare",
+        "business_type": "Diagnostic & Healthcare Clinic",
+        "country": "India",
+        "scanned_at": "2026-11-22T11:50:17.723263+00:00",
+        "summary_metrics": {
+          "pages_scanned_count": 3,
+          "forms_discovered_count": 1,
+          "privacy_pages_count": 0,
+          "third_party_services_count": 3,
+          "total_findings_count": 8,
+          "critical_count": 0,
+          "high_count": 4,
+          "medium_count": 2,
+          "low_count": 1,
+          "info_count": 1,
+          "readiness_score": 38,
+          "scan_duration_seconds": 0.0
+        },
+        "findings": [
+          {
+            "id": "GAP-NOTICE-b428fe",
+            "title": "Privacy Notice Not Detected on Public Pages",
+            "category": "Privacy Notice & Transparency",
+            "affected_component": "Website Navigation & Footer",
+            "affected_page": "https://medicare.example.in/",
+            "severity": "HIGH",
+            "confidence": "MEDIUM",
+            "legal_reference": "Section 5 & Rule 3 (Subject to Commencement)",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "No accessible Privacy Policy or Data Protection Notice was found among 3 scanned public pages.",
+            "evidence_snippet": "Searched standard footer anchors, sitemaps, and common paths (/privacy, /privacy-policy, /data-protection). None returned valid notice content.",
+            "why_it_matters": "Under Section 5, every Data Fiduciary must give Data Principals an itemised notice before or at the time of requesting personal data, stating the personal data categories, processing purpose, manner of exercising rights, and grievance details.",
+            "recommended_action": "Draft and publish a clear, standalone, business-specific Privacy Notice compliant with Section 5 and Rule 3 itemised notice standards.",
+            "required_evidence": "Published Privacy Notice URL and internal Board / Management approval sign-off.",
+            "remediation_action_type": "GENERATE_PRIVACY_NOTICE",
+            "statutory_penalty_ref": "GENERAL_CONTRAVENTION",
+            "penalty_ceiling_text": "Up to \u20b950 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          },
+          {
+            "id": "GAP-PRETICK-6aac3b",
+            "title": "Pre-Selected Consent Checkbox Detected on Public Form",
+            "category": "Consent & Lawful Grounds",
+            "affected_component": "Form 'quick-book'",
+            "affected_page": "https://medicare.example.in",
+            "severity": "HIGH",
+            "confidence": "HIGH",
+            "legal_reference": "Section 6(1) & Rule 3 (Unconditional & Affirmative Consent)",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "A consent or agreement checkbox in form 'quick-book' was observed in a pre-checked state by default.",
+            "evidence_snippet": "HTML element <input type='checkbox' checked> detected with consent wording: 'I agree to communications'",
+            "why_it_matters": "Under Section 6(1), consent must be free, specific, informed, unconditional, and an unambiguous indication through clear affirmative action. Pre-ticked boxes are deemed invalid consent under Indian DPDP regulatory interpretations.",
+            "recommended_action": "Ensure all consent checkboxes default to un-ticked, requiring an active affirmative gesture by the Data Principal.",
+            "required_evidence": "Updated form markup confirming default unselected state.",
+            "remediation_action_type": "FIX_PRETICKED_CHECKBOX",
+            "statutory_penalty_ref": "GENERAL_CONTRAVENTION",
+            "penalty_ceiling_text": "Up to \u20b950 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          },
+          {
+            "id": "GAP-FORM-NOTICE-a52a99",
+            "title": "Data Collection Form Lacks Nearby Privacy Notice Reference",
+            "category": "Forms & Data Collection",
+            "affected_component": "Form 'quick-book'",
+            "affected_page": "https://medicare.example.in",
+            "severity": "MEDIUM",
+            "confidence": "HIGH",
+            "legal_reference": "Section 5(1) & Rule 3",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "Public form collects Full Name / Identity, Phone / Mobile Number without an accompanying privacy notice link or purpose explanation adjacent to the submit action.",
+            "evidence_snippet": "Form at https://medicare.example.in has inputs: ['patient_name', 'phone', 'agree'] but no nearby privacy notice reference.",
+            "why_it_matters": "Data Principals should be informed of the purpose and privacy terms at or before the moment personal data is collected.",
+            "recommended_action": "Add a clear statement adjacent to the form submit button: 'We process your details in accordance with our Privacy Notice [Link] for appointment and consultation purposes.'",
+            "required_evidence": "Screenshot of updated form with adjacent notice hyperlink.",
+            "remediation_action_type": "ADD_FORM_NOTICE_LINK",
+            "statutory_penalty_ref": "GENERAL_CONTRAVENTION",
+            "penalty_ceiling_text": "Up to \u20b950 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          },
+          {
+            "id": "GAP-GRIEVANCE-4f0ec4",
+            "title": "Published Grievance Redressal Contact Not Detected",
+            "category": "Rights & Grievance Mechanism",
+            "affected_component": "Website Footer & Contact Info",
+            "affected_page": "https://medicare.example.in/",
+            "severity": "HIGH",
+            "confidence": "HIGH",
+            "legal_reference": "Section 8(9), Section 13 & Rule 14",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "No Grievance Redressal Officer or dedicated privacy contact information was discovered on the public website.",
+            "evidence_snippet": "Searched scanned pages for 'Grievance Officer', 'Data Protection Officer', or dedicated privacy contact details.",
+            "why_it_matters": "Section 8(9) requires every Data Fiduciary to establish an effective grievance redressal mechanism and publish the contact details of the Grievance Officer on its website so Data Principals can seek redressal prior to approaching the Board.",
+            "recommended_action": "Publish the name, designation, and official email address of your Grievance Redressal Officer on your contact and privacy pages.",
+            "required_evidence": "Published Grievance Officer section and appointment record.",
+            "remediation_action_type": "GENERATE_GRIEVANCE_SECTION",
+            "statutory_penalty_ref": "GENERAL_CONTRAVENTION",
+            "penalty_ceiling_text": "Up to \u20b950 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          },
+          {
+            "id": "GAP-THIRD-PARTY-da09e3",
+            "title": "Observable Third-Party Trackers & Services Detected (3 Services)",
+            "category": "Third-Party Data Sharing & Processors",
+            "affected_component": "External Scripts & Pixels",
+            "affected_page": "https://medicare.example.in/",
+            "severity": "MEDIUM",
+            "confidence": "HIGH",
+            "legal_reference": "Section 8(2) & Section 5(1)",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "Public website loads external services: Google Tag Manager, Meta Pixel (Facebook), Razorpay Payment Gateway.",
+            "evidence_snippet": "Observed script requests: ['https://www.googletagmanager.com/gtm.js?id=GTM-DEMO123', 'https://connect.facebook.net/en_US/fbevents.js', 'https://checkout.razorpay.com/v1/checkout.js']",
+            "why_it_matters": "Under Section 8(2), a Data Fiduciary may only engage a Data Processor under a valid contract that ensures compliance with the Act. Furthermore, third-party sharing must be itemised in privacy notices under Section 5.",
+            "recommended_action": "1. Verify whether Data Processor Agreements (DPAs) with standard DPDP safeguards are executed with each provider. 2. Log them in your internal Vendor Register. 3. Update the privacy notice to disclose these processing partners.",
+            "required_evidence": "Executed Data Processor Agreements and entry in internal Vendor Register.",
+            "remediation_action_type": "CREATE_VENDOR_REGISTER_ENTRY",
+            "statutory_penalty_ref": "GENERAL_CONTRAVENTION",
+            "penalty_ceiling_text": "Up to \u20b950 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          },
+          {
+            "id": "GAP-CHILDREN-DATA-84319c",
+            "title": "Verifiable Parental Consent Mechanism Not Observed for Children's Data",
+            "category": "Children's Data Protection",
+            "affected_component": "Onboarding & Student/Minor Enquiries",
+            "affected_page": "https://medicare.example.in/",
+            "severity": "HIGH",
+            "confidence": "MEDIUM",
+            "legal_reference": "Section 9(1) & October 2026 Removal of Difficulties Order",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "Website context indicates services for minors / students / pediatric patients, but no verifiable parental or guardian consent workflow was observed.",
+            "evidence_snippet": "Selected industry: 'healthcare'; no parental consent disclosures detected on public intake forms.",
+            "why_it_matters": "Section 9(1) strictly mandates that a Data Fiduciary must obtain verifiable consent of the parent or lawful guardian before processing any personal data of a child. Section 9(2) and (3) strictly prohibit tracking, behavioral monitoring, or targeted ads directed at children.",
+            "recommended_action": "Implement a verifiable parental/guardian consent verification step during child registration, and ensure analytics scripts are disabled for minor user journeys.",
+            "required_evidence": "Documented parental consent workflow and guardian verification log.",
+            "remediation_action_type": "IMPLEMENT_PARENTAL_CONSENT",
+            "statutory_penalty_ref": "SEC_09",
+            "penalty_ceiling_text": "Up to \u20b9200 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          },
+          {
+            "id": "GAP-SECURITY-HEADERS-dc9066",
+            "title": "Perimeter HTTP Security Headers Missing (3 Headers)",
+            "category": "Technical Security Safeguards",
+            "affected_component": "HTTP Response Headers",
+            "affected_page": "https://medicare.example.in/",
+            "severity": "LOW",
+            "confidence": "HIGH",
+            "legal_reference": "Section 8(5) (Defense-in-Depth Technical Safeguards)",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "Public web server does not return: HSTS (Strict-Transport-Security), Clickjacking Protection (X-Frame-Options), MIME-Sniffing Defense (X-Content-Type-Options).",
+            "evidence_snippet": "Observed headers: ['server', 'content-type']",
+            "why_it_matters": "HTTP security headers provide essential baseline perimeter hardening against clickjacking, MIME sniffing, and insecure downgrade attacks on personal data.",
+            "recommended_action": "Configure your reverse proxy, CDN, or web server to append HSTS, X-Frame-Options: SAMEORIGIN, and X-Content-Type-Options: nosniff headers.",
+            "required_evidence": "Server header configuration file.",
+            "remediation_action_type": "CONFIGURE_SECURITY_HEADERS",
+            "statutory_penalty_ref": "SEC_08_05",
+            "penalty_ceiling_text": "Up to \u20b9250 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          },
+          {
+            "id": "GAP-INTERNAL-ASSESS-52dd7b",
+            "title": "Internal Controls & Backend Systems Require DPDP Assessment",
+            "category": "Governance & Scoping",
+            "affected_component": "Internal Databases & Access Controls",
+            "affected_page": "Internal Perimeter (Non-Public)",
+            "severity": "INFORMATIONAL",
+            "confidence": "HIGH",
+            "legal_reference": "Section 8(5), Section 8(7) & Rule 8",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "Public website scanning cannot inspect internal database encryption at rest, employee role-based access, backup restoration drills, or purpose-based retention schedules.",
+            "evidence_snippet": "Inherent limitation of external perimeter inspection.",
+            "why_it_matters": "Full statutory DPDP compliance requires internal governance, employee training, data retention schedules, and breach notification readiness that cannot be verified from outside.",
+            "recommended_action": "Continue with the TrustAudit Full Internal DPDP Assessment to evaluate your RoPA inventory, retention schedules, and evidence vault.",
+            "required_evidence": "Completed DPDP Internal Assessment questionnaire.",
+            "remediation_action_type": "START_INTERNAL_ASSESSMENT",
+            "statutory_penalty_ref": "GENERAL_CONTRAVENTION",
+            "penalty_ceiling_text": "Up to \u20b950 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          }
+        ],
+        "forms": [
+          {
+            "id": "quick-book",
+            "action": "https://medicare.example.in/book",
+            "method": "POST",
+            "page_url": "https://medicare.example.in",
+            "inputs": [
+              {
+                "name": "patient_name",
+                "label": "Patient Name",
+                "type": "text"
+              },
+              {
+                "name": "phone",
+                "label": "Mobile Number",
+                "type": "tel"
+              },
+              {
+                "name": "agree",
+                "label": "Consent",
+                "type": "checkbox",
+                "checked": true
+              }
+            ],
+            "detected_categories": [
+              "Full Name / Identity",
+              "Phone / Mobile Number"
+            ],
+            "has_notice_link": false,
+            "has_consent_checkbox": true,
+            "consent_prechecked": true,
+            "consent_text": "I agree to communications"
+          }
+        ],
+        "third_party_services": [
+          {
+            "domain": "googletagmanager.com",
+            "name": "Google Tag Manager",
+            "category": "Tag Management / Marketing",
+            "potential_data": [
+              "User Interaction Events",
+              "Page URLs"
+            ],
+            "detected_on_pages": [
+              "https://medicare.example.in"
+            ],
+            "script_url": "https://www.googletagmanager.com/gtm.js?id=GTM-DEMO123"
+          },
+          {
+            "domain": "connect.facebook.net",
+            "name": "Meta Pixel (Facebook)",
+            "category": "Advertising & Tracking",
+            "potential_data": [
+              "Social Profile Identifier",
+              "Conversion Events"
+            ],
+            "detected_on_pages": [
+              "https://medicare.example.in"
+            ],
+            "script_url": "https://connect.facebook.net/en_US/fbevents.js"
+          },
+          {
+            "domain": "razorpay.com",
+            "name": "Razorpay Payment Gateway",
+            "category": "Payment Processing",
+            "potential_data": [
+              "Payment Identifiers",
+              "Phone",
+              "Email"
+            ],
+            "detected_on_pages": [
+              "https://medicare.example.in/checkout"
+            ],
+            "script_url": "https://checkout.razorpay.com/v1/checkout.js"
+          }
+        ],
+        "privacy_pages": [],
+        "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+        "logs": [
+          {
+            "timestamp": "11:50:17",
+            "stage": "08_STATUTORY_MAPPING",
+            "message": "Mapping observations to DPDP Act 2023 Schedule & statutory timelines..."
+          },
+          {
+            "timestamp": "11:50:17",
+            "stage": "09_REPORT_GENERATION",
+            "message": "Assembling comprehensive DPDP Website Assessment Report..."
+          }
+        ]
+      },
+      {
+        "scan_id": "dpdp-scan-83322187e5",
+        "business_name": "Apollo Diag Lab",
+        "target_url": "https://apollodiag.example.in/",
+        "industry": "healthcare",
+        "business_type": "Diagnostic & Healthcare Clinic",
+        "country": "India",
+        "scanned_at": "2026-11-22T11:50:17.676791+00:00",
+        "summary_metrics": {
+          "pages_scanned_count": 3,
+          "forms_discovered_count": 1,
+          "privacy_pages_count": 0,
+          "third_party_services_count": 3,
+          "total_findings_count": 8,
+          "critical_count": 0,
+          "high_count": 4,
+          "medium_count": 2,
+          "low_count": 1,
+          "info_count": 1,
+          "readiness_score": 38,
+          "scan_duration_seconds": 0.0
+        },
+        "findings": [
+          {
+            "id": "GAP-NOTICE-55b786",
+            "title": "Privacy Notice Not Detected on Public Pages",
+            "category": "Privacy Notice & Transparency",
+            "affected_component": "Website Navigation & Footer",
+            "affected_page": "https://apollodiag.example.in/",
+            "severity": "HIGH",
+            "confidence": "MEDIUM",
+            "legal_reference": "Section 5 & Rule 3 (Subject to Commencement)",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "No accessible Privacy Policy or Data Protection Notice was found among 3 scanned public pages.",
+            "evidence_snippet": "Searched standard footer anchors, sitemaps, and common paths (/privacy, /privacy-policy, /data-protection). None returned valid notice content.",
+            "why_it_matters": "Under Section 5, every Data Fiduciary must give Data Principals an itemised notice before or at the time of requesting personal data, stating the personal data categories, processing purpose, manner of exercising rights, and grievance details.",
+            "recommended_action": "Draft and publish a clear, standalone, business-specific Privacy Notice compliant with Section 5 and Rule 3 itemised notice standards.",
+            "required_evidence": "Published Privacy Notice URL and internal Board / Management approval sign-off.",
+            "remediation_action_type": "GENERATE_PRIVACY_NOTICE",
+            "statutory_penalty_ref": "GENERAL_CONTRAVENTION",
+            "penalty_ceiling_text": "Up to \u20b950 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          },
+          {
+            "id": "GAP-PRETICK-f6c00e",
+            "title": "Pre-Selected Consent Checkbox Detected on Public Form",
+            "category": "Consent & Lawful Grounds",
+            "affected_component": "Form 'quick-book'",
+            "affected_page": "https://apollodiag.example.in",
+            "severity": "HIGH",
+            "confidence": "HIGH",
+            "legal_reference": "Section 6(1) & Rule 3 (Unconditional & Affirmative Consent)",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "A consent or agreement checkbox in form 'quick-book' was observed in a pre-checked state by default.",
+            "evidence_snippet": "HTML element <input type='checkbox' checked> detected with consent wording: 'I agree to communications'",
+            "why_it_matters": "Under Section 6(1), consent must be free, specific, informed, unconditional, and an unambiguous indication through clear affirmative action. Pre-ticked boxes are deemed invalid consent under Indian DPDP regulatory interpretations.",
+            "recommended_action": "Ensure all consent checkboxes default to un-ticked, requiring an active affirmative gesture by the Data Principal.",
+            "required_evidence": "Updated form markup confirming default unselected state.",
+            "remediation_action_type": "FIX_PRETICKED_CHECKBOX",
+            "statutory_penalty_ref": "GENERAL_CONTRAVENTION",
+            "penalty_ceiling_text": "Up to \u20b950 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          },
+          {
+            "id": "GAP-FORM-NOTICE-0a6625",
+            "title": "Data Collection Form Lacks Nearby Privacy Notice Reference",
+            "category": "Forms & Data Collection",
+            "affected_component": "Form 'quick-book'",
+            "affected_page": "https://apollodiag.example.in",
+            "severity": "MEDIUM",
+            "confidence": "HIGH",
+            "legal_reference": "Section 5(1) & Rule 3",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "Public form collects Full Name / Identity, Phone / Mobile Number without an accompanying privacy notice link or purpose explanation adjacent to the submit action.",
+            "evidence_snippet": "Form at https://apollodiag.example.in has inputs: ['patient_name', 'phone', 'agree'] but no nearby privacy notice reference.",
+            "why_it_matters": "Data Principals should be informed of the purpose and privacy terms at or before the moment personal data is collected.",
+            "recommended_action": "Add a clear statement adjacent to the form submit button: 'We process your details in accordance with our Privacy Notice [Link] for appointment and consultation purposes.'",
+            "required_evidence": "Screenshot of updated form with adjacent notice hyperlink.",
+            "remediation_action_type": "ADD_FORM_NOTICE_LINK",
+            "statutory_penalty_ref": "GENERAL_CONTRAVENTION",
+            "penalty_ceiling_text": "Up to \u20b950 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          },
+          {
+            "id": "GAP-GRIEVANCE-ee8707",
+            "title": "Published Grievance Redressal Contact Not Detected",
+            "category": "Rights & Grievance Mechanism",
+            "affected_component": "Website Footer & Contact Info",
+            "affected_page": "https://apollodiag.example.in/",
+            "severity": "HIGH",
+            "confidence": "HIGH",
+            "legal_reference": "Section 8(9), Section 13 & Rule 14",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "No Grievance Redressal Officer or dedicated privacy contact information was discovered on the public website.",
+            "evidence_snippet": "Searched scanned pages for 'Grievance Officer', 'Data Protection Officer', or dedicated privacy contact details.",
+            "why_it_matters": "Section 8(9) requires every Data Fiduciary to establish an effective grievance redressal mechanism and publish the contact details of the Grievance Officer on its website so Data Principals can seek redressal prior to approaching the Board.",
+            "recommended_action": "Publish the name, designation, and official email address of your Grievance Redressal Officer on your contact and privacy pages.",
+            "required_evidence": "Published Grievance Officer section and appointment record.",
+            "remediation_action_type": "GENERATE_GRIEVANCE_SECTION",
+            "statutory_penalty_ref": "GENERAL_CONTRAVENTION",
+            "penalty_ceiling_text": "Up to \u20b950 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          },
+          {
+            "id": "GAP-THIRD-PARTY-5a23b1",
+            "title": "Observable Third-Party Trackers & Services Detected (3 Services)",
+            "category": "Third-Party Data Sharing & Processors",
+            "affected_component": "External Scripts & Pixels",
+            "affected_page": "https://apollodiag.example.in/",
+            "severity": "MEDIUM",
+            "confidence": "HIGH",
+            "legal_reference": "Section 8(2) & Section 5(1)",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "Public website loads external services: Google Tag Manager, Meta Pixel (Facebook), Razorpay Payment Gateway.",
+            "evidence_snippet": "Observed script requests: ['https://www.googletagmanager.com/gtm.js?id=GTM-DEMO123', 'https://connect.facebook.net/en_US/fbevents.js', 'https://checkout.razorpay.com/v1/checkout.js']",
+            "why_it_matters": "Under Section 8(2), a Data Fiduciary may only engage a Data Processor under a valid contract that ensures compliance with the Act. Furthermore, third-party sharing must be itemised in privacy notices under Section 5.",
+            "recommended_action": "1. Verify whether Data Processor Agreements (DPAs) with standard DPDP safeguards are executed with each provider. 2. Log them in your internal Vendor Register. 3. Update the privacy notice to disclose these processing partners.",
+            "required_evidence": "Executed Data Processor Agreements and entry in internal Vendor Register.",
+            "remediation_action_type": "CREATE_VENDOR_REGISTER_ENTRY",
+            "statutory_penalty_ref": "GENERAL_CONTRAVENTION",
+            "penalty_ceiling_text": "Up to \u20b950 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          },
+          {
+            "id": "GAP-CHILDREN-DATA-143daf",
+            "title": "Verifiable Parental Consent Mechanism Not Observed for Children's Data",
+            "category": "Children's Data Protection",
+            "affected_component": "Onboarding & Student/Minor Enquiries",
+            "affected_page": "https://apollodiag.example.in/",
+            "severity": "HIGH",
+            "confidence": "MEDIUM",
+            "legal_reference": "Section 9(1) & October 2026 Removal of Difficulties Order",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "Website context indicates services for minors / students / pediatric patients, but no verifiable parental or guardian consent workflow was observed.",
+            "evidence_snippet": "Selected industry: 'healthcare'; no parental consent disclosures detected on public intake forms.",
+            "why_it_matters": "Section 9(1) strictly mandates that a Data Fiduciary must obtain verifiable consent of the parent or lawful guardian before processing any personal data of a child. Section 9(2) and (3) strictly prohibit tracking, behavioral monitoring, or targeted ads directed at children.",
+            "recommended_action": "Implement a verifiable parental/guardian consent verification step during child registration, and ensure analytics scripts are disabled for minor user journeys.",
+            "required_evidence": "Documented parental consent workflow and guardian verification log.",
+            "remediation_action_type": "IMPLEMENT_PARENTAL_CONSENT",
+            "statutory_penalty_ref": "SEC_09",
+            "penalty_ceiling_text": "Up to \u20b9200 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          },
+          {
+            "id": "GAP-SECURITY-HEADERS-83f02e",
+            "title": "Perimeter HTTP Security Headers Missing (3 Headers)",
+            "category": "Technical Security Safeguards",
+            "affected_component": "HTTP Response Headers",
+            "affected_page": "https://apollodiag.example.in/",
+            "severity": "LOW",
+            "confidence": "HIGH",
+            "legal_reference": "Section 8(5) (Defense-in-Depth Technical Safeguards)",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "Public web server does not return: HSTS (Strict-Transport-Security), Clickjacking Protection (X-Frame-Options), MIME-Sniffing Defense (X-Content-Type-Options).",
+            "evidence_snippet": "Observed headers: ['server', 'content-type']",
+            "why_it_matters": "HTTP security headers provide essential baseline perimeter hardening against clickjacking, MIME sniffing, and insecure downgrade attacks on personal data.",
+            "recommended_action": "Configure your reverse proxy, CDN, or web server to append HSTS, X-Frame-Options: SAMEORIGIN, and X-Content-Type-Options: nosniff headers.",
+            "required_evidence": "Server header configuration file.",
+            "remediation_action_type": "CONFIGURE_SECURITY_HEADERS",
+            "statutory_penalty_ref": "SEC_08_05",
+            "penalty_ceiling_text": "Up to \u20b9250 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          },
+          {
+            "id": "GAP-INTERNAL-ASSESS-4d9f24",
+            "title": "Internal Controls & Backend Systems Require DPDP Assessment",
+            "category": "Governance & Scoping",
+            "affected_component": "Internal Databases & Access Controls",
+            "affected_page": "Internal Perimeter (Non-Public)",
+            "severity": "INFORMATIONAL",
+            "confidence": "HIGH",
+            "legal_reference": "Section 8(5), Section 8(7) & Rule 8",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "Public website scanning cannot inspect internal database encryption at rest, employee role-based access, backup restoration drills, or purpose-based retention schedules.",
+            "evidence_snippet": "Inherent limitation of external perimeter inspection.",
+            "why_it_matters": "Full statutory DPDP compliance requires internal governance, employee training, data retention schedules, and breach notification readiness that cannot be verified from outside.",
+            "recommended_action": "Continue with the TrustAudit Full Internal DPDP Assessment to evaluate your RoPA inventory, retention schedules, and evidence vault.",
+            "required_evidence": "Completed DPDP Internal Assessment questionnaire.",
+            "remediation_action_type": "START_INTERNAL_ASSESSMENT",
+            "statutory_penalty_ref": "GENERAL_CONTRAVENTION",
+            "penalty_ceiling_text": "Up to \u20b950 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          }
+        ],
+        "forms": [
+          {
+            "id": "quick-book",
+            "action": "https://apollodiag.example.in/book",
+            "method": "POST",
+            "page_url": "https://apollodiag.example.in",
+            "inputs": [
+              {
+                "name": "patient_name",
+                "label": "Patient Name",
+                "type": "text"
+              },
+              {
+                "name": "phone",
+                "label": "Mobile Number",
+                "type": "tel"
+              },
+              {
+                "name": "agree",
+                "label": "Consent",
+                "type": "checkbox",
+                "checked": true
+              }
+            ],
+            "detected_categories": [
+              "Full Name / Identity",
+              "Phone / Mobile Number"
+            ],
+            "has_notice_link": false,
+            "has_consent_checkbox": true,
+            "consent_prechecked": true,
+            "consent_text": "I agree to communications"
+          }
+        ],
+        "third_party_services": [
+          {
+            "domain": "googletagmanager.com",
+            "name": "Google Tag Manager",
+            "category": "Tag Management / Marketing",
+            "potential_data": [
+              "User Interaction Events",
+              "Page URLs"
+            ],
+            "detected_on_pages": [
+              "https://apollodiag.example.in"
+            ],
+            "script_url": "https://www.googletagmanager.com/gtm.js?id=GTM-DEMO123"
+          },
+          {
+            "domain": "connect.facebook.net",
+            "name": "Meta Pixel (Facebook)",
+            "category": "Advertising & Tracking",
+            "potential_data": [
+              "Social Profile Identifier",
+              "Conversion Events"
+            ],
+            "detected_on_pages": [
+              "https://apollodiag.example.in"
+            ],
+            "script_url": "https://connect.facebook.net/en_US/fbevents.js"
+          },
+          {
+            "domain": "razorpay.com",
+            "name": "Razorpay Payment Gateway",
+            "category": "Payment Processing",
+            "potential_data": [
+              "Payment Identifiers",
+              "Phone",
+              "Email"
+            ],
+            "detected_on_pages": [
+              "https://apollodiag.example.in/checkout"
+            ],
+            "script_url": "https://checkout.razorpay.com/v1/checkout.js"
+          }
+        ],
+        "privacy_pages": [],
+        "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+        "logs": [
+          {
+            "timestamp": "11:50:17",
+            "stage": "08_STATUTORY_MAPPING",
+            "message": "Mapping observations to DPDP Act 2023 Schedule & statutory timelines..."
+          },
+          {
+            "timestamp": "11:50:17",
+            "stage": "09_REPORT_GENERATION",
+            "message": "Assembling comprehensive DPDP Website Assessment Report..."
+          }
+        ]
+      },
+      {
+        "scan_id": "dpdp-scan-55c257d26d",
+        "business_name": "City Care Diagnostic Center",
+        "target_url": "https://citycare.example.in/",
+        "industry": "healthcare",
+        "business_type": "Diagnostic & Healthcare Clinic",
+        "country": "India",
+        "scanned_at": "2026-11-22T11:50:17.649771+00:00",
+        "summary_metrics": {
+          "pages_scanned_count": 3,
+          "forms_discovered_count": 1,
+          "privacy_pages_count": 0,
+          "third_party_services_count": 3,
+          "total_findings_count": 8,
+          "critical_count": 0,
+          "high_count": 4,
+          "medium_count": 2,
+          "low_count": 1,
+          "info_count": 1,
+          "readiness_score": 38,
+          "scan_duration_seconds": 0.0
+        },
+        "findings": [
+          {
+            "id": "GAP-NOTICE-bd5c03",
+            "title": "Privacy Notice Not Detected on Public Pages",
+            "category": "Privacy Notice & Transparency",
+            "affected_component": "Website Navigation & Footer",
+            "affected_page": "https://citycare.example.in/",
+            "severity": "HIGH",
+            "confidence": "MEDIUM",
+            "legal_reference": "Section 5 & Rule 3 (Subject to Commencement)",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "No accessible Privacy Policy or Data Protection Notice was found among 3 scanned public pages.",
+            "evidence_snippet": "Searched standard footer anchors, sitemaps, and common paths (/privacy, /privacy-policy, /data-protection). None returned valid notice content.",
+            "why_it_matters": "Under Section 5, every Data Fiduciary must give Data Principals an itemised notice before or at the time of requesting personal data, stating the personal data categories, processing purpose, manner of exercising rights, and grievance details.",
+            "recommended_action": "Draft and publish a clear, standalone, business-specific Privacy Notice compliant with Section 5 and Rule 3 itemised notice standards.",
+            "required_evidence": "Published Privacy Notice URL and internal Board / Management approval sign-off.",
+            "remediation_action_type": "GENERATE_PRIVACY_NOTICE",
+            "statutory_penalty_ref": "GENERAL_CONTRAVENTION",
+            "penalty_ceiling_text": "Up to \u20b950 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          },
+          {
+            "id": "GAP-PRETICK-2891bb",
+            "title": "Pre-Selected Consent Checkbox Detected on Public Form",
+            "category": "Consent & Lawful Grounds",
+            "affected_component": "Form 'quick-book'",
+            "affected_page": "https://citycare.example.in",
+            "severity": "HIGH",
+            "confidence": "HIGH",
+            "legal_reference": "Section 6(1) & Rule 3 (Unconditional & Affirmative Consent)",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "A consent or agreement checkbox in form 'quick-book' was observed in a pre-checked state by default.",
+            "evidence_snippet": "HTML element <input type='checkbox' checked> detected with consent wording: 'I agree to communications'",
+            "why_it_matters": "Under Section 6(1), consent must be free, specific, informed, unconditional, and an unambiguous indication through clear affirmative action. Pre-ticked boxes are deemed invalid consent under Indian DPDP regulatory interpretations.",
+            "recommended_action": "Ensure all consent checkboxes default to un-ticked, requiring an active affirmative gesture by the Data Principal.",
+            "required_evidence": "Updated form markup confirming default unselected state.",
+            "remediation_action_type": "FIX_PRETICKED_CHECKBOX",
+            "statutory_penalty_ref": "GENERAL_CONTRAVENTION",
+            "penalty_ceiling_text": "Up to \u20b950 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          },
+          {
+            "id": "GAP-FORM-NOTICE-275c71",
+            "title": "Data Collection Form Lacks Nearby Privacy Notice Reference",
+            "category": "Forms & Data Collection",
+            "affected_component": "Form 'quick-book'",
+            "affected_page": "https://citycare.example.in",
+            "severity": "MEDIUM",
+            "confidence": "HIGH",
+            "legal_reference": "Section 5(1) & Rule 3",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "Public form collects Full Name / Identity, Phone / Mobile Number without an accompanying privacy notice link or purpose explanation adjacent to the submit action.",
+            "evidence_snippet": "Form at https://citycare.example.in has inputs: ['patient_name', 'phone', 'agree'] but no nearby privacy notice reference.",
+            "why_it_matters": "Data Principals should be informed of the purpose and privacy terms at or before the moment personal data is collected.",
+            "recommended_action": "Add a clear statement adjacent to the form submit button: 'We process your details in accordance with our Privacy Notice [Link] for appointment and consultation purposes.'",
+            "required_evidence": "Screenshot of updated form with adjacent notice hyperlink.",
+            "remediation_action_type": "ADD_FORM_NOTICE_LINK",
+            "statutory_penalty_ref": "GENERAL_CONTRAVENTION",
+            "penalty_ceiling_text": "Up to \u20b950 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          },
+          {
+            "id": "GAP-GRIEVANCE-ac3f86",
+            "title": "Published Grievance Redressal Contact Not Detected",
+            "category": "Rights & Grievance Mechanism",
+            "affected_component": "Website Footer & Contact Info",
+            "affected_page": "https://citycare.example.in/",
+            "severity": "HIGH",
+            "confidence": "HIGH",
+            "legal_reference": "Section 8(9), Section 13 & Rule 14",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "No Grievance Redressal Officer or dedicated privacy contact information was discovered on the public website.",
+            "evidence_snippet": "Searched scanned pages for 'Grievance Officer', 'Data Protection Officer', or dedicated privacy contact details.",
+            "why_it_matters": "Section 8(9) requires every Data Fiduciary to establish an effective grievance redressal mechanism and publish the contact details of the Grievance Officer on its website so Data Principals can seek redressal prior to approaching the Board.",
+            "recommended_action": "Publish the name, designation, and official email address of your Grievance Redressal Officer on your contact and privacy pages.",
+            "required_evidence": "Published Grievance Officer section and appointment record.",
+            "remediation_action_type": "GENERATE_GRIEVANCE_SECTION",
+            "statutory_penalty_ref": "GENERAL_CONTRAVENTION",
+            "penalty_ceiling_text": "Up to \u20b950 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          },
+          {
+            "id": "GAP-THIRD-PARTY-0a16cd",
+            "title": "Observable Third-Party Trackers & Services Detected (3 Services)",
+            "category": "Third-Party Data Sharing & Processors",
+            "affected_component": "External Scripts & Pixels",
+            "affected_page": "https://citycare.example.in/",
+            "severity": "MEDIUM",
+            "confidence": "HIGH",
+            "legal_reference": "Section 8(2) & Section 5(1)",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "Public website loads external services: Google Tag Manager, Meta Pixel (Facebook), Razorpay Payment Gateway.",
+            "evidence_snippet": "Observed script requests: ['https://www.googletagmanager.com/gtm.js?id=GTM-DEMO123', 'https://connect.facebook.net/en_US/fbevents.js', 'https://checkout.razorpay.com/v1/checkout.js']",
+            "why_it_matters": "Under Section 8(2), a Data Fiduciary may only engage a Data Processor under a valid contract that ensures compliance with the Act. Furthermore, third-party sharing must be itemised in privacy notices under Section 5.",
+            "recommended_action": "1. Verify whether Data Processor Agreements (DPAs) with standard DPDP safeguards are executed with each provider. 2. Log them in your internal Vendor Register. 3. Update the privacy notice to disclose these processing partners.",
+            "required_evidence": "Executed Data Processor Agreements and entry in internal Vendor Register.",
+            "remediation_action_type": "CREATE_VENDOR_REGISTER_ENTRY",
+            "statutory_penalty_ref": "GENERAL_CONTRAVENTION",
+            "penalty_ceiling_text": "Up to \u20b950 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          },
+          {
+            "id": "GAP-CHILDREN-DATA-ad10da",
+            "title": "Verifiable Parental Consent Mechanism Not Observed for Children's Data",
+            "category": "Children's Data Protection",
+            "affected_component": "Onboarding & Student/Minor Enquiries",
+            "affected_page": "https://citycare.example.in/",
+            "severity": "HIGH",
+            "confidence": "MEDIUM",
+            "legal_reference": "Section 9(1) & October 2026 Removal of Difficulties Order",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "Website context indicates services for minors / students / pediatric patients, but no verifiable parental or guardian consent workflow was observed.",
+            "evidence_snippet": "Selected industry: 'healthcare'; no parental consent disclosures detected on public intake forms.",
+            "why_it_matters": "Section 9(1) strictly mandates that a Data Fiduciary must obtain verifiable consent of the parent or lawful guardian before processing any personal data of a child. Section 9(2) and (3) strictly prohibit tracking, behavioral monitoring, or targeted ads directed at children.",
+            "recommended_action": "Implement a verifiable parental/guardian consent verification step during child registration, and ensure analytics scripts are disabled for minor user journeys.",
+            "required_evidence": "Documented parental consent workflow and guardian verification log.",
+            "remediation_action_type": "IMPLEMENT_PARENTAL_CONSENT",
+            "statutory_penalty_ref": "SEC_09",
+            "penalty_ceiling_text": "Up to \u20b9200 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          },
+          {
+            "id": "GAP-SECURITY-HEADERS-7a5a7f",
+            "title": "Perimeter HTTP Security Headers Missing (3 Headers)",
+            "category": "Technical Security Safeguards",
+            "affected_component": "HTTP Response Headers",
+            "affected_page": "https://citycare.example.in/",
+            "severity": "LOW",
+            "confidence": "HIGH",
+            "legal_reference": "Section 8(5) (Defense-in-Depth Technical Safeguards)",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "Public web server does not return: HSTS (Strict-Transport-Security), Clickjacking Protection (X-Frame-Options), MIME-Sniffing Defense (X-Content-Type-Options).",
+            "evidence_snippet": "Observed headers: ['server', 'content-type']",
+            "why_it_matters": "HTTP security headers provide essential baseline perimeter hardening against clickjacking, MIME sniffing, and insecure downgrade attacks on personal data.",
+            "recommended_action": "Configure your reverse proxy, CDN, or web server to append HSTS, X-Frame-Options: SAMEORIGIN, and X-Content-Type-Options: nosniff headers.",
+            "required_evidence": "Server header configuration file.",
+            "remediation_action_type": "CONFIGURE_SECURITY_HEADERS",
+            "statutory_penalty_ref": "SEC_08_05",
+            "penalty_ceiling_text": "Up to \u20b9250 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          },
+          {
+            "id": "GAP-INTERNAL-ASSESS-51960a",
+            "title": "Internal Controls & Backend Systems Require DPDP Assessment",
+            "category": "Governance & Scoping",
+            "affected_component": "Internal Databases & Access Controls",
+            "affected_page": "Internal Perimeter (Non-Public)",
+            "severity": "INFORMATIONAL",
+            "confidence": "HIGH",
+            "legal_reference": "Section 8(5), Section 8(7) & Rule 8",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "Public website scanning cannot inspect internal database encryption at rest, employee role-based access, backup restoration drills, or purpose-based retention schedules.",
+            "evidence_snippet": "Inherent limitation of external perimeter inspection.",
+            "why_it_matters": "Full statutory DPDP compliance requires internal governance, employee training, data retention schedules, and breach notification readiness that cannot be verified from outside.",
+            "recommended_action": "Continue with the TrustAudit Full Internal DPDP Assessment to evaluate your RoPA inventory, retention schedules, and evidence vault.",
+            "required_evidence": "Completed DPDP Internal Assessment questionnaire.",
+            "remediation_action_type": "START_INTERNAL_ASSESSMENT",
+            "statutory_penalty_ref": "GENERAL_CONTRAVENTION",
+            "penalty_ceiling_text": "Up to \u20b950 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          }
+        ],
+        "forms": [
+          {
+            "id": "quick-book",
+            "action": "https://citycare.example.in/book",
+            "method": "POST",
+            "page_url": "https://citycare.example.in",
+            "inputs": [
+              {
+                "name": "patient_name",
+                "label": "Patient Name",
+                "type": "text"
+              },
+              {
+                "name": "phone",
+                "label": "Mobile Number",
+                "type": "tel"
+              },
+              {
+                "name": "agree",
+                "label": "Consent",
+                "type": "checkbox",
+                "checked": true
+              }
+            ],
+            "detected_categories": [
+              "Full Name / Identity",
+              "Phone / Mobile Number"
+            ],
+            "has_notice_link": false,
+            "has_consent_checkbox": true,
+            "consent_prechecked": true,
+            "consent_text": "I agree to communications"
+          }
+        ],
+        "third_party_services": [
+          {
+            "domain": "googletagmanager.com",
+            "name": "Google Tag Manager",
+            "category": "Tag Management / Marketing",
+            "potential_data": [
+              "User Interaction Events",
+              "Page URLs"
+            ],
+            "detected_on_pages": [
+              "https://citycare.example.in"
+            ],
+            "script_url": "https://www.googletagmanager.com/gtm.js?id=GTM-DEMO123"
+          },
+          {
+            "domain": "connect.facebook.net",
+            "name": "Meta Pixel (Facebook)",
+            "category": "Advertising & Tracking",
+            "potential_data": [
+              "Social Profile Identifier",
+              "Conversion Events"
+            ],
+            "detected_on_pages": [
+              "https://citycare.example.in"
+            ],
+            "script_url": "https://connect.facebook.net/en_US/fbevents.js"
+          },
+          {
+            "domain": "razorpay.com",
+            "name": "Razorpay Payment Gateway",
+            "category": "Payment Processing",
+            "potential_data": [
+              "Payment Identifiers",
+              "Phone",
+              "Email"
+            ],
+            "detected_on_pages": [
+              "https://citycare.example.in/checkout"
+            ],
+            "script_url": "https://checkout.razorpay.com/v1/checkout.js"
+          }
+        ],
+        "privacy_pages": [],
+        "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+        "logs": [
+          {
+            "timestamp": "11:50:17",
+            "stage": "08_STATUTORY_MAPPING",
+            "message": "Mapping observations to DPDP Act 2023 Schedule & statutory timelines..."
+          },
+          {
+            "timestamp": "11:50:17",
+            "stage": "09_REPORT_GENERATION",
+            "message": "Assembling comprehensive DPDP Website Assessment Report..."
+          }
+        ]
+      },
       {
         "scan_id": "dpdp-scan-a0266e8357",
         "business_name": "MediCare Clinic",
@@ -8744,6 +10473,592 @@
           },
           {
             "timestamp": "11:18:10",
+            "stage": "09_REPORT_GENERATION",
+            "message": "Assembling comprehensive DPDP Website Assessment Report..."
+          }
+        ]
+      }
+    ],
+    "org-tenant-a-51632e": [
+      {
+        "scan_id": "dpdp-scan-2fef8484a5",
+        "business_name": "Clinic A",
+        "target_url": "https://clinica.in/",
+        "industry": "healthcare",
+        "business_type": "Diagnostic & Healthcare Clinic",
+        "country": "India",
+        "scanned_at": "2026-11-22T11:50:17.904221+00:00",
+        "summary_metrics": {
+          "pages_scanned_count": 3,
+          "forms_discovered_count": 1,
+          "privacy_pages_count": 0,
+          "third_party_services_count": 3,
+          "total_findings_count": 8,
+          "critical_count": 0,
+          "high_count": 4,
+          "medium_count": 2,
+          "low_count": 1,
+          "info_count": 1,
+          "readiness_score": 38,
+          "scan_duration_seconds": 0.0
+        },
+        "findings": [
+          {
+            "id": "GAP-NOTICE-dfbb23",
+            "title": "Privacy Notice Not Detected on Public Pages",
+            "category": "Privacy Notice & Transparency",
+            "affected_component": "Website Navigation & Footer",
+            "affected_page": "https://clinica.in/",
+            "severity": "HIGH",
+            "confidence": "MEDIUM",
+            "legal_reference": "Section 5 & Rule 3 (Subject to Commencement)",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "No accessible Privacy Policy or Data Protection Notice was found among 3 scanned public pages.",
+            "evidence_snippet": "Searched standard footer anchors, sitemaps, and common paths (/privacy, /privacy-policy, /data-protection). None returned valid notice content.",
+            "why_it_matters": "Under Section 5, every Data Fiduciary must give Data Principals an itemised notice before or at the time of requesting personal data, stating the personal data categories, processing purpose, manner of exercising rights, and grievance details.",
+            "recommended_action": "Draft and publish a clear, standalone, business-specific Privacy Notice compliant with Section 5 and Rule 3 itemised notice standards.",
+            "required_evidence": "Published Privacy Notice URL and internal Board / Management approval sign-off.",
+            "remediation_action_type": "GENERATE_PRIVACY_NOTICE",
+            "statutory_penalty_ref": "GENERAL_CONTRAVENTION",
+            "penalty_ceiling_text": "Up to \u20b950 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          },
+          {
+            "id": "GAP-PRETICK-9ae8be",
+            "title": "Pre-Selected Consent Checkbox Detected on Public Form",
+            "category": "Consent & Lawful Grounds",
+            "affected_component": "Form 'quick-book'",
+            "affected_page": "https://clinica.in",
+            "severity": "HIGH",
+            "confidence": "HIGH",
+            "legal_reference": "Section 6(1) & Rule 3 (Unconditional & Affirmative Consent)",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "A consent or agreement checkbox in form 'quick-book' was observed in a pre-checked state by default.",
+            "evidence_snippet": "HTML element <input type='checkbox' checked> detected with consent wording: 'I agree to communications'",
+            "why_it_matters": "Under Section 6(1), consent must be free, specific, informed, unconditional, and an unambiguous indication through clear affirmative action. Pre-ticked boxes are deemed invalid consent under Indian DPDP regulatory interpretations.",
+            "recommended_action": "Ensure all consent checkboxes default to un-ticked, requiring an active affirmative gesture by the Data Principal.",
+            "required_evidence": "Updated form markup confirming default unselected state.",
+            "remediation_action_type": "FIX_PRETICKED_CHECKBOX",
+            "statutory_penalty_ref": "GENERAL_CONTRAVENTION",
+            "penalty_ceiling_text": "Up to \u20b950 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          },
+          {
+            "id": "GAP-FORM-NOTICE-e9c886",
+            "title": "Data Collection Form Lacks Nearby Privacy Notice Reference",
+            "category": "Forms & Data Collection",
+            "affected_component": "Form 'quick-book'",
+            "affected_page": "https://clinica.in",
+            "severity": "MEDIUM",
+            "confidence": "HIGH",
+            "legal_reference": "Section 5(1) & Rule 3",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "Public form collects Full Name / Identity, Phone / Mobile Number without an accompanying privacy notice link or purpose explanation adjacent to the submit action.",
+            "evidence_snippet": "Form at https://clinica.in has inputs: ['patient_name', 'phone', 'agree'] but no nearby privacy notice reference.",
+            "why_it_matters": "Data Principals should be informed of the purpose and privacy terms at or before the moment personal data is collected.",
+            "recommended_action": "Add a clear statement adjacent to the form submit button: 'We process your details in accordance with our Privacy Notice [Link] for appointment and consultation purposes.'",
+            "required_evidence": "Screenshot of updated form with adjacent notice hyperlink.",
+            "remediation_action_type": "ADD_FORM_NOTICE_LINK",
+            "statutory_penalty_ref": "GENERAL_CONTRAVENTION",
+            "penalty_ceiling_text": "Up to \u20b950 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          },
+          {
+            "id": "GAP-GRIEVANCE-914658",
+            "title": "Published Grievance Redressal Contact Not Detected",
+            "category": "Rights & Grievance Mechanism",
+            "affected_component": "Website Footer & Contact Info",
+            "affected_page": "https://clinica.in/",
+            "severity": "HIGH",
+            "confidence": "HIGH",
+            "legal_reference": "Section 8(9), Section 13 & Rule 14",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "No Grievance Redressal Officer or dedicated privacy contact information was discovered on the public website.",
+            "evidence_snippet": "Searched scanned pages for 'Grievance Officer', 'Data Protection Officer', or dedicated privacy contact details.",
+            "why_it_matters": "Section 8(9) requires every Data Fiduciary to establish an effective grievance redressal mechanism and publish the contact details of the Grievance Officer on its website so Data Principals can seek redressal prior to approaching the Board.",
+            "recommended_action": "Publish the name, designation, and official email address of your Grievance Redressal Officer on your contact and privacy pages.",
+            "required_evidence": "Published Grievance Officer section and appointment record.",
+            "remediation_action_type": "GENERATE_GRIEVANCE_SECTION",
+            "statutory_penalty_ref": "GENERAL_CONTRAVENTION",
+            "penalty_ceiling_text": "Up to \u20b950 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          },
+          {
+            "id": "GAP-THIRD-PARTY-dbc885",
+            "title": "Observable Third-Party Trackers & Services Detected (3 Services)",
+            "category": "Third-Party Data Sharing & Processors",
+            "affected_component": "External Scripts & Pixels",
+            "affected_page": "https://clinica.in/",
+            "severity": "MEDIUM",
+            "confidence": "HIGH",
+            "legal_reference": "Section 8(2) & Section 5(1)",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "Public website loads external services: Google Tag Manager, Meta Pixel (Facebook), Razorpay Payment Gateway.",
+            "evidence_snippet": "Observed script requests: ['https://www.googletagmanager.com/gtm.js?id=GTM-DEMO123', 'https://connect.facebook.net/en_US/fbevents.js', 'https://checkout.razorpay.com/v1/checkout.js']",
+            "why_it_matters": "Under Section 8(2), a Data Fiduciary may only engage a Data Processor under a valid contract that ensures compliance with the Act. Furthermore, third-party sharing must be itemised in privacy notices under Section 5.",
+            "recommended_action": "1. Verify whether Data Processor Agreements (DPAs) with standard DPDP safeguards are executed with each provider. 2. Log them in your internal Vendor Register. 3. Update the privacy notice to disclose these processing partners.",
+            "required_evidence": "Executed Data Processor Agreements and entry in internal Vendor Register.",
+            "remediation_action_type": "CREATE_VENDOR_REGISTER_ENTRY",
+            "statutory_penalty_ref": "GENERAL_CONTRAVENTION",
+            "penalty_ceiling_text": "Up to \u20b950 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          },
+          {
+            "id": "GAP-CHILDREN-DATA-da4d3c",
+            "title": "Verifiable Parental Consent Mechanism Not Observed for Children's Data",
+            "category": "Children's Data Protection",
+            "affected_component": "Onboarding & Student/Minor Enquiries",
+            "affected_page": "https://clinica.in/",
+            "severity": "HIGH",
+            "confidence": "MEDIUM",
+            "legal_reference": "Section 9(1) & October 2026 Removal of Difficulties Order",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "Website context indicates services for minors / students / pediatric patients, but no verifiable parental or guardian consent workflow was observed.",
+            "evidence_snippet": "Selected industry: 'healthcare'; no parental consent disclosures detected on public intake forms.",
+            "why_it_matters": "Section 9(1) strictly mandates that a Data Fiduciary must obtain verifiable consent of the parent or lawful guardian before processing any personal data of a child. Section 9(2) and (3) strictly prohibit tracking, behavioral monitoring, or targeted ads directed at children.",
+            "recommended_action": "Implement a verifiable parental/guardian consent verification step during child registration, and ensure analytics scripts are disabled for minor user journeys.",
+            "required_evidence": "Documented parental consent workflow and guardian verification log.",
+            "remediation_action_type": "IMPLEMENT_PARENTAL_CONSENT",
+            "statutory_penalty_ref": "SEC_09",
+            "penalty_ceiling_text": "Up to \u20b9200 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          },
+          {
+            "id": "GAP-SECURITY-HEADERS-86dbb5",
+            "title": "Perimeter HTTP Security Headers Missing (3 Headers)",
+            "category": "Technical Security Safeguards",
+            "affected_component": "HTTP Response Headers",
+            "affected_page": "https://clinica.in/",
+            "severity": "LOW",
+            "confidence": "HIGH",
+            "legal_reference": "Section 8(5) (Defense-in-Depth Technical Safeguards)",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "Public web server does not return: HSTS (Strict-Transport-Security), Clickjacking Protection (X-Frame-Options), MIME-Sniffing Defense (X-Content-Type-Options).",
+            "evidence_snippet": "Observed headers: ['server', 'content-type']",
+            "why_it_matters": "HTTP security headers provide essential baseline perimeter hardening against clickjacking, MIME sniffing, and insecure downgrade attacks on personal data.",
+            "recommended_action": "Configure your reverse proxy, CDN, or web server to append HSTS, X-Frame-Options: SAMEORIGIN, and X-Content-Type-Options: nosniff headers.",
+            "required_evidence": "Server header configuration file.",
+            "remediation_action_type": "CONFIGURE_SECURITY_HEADERS",
+            "statutory_penalty_ref": "SEC_08_05",
+            "penalty_ceiling_text": "Up to \u20b9250 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          },
+          {
+            "id": "GAP-INTERNAL-ASSESS-15454d",
+            "title": "Internal Controls & Backend Systems Require DPDP Assessment",
+            "category": "Governance & Scoping",
+            "affected_component": "Internal Databases & Access Controls",
+            "affected_page": "Internal Perimeter (Non-Public)",
+            "severity": "INFORMATIONAL",
+            "confidence": "HIGH",
+            "legal_reference": "Section 8(5), Section 8(7) & Rule 8",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "Public website scanning cannot inspect internal database encryption at rest, employee role-based access, backup restoration drills, or purpose-based retention schedules.",
+            "evidence_snippet": "Inherent limitation of external perimeter inspection.",
+            "why_it_matters": "Full statutory DPDP compliance requires internal governance, employee training, data retention schedules, and breach notification readiness that cannot be verified from outside.",
+            "recommended_action": "Continue with the TrustAudit Full Internal DPDP Assessment to evaluate your RoPA inventory, retention schedules, and evidence vault.",
+            "required_evidence": "Completed DPDP Internal Assessment questionnaire.",
+            "remediation_action_type": "START_INTERNAL_ASSESSMENT",
+            "statutory_penalty_ref": "GENERAL_CONTRAVENTION",
+            "penalty_ceiling_text": "Up to \u20b950 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          }
+        ],
+        "forms": [
+          {
+            "id": "quick-book",
+            "action": "https://clinica.in/book",
+            "method": "POST",
+            "page_url": "https://clinica.in",
+            "inputs": [
+              {
+                "name": "patient_name",
+                "label": "Patient Name",
+                "type": "text"
+              },
+              {
+                "name": "phone",
+                "label": "Mobile Number",
+                "type": "tel"
+              },
+              {
+                "name": "agree",
+                "label": "Consent",
+                "type": "checkbox",
+                "checked": true
+              }
+            ],
+            "detected_categories": [
+              "Full Name / Identity",
+              "Phone / Mobile Number"
+            ],
+            "has_notice_link": false,
+            "has_consent_checkbox": true,
+            "consent_prechecked": true,
+            "consent_text": "I agree to communications"
+          }
+        ],
+        "third_party_services": [
+          {
+            "domain": "googletagmanager.com",
+            "name": "Google Tag Manager",
+            "category": "Tag Management / Marketing",
+            "potential_data": [
+              "User Interaction Events",
+              "Page URLs"
+            ],
+            "detected_on_pages": [
+              "https://clinica.in"
+            ],
+            "script_url": "https://www.googletagmanager.com/gtm.js?id=GTM-DEMO123"
+          },
+          {
+            "domain": "connect.facebook.net",
+            "name": "Meta Pixel (Facebook)",
+            "category": "Advertising & Tracking",
+            "potential_data": [
+              "Social Profile Identifier",
+              "Conversion Events"
+            ],
+            "detected_on_pages": [
+              "https://clinica.in"
+            ],
+            "script_url": "https://connect.facebook.net/en_US/fbevents.js"
+          },
+          {
+            "domain": "razorpay.com",
+            "name": "Razorpay Payment Gateway",
+            "category": "Payment Processing",
+            "potential_data": [
+              "Payment Identifiers",
+              "Phone",
+              "Email"
+            ],
+            "detected_on_pages": [
+              "https://clinica.in/checkout"
+            ],
+            "script_url": "https://checkout.razorpay.com/v1/checkout.js"
+          }
+        ],
+        "privacy_pages": [],
+        "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+        "logs": [
+          {
+            "timestamp": "11:50:17",
+            "stage": "08_STATUTORY_MAPPING",
+            "message": "Mapping observations to DPDP Act 2023 Schedule & statutory timelines..."
+          },
+          {
+            "timestamp": "11:50:17",
+            "stage": "09_REPORT_GENERATION",
+            "message": "Assembling comprehensive DPDP Website Assessment Report..."
+          }
+        ]
+      }
+    ],
+    "org-tenant-b-3f5d8f": [
+      {
+        "scan_id": "dpdp-scan-f3ac1c2242",
+        "business_name": "Clinic B",
+        "target_url": "https://clinicb.in/",
+        "industry": "healthcare",
+        "business_type": "Diagnostic & Healthcare Clinic",
+        "country": "India",
+        "scanned_at": "2026-11-22T11:50:17.905250+00:00",
+        "summary_metrics": {
+          "pages_scanned_count": 3,
+          "forms_discovered_count": 1,
+          "privacy_pages_count": 0,
+          "third_party_services_count": 3,
+          "total_findings_count": 8,
+          "critical_count": 0,
+          "high_count": 4,
+          "medium_count": 2,
+          "low_count": 1,
+          "info_count": 1,
+          "readiness_score": 38,
+          "scan_duration_seconds": 0.0
+        },
+        "findings": [
+          {
+            "id": "GAP-NOTICE-721475",
+            "title": "Privacy Notice Not Detected on Public Pages",
+            "category": "Privacy Notice & Transparency",
+            "affected_component": "Website Navigation & Footer",
+            "affected_page": "https://clinicb.in/",
+            "severity": "HIGH",
+            "confidence": "MEDIUM",
+            "legal_reference": "Section 5 & Rule 3 (Subject to Commencement)",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "No accessible Privacy Policy or Data Protection Notice was found among 3 scanned public pages.",
+            "evidence_snippet": "Searched standard footer anchors, sitemaps, and common paths (/privacy, /privacy-policy, /data-protection). None returned valid notice content.",
+            "why_it_matters": "Under Section 5, every Data Fiduciary must give Data Principals an itemised notice before or at the time of requesting personal data, stating the personal data categories, processing purpose, manner of exercising rights, and grievance details.",
+            "recommended_action": "Draft and publish a clear, standalone, business-specific Privacy Notice compliant with Section 5 and Rule 3 itemised notice standards.",
+            "required_evidence": "Published Privacy Notice URL and internal Board / Management approval sign-off.",
+            "remediation_action_type": "GENERATE_PRIVACY_NOTICE",
+            "statutory_penalty_ref": "GENERAL_CONTRAVENTION",
+            "penalty_ceiling_text": "Up to \u20b950 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          },
+          {
+            "id": "GAP-PRETICK-019d59",
+            "title": "Pre-Selected Consent Checkbox Detected on Public Form",
+            "category": "Consent & Lawful Grounds",
+            "affected_component": "Form 'quick-book'",
+            "affected_page": "https://clinicb.in",
+            "severity": "HIGH",
+            "confidence": "HIGH",
+            "legal_reference": "Section 6(1) & Rule 3 (Unconditional & Affirmative Consent)",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "A consent or agreement checkbox in form 'quick-book' was observed in a pre-checked state by default.",
+            "evidence_snippet": "HTML element <input type='checkbox' checked> detected with consent wording: 'I agree to communications'",
+            "why_it_matters": "Under Section 6(1), consent must be free, specific, informed, unconditional, and an unambiguous indication through clear affirmative action. Pre-ticked boxes are deemed invalid consent under Indian DPDP regulatory interpretations.",
+            "recommended_action": "Ensure all consent checkboxes default to un-ticked, requiring an active affirmative gesture by the Data Principal.",
+            "required_evidence": "Updated form markup confirming default unselected state.",
+            "remediation_action_type": "FIX_PRETICKED_CHECKBOX",
+            "statutory_penalty_ref": "GENERAL_CONTRAVENTION",
+            "penalty_ceiling_text": "Up to \u20b950 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          },
+          {
+            "id": "GAP-FORM-NOTICE-08f0bf",
+            "title": "Data Collection Form Lacks Nearby Privacy Notice Reference",
+            "category": "Forms & Data Collection",
+            "affected_component": "Form 'quick-book'",
+            "affected_page": "https://clinicb.in",
+            "severity": "MEDIUM",
+            "confidence": "HIGH",
+            "legal_reference": "Section 5(1) & Rule 3",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "Public form collects Full Name / Identity, Phone / Mobile Number without an accompanying privacy notice link or purpose explanation adjacent to the submit action.",
+            "evidence_snippet": "Form at https://clinicb.in has inputs: ['patient_name', 'phone', 'agree'] but no nearby privacy notice reference.",
+            "why_it_matters": "Data Principals should be informed of the purpose and privacy terms at or before the moment personal data is collected.",
+            "recommended_action": "Add a clear statement adjacent to the form submit button: 'We process your details in accordance with our Privacy Notice [Link] for appointment and consultation purposes.'",
+            "required_evidence": "Screenshot of updated form with adjacent notice hyperlink.",
+            "remediation_action_type": "ADD_FORM_NOTICE_LINK",
+            "statutory_penalty_ref": "GENERAL_CONTRAVENTION",
+            "penalty_ceiling_text": "Up to \u20b950 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          },
+          {
+            "id": "GAP-GRIEVANCE-97f7a1",
+            "title": "Published Grievance Redressal Contact Not Detected",
+            "category": "Rights & Grievance Mechanism",
+            "affected_component": "Website Footer & Contact Info",
+            "affected_page": "https://clinicb.in/",
+            "severity": "HIGH",
+            "confidence": "HIGH",
+            "legal_reference": "Section 8(9), Section 13 & Rule 14",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "No Grievance Redressal Officer or dedicated privacy contact information was discovered on the public website.",
+            "evidence_snippet": "Searched scanned pages for 'Grievance Officer', 'Data Protection Officer', or dedicated privacy contact details.",
+            "why_it_matters": "Section 8(9) requires every Data Fiduciary to establish an effective grievance redressal mechanism and publish the contact details of the Grievance Officer on its website so Data Principals can seek redressal prior to approaching the Board.",
+            "recommended_action": "Publish the name, designation, and official email address of your Grievance Redressal Officer on your contact and privacy pages.",
+            "required_evidence": "Published Grievance Officer section and appointment record.",
+            "remediation_action_type": "GENERATE_GRIEVANCE_SECTION",
+            "statutory_penalty_ref": "GENERAL_CONTRAVENTION",
+            "penalty_ceiling_text": "Up to \u20b950 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          },
+          {
+            "id": "GAP-THIRD-PARTY-382016",
+            "title": "Observable Third-Party Trackers & Services Detected (3 Services)",
+            "category": "Third-Party Data Sharing & Processors",
+            "affected_component": "External Scripts & Pixels",
+            "affected_page": "https://clinicb.in/",
+            "severity": "MEDIUM",
+            "confidence": "HIGH",
+            "legal_reference": "Section 8(2) & Section 5(1)",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "Public website loads external services: Google Tag Manager, Meta Pixel (Facebook), Razorpay Payment Gateway.",
+            "evidence_snippet": "Observed script requests: ['https://www.googletagmanager.com/gtm.js?id=GTM-DEMO123', 'https://connect.facebook.net/en_US/fbevents.js', 'https://checkout.razorpay.com/v1/checkout.js']",
+            "why_it_matters": "Under Section 8(2), a Data Fiduciary may only engage a Data Processor under a valid contract that ensures compliance with the Act. Furthermore, third-party sharing must be itemised in privacy notices under Section 5.",
+            "recommended_action": "1. Verify whether Data Processor Agreements (DPAs) with standard DPDP safeguards are executed with each provider. 2. Log them in your internal Vendor Register. 3. Update the privacy notice to disclose these processing partners.",
+            "required_evidence": "Executed Data Processor Agreements and entry in internal Vendor Register.",
+            "remediation_action_type": "CREATE_VENDOR_REGISTER_ENTRY",
+            "statutory_penalty_ref": "GENERAL_CONTRAVENTION",
+            "penalty_ceiling_text": "Up to \u20b950 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          },
+          {
+            "id": "GAP-CHILDREN-DATA-9ad225",
+            "title": "Verifiable Parental Consent Mechanism Not Observed for Children's Data",
+            "category": "Children's Data Protection",
+            "affected_component": "Onboarding & Student/Minor Enquiries",
+            "affected_page": "https://clinicb.in/",
+            "severity": "HIGH",
+            "confidence": "MEDIUM",
+            "legal_reference": "Section 9(1) & October 2026 Removal of Difficulties Order",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "Website context indicates services for minors / students / pediatric patients, but no verifiable parental or guardian consent workflow was observed.",
+            "evidence_snippet": "Selected industry: 'healthcare'; no parental consent disclosures detected on public intake forms.",
+            "why_it_matters": "Section 9(1) strictly mandates that a Data Fiduciary must obtain verifiable consent of the parent or lawful guardian before processing any personal data of a child. Section 9(2) and (3) strictly prohibit tracking, behavioral monitoring, or targeted ads directed at children.",
+            "recommended_action": "Implement a verifiable parental/guardian consent verification step during child registration, and ensure analytics scripts are disabled for minor user journeys.",
+            "required_evidence": "Documented parental consent workflow and guardian verification log.",
+            "remediation_action_type": "IMPLEMENT_PARENTAL_CONSENT",
+            "statutory_penalty_ref": "SEC_09",
+            "penalty_ceiling_text": "Up to \u20b9200 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          },
+          {
+            "id": "GAP-SECURITY-HEADERS-324359",
+            "title": "Perimeter HTTP Security Headers Missing (3 Headers)",
+            "category": "Technical Security Safeguards",
+            "affected_component": "HTTP Response Headers",
+            "affected_page": "https://clinicb.in/",
+            "severity": "LOW",
+            "confidence": "HIGH",
+            "legal_reference": "Section 8(5) (Defense-in-Depth Technical Safeguards)",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "Public web server does not return: HSTS (Strict-Transport-Security), Clickjacking Protection (X-Frame-Options), MIME-Sniffing Defense (X-Content-Type-Options).",
+            "evidence_snippet": "Observed headers: ['server', 'content-type']",
+            "why_it_matters": "HTTP security headers provide essential baseline perimeter hardening against clickjacking, MIME sniffing, and insecure downgrade attacks on personal data.",
+            "recommended_action": "Configure your reverse proxy, CDN, or web server to append HSTS, X-Frame-Options: SAMEORIGIN, and X-Content-Type-Options: nosniff headers.",
+            "required_evidence": "Server header configuration file.",
+            "remediation_action_type": "CONFIGURE_SECURITY_HEADERS",
+            "statutory_penalty_ref": "SEC_08_05",
+            "penalty_ceiling_text": "Up to \u20b9250 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          },
+          {
+            "id": "GAP-INTERNAL-ASSESS-444099",
+            "title": "Internal Controls & Backend Systems Require DPDP Assessment",
+            "category": "Governance & Scoping",
+            "affected_component": "Internal Databases & Access Controls",
+            "affected_page": "Internal Perimeter (Non-Public)",
+            "severity": "INFORMATIONAL",
+            "confidence": "HIGH",
+            "legal_reference": "Section 8(5), Section 8(7) & Rule 8",
+            "effective_status": "SCHEDULED_MAY_2027",
+            "effective_date": "13 May 2027",
+            "observation": "Public website scanning cannot inspect internal database encryption at rest, employee role-based access, backup restoration drills, or purpose-based retention schedules.",
+            "evidence_snippet": "Inherent limitation of external perimeter inspection.",
+            "why_it_matters": "Full statutory DPDP compliance requires internal governance, employee training, data retention schedules, and breach notification readiness that cannot be verified from outside.",
+            "recommended_action": "Continue with the TrustAudit Full Internal DPDP Assessment to evaluate your RoPA inventory, retention schedules, and evidence vault.",
+            "required_evidence": "Completed DPDP Internal Assessment questionnaire.",
+            "remediation_action_type": "START_INTERNAL_ASSESSMENT",
+            "statutory_penalty_ref": "GENERAL_CONTRAVENTION",
+            "penalty_ceiling_text": "Up to \u20b950 crore",
+            "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+            "review_status": "OPEN"
+          }
+        ],
+        "forms": [
+          {
+            "id": "quick-book",
+            "action": "https://clinicb.in/book",
+            "method": "POST",
+            "page_url": "https://clinicb.in",
+            "inputs": [
+              {
+                "name": "patient_name",
+                "label": "Patient Name",
+                "type": "text"
+              },
+              {
+                "name": "phone",
+                "label": "Mobile Number",
+                "type": "tel"
+              },
+              {
+                "name": "agree",
+                "label": "Consent",
+                "type": "checkbox",
+                "checked": true
+              }
+            ],
+            "detected_categories": [
+              "Full Name / Identity",
+              "Phone / Mobile Number"
+            ],
+            "has_notice_link": false,
+            "has_consent_checkbox": true,
+            "consent_prechecked": true,
+            "consent_text": "I agree to communications"
+          }
+        ],
+        "third_party_services": [
+          {
+            "domain": "googletagmanager.com",
+            "name": "Google Tag Manager",
+            "category": "Tag Management / Marketing",
+            "potential_data": [
+              "User Interaction Events",
+              "Page URLs"
+            ],
+            "detected_on_pages": [
+              "https://clinicb.in"
+            ],
+            "script_url": "https://www.googletagmanager.com/gtm.js?id=GTM-DEMO123"
+          },
+          {
+            "domain": "connect.facebook.net",
+            "name": "Meta Pixel (Facebook)",
+            "category": "Advertising & Tracking",
+            "potential_data": [
+              "Social Profile Identifier",
+              "Conversion Events"
+            ],
+            "detected_on_pages": [
+              "https://clinicb.in"
+            ],
+            "script_url": "https://connect.facebook.net/en_US/fbevents.js"
+          },
+          {
+            "domain": "razorpay.com",
+            "name": "Razorpay Payment Gateway",
+            "category": "Payment Processing",
+            "potential_data": [
+              "Payment Identifiers",
+              "Phone",
+              "Email"
+            ],
+            "detected_on_pages": [
+              "https://clinicb.in/checkout"
+            ],
+            "script_url": "https://checkout.razorpay.com/v1/checkout.js"
+          }
+        ],
+        "privacy_pages": [],
+        "statutory_disclaimer": "These are statutory maximum penalty ceilings enumerated under the Schedule to the Digital Personal Data Protection Act, 2023, not predicted, automated, or actual fines. Actual penalties are determined solely by the Data Protection Board of India on a case-by-case basis under Section 28 and Section 33, evaluating nature, gravity, duration, repetitive nature, and mitigating actions taken. Most substantive obligations are scheduled to take effect on 13 May 2027.",
+        "logs": [
+          {
+            "timestamp": "11:50:17",
+            "stage": "08_STATUTORY_MAPPING",
+            "message": "Mapping observations to DPDP Act 2023 Schedule & statutory timelines..."
+          },
+          {
+            "timestamp": "11:50:17",
             "stage": "09_REPORT_GENERATION",
             "message": "Assembling comprehensive DPDP Website Assessment Report..."
           }
