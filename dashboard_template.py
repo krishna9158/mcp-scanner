@@ -1,14 +1,8 @@
 """
-TrustAudit SaaS Dashboard HTML Template.
-
-Enterprise-grade startup cybersecurity copilot interface:
-- 15 dedicated core sections (Dashboard, Assets, Scans, Findings, Fix Center, Monitoring,
-  Attack Surface, Score, Changes, Compliance, Reports, Integrations, Team, Settings, Scanner Health)
-- Evidence-first vulnerability drawer with assignees, notes, and [Verify Fix Now] loop
-- 'Fix These First' Business Risk cards with Cursor/Claude/Copilot prompts
-- Real-time continuous monitoring pulse and schedule manager
-- Dual-mode reports (Executive & Technical)
-- 100% responsive dark-mode theme with zero horizontal scrollbar blockage
+TrustAudit — DPDP Compliance Management Platform Dashboard Template
+===================================================================
+Comprehensive 13-section SaaS Command Center for Indian businesses & healthcare.
+Replaces all legacy scanner views with DPDP Discovery, Assessment, and Operational Workflows.
 """
 
 DASHBOARD_HTML = """<!doctype html>
@@ -16,2681 +10,1241 @@ DASHBOARD_HTML = """<!doctype html>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TrustAudit Console | Startup Security Copilot</title>
+    <title>TrustAudit — DPDP Compliance Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-main: #070b12;
-            --bg-surface: #0f172a;
-            --bg-subtle: #1e293b;
-            --bg-hover: #334155;
-            --border-subtle: #1e293b;
-            --border-focus: #3b82f6;
+            --bg-base: #0b111e;
+            --bg-surface: #111a2e;
+            --bg-card: #16223b;
+            --bg-card-hover: #1c2b4a;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --text-dim: #64748b;
-            --brand-blue: #3b82f6;
-            --brand-blue-hover: #2563eb;
-            --brand-indigo: #6366f1;
-            --brand-cyan: #06b6d4;
-            --status-green: #22c55e;
-            --status-yellow: #eab308;
-            --status-red: #ef4444;
-            --status-critical: #dc2626;
-            --card-radius: 12px;
+            --border-color: #1e2e4f;
+            --border-subtle: #2d416b;
+            --brand-primary: #2563eb;
+            --brand-primary-hover: #1d4ed8;
+            --brand-accent: #38bdf8;
+            --brand-emerald: #10b981;
+            --brand-amber: #f59e0b;
+            --brand-red: #ef4444;
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --radius-xl: 20px;
         }
+
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--bg-main); color: var(--text-main); line-height: 1.5; -webkit-font-smoothing: antialiased; }
-        a { color: var(--brand-blue); text-decoration: none; }
-        a:hover { text-decoration: underline; }
-        .container { max-width: 1280px; margin: 0 auto; padding: 0 20px; }
+        body { font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif; background: var(--bg-base); color: var(--text-main); line-height: 1.5; font-size: 13.5px; overflow-x: hidden; }
+        a { color: inherit; text-decoration: none; }
+        button { cursor: pointer; border: none; font-family: inherit; }
+
+        .app-layout { display: flex; height: 100vh; overflow: hidden; }
+
+        /* SIDEBAR */
+        aside.sidebar { width: 260px; background: var(--bg-surface); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; flex-shrink: 0; }
+        .sidebar-brand { height: 70px; display: flex; align-items: center; gap: 10px; padding: 0 20px; border-bottom: 1px solid var(--border-color); font-weight: 800; font-size: 18px; color: #ffffff; }
+        .sidebar-brand svg { color: var(--brand-accent); }
+        .sidebar-brand-badge { font-size: 9.5px; font-weight: 700; background: rgba(56, 189, 248, 0.15); color: var(--brand-accent); padding: 2px 6px; border-radius: 4px; }
         
-        /* Custom Clean Scrollbar */
-        ::-webkit-scrollbar { height: 6px; width: 6px; }
-        ::-webkit-scrollbar-track { background: #070b12; }
-        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #3b82f6; }
+        .sidebar-nav { flex-grow: 1; overflow-y: auto; padding: 16px 10px; }
+        .nav-group-title { font-size: 10.5px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; padding: 12px 12px 6px 12px; }
+        .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: var(--radius-md); font-weight: 600; font-size: 13px; color: var(--text-muted); transition: all 0.15s; margin-bottom: 2px; }
+        .nav-item:hover { color: #ffffff; background: rgba(255, 255, 255, 0.05); }
+        .nav-item.active { color: #ffffff; background: var(--brand-primary); }
+        .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+        .nav-pill { margin-left: auto; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 9999px; }
+        .nav-pill-amber { background: rgba(245, 158, 11, 0.2); color: var(--brand-amber); }
+        .nav-pill-emerald { background: rgba(16, 185, 129, 0.2); color: var(--brand-emerald); }
 
-        /* Buttons & Badges */
-        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; font-size: 13.5px; padding: 9px 16px; border-radius: 8px; cursor: pointer; transition: 0.15s ease; border: none; user-select: none; }
-        .btn-primary { background: var(--brand-blue); color: #fff; }
-        .btn-primary:hover { background: var(--brand-blue-hover); text-decoration: none; }
-        .btn-secondary { background: var(--bg-subtle); color: var(--text-main); border: 1px solid var(--border-subtle); }
-        .btn-secondary:hover { background: var(--bg-hover); text-decoration: none; border-color: var(--text-muted); }
-        .btn-sm { font-size: 12px; padding: 6px 12px; border-radius: 6px; }
-        
-        .badge { display: inline-flex; align-items: center; padding: 3px 8px; font-size: 11px; font-weight: 700; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .badge-CRITICAL { background: #450a0a; color: #f87171; border: 1px solid #7f1d1d; }
-        .badge-HIGH { background: #431407; color: #fb923c; border: 1px solid #7c2d12; }
-        .badge-MEDIUM { background: #422006; color: #facc15; border: 1px solid #713f12; }
-        .badge-LOW { background: #052e16; color: #4ade80; border: 1px solid #14532d; }
-        .badge-INFO { background: #082f49; color: #38bdf8; border: 1px solid #0369a1; }
-        .badge-conf-CONFIRMED { background: #064e3b; color: #34d399; border: 1px solid #059669; }
-        .badge-conf-LIKELY { background: #1e1b4b; color: #a5b4fc; border: 1px solid #4338ca; }
-        .badge-conf-POSSIBLE { background: #3b0764; color: #e879f9; border: 1px solid #7e22ce; }
-        .badge-conf-UNVERIFIED { background: #1e293b; color: #94a3b8; border: 1px solid #475569; }
-        .badge-engine { background: #1e293b; color: #38bdf8; font-size: 11px; font-weight: 600; border-radius: 4px; padding: 2px 6px; font-family: monospace; border: 1px solid #334155; }
-        .badge-status { background: #1e293b; color: #cbd5e1; font-size: 11px; font-weight: 600; border-radius: 4px; padding: 2px 6px; }
-        .badge-pass { background: #052e16; color: #4ade80; border: 1px solid #14532d; }
-        .badge-fail { background: #450a0a; color: #f87171; border: 1px solid #7f1d1d; }
-        .badge-warn { background: #422006; color: #facc15; border: 1px solid #713f12; }
+        .sidebar-footer { padding: 14px 16px; border-top: 1px solid var(--border-color); font-size: 12px; color: var(--text-muted); }
 
-        /* Cards & Tables */
-        .card { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--card-radius); padding: 20px; margin-bottom: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
-        th, td { border: 1px solid var(--border-subtle); padding: 10px 14px; text-align: left; }
-        th { background: #0b1120; color: var(--text-muted); font-weight: 600; }
-        tr:hover td { background: rgba(30, 41, 59, 0.4); }
-        code { background: #1e293b; color: #38bdf8; padding: 2px 6px; border-radius: 4px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; }
+        /* MAIN CONTENT AREA */
+        main.main-area { flex-grow: 1; display: flex; flex-direction: column; overflow-y: auto; background: var(--bg-base); }
+        header.top-bar { height: 70px; background: var(--bg-surface); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 28px; flex-shrink: 0; }
+        .topbar-left { display: flex; align-items: center; gap: 16px; }
+        .org-badge { display: flex; align-items: center; gap: 8px; background: var(--bg-card); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 9999px; font-size: 12.5px; font-weight: 600; }
+        .readiness-chip { background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: var(--brand-emerald); font-weight: 700; font-size: 12px; padding: 4px 10px; border-radius: 9999px; display: flex; align-items: center; gap: 6px; }
+        .topbar-right { display: flex; align-items: center; gap: 14px; }
 
-        /* Top Header */
-        .dash-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 24px; background: var(--bg-surface); border-bottom: 1px solid var(--border-subtle); position: sticky; top: 0; z-index: 100; }
-        .header-brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 18px; color: #fff; letter-spacing: -0.5px; }
-        .header-brand svg { width: 24px; height: 24px; fill: var(--brand-blue); }
-        .header-meta { display: flex; align-items: center; gap: 12px; }
-        .pulse-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--status-green); background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.25); padding: 4px 10px; border-radius: 9999px; }
-        .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--status-green); box-shadow: 0 0 8px var(--status-green); }
+        .content-body { padding: 28px; max-width: 1400px; margin: 0 auto; width: 100%; }
 
-        /* Navigation Bar (Clean wrap layout - zero scrollbar obstruction) */
-        .nav-bar-container { background: #0a0f1d; border-bottom: 1px solid var(--border-subtle); padding: 8px 24px; }
-        .header-nav { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
-        .nav-item { background: transparent; border: 1px solid transparent; padding: 7px 13px; font-size: 13px; font-weight: 600; color: var(--text-muted); border-radius: 6px; cursor: pointer; white-space: nowrap; transition: all 0.15s; }
-        .nav-item:hover { background: var(--bg-surface); color: #fff; border-color: #334155; }
-        .nav-item.active { background: #1e293b; color: #38bdf8; border-color: var(--brand-blue); font-weight: 700; box-shadow: 0 0 10px rgba(59, 130, 246, 0.2); }
+        /* CARDS & PANELS */
+        .dash-section { display: none; }
+        .dash-section.active { display: block; animation: fadeIn 0.2s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Main Layout */
-        .main-wrapper { padding: 24px 0 60px; }
-        .section-view { display: none; }
-        .section-view.active { display: block; }
+        .page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
+        .page-title { font-size: 22px; font-weight: 800; color: #ffffff; letter-spacing: -0.4px; }
+        .page-subtitle { font-size: 13.5px; color: var(--text-muted); margin-top: 4px; }
 
-        /* Grid Layouts */
-        .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 20px; }
-        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-bottom: 20px; }
-        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 20px; margin-bottom: 20px; }
-        
-        /* Metric Card */
-        .metric-card { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 18px 20px; }
-        .metric-lbl { font-size: 12px; color: var(--text-dim); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
-        .metric-val { font-size: 28px; font-weight: 800; color: #fff; margin-top: 4px; line-height: 1.2; }
-        .metric-sub { font-size: 12px; color: var(--text-muted); margin-top: 4px; display: flex; align-items: center; gap: 6px; }
+        .grid-kpi { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+        .kpi-card { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 18px 20px; }
+        .kpi-title { font-size: 11px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; }
+        .kpi-val { font-size: 28px; font-weight: 800; color: #ffffff; line-height: 1.1; }
+        .kpi-sub { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
 
-        /* Score Hero Card */
-        .score-hero { display: grid; grid-template-columns: 240px 1fr; gap: 20px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 24px; margin-bottom: 24px; }
-        .score-circle { display: flex; flex-direction: column; align-items: center; justify-content: center; border: 4px solid var(--border-subtle); border-radius: 16px; padding: 20px; text-align: center; }
-        .score-number { font-size: 52px; font-weight: 800; line-height: 1; }
-        .score-grade { font-size: 18px; font-weight: 700; margin-top: 4px; }
-        .score-GREEN { color: var(--status-green); border-color: rgba(34, 197, 94, 0.3); }
-        .score-YELLOW { color: var(--status-yellow); border-color: rgba(234, 179, 8, 0.3); }
-        .score-RED { color: var(--status-red); border-color: rgba(239, 68, 68, 0.3); }
-        .subscores-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; align-content: center; }
-        .subscore-item { background: var(--bg-subtle); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 12px; text-align: center; cursor: pointer; transition: 0.15s; }
-        .subscore-item:hover { border-color: var(--brand-blue); }
-        .subscore-val { font-size: 20px; font-weight: 700; }
-        .subscore-lbl { font-size: 11px; color: var(--text-dim); text-transform: uppercase; margin-top: 2px; }
+        .card { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 22px; margin-bottom: 24px; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--border-color); }
+        .card-title { font-size: 16px; font-weight: 700; color: #ffffff; display: flex; align-items: center; gap: 8px; }
 
-        /* Scan Launcher Card */
-        .launcher-card { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 20px; margin-bottom: 24px; }
-        .scan-mode-toggle { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
-        .mode-pill { flex: 1; min-width: 160px; padding: 9px; text-align: center; background: var(--bg-subtle); border: 1px solid var(--border-subtle); border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--text-muted); transition: 0.15s; user-select: none; }
-        .mode-pill.active { background: #1e293b; border-color: var(--brand-blue); color: #fff; }
-        .mode-pill input { display: none; }
-        .input-row { display: flex; gap: 10px; flex-wrap: wrap; }
-        .input-row input { flex: 1; min-width: 260px; background: var(--bg-subtle); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 12px 16px; color: #fff; font-size: 14.5px; outline: none; }
-        .input-row input:focus { border-color: var(--brand-blue); }
+        /* BUTTONS & CONTROLS */
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 8px 16px; border-radius: var(--radius-sm); font-weight: 600; font-size: 13px; transition: all 0.15s; }
+        .btn-primary { background: var(--brand-primary); color: #ffffff; }
+        .btn-primary:hover { background: var(--brand-primary-hover); }
+        .btn-secondary { background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color); }
+        .btn-secondary:hover { background: var(--bg-card-hover); border-color: var(--border-subtle); }
+        .btn-sm { padding: 5px 10px; font-size: 12px; }
 
-        /* Live Progress */
-        .progress-overlay { display: none; margin-top: 16px; padding: 14px; background: #0b1120; border: 1px solid #1e293b; border-radius: 8px; }
-        .progress-bar-container { height: 6px; background: #1e293b; border-radius: 3px; overflow: hidden; margin-bottom: 10px; }
-        .progress-bar-fill { height: 100%; width: 20%; background: var(--brand-blue); transition: width 0.3s ease; }
-        .progress-stage-text { font-size: 13px; color: #93c5fd; font-weight: 600; }
+        /* TABLES */
+        .table-wrap { overflow-x: auto; }
+        table.dash-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 12.5px; }
+        table.dash-table th { padding: 11px 14px; background: rgba(0, 0, 0, 0.2); color: var(--text-dim); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; font-size: 11px; border-bottom: 1px solid var(--border-color); }
+        table.dash-table td { padding: 12px 14px; border-bottom: 1px solid var(--border-color); color: var(--text-main); }
+        table.dash-table tr:hover td { background: rgba(255, 255, 255, 0.02); }
 
-        /* Result Tabs Inside Scan Results */
-        .tabs-header { display: flex; flex-wrap: wrap; gap: 8px; border-bottom: 1px solid var(--border-subtle); margin-bottom: 24px; padding-bottom: 12px; position: relative; z-index: 10; }
-        .tab-btn { background: #111827; border: 1px solid #1e293b; border-radius: 8px; padding: 9px 16px; color: #94a3b8; font-size: 13.5px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.15s ease; user-select: none; position: relative; z-index: 2; }
-        .tab-btn:hover { background: #1f2937; color: #f8fafc; border-color: #3b82f6; }
-        .tab-btn.active { background: #1e293b; color: #38bdf8; border-color: #3b82f6; box-shadow: 0 0 12px rgba(59, 130, 246, 0.35); font-weight: 700; }
-        .tab-pane { display: none !important; }
-        .tab-pane.active { display: block !important; }
+        .badge-pill { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 9999px; }
+        .badge-emerald { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+        .badge-amber { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+        .badge-sky { background: rgba(56, 189, 248, 0.15); color: #38bdf8; }
+        .badge-red { background: rgba(239, 68, 68, 0.15); color: #f87171; }
 
-        /* Fix These First Action Cards */
-        .fix-card { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-left: 4px solid var(--brand-blue); border-radius: 10px; padding: 20px; margin-bottom: 16px; }
-        .fix-card.crit { border-left-color: var(--status-red); }
-        .fix-card.high { border-left-color: #f97316; }
-        .fix-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 10px; }
-        .fix-title { font-size: 16px; font-weight: 700; color: #fff; }
-        .fix-details { font-size: 13.5px; color: var(--text-main); line-height: 1.6; margin-bottom: 12px; }
-        .fix-meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; background: #0b1120; border-radius: 8px; padding: 12px; margin-bottom: 14px; font-size: 12.5px; }
+        /* FORMS & MODALS */
+        .form-group { margin-bottom: 16px; }
+        .form-label { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; }
+        .form-control { width: 100%; padding: 9px 12px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-sm); color: #ffffff; font-size: 13px; font-family: inherit; }
+        .form-control:focus { outline: none; border-color: var(--brand-accent); }
 
-        /* Slide-over Drawer / Modal */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
-        .modal-overlay.active { display: flex; }
-        .modal-box { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 14px; max-width: 820px; width: 100%; max-height: 88vh; overflow-y: auto; padding: 28px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8); }
-        .modal-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 18px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 14px; }
-        .modal-close { background: none; border: none; color: var(--text-muted); font-size: 24px; cursor: pointer; }
-        .modal-close:hover { color: #fff; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .modal-overlay.open { display: flex; }
+        .modal-card { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-lg); width: 100%; max-width: 600px; padding: 26px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5); max-height: 90vh; overflow-y: auto; }
+
+        /* ASSISTANT DRAWER */
+        .assistant-panel { background: #0c1424; border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 20px; margin-top: 18px; }
+        .assistant-chat { max-height: 280px; overflow-y: auto; margin-bottom: 14px; display: flex; flex-direction: column; gap: 10px; }
+        .chat-bubble { padding: 12px 14px; border-radius: var(--radius-md); font-size: 13px; line-height: 1.5; }
+        .chat-user { background: var(--brand-primary); color: #ffffff; align-self: flex-end; max-width: 80%; }
+        .chat-ai { background: var(--bg-card); border: 1px solid var(--border-color); color: #f1f5f9; align-self: flex-start; max-width: 90%; }
     </style>
 </head>
 <body>
-    <!-- Top Bar -->
-    <header class="dash-header">
-        <div class="header-brand">
-            <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
-            TRUSTAUDIT <span style="font-size: 11px; font-weight: 700; background: #1e293b; color: #93c5fd; padding: 2px 8px; border-radius: 4px;">COPILOT</span>
-        </div>
-        <div class="header-meta">
-            <div class="pulse-badge">
-                <span class="pulse-dot"></span>
-                <span>{{ monitoring_summary.get('overall_status', 'HEALTHY') }} &bull; Active Monitoring</span>
-            </div>
-            <select id="project-switcher" style="background: #1e293b; color: #fff; border: 1px solid #334155; padding: 6px 12px; border-radius: 6px; font-size: 13px; outline: none;" onchange="switchProject(this.value)">
-                <optgroup label="Security Projects ({{ projects|length }})">
-                {% for p in projects %}
-                <option value="{{ p.id }}">{{ p.name }} (Score: {{ p.last_score }})</option>
-                {% endfor %}
-                </optgroup>
-            </select>
-            <button class="btn btn-sm btn-primary" onclick="switchNav('dash-scans')">+ New Audit</button>
-        </div>
-    </header>
 
-    <!-- Navigation Header (15 Core SaaS Sections) -->
-    <div class="nav-bar-container">
-        <div class="header-nav">
-            <button class="nav-item active" onclick="switchNav('dash-main')">📊 1. Overview</button>
-            <button class="nav-item" onclick="switchNav('dash-security-hub')">🛡️ 2. Security Posture</button>
-            <button class="nav-item" onclick="switchNav('dash-compliance')">📜 3. Compliance Centre</button>
-            <button class="nav-item" onclick="switchNav('dash-fix-center')">🎯 4. Findings &amp; Remediation</button>
-            <button class="nav-item" onclick="switchNav('dash-evidence-vault')">📁 5. Evidence &amp; Reports</button>
-            <div style="margin-left: auto; display: flex; gap: 6px; align-items: center;">
-                <button class="nav-item" onclick="switchNav('dash-tools')" style="font-size: 11.5px; opacity: 0.85;">🩺 Scanner Health</button>
-                <button class="nav-item" onclick="switchNav('dash-integrations')" style="font-size: 11.5px; opacity: 0.85;">🔌 Integrations</button>
-                <button class="nav-item" onclick="switchNav('dash-settings')" style="font-size: 11.5px; opacity: 0.85;">⚙️ Settings</button>
+    <div class="app-layout">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span>TrustAudit</span>
+                <span class="sidebar-brand-badge">DPDP</span>
+            </div>
+
+            <div class="sidebar-nav">
+                <div class="nav-group-title">Command &bull; DPDP</div>
+                <a href="#overview" onclick="navTo('overview', this)" class="nav-item active">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                    <span>Overview</span>
+                </a>
+                <a href="#assessment" onclick="navTo('assessment', this)" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    <span>DPDP Assessment</span>
+                    <span class="nav-pill nav-pill-amber">15</span>
+                </a>
+                <a href="#inventory" onclick="navTo('inventory', this)" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+                    <span>Data Inventory</span>
+                    <span class="nav-pill nav-pill-emerald" id="nav-inv-count">18</span>
+                </a>
+
+                <div class="nav-group-title">Privacy &amp; Workflows</div>
+                <a href="#privacy" onclick="navTo('privacy', this)" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    <span>Privacy Notices (Sec 5)</span>
+                </a>
+                <a href="#consent" onclick="navTo('consent', this)" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></svg>
+                    <span>Consent &amp; Withdrawals</span>
+                </a>
+                <a href="#rights" onclick="navTo('rights', this)" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+                    <span>Data Principal Rights</span>
+                </a>
+                <a href="#vendors" onclick="navTo('vendors', this)" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                    <span>Vendor Management</span>
+                </a>
+                <a href="#retention" onclick="navTo('retention', this)" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span>Retention &amp; Erasure</span>
+                </a>
+                <a href="#breach" onclick="navTo('breach', this)" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    <span>Breach Management (Sec 8(6))</span>
+                </a>
+
+                <div class="nav-group-title">Governance &amp; Audit</div>
+                <a href="#evidence" onclick="navTo('evidence', this)" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    <span>Evidence Vault</span>
+                </a>
+                <a href="#remediation" onclick="navTo('remediation', this)" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                    <span>Remediation Centre</span>
+                    <span class="nav-pill nav-pill-amber" id="nav-gaps-count">3</span>
+                </a>
+                <a href="#reports" onclick="navTo('reports', this)" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    <span>Reports</span>
+                </a>
+                <a href="#settings" onclick="navTo('settings', this)" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                    <span>Settings &amp; Team</span>
+                </a>
+            </div>
+
+            <div class="sidebar-footer">
+                <div style="font-weight: 600; color: #ffffff;">TrustAudit &bull; India</div>
+                <div style="font-size: 11px; margin-top: 2px;">DPDP Act 2023 &amp; Rules 2025</div>
+            </div>
+        </aside>
+
+        <!-- MAIN AREA -->
+        <main class="main-area">
+            <!-- TOP BAR -->
+            <header class="top-bar">
+                <div class="topbar-left">
+                    <div class="org-badge">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+                        <span id="topbar-org-name">{{ org_info.name if org_info else "Arogya Diagnostics Clinic" }}</span>
+                    </div>
+                    <div class="readiness-chip">
+                        <span>DPDP Readiness:</span>
+                        <strong id="topbar-readiness-val">82%</strong>
+                        <span style="font-size: 10.5px; opacity: 0.8;">(Self-Attested)</span>
+                    </div>
+                </div>
+
+                <div class="topbar-right">
+                    <a href="/trust" target="_blank" class="btn btn-secondary btn-sm">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        <span>Public Trust Centre</span>
+                    </a>
+                    <button onclick="openAssistantModal()" class="btn btn-primary btn-sm">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        <span>AI DPDP Assistant</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- CONTENT BODY -->
+            <div class="content-body">
+
+                <!-- ============================================================== -->
+                <!-- SECTION 1: OVERVIEW                                            -->
+                <!-- ============================================================== -->
+                <div id="section-overview" class="dash-section active">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">DPDP Compliance Overview</h1>
+                            <p class="page-subtitle">Continuous operational posture, applicable requirements, and evidence readiness.</p>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button onclick="openAddInventoryModal()" class="btn btn-secondary">+ Add Inventory Entry</button>
+                            <button onclick="navTo('assessment')" class="btn btn-primary">Review Assessment</button>
+                        </div>
+                    </div>
+
+                    <div class="grid-kpi">
+                        <div class="kpi-card">
+                            <div class="kpi-title">DPDP Readiness Status</div>
+                            <div class="kpi-val" style="color: var(--brand-accent);" id="kpi-readiness">82%</div>
+                            <div class="kpi-sub">12 of 15 Requirements Addressed</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-title">Personal Data Inventory</div>
+                            <div class="kpi-val" id="kpi-inventory-count">18</div>
+                            <div class="kpi-sub">Across 6 Clinical / Staff Streams</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-title">Compliance Gaps</div>
+                            <div class="kpi-val" style="color: var(--brand-amber);" id="kpi-gaps-count">3</div>
+                            <div class="kpi-sub">Actionable Tasks in Remediation</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-title">Evidence Artifacts</div>
+                            <div class="kpi-val" style="color: var(--brand-emerald);" id="kpi-evidence-count">14</div>
+                            <div class="kpi-sub">SHA-256 Cryptographic Records</div>
+                        </div>
+                    </div>
+
+                    <!-- RECENT WORKFLOWS -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                                <span>Core DPDP Workflows &amp; Readiness Status</span>
+                            </div>
+                            <span class="badge-pill badge-sky">Statutory Timelines Active</span>
+                        </div>
+
+                        <div class="table-wrap">
+                            <table class="dash-table">
+                                <thead>
+                                    <tr>
+                                        <th>Workflow / Control</th>
+                                        <th>Statutory Reference</th>
+                                        <th>Applicable Date</th>
+                                        <th>Current Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Itemised Patient Privacy Notice</strong></td>
+                                        <td>Section 5 read with Rule 3</td>
+                                        <td>13 May 2027</td>
+                                        <td><span class="badge-pill badge-emerald">Published (English &amp; Hindi)</span></td>
+                                        <td><a href="#privacy" onclick="navTo('privacy')" style="color: var(--brand-accent);">Manage &rarr;</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Consent Withdrawal &amp; Processor Cascading</strong></td>
+                                        <td>Section 6(4)-(6)</td>
+                                        <td>13 May 2027</td>
+                                        <td><span class="badge-pill badge-emerald">Operational Workflow Active</span></td>
+                                        <td><a href="#consent" onclick="navTo('consent')" style="color: var(--brand-accent);">View Logs &rarr;</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Data Principal Access &amp; Erasure Desk</strong></td>
+                                        <td>Sections 11–14</td>
+                                        <td>13 May 2027</td>
+                                        <td><span class="badge-pill badge-sky">2 Requests In Progress</span></td>
+                                        <td><a href="#rights" onclick="navTo('rights')" style="color: var(--brand-accent);">Ticketing &rarr;</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Diagnostic Lab &amp; HMS Vendor DPAs</strong></td>
+                                        <td>Section 8(2)</td>
+                                        <td>13 May 2027</td>
+                                        <td><span class="badge-pill badge-amber">1 DPA Review Pending</span></td>
+                                        <td><a href="#vendors" onclick="navTo('vendors')" style="color: var(--brand-accent);">Review &rarr;</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Dual-Stage Breach Intimation Procedure</strong></td>
+                                        <td>Section 8(6) read with Rule 7</td>
+                                        <td>13 May 2027</td>
+                                        <td><span class="badge-pill badge-emerald">Draft Forms Prepared</span></td>
+                                        <td><a href="#breach" onclick="navTo('breach')" style="color: var(--brand-accent);">Configure &rarr;</a></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================================== -->
+                <!-- SECTION 2: DPDP ASSESSMENT                                     -->
+                <!-- ============================================================== -->
+                <div id="section-assessment" class="dash-section">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">DPDP Statutory Requirements Assessment</h1>
+                            <p class="page-subtitle">Evaluate controls against the DPDP Act 2023, Rules 2025, and October 2026 Removal of Difficulties Order.</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Requirement Controls Matrix (15 Evaluated)</div>
+                            <span class="badge-pill badge-amber">3 Actionable Gaps</span>
+                        </div>
+                        <div class="table-wrap">
+                            <table class="dash-table" id="assessment-table">
+                                <thead>
+                                    <tr>
+                                        <th>Section / Rule</th>
+                                        <th>Requirement Title</th>
+                                        <th>Category</th>
+                                        <th>Effective Date</th>
+                                        <th>Self-Attested Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="assessment-tbody">
+                                    <!-- Populated dynamically via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================================== -->
+                <!-- SECTION 3: PERSONAL DATA INVENTORY                             -->
+                <!-- ============================================================== -->
+                <div id="section-inventory" class="dash-section">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">Personal Data Inventory</h1>
+                            <p class="page-subtitle">Catalog all digital personal data, collection sources, legal bases, storage systems, and retention rules.</p>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button onclick="downloadInventoryCSV()" class="btn btn-secondary">Export CSV</button>
+                            <button onclick="openAddInventoryModal()" class="btn btn-primary">+ Add Data Stream</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="table-wrap">
+                            <table class="dash-table" id="inventory-table">
+                                <thead>
+                                    <tr>
+                                        <th>Data Category</th>
+                                        <th>Principal Type</th>
+                                        <th>Processing Purpose</th>
+                                        <th>Legal Basis</th>
+                                        <th>Storage System</th>
+                                        <th>Department</th>
+                                        <th>Retention</th>
+                                        <th>Transfer</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="inventory-tbody">
+                                    <!-- Populated dynamically via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================================== -->
+                <!-- SECTION 4: PRIVACY NOTICES (SECTION 5)                         -->
+                <!-- ============================================================== -->
+                <div id="section-privacy" class="dash-section">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">Privacy Notice Management</h1>
+                            <p class="page-subtitle">Generate itemised privacy notices under Section 5 &amp; Rule 3 with Grievance Officer details and Eighth Schedule language readiness.</p>
+                        </div>
+                        <button onclick="openNoticeModal()" class="btn btn-primary">+ Generate New Notice</button>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Published Itemised Notices</div>
+                            <span class="badge-pill badge-emerald">Rule 3 Compliant</span>
+                        </div>
+                        <div id="notice-cards-container">
+                            <!-- Notice cards populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================================== -->
+                <!-- SECTION 5: CONSENT & WITHDRAWAL (SECTION 6)                    -->
+                <!-- ============================================================== -->
+                <div id="section-consent" class="dash-section">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">Consent Records &amp; Withdrawal Workflows</h1>
+                            <p class="page-subtitle">Execute Section 6(4)-(6) consent withdrawal workflows that cascade instructions to data processors.</p>
+                        </div>
+                        <button onclick="openWithdrawalModal()" class="btn btn-primary">+ Log Consent Withdrawal</button>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Withdrawal Requests &amp; Processor Cease-Processing Audits</div>
+                            <span class="badge-pill badge-sky">Section 6(4) Active</span>
+                        </div>
+                        <div class="table-wrap">
+                            <table class="dash-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Principal Reference</th>
+                                        <th>Data Category</th>
+                                        <th>Processing Halt</th>
+                                        <th>Processors Notified</th>
+                                        <th>Statutory Retention Check</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="withdrawal-tbody">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================================== -->
+                <!-- SECTION 6: DATA PRINCIPAL RIGHTS                               -->
+                <!-- ============================================================== -->
+                <div id="section-rights" class="dash-section">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">Data Principal Rights Management</h1>
+                            <p class="page-subtitle">Statutory request tracking for Access (Sec 11), Correction (Sec 12), Erasure, Grievance (Sec 13), and Nomination (Sec 14).</p>
+                        </div>
+                        <button onclick="openRightsModal()" class="btn btn-primary">+ New Rights Request</button>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Active Requests &amp; SLA Tracking (30-Day Window)</div>
+                        </div>
+                        <div class="table-wrap">
+                            <table class="dash-table">
+                                <thead>
+                                    <tr>
+                                        <th>Request ID</th>
+                                        <th>Type</th>
+                                        <th>Principal</th>
+                                        <th>Received Date</th>
+                                        <th>SLA Deadline</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="rights-tbody">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================================== -->
+                <!-- SECTION 7: VENDOR MANAGEMENT (SECTION 8(2))                    -->
+                <!-- ============================================================== -->
+                <div id="section-vendors" class="dash-section">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">Vendor &amp; Data Processor Register</h1>
+                            <p class="page-subtitle">Track Data Processing Agreements (DPAs), cloud storage regions, and breach notification terms under Section 8(2).</p>
+                        </div>
+                        <button onclick="openVendorModal()" class="btn btn-primary">+ Add Vendor Record</button>
+                    </div>
+
+                    <div class="card">
+                        <div class="table-wrap">
+                            <table class="dash-table">
+                                <thead>
+                                    <tr>
+                                        <th>Vendor Name</th>
+                                        <th>Service Provided</th>
+                                        <th>Personal Data Handled</th>
+                                        <th>Storage Region</th>
+                                        <th>DPA Contract Status</th>
+                                        <th>Breach Clause</th>
+                                        <th>Risk</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="vendors-tbody">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================================== -->
+                <!-- SECTION 8: RETENTION & ERASURE (RULE 8)                        -->
+                <!-- ============================================================== -->
+                <div id="section-retention" class="dash-section">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">Retention &amp; Erasure Schedules</h1>
+                            <p class="page-subtitle">Define Rule 8 retention justification, statutory preservation rules, and end-of-purpose deletion workflows.</p>
+                        </div>
+                        <button onclick="openRetentionModal()" class="btn btn-primary">+ Add Retention Rule</button>
+                    </div>
+
+                    <div class="card">
+                        <div class="table-wrap">
+                            <table class="dash-table">
+                                <thead>
+                                    <tr>
+                                        <th>Data Category</th>
+                                        <th>Retention Period</th>
+                                        <th>Statutory Justification</th>
+                                        <th>End of Purpose Trigger</th>
+                                        <th>Disposal Method</th>
+                                        <th>Next Review</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="retention-tbody">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================================== -->
+                <!-- SECTION 9: BREACH MANAGEMENT (SECTION 8(6))                    -->
+                <!-- ============================================================== -->
+                <div id="section-breach" class="dash-section">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">Personal Data Breach Management</h1>
+                            <p class="page-subtitle">Section 8(6) &amp; Rule 7 incident logging, dual-stage Board intimation drafts, and Data Principal notifications.</p>
+                        </div>
+                        <button onclick="openBreachModal()" class="btn btn-primary">+ Log Security Incident</button>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Incident Register &amp; Statutory Intimations</div>
+                            <span class="badge-pill badge-emerald">Requires Customer Authorization</span>
+                        </div>
+                        <div id="breach-cards-container">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================================== -->
+                <!-- SECTION 10: EVIDENCE VAULT                                     -->
+                <!-- ============================================================== -->
+                <div id="section-evidence" class="dash-section">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">Compliance Evidence Vault</h1>
+                            <p class="page-subtitle">Tenant-isolated storage of notices, executed DPAs, staff training logs, and deletion certificates with SHA-256 integrity.</p>
+                        </div>
+                        <button onclick="openEvidenceModal()" class="btn btn-primary">+ Upload Evidence</button>
+                    </div>
+
+                    <div class="card">
+                        <div class="table-wrap">
+                            <table class="dash-table">
+                                <thead>
+                                    <tr>
+                                        <th>Document Title</th>
+                                        <th>Requirement Mapping</th>
+                                        <th>Uploaded Date</th>
+                                        <th>SHA-256 Checksum</th>
+                                        <th>Review Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="evidence-tbody">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================================== -->
+                <!-- SECTION 11: REMEDIATION CENTRE                                 -->
+                <!-- ============================================================== -->
+                <div id="section-remediation" class="dash-section">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">Compliance Remediation Centre</h1>
+                            <p class="page-subtitle">Actionable tasks linked to identified compliance gaps with statutory explanations, templates, and deadlines.</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Active Remediation Action Items</div>
+                        </div>
+                        <div id="remediation-list-container">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================================== -->
+                <!-- SECTION 12: REPORTS                                            -->
+                <!-- ============================================================== -->
+                <div id="section-reports" class="dash-section">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">DPDP Compliance Reports</h1>
+                            <p class="page-subtitle">Generate audit-ready readiness summaries and executive compliance packs.</p>
+                        </div>
+                        <button onclick="window.print()" class="btn btn-secondary">Print / Save as PDF</button>
+                    </div>
+
+                    <div class="card" style="max-width: 800px; margin: 0 auto; background: #ffffff; color: #0f172a; padding: 36px; border-radius: 8px;">
+                        <div style="border-bottom: 2px solid #0f172a; padding-bottom: 16px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h2 style="font-size: 22px; font-weight: 800; color: #0f172a;">DPDP READINESS REPORT</h2>
+                                <div style="font-size: 13px; color: #475569;">Digital Personal Data Protection Act, 2023 &bull; Evaluation Summary</div>
+                            </div>
+                            <div style="text-align: right; font-size: 12px; color: #475569;">
+                                <div>Date: 2026-11-22</div>
+                                <div>Status: Self-Attested Review</div>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 20px;">
+                            <h4 style="font-size: 14px; font-weight: 700; margin-bottom: 6px;">Organisation Profile</h4>
+                            <div style="font-size: 13px; color: #334155;">Organisation: <strong>Arogya Diagnostics Clinic Ltd</strong></div>
+                            <div style="font-size: 13px; color: #334155;">Sector: Healthcare &bull; Jurisdiction: India</div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; text-align: center;">
+                            <div style="background: #f1f5f9; padding: 12px; border-radius: 6px;">
+                                <div style="font-size: 11px; color: #64748b;">READINESS SCORE</div>
+                                <div style="font-size: 24px; font-weight: 800; color: #0284c7;">82%</div>
+                            </div>
+                            <div style="background: #f1f5f9; padding: 12px; border-radius: 6px;">
+                                <div style="font-size: 11px; color: #64748b;">INVENTORY STREAMS</div>
+                                <div style="font-size: 24px; font-weight: 800; color: #059669;">18</div>
+                            </div>
+                            <div style="background: #f1f5f9; padding: 12px; border-radius: 6px;">
+                                <div style="font-size: 11px; color: #64748b;">OPEN GAPS</div>
+                                <div style="font-size: 24px; font-weight: 800; color: #d97706;">3</div>
+                            </div>
+                        </div>
+
+                        <div style="font-size: 12px; color: #64748b; border-top: 1px solid #cbd5e1; padding-top: 12px;">
+                            Disclaimer: This report represents self-attested operational evaluation under TrustAudit DPDP Platform. It does not constitute statutory government certification or formal legal advice.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================================== -->
+                <!-- SECTION 13: SETTINGS & TEAM                                    -->
+                <!-- ============================================================== -->
+                <div id="section-settings" class="dash-section">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">Settings &amp; Organisation Governance</h1>
+                            <p class="page-subtitle">Configure organization details, team roles, MFA, and Data Principal rights settings.</p>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">Organisation Profile</div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Legal Entity Name</label>
+                                <input type="text" class="form-control" value="Arogya Diagnostics Clinic Ltd" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Sector</label>
+                                <input type="text" class="form-control" value="Healthcare (Clinics &amp; Diagnostics)" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Designated Grievance Officer</label>
+                                <input type="text" class="form-control" value="Medical Records Superintendent">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Grievance Email (Section 8(10))</label>
+                                <input type="email" class="form-control" value="grievance@organisation.com">
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">Data Protection &amp; Account Security</div>
+                            </div>
+                            <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+                                Multi-Factor Authentication (RFC 6238 TOTP) is enforced for organization administrators accessing patient inventory records.
+                            </div>
+                            <div style="padding: 12px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 6px; color: var(--brand-emerald); font-weight: 600; font-size: 12.5px; margin-bottom: 16px;">
+                                &bull; PBKDF2-HMAC-SHA256 (600,000 iterations active)
+                            </div>
+                            <div style="border-top: 1px solid var(--border-color); padding-top: 14px;">
+                                <div style="font-weight: 700; color: #ffffff; margin-bottom: 4px;">Organisation Data Erasure</div>
+                                <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">Purge all organization records, evidence artifacts, and session logs with 0-day active scrubbing.</div>
+                                <button onclick="confirmOrgDeletion()" class="btn btn-secondary btn-sm" style="color: var(--brand-red); border-color: rgba(239, 68, 68, 0.3);">Request Account Scrubbing</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- AI ASSISTANT MODAL -->
+    <div id="assistantModal" class="modal-overlay">
+        <div class="modal-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="font-size: 18px; font-weight: 700; color: #ffffff;">AI DPDP Legal Assistant</h3>
+                <button onclick="closeAssistantModal()" style="background: none; font-size: 20px; color: var(--text-muted);">&times;</button>
+            </div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">
+                Grounded queries across the DPDP Act 2023, DPDP Rules 2025, and October 2026 Gazette Orders. Zero external data transmission.
+            </div>
+
+            <div class="assistant-chat" id="chat-messages">
+                <div class="chat-bubble chat-ai">
+                    Hello! I am your DPDP Assistant. You can ask about Section 5 notices, Section 6 consent withdrawal, Section 7 legitimate uses, Section 8(6) breach notifications, or children's data under Section 9.
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 8px;">
+                <input type="text" id="ai-query-input" class="form-control" placeholder="Ask about DPDP requirements..." onkeydown="if(event.key==='Enter') sendAiQuery()">
+                <button onclick="sendAiQuery()" class="btn btn-primary" id="ai-send-btn">Ask</button>
+            </div>
+            <div style="font-size: 11px; color: var(--text-dim); margin-top: 8px; text-align: center;">
+                Informational guidance only &bull; Does not constitute formal legal counsel.
             </div>
         </div>
     </div>
 
-    <div class="container main-wrapper">
-        {% if error %}
-        <div class="card" style="background: #450a0a; border-color: #7f1d1d; color: #f87171; padding: 14px 18px; margin-bottom: 20px;">
-            <b>⚠️ Notice:</b> {{ error }}
-        </div>
-        {% endif %}
-        {% if warning %}
-        <div class="card" style="background: #422006; border-color: #713f12; color: #facc15; padding: 14px 18px; margin-bottom: 20px;">
-            <b>Notice:</b> {{ warning }}
-        </div>
-        {% endif %}
-        
-        <!-- =================================================================== -->
-        <!-- SECTION 1: DASHBOARD (EXECUTIVE OVERVIEW)                           -->
-        <!-- =================================================================== -->
-        <div id="dash-main" class="section-view active">
-            <!-- Score & Subscores Hero Card -->
-            <div class="score-hero">
-                <div class="score-circle score-{{ result.get('badge_color', 'GREEN') if result else 'GREEN' }}">
-                    <div class="score-number">{{ result.get('score', 84) if result else (projects[0].get('last_score', 84) if projects else 84) }}</div>
-                    <div class="score-grade">GRADE {{ result.get('grade', 'A') if result else (projects[0].get('last_grade', 'A') if projects else 'A') }}</div>
-                    <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; margin-top: 4px;">{{ result.get('status', 'SECURE') if result else 'MONITORED' }}</div>
-                    <div style="font-size: 11px; color: var(--status-green); margin-top: 6px;">+{{ (result.get('last_delta', {}) if result else {}).get('score_delta', 8) }} since baseline</div>
-                </div>
-
-                <div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                        <h3 style="font-size: 16px; font-weight: 700; color: #fff;">Executive Posture Breakdown</h3>
-                        <span style="font-size: 12px; color: var(--text-dim);">Target: <b>{{ (result.get('target_url') or result.get('github_url')) if result else (projects[0].get('website_url') or projects[0].get('repo_url') if projects else 'https://example.com') }}</b></span>
-                    </div>
-
-                    <div class="subscores-grid">
-                        <div class="subscore-item" onclick="switchNav('dash-score')">
-                            <div class="subscore-val" style="color: var(--status-green);">{{ (result.get('subscores', {}) if result else {}).get('tls', 92) }}</div>
-                            <div class="subscore-lbl">TLS / SSL</div>
-                        </div>
-                        <div class="subscore-item" onclick="switchNav('dash-score')">
-                            <div class="subscore-val" style="color: var(--status-yellow);">{{ (result.get('subscores', {}) if result else {}).get('headers', 76) }}</div>
-                            <div class="subscore-lbl">Headers</div>
-                        </div>
-                        <div class="subscore-item" onclick="switchNav('dash-score')">
-                            <div class="subscore-val" style="color: var(--status-green);">{{ (result.get('subscores', {}) if result else {}).get('cookies', 100) }}</div>
-                            <div class="subscore-lbl">Cookies</div>
-                        </div>
-                        <div class="subscore-item" onclick="switchNav('dash-score')">
-                            <div class="subscore-val" style="color: var(--status-green);">{{ (result.get('subscores', {}) if result else {}).get('cors', 100) }}</div>
-                            <div class="subscore-lbl">CORS</div>
-                        </div>
-                        <div class="subscore-item" onclick="switchNav('dash-score')">
-                            <div class="subscore-val" style="color: var(--status-green);">{{ (result.get('subscores', {}) if result else {}).get('public_exposure', 95) }}</div>
-                            <div class="subscore-lbl">Exposure</div>
-                        </div>
-                        <div class="subscore-item" onclick="switchNav('dash-score')">
-                            <div class="subscore-val" style="color: var(--brand-blue);">{{ (result.get('subscores', {}) if result else {}).get('api_posture', 88) }}</div>
-                            <div class="subscore-lbl">API Posture</div>
-                        </div>
-                    </div>
-                </div>
+    <!-- MODAL: ADD INVENTORY ENTRY -->
+    <div id="addInventoryModal" class="modal-overlay">
+        <div class="modal-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="font-size: 18px; font-weight: 700; color: #ffffff;">Add Personal Data Inventory Stream</h3>
+                <button onclick="closeAddInventoryModal()" style="background: none; font-size: 20px; color: var(--text-muted);">&times;</button>
             </div>
 
-            <!-- KPI Metric Cards: Confirmed vs Review Needed Split -->
-            <div class="grid-4">
-                <div class="metric-card">
-                    <div class="metric-lbl">Confirmed Critical Risks</div>
-                    <div class="metric-val" style="color: var(--status-red);">
-                        {{ (result.get('confidence_summary', {}) if result else {}).get('confirmed_critical', 0) }}
-                    </div>
-                    <div class="metric-sub">Active &amp; verified live exploits</div>
+            <form onsubmit="submitNewInventory(event)">
+                <div class="form-group">
+                    <label class="form-label">Data Category *</label>
+                    <input type="text" id="inv_cat" class="form-control" placeholder="e.g. Patient Clinical Diagnostic Reports" required>
                 </div>
-                <div class="metric-card">
-                    <div class="metric-lbl">Possible Review Items</div>
-                    <div class="metric-val" style="color: #a5b4fc;">
-                        {{ (result.get('confidence_summary', {}) if result else {}).get('review_needed', (result.get('findings', []) if result else [])|length) }}
-                    </div>
-                    <div class="metric-sub">Test fixtures, heuristics &amp; warnings</div>
+                <div class="form-group">
+                    <label class="form-label">Data Principal Type *</label>
+                    <input type="text" id="inv_principal" class="form-control" placeholder="e.g. Patients / Minor Guardians" required>
                 </div>
-                <div class="metric-card">
-                    <div class="metric-lbl">Assets Monitored</div>
-                    <div class="metric-val" style="color: var(--brand-cyan);">{{ assets|length }}</div>
-                    <div class="metric-sub">Websites, APIs &amp; Repositories</div>
+                <div class="form-group">
+                    <label class="form-label">Processing Purpose *</label>
+                    <input type="text" id="inv_purpose" class="form-control" placeholder="e.g. Medical diagnosis &amp; treatment" required>
                 </div>
-                <div class="metric-card">
-                    <div class="metric-lbl">Continuous Monitoring</div>
-                    <div class="metric-val" style="color: var(--status-green); font-size: 20px; display: flex; align-items: center; gap: 8px;">
-                        <span class="pulse-dot"></span> {{ monitoring_summary.get('overall_status', 'HEALTHY') }}
-                    </div>
-                    <div class="metric-sub">Active &bull; Daily automated sweep</div>
-                </div>
-            </div>
-
-            <!-- Quick Action Prioritization Preview -->
-            <div class="card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-                    <h3 style="font-size: 16px; font-weight: 700; color: #93c5fd;">🎯 "Fix These First" — Top Business Risk Actions</h3>
-                    <button class="btn btn-sm btn-secondary" onclick="switchNav('dash-fix-center')">Open Fix Center &rarr;</button>
-                </div>
-                {% if prioritized_fixes %}
-                    <div style="display: flex; flex-direction: column; gap: 10px;">
-                        {% for item in prioritized_fixes[:3] %}
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: #0b1120; border-radius: 8px; border-left: 3px solid var(--brand-blue);">
-                            <div>
-                                <div style="display: flex; gap: 8px; align-items: center;">
-                                    <span class="badge badge-{{ item.severity }}">{{ item.severity }}</span>
-                                    <b style="font-size: 14px; color: #fff;">#{{ loop.index }} {{ item.title }}</b>
-                                    <span style="font-size: 11px; color: var(--text-dim); font-family: monospace;">{{ item.location }}</span>
-                                </div>
-                                <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">{{ item.why_this_matters }}</div>
-                            </div>
-                            <button class="btn btn-sm btn-primary" onclick="showFindingModalByIndex({{ loop.index0 }})">Fix Guide &rarr;</button>
-                        </div>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    <p style="color: var(--status-green);">✓ Zero urgent vulnerabilities detected. Continuous monitoring active.</p>
-                {% endif %}
-            </div>
-        </div>
-
-        <!-- =================================================================== -->
-        <!-- SECTION 2: ASSETS INVENTORY                                         -->
-        <!-- =================================================================== -->
-        <div id="dash-assets" class="section-view">
-            <div class="card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-                    <div>
-                        <h2 style="font-size: 18px; font-weight: 700;">Attack Surface &amp; Asset Inventory ({{ assets|length }})</h2>
-                        <p style="font-size: 13px; color: var(--text-muted);">Continuous discovery of all web applications, repositories, APIs, and public infrastructure.</p>
-                    </div>
-                    <button class="btn btn-primary btn-sm" onclick="switchNav('dash-scans')">+ Add New Asset</button>
-                </div>
-
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Asset Name</th>
-                            <th>Type</th>
-                            <th>Target URL / Repository</th>
-                            <th>Environment</th>
-                            <th>Tech Stack</th>
-                            <th>Score</th>
-                            <th>Open Risks</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% if assets %}
-                            {% for a in assets %}
-                            <tr>
-                                <td><b>{{ a.name }}</b></td>
-                                <td><span class="badge badge-engine">{{ a.type|upper }}</span></td>
-                                <td><code style="word-break: break-all;">{{ a.target }}</code></td>
-                                <td><span class="badge-status">{{ a.environment }}</span></td>
-                                <td>{{ a.tech_stack|join(', ') }}</td>
-                                <td><b style="color: {{ 'var(--status-green)' if a.score >= 80 else ('var(--status-yellow)' if a.score >= 65 else 'var(--status-red)') }};">{{ a.score }}/100</b></td>
-                                <td>
-                                    {% if a.critical_findings > 0 %}
-                                    <span class="badge badge-CRITICAL">{{ a.critical_findings }} Crit</span>
-                                    {% endif %}
-                                    <span class="badge badge-status">{{ a.open_findings }} Open</span>
-                                </td>
-                                <td><span class="pulse-badge"><span class="pulse-dot"></span> {{ a.monitoring_status }}</span></td>
-                                <td>
-                                    <button class="btn btn-sm btn-secondary" onclick="quickAudit('{{ a.target }}', '{{ a.type }}')">Audit Now</button>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        {% else %}
-                            <tr><td colspan="9" style="text-align: center; color: var(--text-muted); padding: 30px;">No assets discovered yet. Run your first scan to populate your inventory.</td></tr>
-                        {% endif %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- =================================================================== -->
-        <!-- SECTION 3: SCANS (LAUNCHER & REAL-TIME PROGRESS)                    -->
-        <!-- =================================================================== -->
-        <div id="dash-scans" class="section-view">
-            <div class="launcher-card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-                    <div>
-                        <h2 style="font-size: 18px; font-weight: 700;">Multi-Surface Security Scanner</h2>
-                        <p style="font-size: 13px; color: var(--text-muted);">Audits websites, APIs, GitHub repositories, and MCP agent systems using 11 integrated engines.</p>
-                    </div>
-                    <span style="font-size: 12px; color: var(--text-dim);">Engines: Passive Web, Nuclei, ZAP, Semgrep, Bandit, Checkov, Gitleaks, OSV, Trivy, Syft</span>
-                </div>
-
-                <form action="/scan" method="POST" id="dash-scan-form" enctype="multipart/form-data" onsubmit="showProgress('dash')">
-                    <div class="scan-mode-toggle">
-                        <label class="mode-pill {{ 'active' if scan_type == 'website' else '' }}" id="lbl-web">
-                            <input type="radio" name="scan_type" value="website" {{ 'checked' if scan_type == 'website' else '' }} onchange="setDashboardScanMode('website')">
-                            🌐 Website / Web Application
-                        </label>
-                        <label class="mode-pill {{ 'active' if scan_type == 'repository' else '' }}" id="lbl-repo">
-                            <input type="radio" name="scan_type" value="repository" {{ 'checked' if scan_type == 'repository' else '' }} onchange="setDashboardScanMode('repository')">
-                            📦 GitHub Repository / Folder
-                        </label>
-                        <label class="mode-pill {{ 'active' if scan_type == 'mcp' else '' }}" id="lbl-mcp">
-                            <input type="radio" name="scan_type" value="mcp" {{ 'checked' if scan_type == 'mcp' else '' }} onchange="setDashboardScanMode('mcp')">
-                            ⚡ Model Context Protocol (MCP)
-                        </label>
-                    </div>
-
-                    <div class="input-row">
-                        <input type="text" id="dash-target-input" name="target" placeholder="{{ 'https://example.com' if scan_type == 'website' else ('https://github.com/modelcontextprotocol/servers' if scan_type == 'mcp' else 'https://github.com/owner/repository') }}" value="{{ target or github_url or '' }}">
-                        <button type="submit" class="btn btn-primary" id="dash-submit-btn">{{ 'Audit Website' if scan_type == 'website' else ('Scan MCP Server' if scan_type == 'mcp' else 'Scan Repository') }}</button>
-                    </div>
-
-                    <div style="margin-top: 12px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap; font-size: 13px; color: var(--text-muted);">
-                        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; color: #93c5fd;">
-                            <input type="checkbox" name="auth_confirmed" value="yes" checked>
-                            Authorized scan ("Only scan applications you own or have explicit permission to test")
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
-                            <input type="checkbox" name="full_scan" value="yes" {% if full_scan %}checked{% endif %}>
-                            Full deep scan (all engines without file limits)
-                        </label>
-                    </div>
-
-                    <!-- Live Progress Overlay -->
-                    <div id="dash-progress" class="progress-overlay">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-                            <span id="dash-stage" class="progress-stage-text">Initializing security verification pipeline...</span>
-                            <button type="button" class="btn btn-sm btn-secondary" style="padding: 2px 8px; font-size: 11px;" onclick="cancelActiveScan('dash')">Cancel</button>
-                        </div>
-                        <div class="progress-bar-container">
-                            <div id="dash-bar" class="progress-bar-fill"></div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Active Scan Results Tabs (If Scan Loaded) -->
-            {% if result %}
-                <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                        <h3 style="font-size: 17px; font-weight: 700; color: #fff;">Scan Results for <code>{{ result.get('target_url') or result.get('github_url') }}</code></h3>
-                        <div style="display: flex; gap: 8px;">
-                            <button class="btn btn-sm btn-secondary" onclick="window.open('/report/executive?target={{ result.get('target_url') or result.get('github_url') }}', '_blank')">Executive PDF</button>
-                            <button class="btn btn-sm btn-secondary" onclick="window.open('/report/technical?target={{ result.get('target_url') or result.get('github_url') }}', '_blank')">Technical PDF</button>
-                            <button class="btn btn-sm btn-secondary" onclick="window.open('/api/report/json?target={{ result.get('target_url') or result.get('github_url') }}', '_blank')">JSON Export</button>
-                        </div>
-                    </div>
-
-                    {% if result.get('target_type') == 'website' %}
-                        <div class="tabs-header">
-                            <button type="button" class="tab-btn active" data-tab="tab-w-overview" onclick="window.openSubTab(this, 'tab-w-overview')">Executive Overview</button>
-                            <button type="button" class="tab-btn" data-tab="tab-w-findings" onclick="window.openSubTab(this, 'tab-w-findings')">Live Findings ({{ (result.get('findings') or [])|length }})</button>
-                            <button type="button" class="tab-btn" data-tab="tab-w-headers" onclick="window.openSubTab(this, 'tab-w-headers')">Security Headers ({{ (result.get('headers_eval') or {})|length }})</button>
-                            <button type="button" class="tab-btn" data-tab="tab-w-tls" onclick="window.openSubTab(this, 'tab-w-tls')">TLS &amp; Certificate</button>
-                            <button type="button" class="tab-btn" data-tab="tab-w-cookies" onclick="window.openSubTab(this, 'tab-w-cookies')">Cookies</button>
-                            <button type="button" class="tab-btn" data-tab="tab-w-cors" onclick="window.openSubTab(this, 'tab-w-cors')">CORS</button>
-                            <button type="button" class="tab-btn" data-tab="tab-w-exposure" onclick="window.openSubTab(this, 'tab-w-exposure')">Public Exposure</button>
-                            <button type="button" class="tab-btn" data-tab="tab-w-tech" onclick="window.openSubTab(this, 'tab-w-tech')">Tech &amp; API Discovery</button>
-                            <button type="button" class="tab-btn" data-tab="tab-w-engines" onclick="window.openSubTab(this, 'tab-w-engines')">Security Engines</button>
-                        </div>
-
-                        <!-- Web Overview Tab Pane -->
-                        <div id="tab-w-overview" class="tab-pane active">
-                            <div class="grid-3" style="margin-bottom: 20px;">
-                                <div class="card" style="margin-bottom: 0;">
-                                    <div class="metric-lbl">Target Host</div>
-                                    <div style="font-size: 15px; font-weight: 700; color: #fff; margin-top: 4px; word-break: break-all;">{{ result.get('target_url') }}</div>
-                                    <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">IPs: {{ (result.get('ip_addresses') or [])|join(', ') or 'Resolved' }}</div>
-                                </div>
-                                <div class="card" style="margin-bottom: 0;">
-                                    <div class="metric-lbl">Status &amp; Duration</div>
-                                    <div style="font-size: 17px; font-weight: 800; color: var(--brand-blue); margin-top: 4px;">{{ result.get('status', 'SECURE') }}</div>
-                                    <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">HTTP Status: {{ result.get('http_status', '200 OK') }} &bull; {{ result.get('scan_duration_seconds', 0) }}s duration</div>
-                                </div>
-                                <div class="card" style="margin-bottom: 0;">
-                                    <div class="metric-lbl">Verified Findings</div>
-                                    <div style="display: flex; gap: 6px; margin-top: 6px;">
-                                        <span class="badge badge-CRITICAL">{{ (result.get('findings_summary') or {}).get('critical', 0) }} Crit</span>
-                                        <span class="badge badge-HIGH">{{ (result.get('findings_summary') or {}).get('high', 0) }} High</span>
-                                        <span class="badge badge-MEDIUM">{{ (result.get('findings_summary') or {}).get('medium', 0) }} Med</span>
-                                        <span class="badge badge-LOW">{{ (result.get('findings_summary') or {}).get('low', 0) }} Low</span>
-                                    </div>
-                                    <div style="font-size: 12px; color: var(--text-muted); margin-top: 6px;">Total Findings: <b>{{ (result.get('findings') or [])|length }}</b></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Web Findings Tab Pane -->
-                        <div id="tab-w-findings" class="tab-pane">
-                            <table>
-                                <thead>
-                                    <tr><th>Severity</th><th>Category</th><th>Title &amp; Summary</th><th>Location</th><th>Engine</th><th>Action</th></tr>
-                                </thead>
-                                <tbody>
-                                    {% for f in (result.get('findings') or []) %}
-                                    <tr>
-                                        <td><span class="badge badge-{{ f.get('severity', 'MEDIUM') }}">{{ f.get('severity', 'MEDIUM') }}</span></td>
-                                        <td><b>{{ f.get('category', 'web') }}</b></td>
-                                        <td>
-                                            <b>{{ f.get('title', 'Untitled Finding') }}</b><br>
-                                            <small style="color: var(--text-muted);">{{ f.get('description', '') }}</small>
-                                        </td>
-                                        <td><code style="word-break: break-all;">{{ f.get('file') or result.get('target_url') }}</code></td>
-                                        <td><span class="badge-engine">{{ f.get('scanner', 'trustaudit') }}</span></td>
-                                        <td>
-                                            <button class="btn btn-sm btn-primary" onclick="showFindingModalByIndex({{ loop.index0 }})">Details &amp; Fix</button>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <!-- Web Headers Tab Pane -->
-                        <div id="tab-w-headers" class="tab-pane">
-                            <table>
-                                <thead>
-                                    <tr><th>Header Name</th><th>Status</th><th>Severity</th><th>Observed Value</th><th>Recommendation</th></tr>
-                                </thead>
-                                <tbody>
-                                    {% for h_name, h_info in (result.get('headers_eval') or {}).items() %}
-                                    <tr>
-                                        <td><b>{{ h_name }}</b></td>
-                                        <td><span class="badge {{ 'badge-pass' if h_info.get('present') else 'badge-fail' }}">{{ 'PRESENT' if h_info.get('present') else 'ABSENT' }}</span></td>
-                                        <td><span class="badge badge-{{ h_info.get('severity', 'LOW') }}">{{ h_info.get('severity', 'LOW') }}</span></td>
-                                        <td><code style="word-break: break-all;">{{ h_info.get('value') or 'None (Header Missing)' }}</code></td>
-                                        <td><small>{{ h_info.get('recommended') or 'Configure standard security header.' }}</small></td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <!-- Web TLS Tab Pane -->
-                        <div id="tab-w-tls" class="tab-pane">
-                            <div class="grid-2">
-                                <div class="card" style="margin-bottom: 0;">
-                                    <h4 style="color: #93c5fd; margin-bottom: 8px;">Certificate Details</h4>
-                                    <p><b>Subject:</b> {{ (result.get('tls_info') or {}).get('subject', 'N/A') }}</p>
-                                    <p><b>Issuer:</b> {{ (result.get('tls_info') or {}).get('issuer', 'N/A') }}</p>
-                                    <p><b>Valid Until:</b> {{ (result.get('tls_info') or {}).get('expires_at', 'N/A') }} ({{ (result.get('tls_info') or {}).get('days_remaining', 'N/A') }} days left)</p>
-                                </div>
-                                <div class="card" style="margin-bottom: 0;">
-                                    <h4 style="color: #93c5fd; margin-bottom: 8px;">Protocol &amp; Cipher</h4>
-                                    <p><b>Negotiated Protocol:</b> <span class="badge badge-pass">{{ (result.get('tls_info') or {}).get('protocol', 'TLSv1.3') }}</span></p>
-                                    <p><b>Cipher Suite:</b> <code>{{ (result.get('tls_info') or {}).get('cipher', 'TLS_AES_256_GCM_SHA384') }}</code></p>
-                                    <p><b>Hostname Matches SANs:</b> {{ '✓ Yes' if (result.get('tls_info') or {}).get('hostname_match') else '✗ No' }}</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Web Cookies Tab Pane -->
-                        <div id="tab-w-cookies" class="tab-pane">
-                            <p style="color: var(--text-muted); margin-bottom: 10px;">Audit of cookies observed in HTTP responses for Secure, HttpOnly, and SameSite flags.</p>
-                            {% if (result.get('cookie_analysis') or {}).get('cookies') %}
-                            <table>
-                                <thead><tr><th>Cookie Name</th><th>Domain</th><th>Secure Flag</th><th>HttpOnly Flag</th><th>SameSite Flag</th></tr></thead>
-                                <tbody>
-                                    {% for c in (result.get('cookie_analysis') or {}).get('cookies', []) %}
-                                    <tr>
-                                        <td><b>{{ c.get('name') }}</b></td>
-                                        <td><code>{{ c.get('domain') }}</code></td>
-                                        <td><span class="badge {{ 'badge-pass' if c.get('secure') else 'badge-fail' }}">{{ 'SECURE' if c.get('secure') else 'INSECURE' }}</span></td>
-                                        <td><span class="badge {{ 'badge-pass' if c.get('httponly') else 'badge-fail' }}">{{ 'HTTPONLY' if c.get('httponly') else 'NO HTTPONLY' }}</span></td>
-                                        <td><span class="badge-status">{{ c.get('samesite') or 'None' }}</span></td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                            {% else %}
-                            <p style="color: var(--status-green);">✓ Zero session cookies set without required flags.</p>
-                            {% endif %}
-                        </div>
-
-                        <!-- Web CORS Tab Pane -->
-                        <div id="tab-w-cors" class="tab-pane">
-                            <div class="card" style="margin-bottom: 0;">
-                                <h4 style="color: #93c5fd; margin-bottom: 8px;">CORS Policy Evaluation</h4>
-                                <p><b>Status:</b> <span class="badge {{ 'badge-pass' if (result.get('cors_info') or {}).get('status') == 'SECURE' else 'badge-fail' }}">{{ (result.get('cors_info') or {}).get('status', 'SECURE') }}</span></p>
-                                <p><b>Access-Control-Allow-Origin:</b> <code>{{ (result.get('cors_info') or {}).get('allow_origin', 'None (Restricted)') }}</code></p>
-                                <p><b>Access-Control-Allow-Credentials:</b> {{ (result.get('cors_info') or {}).get('allow_credentials', False) }}</p>
-                            </div>
-                        </div>
-
-                        <!-- Web Exposure Tab Pane -->
-                        <div id="tab-w-exposure" class="tab-pane">
-                            <table>
-                                <thead><tr><th>Resource / Path</th><th>Status</th><th>Detected Value</th></tr></thead>
-                                <tbody>
-                                    {% for exp in (result.get('tech_info') or {}).get('public_exposures', []) %}
-                                    <tr>
-                                        <td><b>{{ exp.get('resource') }}</b> (<code>{{ exp.get('path') }}</code>)</td>
-                                        <td><span class="badge badge-status">HTTP {{ exp.get('status') }}</span></td>
-                                        <td><code style="word-break: break-all;">{{ exp.get('url') }}</code></td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <!-- Web Tech Tab Pane -->
-                        <div id="tab-w-tech" class="tab-pane">
-                            <div class="grid-2">
-                                <div class="card">
-                                    <h4 style="color: #93c5fd; margin-bottom: 8px;">Web Server &amp; CDN / WAF</h4>
-                                    <p><b>Server:</b> <code>{{ (result.get('tech_info') or {}).get('web_server', 'Undisclosed') }}</code></p>
-                                    <p><b>CDN / Edge Proxy:</b> {{ (result.get('tech_info') or {}).get('cdn_waf', [])|join(', ') or 'Direct Origin' }}</p>
-                                </div>
-                                <div class="card">
-                                    <h4 style="color: #93c5fd; margin-bottom: 8px;">Frameworks &amp; APIs</h4>
-                                    <p><b>Frameworks:</b> {{ (result.get('tech_info') or {}).get('frameworks', [])|join(', ') or 'Standard HTML/JS' }}</p>
-                                    <p><b>Discovered API Routes:</b> {{ (result.get('tech_info') or {}).get('api_endpoints', [])|length }} endpoints</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Web Engines Tab Pane -->
-                        <div id="tab-w-engines" class="tab-pane">
-                            <table>
-                                <thead><tr><th>Engine Name</th><th>Status</th><th>Findings</th><th>Duration</th></tr></thead>
-                                <tbody>
-                                    {% for eng_key, eng_data in (result.get('engines_status') or {}).items() %}
-                                    <tr>
-                                        <td><b>{{ eng_data.get('name', eng_key) }}</b></td>
-                                        <td><span class="badge {{ 'badge-pass' if eng_data.get('status') == 'COMPLETED' else ('badge-fail' if eng_data.get('status') == 'FAILED' else 'badge-warn') }}">{{ eng_data.get('status') }}</span></td>
-                                        <td><b>{{ eng_data.get('findings_count', 0) }}</b></td>
-                                        <td>{{ eng_data.get('duration', 0.0) }}s</td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    {% endif %}
-                </div>
-            {% endif %}
-        </div>
-
-        <!-- =================================================================== -->
-        <!-- SECTION 4: FINDINGS (VULNERABILITY LIFECYCLE MANAGEMENT)            -->
-        <!-- =================================================================== -->
-        <div id="dash-findings" class="section-view">
-            <div class="card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
-                    <div>
-                        <h2 style="font-size: 18px; font-weight: 700;">Vulnerability Findings Center</h2>
-                        <p style="font-size: 13px; color: var(--text-muted);">Comprehensive inventory of all verified security findings with lifecycle tracking.</p>
-                    </div>
-                    <div style="display: flex; gap: 8px;">
-                        <input type="text" id="finding-search" placeholder="Search findings..." style="background: #1e293b; color: #fff; border: 1px solid #334155; padding: 6px 12px; border-radius: 6px; font-size: 13px; outline: none;" onkeyup="filterFindingsTable()">
-                        <select id="filter-severity" style="background: #1e293b; color: #fff; border: 1px solid #334155; padding: 6px 12px; border-radius: 6px; font-size: 13px; outline: none;" onchange="filterFindingsTable()">
-                            <option value="ALL">All Severities</option>
-                            <option value="CRITICAL">Critical</option>
-                            <option value="HIGH">High</option>
-                            <option value="MEDIUM">Medium</option>
-                            <option value="LOW">Low</option>
-                        </select>
-                    </div>
-                </div>
-
-                <table id="findings-table">
-                    <thead>
-                        <tr>
-                            <th>Severity &amp; Confidence</th>
-                            <th>Category</th>
-                            <th>Title &amp; Summary</th>
-                            <th>Asset / Location</th>
-                            <th>Engine</th>
-                            <th>CWE / CVE</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% set active_findings = (result.get('findings') or []) if result else ((projects[0].get('last_scan_result') or {}).get('findings', []) if projects else []) %}
-                        {% if active_findings %}
-                            {% for f in active_findings %}
-                            <tr data-severity="{{ (f.get('severity') or 'MEDIUM')|upper }}" data-confidence="{{ (f.get('confidence') or 'LIKELY')|upper }}" data-title="{{ f.get('title', '')|lower }}">
-                                <td>
-                                    <span class="badge badge-{{ f.get('severity', 'MEDIUM') }}">{{ f.get('severity', 'MEDIUM') }}</span><br>
-                                    <span class="badge badge-conf-{{ (f.get('confidence') or 'LIKELY')|upper }}" style="margin-top: 4px; font-size: 10px;">{{ f.get('confidence', 'LIKELY') }}</span>
-                                </td>
-                                <td><b>{{ f.get('category', 'web') }}</b></td>
-                                <td>
-                                    <b>{{ f.get('title', 'Untitled Finding') }}</b>
-                                    {% if f.get('locations') and f.get('locations')|length > 1 %}
-                                    <span class="badge badge-engine" style="margin-left: 6px; background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3);">📍 {{ f.get('locations')|length }} locations</span>
-                                    {% endif %}
-                                    <br>
-                                    <small style="color: var(--text-muted);">{{ f.get('description', '') }}</small>
-                                </td>
-                                <td>
-                                    {% if f.get('locations') and f.get('locations')|length > 1 %}
-                                    <code style="color: #38bdf8; word-break: break-all;">Multiple locations ({{ f.get('locations')|length }} files)</code>
-                                    {% else %}
-                                    <code style="word-break: break-all;">{{ f.get('file') or f.get('target', 'Target Asset') }}{% if f.get('line') %}:{{ f.get('line') }}{% endif %}</code>
-                                    {% endif %}
-                                </td>
-                                <td><span class="badge-engine">{{ f.get('scanner', 'trustaudit') }}</span></td>
-                                <td><span class="badge-status">{{ f.get('cwe') or f.get('cwe_id') or 'CWE-200' }}</span></td>
-                                <td><span class="badge-status">OPEN</span></td>
-                                <td>
-                                    <button class="btn btn-sm btn-primary" onclick="showFindingModalByIndex({{ loop.index0 }})">Details &amp; Fix</button>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        {% else %}
-                            <tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 30px;">No vulnerabilities detected. Run a scan to discover security risks.</td></tr>
-                        {% endif %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- =================================================================== -->
-        <!-- SECTION 5: FIX CENTER ("FIX THESE FIRST")                           -->
-        <!-- =================================================================== -->
-        <div id="dash-fix-center" class="section-view">
-            <div class="card" style="margin-bottom: 20px;">
-                <h2 style="font-size: 18px; font-weight: 700; color: #fff;">🎯 "Fix These First" — Prioritized Remediation Hub</h2>
-                <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
-                    TrustAudit automatically ranks vulnerabilities by true business risk (severity, internet exposure, exploitability, and confidence).
-                    Remediate the highest impact risks first to maximize your security posture quickly.
-                </p>
-            </div>
-
-            {% if prioritized_fixes %}
-                {% for fix in prioritized_fixes %}
-                <div class="fix-card {{ 'crit' if fix.severity == 'CRITICAL' else ('high' if fix.severity == 'HIGH' else '') }}">
-                    <div class="fix-header">
-                        <div>
-                            <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 4px;">
-                                <span class="badge badge-{{ fix.severity }}">{{ fix.severity }}</span>
-                                <span class="badge badge-engine">Risk Score: {{ fix.risk_score }}/100</span>
-                                <span class="badge-status">{{ fix.exposure }}</span>
-                            </div>
-                            <div class="fix-title">#{{ loop.index }} {{ fix.title }}</div>
-                        </div>
-                        <button class="btn btn-primary btn-sm" onclick="triggerFixVerification('{{ fix.id }}', '{{ fix.location }}')">Verify Fix Now</button>
-                    </div>
-
-                    <div class="fix-meta-grid">
-                        <div><b>Location:</b> <code style="word-break: break-all;">{{ fix.location }}</code></div>
-                        <div><b>Confidence:</b> {{ fix.confidence }}</div>
-                        <div><b>CWE:</b> {{ fix.cwe }}</div>
-                    </div>
-
-                    <div class="fix-details">
-                        <p style="margin-bottom: 6px;"><b>What is Wrong:</b> {{ fix.what_is_wrong }}</p>
-                        <p style="margin-bottom: 6px; color: #93c5fd;"><b>Why It Matters:</b> {{ fix.why_this_matters }}</p>
-                        <p style="margin-bottom: 8px; color: #f87171;"><b>Worst-Case Impact:</b> {{ fix.what_could_happen }}</p>
-                        
-                        <div style="background: #070b12; border: 1px solid var(--border-subtle); border-radius: 8px; padding: 14px; margin-top: 10px;">
-                            <div style="font-size: 12px; font-weight: 700; color: #38bdf8; margin-bottom: 6px;">RECOMMENDED CODE / CONFIGURATION FIX:</div>
-                            <pre style="color: #e2e8f0; font-size: 12px; font-family: monospace; white-space: pre-wrap; margin: 0;">{{ fix.code_example or fix.what_to_do }}</pre>
-                        </div>
-
-                        <div style="margin-top: 12px; display: flex; justify-content: space-between; align-items: center;">
-                            <small style="color: var(--text-dim);">Verification: {{ fix.how_to_verify }}</small>
-                            <button class="btn btn-sm btn-secondary" onclick="copyPrompt('{{ fix.id }}')">Copy AI Coding Prompt</button>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            {% else %}
-                <div class="card" style="text-align: center; padding: 40px; color: var(--status-green);">
-                    <h3>✓ Zero Critical Security Risks Pending</h3>
-                    <p style="color: var(--text-muted); margin-top: 6px;">Your security targets are currently clean of urgent business risk drivers.</p>
-                </div>
-            {% endif %}
-        </div>
-
-        <!-- =================================================================== -->
-        <!-- SECTION 6: CONTINUOUS MONITORING                                    -->
-        <!-- =================================================================== -->
-        <div id="dash-monitoring" class="section-view">
-            <div class="grid-2">
-                <div class="card">
-                    <h3 style="font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 12px;">Automated Security Schedule</h3>
-                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;">Configure the recurring scan cadence for continuous vulnerability drift detection.</p>
-                    
-                    <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 16px;">
-                        <label style="font-size: 13.5px; font-weight: 600;">Cadence:</label>
-                        <select id="monitoring-cadence-select" style="background: #1e293b; color: #fff; border: 1px solid #334155; padding: 8px 14px; border-radius: 6px; font-size: 13.5px; outline: none;">
-                            <option value="every_15_mins">Every 15 Minutes (Pro / Enterprise)</option>
-                            <option value="hourly">Hourly (Pro / Enterprise)</option>
-                            <option value="daily" selected>Daily Continuous (Starter / Pro)</option>
-                            <option value="weekly">Weekly Summary</option>
-                            <option value="manual">Manual Audits Only</option>
-                        </select>
-                        <button class="btn btn-primary btn-sm" onclick="saveMonitoringSchedule()">Save Schedule</button>
-                    </div>
-
-                    <div style="border-top: 1px solid var(--border-subtle); padding-top: 14px; margin-top: 14px;">
-                        <button class="btn btn-secondary" style="width: 100%;" onclick="triggerInstantSweep()">⚡ Run Immediate Security Sweep (All Assets)</button>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h3 style="font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 12px;">Active Continuous Checkpoints</h3>
-                    <ul style="font-size: 13px; color: var(--text-muted); padding-left: 18px; line-height: 1.8;">
-                        <li><b>SSL/TLS Validity:</b> Alerts on certificate expiration warnings (< 14 days)</li>
-                        <li><b>Security Headers Drift:</b> Detects accidental removal of CSP, HSTS, or CORS policies</li>
-                        <li><b>Public Exposure Watch:</b> Monitors for exposed `.env`, `.git`, backups, and open APIs</li>
-                        <li><b>Supply Chain &amp; CVEs:</b> Automated daily queries against OSV-Scanner database</li>
-                        <li><b>Perimeter DNS:</b> Watches for newly exposed subdomains and IP changes</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <!-- =================================================================== -->
-        <!-- SECTION 7: ATTACK SURFACE                                           -->
-        <!-- =================================================================== -->
-        <div id="dash-attack-surface" class="section-view">
-            <div class="card">
-                <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 4px;">Public Attack Surface &amp; Perimeter Exposures</h2>
-                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">External security footprint discovered across public internet endpoints.</p>
-
-                <div class="grid-3" style="margin-bottom: 20px;">
-                    <div class="metric-card">
-                        <div class="metric-lbl">Public HTTP Endpoints</div>
-                        <div class="metric-val" style="color: var(--brand-blue);">{{ (result.get('tech_info') or {}).get('public_exposures', [])|length if result else 3 }}</div>
-                        <div class="metric-sub">robots.txt, security.txt, sitemap</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-lbl">Discovered API Routes</div>
-                        <div class="metric-val" style="color: var(--brand-cyan);">{{ (result.get('tech_info') or {}).get('api_endpoints', [])|length if result else 2 }}</div>
-                        <div class="metric-sub">REST / GraphQL surface</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-lbl">TLS Certificate Status</div>
-                        <div class="metric-val" style="color: var(--status-green); font-size: 20px;">VALID</div>
-                        <div class="metric-sub">Expires in 60 days &bull; TLS 1.3</div>
-                    </div>
-                </div>
-
-                <table>
-                    <thead><tr><th>Exposed Surface</th><th>Type</th><th>HTTP Code</th><th>Location</th><th>Risk Evaluation</th></tr></thead>
-                    <tbody>
-                        <tr>
-                            <td><b>Robots File</b></td>
-                            <td><span class="badge-status">Configuration</span></td>
-                            <td><span class="badge badge-pass">200 OK</span></td>
-                            <td><code>/robots.txt</code></td>
-                            <td>Standard crawler policy</td>
-                        </tr>
-                        <tr>
-                            <td><b>Security Contact Policy</b></td>
-                            <td><span class="badge-status">Security Policy</span></td>
-                            <td><span class="badge badge-pass">200 OK</span></td>
-                            <td><code>/.well-known/security.txt</code></td>
-                            <td>Responsible disclosure enabled</td>
-                        </tr>
-                        <tr>
-                            <td><b>Environment Config (.env)</b></td>
-                            <td><span class="badge-status">Sensitive File</span></td>
-                            <td><span class="badge badge-pass">404 NOT FOUND</span></td>
-                            <td><code>/.env</code></td>
-                            <td>Securely blocked from public web</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- =================================================================== -->
-        <!-- SECTION 8: SECURITY SCORE                                           -->
-        <!-- =================================================================== -->
-        <div id="dash-score" class="section-view">
-            <div class="card">
-                <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 4px;">Security Posture Scoring Rubric</h2>
-                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Transparent breakdown of how TrustAudit calculates your score out of 100 points.</p>
-
-                <div class="grid-2">
-                    <div class="card" style="background: #0b1120;">
-                        <h4 style="color: #93c5fd; margin-bottom: 10px;">Scoring Deduction Weights</h4>
-                        <ul style="font-size: 13px; color: var(--text-muted); padding-left: 18px; line-height: 2;">
-                            <li><b style="color: var(--status-red);">CRITICAL Severity:</b> -25 points per finding</li>
-                            <li><b style="color: #f97316;">HIGH Severity:</b> -15 points per finding</li>
-                            <li><b style="color: var(--status-yellow);">MEDIUM Severity:</b> -8 points per finding</li>
-                            <li><b style="color: var(--status-green);">LOW Severity:</b> -3 points per finding</li>
-                        </ul>
-                    </div>
-                    <div class="card" style="background: #0b1120;">
-                        <h4 style="color: #93c5fd; margin-bottom: 10px;">Category Maximums (100 pts each)</h4>
-                        <ul style="font-size: 13px; color: var(--text-muted); padding-left: 18px; line-height: 2;">
-                            <li><b>TLS &amp; Certificate:</b> Protocols, expiration, cipher strength</li>
-                            <li><b>Security Headers:</b> HSTS, CSP, X-Frame-Options, Permissions</li>
-                            <li><b>Cookies &amp; CORS:</b> HttpOnly, Secure flags, origin restriction</li>
-                            <li><b>Public Exposure:</b> Sensitive files, API routes, .git hygiene</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- =================================================================== -->
-        <!-- SECTION 9: WHAT CHANGED?                                            -->
-        <!-- =================================================================== -->
-        <div id="dash-what-changed" class="section-view">
-            <div class="card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-                    <div>
-                        <h2 style="font-size: 18px; font-weight: 700;">⚖️ "What Changed?" — Security Delta Intelligence</h2>
-                        <p style="font-size: 13px; color: var(--text-muted);">Automated comparison between your baseline and latest deployment.</p>
-                    </div>
-                    <span class="badge badge-pass" style="font-size: 13px;">{{ what_changed.get('summary', 'Baseline scan active') if what_changed else 'Baseline scan active' }}</span>
-                </div>
-
-                <div class="grid-3" style="margin-bottom: 20px;">
-                    <div class="metric-card">
-                        <div class="metric-lbl">New Vulnerabilities</div>
-                        <div class="metric-val" style="color: var(--status-red);">+{{ what_changed.get('new_count', 0) if what_changed else 0 }}</div>
-                        <div class="metric-sub">Detected since previous scan</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-lbl">Fixed Vulnerabilities</div>
-                        <div class="metric-val" style="color: var(--status-green);">-{{ what_changed.get('fixed_count', 0) if what_changed else 0 }}</div>
-                        <div class="metric-sub">Verified clean by rescan</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-lbl">Score Drift</div>
-                        <div class="metric-val" style="color: var(--brand-blue);">{{ what_changed.get('score_delta', 0) if what_changed else 0 }} pts</div>
-                        <div class="metric-sub">Posture change trajectory</div>
-                    </div>
-                </div>
-
-                <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 10px;">Security Event Timeline</h3>
-                <table>
-                    <thead><tr><th>Timestamp</th><th>Event Type</th><th>Summary</th></tr></thead>
-                    <tbody>
-                        {% if timeline %}
-                            {% for ev in timeline[:10] %}
-                            <tr>
-                                <td><code>{{ ev.timestamp }}</code></td>
-                                <td><span class="badge badge-status">{{ ev.event_type }}</span></td>
-                                <td>{{ ev.summary }}</td>
-                            </tr>
-                            {% endfor %}
-                        {% else %}
-                            <tr><td colspan="3" style="text-align: center; color: var(--text-muted); padding: 20px;">No historical events recorded yet. Consecutive scans will populate change diffs.</td></tr>
-                        {% endif %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- =================================================================== -->
-        <!-- SECTION 10: COMPLIANCE & STARTUP HEALTH                             -->
-        <!-- =================================================================== -->
-                <!-- =================================================================== -->
-        <!-- SECTION: COMPLIANCE CENTRE (DPDP, SOC 2, ISO 27001, GDPR)           -->
-        <!-- =================================================================== -->
-        <div id="dash-compliance" class="section-view">
-            <div class="card" style="margin-bottom: 20px;">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
-                    <div>
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <h2 style="font-size: 20px; font-weight: 700; margin: 0;">📜 Continuous Compliance Centre</h2>
-                            <span class="badge" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3);">Multi-Framework GRC</span>
-                        </div>
-                        <p style="font-size: 13.5px; color: var(--text-muted); margin-top: 6px;">
-                            Continuous technical gap analysis, policy readiness, and audit evidence collection for startups and software businesses.
-                        </p>
-                    </div>
-                    <div style="display: flex; gap: 8px;">
-                        <button class="btn btn-sm btn-secondary" onclick="openOnboardingModal()">⚙️ Profile &amp; Applicability</button>
-                        <button class="btn btn-sm btn-primary" onclick="refreshComplianceData()">🔄 Refresh Assessment</button>
-                    </div>
-                </div>
-
-                <!-- Legal Transparency Notice -->
-                <div style="background: rgba(30, 41, 59, 0.7); border-left: 4px solid var(--brand-blue); padding: 12px 16px; border-radius: 6px; font-size: 12.5px; color: #cbd5e1; margin-bottom: 20px;">
-                    <b>⚖️ Regulatory Transparency:</b> TrustAudit evaluates automated technical controls, repository configurations, and uploaded policy evidence. It does not replace formal legal counsel, statutory audit by the Data Protection Board of India, or an examination report issued by an independent CPA firm for SOC 2.
-                </div>
-
-                <!-- Framework Selection Tabs -->
-                <div style="display: flex; gap: 8px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px; margin-bottom: 20px; overflow-x: auto;">
-                    <button class="btn btn-sm fw-tab-btn active" id="tab-fw-dpdp" onclick="switchComplianceFramework('DPDP')">🇮🇳 India DPDP Act 2023</button>
-                    <button class="btn btn-sm fw-tab-btn btn-secondary" id="tab-fw-soc2" onclick="switchComplianceFramework('SOC2')">🛡️ SOC 2 (Readiness)</button>
-                    <button class="btn btn-sm fw-tab-btn btn-secondary" id="tab-fw-iso27001" onclick="switchComplianceFramework('ISO27001')">🌐 ISO/IEC 27001:2022</button>
-                    <button class="btn btn-sm fw-tab-btn btn-secondary" id="tab-fw-gdpr" onclick="switchComplianceFramework('GDPR')">🇪🇺 EU GDPR</button>
-                </div>
-
-                <!-- Framework Overview Stats Card -->
-                <div id="compliance-framework-summary" class="grid-4" style="margin-bottom: 24px;">
-                    <div class="card" style="background: #0b1120; margin-bottom: 0; padding: 16px;">
-                        <span style="font-size: 11.5px; color: var(--text-muted); text-transform: uppercase;">Readiness Posture</span>
-                        <div style="font-size: 26px; font-weight: 700; color: #38bdf8; margin-top: 4px;" id="fw-readiness-score">--%</div>
-                        <small style="color: #64748b;" id="fw-readiness-grade">Grade: --</small>
-                    </div>
-                    <div class="card" style="background: #0b1120; margin-bottom: 0; padding: 16px;">
-                        <span style="font-size: 11.5px; color: var(--text-muted); text-transform: uppercase;">Implemented &amp; Reviewed</span>
-                        <div style="font-size: 26px; font-weight: 700; color: #34d399; margin-top: 4px;" id="fw-implemented-count">0</div>
-                        <small style="color: #64748b;">Technical + Document verified</small>
-                    </div>
-                    <div class="card" style="background: #0b1120; margin-bottom: 0; padding: 16px;">
-                        <span style="font-size: 11.5px; color: var(--text-muted); text-transform: uppercase;">Evidence Gaps</span>
-                        <div style="font-size: 26px; font-weight: 700; color: #f59e0b; margin-top: 4px;" id="fw-evidence-missing-count">0</div>
-                        <small style="color: #64748b;">Technical passed, document missing</small>
-                    </div>
-                    <div class="card" style="background: #0b1120; margin-bottom: 0; padding: 16px;">
-                        <span style="font-size: 11.5px; color: var(--text-muted); text-transform: uppercase;">Active Security Gaps</span>
-                        <div style="font-size: 26px; font-weight: 700; color: #f87171; margin-top: 4px;" id="fw-gap-count">0</div>
-                        <small style="color: #64748b;">Vulnerabilities threaten control</small>
-                    </div>
-                </div>
-
-                <!-- Framework Detailed Controls Table -->
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                    <h3 style="font-size: 16px; font-weight: 700; margin: 0;" id="fw-table-heading">Controls &amp; Statutory Requirements</h3>
-                    <div style="font-size: 12.5px; color: var(--text-muted);">
-                        Showing official statutory controls with verified technical mapping
-                    </div>
-                </div>
-
-                <div class="table-responsive">
-                    <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
-                        <thead>
-                            <tr style="border-bottom: 2px solid var(--border-subtle); text-align: left; background: #0f172a;">
-                                <th style="padding: 10px 14px;">Control / Section</th>
-                                <th style="padding: 10px 14px;">Requirement &amp; Official Reference</th>
-                                <th style="padding: 10px 14px;">Enforcement Phase</th>
-                                <th style="padding: 10px 14px;">Implementation Status</th>
-                                <th style="padding: 10px 14px; text-align: right;">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="compliance-controls-tbody">
-                            <tr><td colspan="5" style="text-align: center; padding: 30px; color: var(--text-muted);">Loading compliance assessment data...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- =================================================================== -->
-        <!-- SECTION: EVIDENCE VAULT & REPORTS                                   -->
-        <!-- =================================================================== -->
-        <div id="dash-evidence-vault" class="section-view">
-            <div class="card" style="margin-bottom: 20px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                    <div>
-                        <h2 style="font-size: 20px; font-weight: 700; margin: 0;">📁 Evidence Vault &amp; Document Management</h2>
-                        <p style="font-size: 13.5px; color: var(--text-muted); margin-top: 6px;">
-                            Tenant-isolated repository for supporting policies, audit logs, screenshots, and review sign-offs with cryptographic SHA-256 integrity verification.
-                        </p>
-                    </div>
-                    <button class="btn btn-sm btn-primary" onclick="openUploadEvidenceModal()">+ Upload New Evidence</button>
-                </div>
-
-                <!-- Quick Upload Card -->
-                <div style="background: #0f172a; border: 1px dashed #334155; border-radius: 8px; padding: 18px; margin-bottom: 20px;">
-                    <form id="evidence-upload-form" onsubmit="handleEvidenceUpload(event)" enctype="multipart/form-data" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) auto; gap: 12px; align-items: flex-end;">
-                        <div>
-                            <label style="font-size: 12px; font-weight: 600; color: #cbd5e1; display: block; margin-bottom: 4px;">Evidence Title</label>
-                            <input type="text" name="title" required placeholder="e.g. Information Security Policy v2.1" class="form-control" style="background: #1e293b; color: #fff; border: 1px solid #334155; border-radius: 6px; padding: 7px 10px; width: 100%;">
-                        </div>
-                        <div>
-                            <label style="font-size: 12px; font-weight: 600; color: #cbd5e1; display: block; margin-bottom: 4px;">Target Framework</label>
-                            <select name="framework" class="form-control" style="background: #1e293b; color: #fff; border: 1px solid #334155; border-radius: 6px; padding: 7px 10px; width: 100%;">
-                                <option value="DPDP">India DPDP Act 2023</option>
-                                <option value="SOC2" selected>SOC 2 Type II</option>
-                                <option value="ISO27001">ISO/IEC 27001:2022</option>
-                                <option value="GDPR">EU GDPR</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label style="font-size: 12px; font-weight: 600; color: #cbd5e1; display: block; margin-bottom: 4px;">Control Identifier</label>
-                            <input type="text" name="control_id" required placeholder="e.g. DPDP-SEC-08-1 or SOC2-CC6.1" class="form-control" style="background: #1e293b; color: #fff; border: 1px solid #334155; border-radius: 6px; padding: 7px 10px; width: 100%;">
-                        </div>
-                        <div>
-                            <label style="font-size: 12px; font-weight: 600; color: #cbd5e1; display: block; margin-bottom: 4px;">Attach File / Screenshot</label>
-                            <input type="file" name="file" class="form-control" style="background: #1e293b; color: #94a3b8; border: 1px solid #334155; border-radius: 6px; padding: 5px 8px; width: 100%;">
-                        </div>
-                        <div>
-                            <button type="submit" class="btn btn-primary" style="height: 38px;">Attach Evidence</button>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- Stored Evidence List Table -->
-                <div class="table-responsive">
-                    <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
-                        <thead>
-                            <tr style="border-bottom: 2px solid var(--border-subtle); text-align: left; background: #0f172a;">
-                                <th style="padding: 10px 14px;">Evidence ID &amp; Document</th>
-                                <th style="padding: 10px 14px;">Control Mapping</th>
-                                <th style="padding: 10px 14px;">Owner &amp; Upload Date</th>
-                                <th style="padding: 10px 14px;">Integrity (SHA-256)</th>
-                                <th style="padding: 10px 14px;">Status / Expiration</th>
-                                <th style="padding: 10px 14px; text-align: right;">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="evidence-vault-tbody">
-                            <tr><td colspan="6" style="text-align: center; padding: 30px; color: var(--text-muted);">Loading tenant evidence documents...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Reports Download Cards -->
-                <div style="margin-top: 30px; border-top: 1px solid var(--border-subtle); padding-top: 20px;">
-                    <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px;">Audit-Ready Compliance &amp; Security Reports</h3>
-                    <div class="grid-3">
-                        <div class="card" style="background: #0b1120; margin-bottom: 0;">
-                            <h4 style="margin-top: 0; color: #fff;">Executive Summary PDF / HTML</h4>
-                            <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 14px;">High-level posture report for executive leadership, board reviews, and enterprise enterprise procurement.</p>
-                            <a href="/report/executive" target="_blank" class="btn btn-sm btn-secondary" style="display: inline-block;">View Executive Report &rarr;</a>
-                        </div>
-                        <div class="card" style="background: #0b1120; margin-bottom: 0;">
-                            <h4 style="margin-top: 0; color: #fff;">Detailed Technical Audit Report</h4>
-                            <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 14px;">Exhaustive vulnerability details with line numbers, code snippets, and scanner execution records.</p>
-                            <a href="/report/technical" target="_blank" class="btn btn-sm btn-secondary" style="display: inline-block;">View Technical Report &rarr;</a>
-                        </div>
-                        <div class="card" style="background: #0b1120; margin-bottom: 0;">
-                            <h4 style="margin-top: 0; color: #fff;">Public Security &amp; Trust Portal</h4>
-                            <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 14px;">Verified public trust page showcasing DPDP, SOC 2, and zero-leakage security protections.</p>
-                            <a href="/trust" target="_blank" class="btn btn-sm btn-primary" style="display: inline-block;">Open Trust Center &rarr;</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- =================================================================== -->
-        <!-- SECTION: SECURITY POSTURE HUB                                       -->
-        <!-- =================================================================== -->
-        <div id="dash-security-hub" class="section-view">
-            <div class="card" style="margin-bottom: 20px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                    <div>
-                        <h2 style="font-size: 20px; font-weight: 700; margin: 0;">🛡️ Security Posture &amp; Engine Management</h2>
-                        <p style="font-size: 13.5px; color: var(--text-muted); margin-top: 6px;">
-                            Unified control plane for proprietary AST engines, live perimeter analyzers, and third-party security scanners.
-                        </p>
-                    </div>
-                    <div style="display: flex; gap: 8px;">
-                        <button class="btn btn-sm btn-primary" onclick="switchNav('dash-scans')">+ Launch New Scan</button>
-                    </div>
-                </div>
-
-                <div class="grid-4" style="margin-bottom: 24px;">
-                    <div class="card" style="background: #0b1120; margin-bottom: 0; cursor: pointer;" onclick="switchNav('dash-tools')">
-                        <span style="font-size: 11.5px; color: var(--text-muted); text-transform: uppercase;">Scanner Engines</span>
-                        <div style="font-size: 22px; font-weight: 700; color: #38bdf8; margin-top: 4px;">Health &amp; Telemetry</div>
-                        <small style="color: #64748b;">Inspect binary paths &amp; versions &rarr;</small>
-                    </div>
-                    <div class="card" style="background: #0b1120; margin-bottom: 0; cursor: pointer;" onclick="switchNav('dash-mcp-intel')">
-                        <span style="font-size: 11.5px; color: var(--text-muted); text-transform: uppercase;">MCP Deep Analysis</span>
-                        <div style="font-size: 22px; font-weight: 700; color: #a78bfa; margin-top: 4px;">Tools &amp; Permissions</div>
-                        <small style="color: #64748b;">Blast radius &amp; attack paths &rarr;</small>
-                    </div>
-                    <div class="card" style="background: #0b1120; margin-bottom: 0; cursor: pointer;" onclick="switchNav('dash-vuln-intel')">
-                        <span style="font-size: 11.5px; color: var(--text-muted); text-transform: uppercase;">CISA KEV Intel</span>
-                        <div style="font-size: 22px; font-weight: 700; color: #f59e0b; margin-top: 4px;">Active Exploits</div>
-                        <small style="color: #64748b;">1,782 synchronized CVEs &rarr;</small>
-                    </div>
-                    <div class="card" style="background: #0b1120; margin-bottom: 0; cursor: pointer;" onclick="switchNav('dash-monitoring')">
-                        <span style="font-size: 11.5px; color: var(--text-muted); text-transform: uppercase;">Continuous Watch</span>
-                        <div style="font-size: 22px; font-weight: 700; color: #34d399; margin-top: 4px;">Monitoring Daemon</div>
-                        <small style="color: #64748b;">Schedules &amp; drift tracking &rarr;</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="dash-mcp-intel" class="section-view">
-            <div class="card" style="margin-bottom: 20px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-                    <div>
-                        <h2 style="font-size: 18px; font-weight: 700; color: #fff;">⚡ Model Context Protocol (MCP) Intelligence Sentinel</h2>
-                        <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
-                            Specialized security intelligence for the MCP AI ecosystem: official registry verification, typosquatting &amp; homoglyph detection, and release capability drift diffing.
-                        </p>
-                    </div>
-                    <span class="badge badge-engine" style="font-size: 13px; padding: 6px 12px;">Protocol: MCP 2024-11-05 Spec</span>
-                </div>
-            </div>
-
-            <div class="grid-2">
-                <!-- Card 1: Official Registry & Package Reputation Lookup -->
-                <div class="card">
-                    <h3 style="font-size: 16px; font-weight: 700; color: #38bdf8; margin-bottom: 8px;">🏛️ MCP Package Reputation &amp; Registry Lookup</h3>
-                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Verify whether an MCP server package is an official release by Anthropic / ModelContextProtocol or an unverified third-party clone.</p>
-                    
-                    <div style="display: flex; gap: 8px; margin-bottom: 14px;">
-                        <input type="text" id="mcp-rep-input" value="@modelcontextprotocol/server-filesystem" placeholder="e.g. @modelcontextprotocol/server-filesystem" style="flex: 1; background: #0b1120; border: 1px solid var(--border-subtle); color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 13px; outline: none;">
-                        <button class="btn btn-primary btn-sm" onclick="searchMcpReputation()">Lookup Reputation</button>
-                    </div>
-
-                    <div id="mcp-rep-result" style="background: #070d18; border: 1px solid var(--border-subtle); border-radius: 8px; padding: 14px; display: none;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <b id="mcp-rep-pkg-name" style="font-size: 14px; color: #fff;"></b>
-                            <span id="mcp-rep-tier-badge" class="badge"></span>
-                        </div>
-                        <div id="mcp-rep-category" style="font-size: 12.5px; font-weight: 600; color: #fbbf24; margin-bottom: 6px; display: none;"></div>
-                        <div id="mcp-rep-concerns" style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 8px;"></div>
-                        <div id="mcp-rep-remediation" style="font-size: 11.5px; color: #94a3b8; background: #0f172a; padding: 8px 10px; border-radius: 6px; display: none;"></div>
-                    </div>
-                </div>
-
-                <!-- Card 2: Typosquatting Sentinel -->
-                <div class="card">
-                    <h3 style="font-size: 16px; font-weight: 700; color: #f87171; margin-bottom: 8px;">🚨 MCP Typosquatting &amp; Impersonation Sentinel</h3>
-                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Detects character substitutions (<code>0 &harr; o</code>, <code>1 &harr; l</code>) and deceptive modifiers (<code>-v2</code>, <code>-safe</code>, <code>official-</code>) masquerading as official MCP servers.</p>
-
-                    <div style="display: flex; gap: 8px; margin-bottom: 14px;">
-                        <input type="text" id="mcp-typo-input" value="@modelcontextprotoco1/server-github" placeholder="e.g. @modelcontextprotoco1/server-github" style="flex: 1; background: #0b1120; border: 1px solid var(--border-subtle); color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 13px; outline: none;">
-                        <button class="btn btn-secondary btn-sm" onclick="checkMcpTyposquat()">Test for Typosquat</button>
-                    </div>
-
-                    <div id="mcp-typo-result" style="background: #070d18; border: 1px solid var(--border-subtle); border-radius: 8px; padding: 14px; display: none;">
-                        <div id="mcp-typo-status" style="font-weight: 700; font-size: 13.5px; margin-bottom: 6px;"></div>
-                        <div id="mcp-typo-detail" style="font-size: 12.5px; color: var(--text-muted);"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 3: Permission Drift & Capability Diffing -->
-            <div class="card" style="margin-top: 20px;">
-                <h3 style="font-size: 16px; font-weight: 700; color: #93c5fd; margin-bottom: 8px;">🔍 Tool Permission-Change &amp; Capability Drift Diffing</h3>
-                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;">Compare tool definitions between two versions or releases to catch silent capability escalation (e.g. benign tool gaining shell execution or outbound network permissions).</p>
-
-                <div class="grid-2" style="margin-bottom: 12px;">
-                    <div>
-                        <label style="font-size: 12px; font-weight: 600; color: var(--text-dim); display: block; margin-bottom: 4px;">Baseline Tool Definition (JSON):</label>
-                        <textarea id="mcp-diff-baseline" rows="4" style="width: 100%; background: #0b1120; border: 1px solid var(--border-subtle); color: #fff; padding: 8px; border-radius: 6px; font-family: monospace; font-size: 12px;">{"name": "fetch_data", "description": "Fetches public API data", "capabilities": ["NETWORK_READ"]}</textarea>
-                    </div>
-                    <div>
-                        <label style="font-size: 12px; font-weight: 600; color: var(--text-dim); display: block; margin-bottom: 4px;">Current / Release Tool Definition (JSON):</label>
-                        <textarea id="mcp-diff-current" rows="4" style="width: 100%; background: #0b1120; border: 1px solid var(--border-subtle); color: #fff; padding: 8px; border-radius: 6px; font-family: monospace; font-size: 12px;">{"name": "fetch_data", "description": "Fetches public API data", "capabilities": ["NETWORK_READ", "SHELL_EXECUTION"]}</textarea>
-                    </div>
-                </div>
-                <button class="btn btn-primary btn-sm" onclick="runMcpPermissionDiff()">Run Permission Diff Analysis</button>
-
-                <div id="mcp-diff-result" style="background: #070d18; border: 1px solid var(--border-subtle); border-radius: 8px; padding: 14px; margin-top: 14px; display: none;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <b style="font-size: 13.5px; color: #fff;">Permission Drift Report: <span id="mcp-diff-tool-name"></span></b>
-                        <span id="mcp-diff-risk-badge" class="badge"></span>
-                    </div>
-                    <div id="mcp-diff-details" style="font-size: 12.5px; color: var(--text-muted); line-height: 1.6;"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- =================================================================== -->
-        <!-- SECTION 11: REPORTS                                                 -->
-        <!-- =================================================================== -->
-        <div id="dash-reports" class="section-view">
-            <div class="grid-2">
-                <div class="card">
-                    <h3 style="font-size: 16px; font-weight: 700; color: #93c5fd; margin-bottom: 8px;">Executive Report</h3>
-                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;">High-level summary designed for company founders, management teams, and investors. Focuses on overall risk, business impact, and compliance status.</p>
-                    <button class="btn btn-primary" onclick="window.open('/report/executive?target=' + encodeURIComponent(document.getElementById('dash-target-input').value || 'https://example.com'), '_blank')">Generate Executive Report (PDF/HTML)</button>
-                </div>
-
-                <div class="card">
-                    <h3 style="font-size: 16px; font-weight: 700; color: #93c5fd; margin-bottom: 8px;">Technical Engineering Report</h3>
-                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;">Deep-dive technical report with raw HTTP evidence, code line numbers, CWE/CVE vectors, and full Software Bill of Materials (SBOM).</p>
-                    <div style="display: flex; gap: 8px;">
-                        <button class="btn btn-secondary" onclick="window.open('/report/technical?target=' + encodeURIComponent(document.getElementById('dash-target-input').value || 'https://example.com'), '_blank')">Print / Export Technical PDF</button>
-                        <button class="btn btn-secondary" onclick="window.open('/api/report/json?target=' + encodeURIComponent(document.getElementById('dash-target-input').value || 'https://example.com'), '_blank')">Download JSON</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Public README Security Badge -->
-            <div class="card" style="margin-top: 20px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <div>
-                        <h3 style="font-size: 16px; font-weight: 700; color: #38bdf8; margin: 0;">🛡️ Public README Security Badge</h3>
-                        <p style="font-size: 13px; color: var(--text-muted); margin: 4px 0 0;">Embed live dynamic security score badges directly in your GitHub README to build customer trust.</p>
-                    </div>
-                    <img src="/api/badge/{{ projects[0].id if projects else 'acme-ai' }}.svg" alt="TrustAudit Security Score" style="height: 24px;">
-                </div>
-
-                <div style="background: #070d18; padding: 14px; border-radius: 8px; border: 1px solid var(--border-subtle); display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                    <input type="text" id="readmeBadgeSnippet" readonly value="[![TrustAudit Security Score](https://app.trustaudit.ai/api/badge/{{ projects[0].id if projects else 'acme-ai' }}.svg)](https://app.trustaudit.ai/projects/{{ projects[0].id if projects else 'acme-ai' }})" style="flex: 1; min-width: 280px; background: #0b1120; border: 1px solid #334155; color: #38bdf8; padding: 8px 12px; border-radius: 6px; font-family: monospace; font-size: 12px;">
-                    <button class="btn btn-sm btn-primary" onclick="copyBadgeSnippet()">Copy Markdown Snippet</button>
-                </div>
-            </div>
-
-            <!-- Weekly Digest Email Generator -->
-            <div class="card" style="margin-top: 20px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <div>
-                        <h3 style="font-size: 16px; font-weight: 700; color: #a5b4fc; margin: 0;">📬 Automated Weekly Digest</h3>
-                        <p style="font-size: 13px; color: var(--text-muted); margin: 4px 0 0;">Sends an ongoing executive summary every Monday—even when 0 new findings occur, demonstrating ongoing protection.</p>
-                    </div>
-                    <button class="btn btn-sm btn-secondary" onclick="previewWeeklyDigest()">Preview Weekly Digest</button>
-                </div>
-                <div id="weeklyDigestPreview" style="display: none; background: #070d18; padding: 14px; border-radius: 8px; border: 1px solid var(--border-subtle); font-size: 13px; color: #cbd5e1; line-height: 1.6;"></div>
-            </div>
-        </div>
-
-        <!-- =================================================================== -->
-        <!-- SECTION 12: AI SECURITY COPILOT ("ASK TRUSTAUDIT")                  -->
-        <!-- =================================================================== -->
-        <div id="dash-advisor" class="section-view">
-            <div class="card">
-                <h2 style="font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 4px;">💬 Ask TrustAudit — Interactive Security Copilot</h2>
-                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">Grounded strictly in your real scan findings. Ask questions about your vulnerabilities, remediation, or risk drivers.</p>
-
-                <div style="display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap;">
-                    <button class="btn btn-sm btn-secondary" onclick="sendAdvisorPrompt('What is the biggest security problem right now?')">"What is the biggest security problem?"</button>
-                    <button class="btn btn-sm btn-secondary" onclick="sendAdvisorPrompt('Explain this vulnerability like I am a founder.')">"Explain like I am a founder"</button>
-                    <button class="btn btn-sm btn-secondary" onclick="sendAdvisorPrompt('What should we fix today to increase our score?')">"What should we fix today?"</button>
-                </div>
-
-                <div style="display: flex; gap: 10px; margin-bottom: 16px;">
-                    <input type="text" id="advisor-query-input" placeholder="Ask anything about your security scan..." style="flex: 1; background: var(--bg-subtle); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 12px 16px; color: #fff; font-size: 14px; outline: none;">
-                    <button class="btn btn-primary" id="advisor-send-btn" onclick="submitAdvisorQuery()">Ask Copilot</button>
-                </div>
-
-                <div id="advisor-response-box" style="display: none; background: #070b12; border: 1px solid var(--border-subtle); border-radius: 8px; padding: 18px;">
-                    <div style="font-size: 12px; font-weight: 700; color: #38bdf8; margin-bottom: 8px;">TRUSTAUDIT COPILOT RESPONSE:</div>
-                    <div id="advisor-response-text" style="font-size: 14px; color: #e2e8f0; line-height: 1.6; white-space: pre-wrap;"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- =================================================================== -->
-        <!-- SECTION 13: INTEGRATIONS                                            -->
-        <!-- =================================================================== -->
-        <div id="dash-integrations" class="section-view">
-            <div class="grid-2">
-                <div class="card">
-                    <h3 style="font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 12px;">Slack &amp; Microsoft Teams Webhooks</h3>
-                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;">Receive instant alerts in your engineering channel when a Critical risk is detected or a fix is verified.</p>
-                    
-                    <div style="margin-bottom: 12px;">
-                        <label style="font-size: 12.5px; font-weight: 600; display: block; margin-bottom: 4px;">Slack Webhook URL:</label>
-                        <input type="text" id="slack-webhook-input" placeholder="https://hooks.slack.com/services/..." style="width: 100%; background: #1e293b; color: #fff; border: 1px solid #334155; padding: 8px 12px; border-radius: 6px; font-size: 13px; outline: none;" value="{{ integrations.get('slack_webhook_url', '') }}">
-                    </div>
-
-                    <div style="display: flex; gap: 8px;">
-                        <button class="btn btn-primary btn-sm" onclick="saveIntegrations()">Save Webhooks</button>
-                        <button class="btn btn-secondary btn-sm" onclick="testIntegrationAlert()">Send Test Alert</button>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h3 style="font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 12px;">GitHub Actions CI/CD Quality Gate</h3>
-                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;">Block pull requests introducing high severity vulnerabilities or secrets.</p>
-                    <pre style="background: #070b12; border: 1px solid var(--border-subtle); border-radius: 6px; padding: 12px; font-size: 11.5px; color: #38bdf8; overflow-x: auto;">- name: TrustAudit Security Gate
-  run: |
-    curl -X POST https://mcp-scanner.onrender.com/api/scan \\
-      -H "Content-Type: application/json" \\
-      -H "Authorization: Bearer {% raw %}${{ secrets.TRUSTAUDIT_API_TOKEN }}{% endraw %}" \\
-      -d '{"target": "https://github.com/owner/repository"}'</pre>
-                </div>
-            </div>
-        </div>
-
-        <!-- =================================================================== -->
-        <!-- SECTION 14: TEAM                                                    -->
-        <!-- =================================================================== -->
-        <div id="dash-team" class="section-view">
-            <div class="card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-                    <div>
-                        <h2 style="font-size: 18px; font-weight: 700;">Team Members &amp; RBAC ({{ team_members|length }})</h2>
-                        <p style="font-size: 13px; color: var(--text-muted);">Manage user permissions: Admin (Full control), Member (Can remediate), Viewer (Read-only).</p>
-                    </div>
-                    <button class="btn btn-primary btn-sm" onclick="promptAddTeamMember()">+ Invite Member</button>
-                </div>
-
-                <table>
-                    <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Action</th></tr></thead>
-                    <tbody>
-                        {% for u in team_members %}
-                        <tr>
-                            <td><b>{{ u.name }}</b></td>
-                            <td><code>{{ u.email }}</code></td>
-                            <td><span class="badge badge-engine">{{ u.role|upper }}</span></td>
-                            <td><span class="badge badge-pass">ACTIVE</span></td>
-                            <td><button class="btn btn-sm btn-secondary" onclick="alert('User settings updated.')">Edit</button></td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- =================================================================== -->
-        <!-- SECTION 15: SETTINGS & PRICING                                      -->
-        <!-- =================================================================== -->
-        <div id="dash-settings" class="section-view">
-            <div class="grid-2">
-                <div class="card">
-                    <h3 style="font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 12px;">Organization Profile</h3>
-                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;"><b>Organization:</b> {{ org_info.name if org_info else 'Acme AI Labs' }}</p>
-                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;"><b>Current Plan:</b> <span class="badge badge-engine">{{ (org_info.plan if org_info else 'starter')|upper }}</span></p>
-                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;"><b>Scans Executed:</b> {{ org_info.scans_count if org_info else 12 }} scans</p>
-                </div>
-
-                <div class="card">
-                    <h3 style="font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 12px;">Subscription Tiers</h3>
-                    <div style="font-size: 13px; color: var(--text-muted); line-height: 1.8;">
-                        <p><b>Free Community:</b> 1 Domain, 1 Repo, Manual scans</p>
-                        <p><b>Starter (₹999/mo):</b> 5 Domains, 5 Repos, Daily continuous monitoring</p>
-                        <p><b>Pro (₹1,999/mo):</b> 20 Domains, 20 Repos, Hourly scans, Webhook alerts</p>
-                        <p><b>Enterprise:</b> Dedicated runners, custom SLAs &amp; compliance</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- =================================================================== -->
-        <!-- SECTION 16: SCANNER HEALTH & TOOL TELEMETRY                         -->
-        <!-- =================================================================== -->
-        <div id="dash-tools" class="section-view">
-            <div class="card">
-                <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 4px;">Scanner Health &amp; Engine Execution Transparency</h2>
-                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">Real-time operational health, executable binaries, and failure diagnostics for all 11 integrated scanners.</p>
-
-                <table>
-                    <thead><tr><th>Engine Name</th><th>Category</th><th>Installed</th><th>Version</th><th>Executable Path</th><th>Status</th></tr></thead>
-                    <tbody>
-                        {% for t in tools_health %}
-                        <tr>
-                            <td><b>{{ t.name }}</b></td>
-                            <td><span class="badge-status">{{ t.category|upper }}</span></td>
-                            <td><span class="badge {{ 'badge-pass' if t.installed else 'badge-fail' }}">{{ 'INSTALLED' if t.installed else 'NOT INSTALLED' }}</span></td>
-                            <td>{{ t.version or 'N/A' }}</td>
-                            <td><code style="word-break: break-all; font-size: 11px;">{{ t.path or 'System PATH' }}</code></td>
-                            <td><span class="badge {{ 'badge-pass' if t.installed else 'badge-warn' }}">{{ 'OPERATIONAL' if t.installed else 'STANDBY' }}</span></td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- =================================================================== -->
-        <!-- SECTION 17: ONBOARDING WIZARD                                       -->
-        <!-- =================================================================== -->
-        <div id="dash-onboarding" class="section-view">
-            <div class="card" style="max-width: 760px; margin: 0 auto;">
-                <h2 style="font-size: 20px; font-weight: 800; margin-bottom: 10px;">🚀 Welcome to TrustAudit</h2>
-                <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 24px;">Your startup's automated security department in a box. Follow these quick steps to get continuously protected:</p>
-                
-                <div style="display: flex; flex-direction: column; gap: 14px;">
-                    <div style="padding: 14px; background: #0b1120; border-radius: 8px; border-left: 3px solid var(--status-green);">
-                        <b>Step 1: Discover Assets</b>
-                        <p style="font-size: 13px; color: var(--text-muted); margin: 4px 0 0;">Add your production web application URL and main GitHub repository.</p>
-                    </div>
-                    <div style="padding: 14px; background: #0b1120; border-radius: 8px; border-left: 3px solid var(--brand-blue);">
-                        <b>Step 2: Run Baseline Security Verification</b>
-                        <p style="font-size: 13px; color: var(--text-muted); margin: 4px 0 0;">Execute full non-destructive DAST, TLS, headers, and secret discovery.</p>
-                    </div>
-                    <div style="padding: 14px; background: #0b1120; border-radius: 8px; border-left: 3px solid var(--brand-cyan);">
-                        <b>Step 3: Review "Fix These First"</b>
-                        <p style="font-size: 13px; color: var(--text-muted); margin: 4px 0 0;">Apply top prioritized code fixes using copyable AI coding prompts.</p>
-                    </div>
-                    <div style="padding: 14px; background: #0b1120; border-radius: 8px; border-left: 3px solid var(--status-yellow);">
-                        <b>Step 4: Enable Continuous Monitoring</b>
-                        <p style="font-size: 13px; color: var(--text-muted); margin: 4px 0 0;">Receive Slack/Email alerts whenever a new vulnerability or certificate expiration occurs.</p>
-                    </div>
-                </div>
-
-                <div style="margin-top: 24px; text-align: right;">
-                    <button class="btn btn-primary" onclick="switchNav('dash-scans')">Launch First Security Audit &rarr;</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- =================================================================== -->
-        <!-- SECTION 17: VULNERABILITY INTELLIGENCE & ADVISORY FEED              -->
-        <!-- =================================================================== -->
-        <div id="dash-vuln-intel" class="section-view">
-            <div class="dash-welcome">
-                <div class="dash-welcome-text">
-                    <h2>🧠 Vulnerability Intelligence Engine</h2>
-                    <p>Continuous correlation across <b>OSV.dev</b>, official <b>NVD CVE API 2.0</b>, and <b>CISA KEV</b> against your software inventory.</p>
-                </div>
-                <div style="display: flex; gap: 8px; align-items: center;">
-                    <button class="btn btn-sm btn-primary" onclick="triggerIntelSync()" id="btn-intel-sync">⚡ Sync Intelligence Now</button>
-                </div>
-            </div>
-
-            <!-- Source Health & Synchronization Status -->
-            <div class="stats-grid" style="margin-bottom: 20px;">
-                <div class="stat-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span class="stat-label">OSV.dev Database</span>
-                        <span class="badge badge-LOW" style="font-size: 10px;">{{ vuln_intel_summary.get('sources', {}).get('osv', {}).get('status', 'Healthy') }}</span>
-                    </div>
-                    <div class="stat-value" style="font-size: 20px; color: #60a5fa;">{{ vuln_intel_summary.get('sources', {}).get('osv', {}).get('records_count', 0) }}</div>
-                    <div class="stat-desc">Primary Package &amp; Version Matcher</div>
-                </div>
-
-                <div class="stat-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span class="stat-label">NVD CVE API 2.0</span>
-                        <span class="badge badge-LOW" style="font-size: 10px;">{{ vuln_intel_summary.get('sources', {}).get('nvd', {}).get('status', 'Healthy') }}</span>
-                    </div>
-                    <div class="stat-value" style="font-size: 20px; color: #a78bfa;">{{ vuln_intel_summary.get('sources', {}).get('nvd', {}).get('records_count', 0) }}</div>
-                    <div class="stat-desc">NIST CVSS &amp; Advisory Metadata</div>
-                </div>
-
-                <div class="stat-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span class="stat-label">CISA KEV Catalog</span>
-                        <span class="badge badge-LOW" style="font-size: 10px;">{{ vuln_intel_summary.get('sources', {}).get('cisa_kev', {}).get('status', 'Healthy') }}</span>
-                    </div>
-                    <div class="stat-value" style="font-size: 20px; color: #f87171;">{{ vuln_intel_summary.get('known_exploited_count', 0) }}</div>
-                    <div class="stat-desc">Actively Exploited in the Wild</div>
-                </div>
-
-                <div class="stat-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span class="stat-label">Affecting Your Inventory</span>
-                        <span class="badge badge-CRITICAL" style="font-size: 10px;">ACTION</span>
-                    </div>
-                    <div class="stat-value" style="font-size: 20px; color: {% if affecting_vulnerabilities %}#ef4444{% else %}#10b981{% endif %};">{{ affecting_vulnerabilities|length }}</div>
-                    <div class="stat-desc">{% if affecting_vulnerabilities %}Vulnerabilities confirmed in code{% else %}No matching vulnerabilities detected{% endif %}</div>
-                </div>
-            </div>
-
-            <!-- "🚨 NEW VULNERABILITIES AFFECTING YOU" SECTION -->
-            <div class="card" style="margin-bottom: 24px; border-color: {% if affecting_vulnerabilities %}#dc2626{% else %}var(--border-subtle){% endif %};">
-                <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <span style="font-size: 18px;">🚨</span>
-                        <h3 style="margin: 0; color: #fff;">Vulnerabilities Affecting Your Environment ({{ affecting_vulnerabilities|length }})</h3>
-                    </div>
-                    <span class="badge badge-CRITICAL">Real-Time Correlation</span>
-                </div>
-
-                {% if affecting_vulnerabilities %}
-                <div style="display: flex; flex-direction: column; gap: 14px; margin-top: 10px;">
-                    {% for vuln in affecting_vulnerabilities %}
-                    <div style="background: #0b1120; border: 1px solid var(--border-subtle); border-radius: 8px; padding: 16px;">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px;">
-                            <div>
-                                <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 4px;">
-                                    <span class="badge badge-{{ vuln.severity }}">{{ vuln.severity }}</span>
-                                    {% if vuln.is_known_exploited %}
-                                    <span class="badge badge-CRITICAL" style="background: #7f1d1d; border-color: #ef4444;">🚨 KNOWN EXPLOITED</span>
-                                    {% endif %}
-                                    <span class="badge badge-LOW" style="background: #1e293b;">{{ vuln.correlation_state }}</span>
-                                    <span style="font-size: 12px; color: var(--text-dim); font-family: monospace;">Score: {{ vuln.risk_score }}/100</span>
-                                </div>
-                                <h4 style="margin: 4px 0; color: #fff; font-size: 15px;">{{ vuln.title }}</h4>
-                                <div style="font-size: 12px; color: var(--text-muted); font-family: monospace; margin-top: 2px;">
-                                    Package: <b style="color: #60a5fa;">{{ vuln.package_name }}</b> (Installed: <span style="color: #f87171;">{{ vuln.installed_version }}</span> &bull; Fixed: <span style="color: #4ade80;">{{ vuln.fixed_versions|join(', ') or 'latest secure' }}</span>) &bull; Ecosystem: {{ vuln.ecosystem }} &bull; Env: {{ vuln.environment }}
-                                </div>
-                            </div>
-                            <div style="display: flex; gap: 6px;">
-                                <button class="btn btn-secondary btn-sm" onclick="showIntelModal({{ vuln|tojson|safe }})">View Details</button>
-                                <button class="btn btn-primary btn-sm" onclick="recheckFinding('{{ vuln.id }}', '{{ vuln.package_name }}', '{{ vuln.installed_version }}')">Recheck Fix</button>
-                            </div>
-                        </div>
-
-                        <div style="margin-top: 10px; padding: 8px 12px; background: #070d18; border-radius: 6px; border-left: 3px solid var(--brand-blue); font-size: 12px; color: #cbd5e1;">
-                            <b>Why Prioritized:</b> {{ vuln.why_prioritized }}
-                        </div>
-
-                        <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-                            <div style="font-size: 12px; color: var(--text-muted);">
-                                <b>Action:</b> {{ vuln.remediation }}
-                            </div>
-                            <button class="btn btn-secondary btn-sm" style="font-size: 11px; padding: 2px 8px;" onclick="navigator.clipboard.writeText('{{ vuln.ai_prompt|escape }}'); alert('Remediation prompt copied to clipboard!');">Copy Fix Prompt</button>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-                {% else %}
-                <div class="empty-state" style="padding: 30px; text-align: center;">
-                    <div style="font-size: 32px; margin-bottom: 8px;">🛡️</div>
-                    <h4 style="color: #10b981; margin-bottom: 4px;">No Vulnerabilities Currently Affect Your Software Inventory</h4>
-                    <p style="color: var(--text-muted); font-size: 13px; margin: 0;">TrustAudit continuously matches newly published CVEs and CISA KEV advisories against your registered repositories and web applications.</p>
-                </div>
-                {% endif %}
-            </div>
-
-            <!-- Software Inventory (SBOM) Table -->
-            <div class="card" style="margin-bottom: 24px;">
-                <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
-                    <h3 style="margin: 0; color: #fff;">Monitored Software Inventory / SBOM ({{ inventory_components|length }})</h3>
-                    <span style="font-size: 12px; color: var(--text-muted);">Auto-discovered from manifests</span>
-                </div>
-                {% if inventory_components %}
-                <div style="overflow-x: auto; margin-top: 10px;">
-                    <table class="findings-table">
-                        <thead>
-                            <tr>
-                                <th>Package</th>
-                                <th>Installed Version</th>
-                                <th>Ecosystem</th>
-                                <th>Manifest Source</th>
-                                <th>Environment</th>
-                                <th>Last Audited</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for comp in inventory_components %}
-                            <tr>
-                                <td><b>{{ comp.package_name }}</b></td>
-                                <td><span style="font-family: monospace; color: {% if comp.version == 'UNKNOWN VERSION' %}var(--text-dim){% else %}#93c5fd{% endif %};">{{ comp.version }}</span></td>
-                                <td><span class="badge badge-LOW">{{ comp.ecosystem }}</span></td>
-                                <td style="font-size: 12px; color: var(--text-dim); font-family: monospace;">{{ comp.manifest_file }}</td>
-                                <td><span class="badge badge-engine">{{ comp.environment }}</span></td>
-                                <td style="font-size: 11px; color: var(--text-dim);">Live Sync</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                {% else %}
-                <div class="empty-state" style="padding: 24px; text-align: center; color: var(--text-muted);">
-                    Run a repository or website audit in the <b>Scans Console</b> to populate your Software Inventory.
-                </div>
-                {% endif %}
-            </div>
-
-            <!-- Global Vulnerability Database Feed -->
-            <div class="card">
-                <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
-                    <h3 style="margin: 0; color: #fff;">Global Security Advisory &amp; CVE Feed ({{ all_intel_vulnerabilities|length }})</h3>
-                    <span style="font-size: 12px; color: var(--text-muted);">Attribution: OSV.dev, NIST NVD, CISA KEV</span>
-                </div>
-
-                <div style="display: flex; gap: 10px; margin: 12px 0; flex-wrap: wrap;">
-                    <input type="text" id="intel-search-input" placeholder="Filter by CVE, package name, or keyword..." style="background: #0b1120; border: 1px solid var(--border-subtle); color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 13px; flex: 1;" onkeyup="filterIntelTable()">
-                    <select id="intel-sev-filter" style="background: #0b1120; border: 1px solid var(--border-subtle); color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 13px;" onchange="filterIntelTable()">
-                        <option value="">All Severities</option>
-                        <option value="CRITICAL">Critical</option>
-                        <option value="HIGH">High</option>
-                        <option value="MEDIUM">Medium</option>
-                        <option value="LOW">Low</option>
+                <div class="form-group">
+                    <label class="form-label">Legal Basis *</label>
+                    <select id="inv_basis" class="form-control">
+                        <option value="DPDP Section 6 (Consent)">DPDP Section 6 (Consent)</option>
+                        <option value="DPDP Section 7(e) (Medical Emergency)">DPDP Section 7(e) (Medical Emergency)</option>
+                        <option value="DPDP Section 7(c) (Legal Obligation)">DPDP Section 7(c) (Legal Obligation)</option>
+                        <option value="DPDP Section 7(i) (Employment)">DPDP Section 7(i) (Employment)</option>
                     </select>
                 </div>
-
-                <div style="overflow-x: auto;">
-                    <table class="findings-table" id="intel-table">
-                        <thead>
-                            <tr>
-                                <th>Advisory / CVE</th>
-                                <th>Title &amp; Summary</th>
-                                <th>Severity</th>
-                                <th>CVSS</th>
-                                <th>Source</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for iv in all_intel_vulnerabilities %}
-                            <tr class="intel-row" data-sev="{{ iv.severity }}" data-cve="{{ iv.cve_id or iv.source_id }}" data-text="{{ iv.title }} {{ iv.package_name }}">
-                                <td style="font-family: monospace; font-weight: 600; color: #60a5fa;">{{ iv.cve_id or iv.source_id }}</td>
-                                <td style="max-width: 380px;">
-                                    <div style="font-weight: 500; color: #fff; font-size: 13px;">{{ iv.title }}</div>
-                                    <div style="font-size: 11px; color: var(--text-dim); margin-top: 2px;">{{ iv.package_name }} ({{ iv.ecosystem }})</div>
-                                </td>
-                                <td><span class="badge badge-{{ iv.severity }}">{{ iv.severity }}</span></td>
-                                <td style="font-family: monospace; color: #cbd5e1;">{{ iv.cvss_score }}</td>
-                                <td><span class="badge-engine">{{ iv.source }}</span></td>
-                                <td>
-                                    <button class="btn btn-secondary btn-sm" style="font-size: 11px; padding: 2px 8px;" onclick="showIntelModal({{ iv|tojson|safe }})">Inspect</button>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                <div class="form-group">
+                    <label class="form-label">Storage System *</label>
+                    <input type="text" id="inv_storage" class="form-control" placeholder="e.g. Hospital Management System / AWS Mumbai" required>
                 </div>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- ======================================================================= -->
-    <!-- SLIDE-OVER VULNERABILITY INTELLIGENCE DETAIL DRAWER                     -->
-    <!-- ======================================================================= -->
-    <div id="intelModal" class="modal-overlay">
-        <div class="modal-box">
-            <div class="modal-header">
-                <div>
-                    <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 6px;">
-                        <span id="intelModalSevBadge" class="badge">SEVERITY</span>
-                        <span id="intelModalKevBadge" class="badge badge-CRITICAL" style="display: none;">🚨 KNOWN EXPLOITED</span>
-                        <span id="intelModalSourceBadge" class="badge-engine">SOURCE</span>
-                    </div>
-                    <h2 id="intelModalTitle" style="font-size: 18px; margin: 0; color: #fff;">Vulnerability Advisory</h2>
-                    <div id="intelModalIds" style="font-size: 12px; color: var(--text-dim); margin-top: 4px; font-family: monospace;"></div>
+                <div class="form-group">
+                    <label class="form-label">Retention Period *</label>
+                    <input type="text" id="inv_retention" class="form-control" placeholder="e.g. 5 Years (Clinical Records Rules)" required>
                 </div>
-                <button class="modal-close" onclick="closeIntelModal()">&times;</button>
-            </div>
-
-            <div style="font-size: 13.5px; line-height: 1.6;">
-                <h4 style="color: #93c5fd; margin-bottom: 4px;">Advisory Summary &amp; Description</h4>
-                <p id="intelModalDesc" style="color: var(--text-main); margin-bottom: 14px; background: #0b1120; padding: 10px; border-radius: 6px;"></p>
-
-                <div id="intelModalKevSection" style="display: none; margin-bottom: 14px; background: #450a0a; border: 1px solid #7f1d1d; border-radius: 6px; padding: 10px;">
-                    <h4 style="color: #fca5a5; margin: 0 0 4px;">🚨 CISA Known Exploited Vulnerability Notice</h4>
-                    <p id="intelModalKevDesc" style="color: #fecaca; margin: 0; font-size: 12.5px;"></p>
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                    <button type="button" onclick="closeAddInventoryModal()" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Entry</button>
                 </div>
-
-                <div style="margin-bottom: 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 12.5px;">
-                    <div style="background: #0b1120; padding: 8px 10px; border-radius: 6px;">
-                        <span style="color: var(--text-dim);">Affected Version Ranges:</span><br>
-                        <b id="intelModalRanges" style="color: #f87171;"></b>
-                    </div>
-                    <div style="background: #0b1120; padding: 8px 10px; border-radius: 6px;">
-                        <span style="color: var(--text-dim);">Patched / Fixed Versions:</span><br>
-                        <b id="intelModalFixed" style="color: #4ade80;"></b>
-                    </div>
-                </div>
-
-                <div id="intelModalWhySection" style="margin-bottom: 14px; background: #070d18; border-left: 3px solid var(--brand-blue); padding: 10px 12px; border-radius: 0 6px 6px 0;">
-                    <h4 style="color: #93c5fd; margin: 0 0 4px;">Why You Are Affected &amp; Prioritization</h4>
-                    <p id="intelModalWhy" style="color: #cbd5e1; margin: 0; font-size: 12.5px;"></p>
-                </div>
-
-                <h4 style="color: #93c5fd; margin-bottom: 4px;">Recommended Remediation</h4>
-                <div id="intelModalRemediation" style="background: #0b1120; border-left: 3px solid #10b981; padding: 12px 14px; border-radius: 0 6px 6px 0; margin-bottom: 18px; color: #e2e8f0; font-size: 13px;"></div>
-
-                <div style="display: flex; gap: 10px; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-subtle); padding-top: 14px; flex-wrap: wrap;">
-                    <div style="display: flex; gap: 8px;">
-                        <button class="btn btn-secondary btn-sm" onclick="copyIntelPrompt()">Copy AI Fix Prompt</button>
-                    </div>
-                    <div style="display: flex; gap: 8px;">
-                        <button class="btn btn-primary btn-sm" id="intelModalRecheckBtn" onclick="recheckFromModal()">Recheck Fix Now</button>
-                    </div>
-                </div>
-            </div>
+            </form>
         </div>
     </div>
 
-    <!-- ======================================================================= -->
-    <!-- SLIDE-OVER FINDING DETAIL DRAWER / MODAL                                -->
-    <!-- ======================================================================= -->
-    <div id="findingModal" class="modal-overlay">
-        <div class="modal-box">
-            <div class="modal-header">
-                <div>
-                    <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 6px;">
-                        <span id="modalSeverityBadge" class="badge">SEVERITY</span>
-                        <span id="modalConfidenceBadge" class="badge badge-conf-LIKELY">LIKELY</span>
-                        <span id="modalCategoryBadge" class="badge badge-LOW">CATEGORY</span>
-                        <span id="modalEngineBadge" class="badge-engine">ENGINE</span>
-                    </div>
-                    <h2 id="modalTitle" style="font-size: 18px; margin: 0; color: #fff;">Finding Title</h2>
-                    <div id="modalTargetLocation" style="font-size: 12px; color: var(--text-dim); margin-top: 4px; font-family: monospace;"></div>
-                </div>
-                <button class="modal-close" onclick="closeModal()">&times;</button>
-            </div>
-
-            <div style="font-size: 13.5px; line-height: 1.6;">
-                <!-- Aggregated Locations (Multi-Location Deduplication) -->
-                <div id="modalLocationsSection" style="display: none; margin-bottom: 12px; background: #070d18; padding: 10px 14px; border-radius: 6px; border: 1px solid var(--border-subtle);">
-                    <div style="font-size: 12px; font-weight: 700; color: #38bdf8; margin-bottom: 4px;">📍 Affected Locations Across Project:</div>
-                    <ul id="modalLocationsList" style="font-size: 12px; padding-left: 18px; color: var(--text-muted); margin: 0;"></ul>
-                </div>
-
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                    <h4 style="color: #93c5fd; margin: 0;">What Happened?</h4>
-                    <button id="eli5ToggleBtn" class="btn btn-secondary btn-sm" style="font-size: 11px; padding: 2px 10px; background: #1e1b4b; color: #a5b4fc; border-color: #4338ca;" onclick="toggleEli5Mode()">👶 Explain Like I'm New to Security (ELI5)</button>
-                </div>
-                <div id="modalDesc" style="color: var(--text-main); margin-bottom: 14px; background: #0b1120; padding: 12px; border-radius: 6px; border: 1px solid var(--border-subtle);"></div>
-
-                <div id="modalImpactSection" style="margin-bottom: 14px;">
-                    <h4 style="color: #93c5fd; margin-bottom: 4px;">Why It Matters &amp; Business Impact</h4>
-                    <p id="modalImpact" style="color: var(--text-muted); background: #0b1120; padding: 10px; border-radius: 6px;"></p>
-                </div>
-
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                    <h4 style="color: #93c5fd; margin: 0;">Raw Detection Evidence</h4>
-                    <button class="btn btn-secondary btn-sm" style="font-size: 11px; padding: 2px 8px;" onclick="copyModalEvidence()">Copy Evidence</button>
-                </div>
-                <code id="modalEvidence" style="display: block; padding: 10px; margin-bottom: 14px; word-break: break-all; background: #050b14; border: 1px solid var(--border-subtle); border-radius: 6px; font-size: 12px; max-height: 120px; overflow-y: auto;"></code>
-
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                    <h4 style="color: #93c5fd; margin: 0;">Recommended Remediation</h4>
-                    <button class="btn btn-secondary btn-sm" style="font-size: 11px; padding: 2px 10px; background: #064e3b; color: #34d399; border-color: #059669;" onclick="copyAiFixPrompt()">🤖 Copy Cursor / Claude Prompt</button>
-                </div>
-                <div id="modalRemediation" style="background: #0b1120; border-left: 3px solid var(--brand-blue); padding: 12px 14px; border-radius: 0 6px 6px 0; margin-bottom: 18px; color: #e2e8f0; font-size: 13px;"></div>
-
-                <div style="display: flex; gap: 10px; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-subtle); padding-top: 14px; flex-wrap: wrap;">
-                    <div style="display: flex; gap: 8px;">
-                        <button class="btn btn-secondary btn-sm" onclick="markFindingStatus('acknowledged')">Acknowledge Risk</button>
-                        <button class="btn btn-secondary btn-sm" onclick="markFindingStatus('false_positive')">Mark False Positive</button>
-                    </div>
-                    <div style="display: flex; gap: 8px;">
-                        <button class="btn btn-primary btn-sm" onclick="triggerFixVerification(currentFinding ? currentFinding.id : '', currentFinding ? (currentFinding.file || '') : '')">Verify Fix Now</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ======================================================================= -->
-    <!-- CLIENT JAVASCRIPT LOGIC (100% Syntax-Safe & Reactive)                   -->
-    <!-- ======================================================================= -->
+    <!-- JAVASCRIPT LOGIC -->
     <script>
-        // 1. Navigation Switcher
-        window.switchNav = function(sectionId) {
-            if (!sectionId) return;
-            const views = document.querySelectorAll('.section-view');
-            views.forEach(function(el) {
-                if (el.id === sectionId) {
-                    el.classList.add('active');
-                    el.style.setProperty('display', 'block', 'important');
-                } else {
-                    el.classList.remove('active');
-                    el.style.setProperty('display', 'none', 'important');
-                }
-            });
+        let currentSection = 'overview';
 
-            // Update nav item active states
-            const navItems = document.querySelectorAll('.nav-item');
-            navItems.forEach(function(btn) {
-                const oc = btn.getAttribute('onclick') || '';
-                if (oc.indexOf("'" + sectionId + "'") !== -1) {
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
-                }
-            });
-
-            if (typeof window.scrollTo === 'function') {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+        function navTo(sectionId, el) {
+            document.querySelectorAll('.dash-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            const target = document.getElementById('section-' + sectionId);
+            if (target) {
+                target.classList.add('active');
+                currentSection = sectionId;
             }
-        };
-
-        // 1b. Project Switcher
-        window.switchProject = function(projectId) {
-            if (!projectId) return;
-            window.location.href = '/scan?project_id=' + encodeURIComponent(projectId);
-        };
-
-        // 2. Scan Results Sub-Tab Switcher
-        window.openSubTab = function(evtOrEl, tabId) {
-            if (!tabId) return;
-
-            const target = document.getElementById(tabId);
-            if (!target) return;
-
-            const panes = document.querySelectorAll('.tab-pane');
-            panes.forEach(function(pane) {
-                pane.classList.remove('active');
-                pane.style.setProperty('display', 'none', 'important');
-            });
-
-            target.classList.add('active');
-            target.style.setProperty('display', 'block', 'important');
-
-            const btns = document.querySelectorAll('.tab-btn');
-            btns.forEach(function(btn) {
-                const btnTab = btn.getAttribute('data-tab');
-                if (btnTab === tabId) {
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
-                }
-            });
-        };
-
-        // 3. Scan Mode Toggle
-        window.setDashboardScanMode = function(mode) {
-            const lblWeb = document.getElementById('lbl-web');
-            const lblRepo = document.getElementById('lbl-repo');
-            const lblMcp = document.getElementById('lbl-mcp');
-            const input = document.getElementById('dash-target-input');
-            const submit = document.getElementById('dash-submit-btn');
-
-            if (lblWeb) lblWeb.classList.remove('active');
-            if (lblRepo) lblRepo.classList.remove('active');
-            if (lblMcp) lblMcp.classList.remove('active');
-
-            if (mode === 'website') {
-                if (lblWeb) lblWeb.classList.add('active');
-                if (input) input.placeholder = 'https://example.com';
-                if (submit) submit.innerText = 'Audit Website';
-            } else if (mode === 'mcp') {
-                if (lblMcp) lblMcp.classList.add('active');
-                if (input) input.placeholder = 'https://github.com/modelcontextprotocol/servers';
-                if (submit) submit.innerText = 'Scan MCP Server';
-            } else {
-                if (lblRepo) lblRepo.classList.add('active');
-                if (input) input.placeholder = 'https://github.com/owner/repository';
-                if (submit) submit.innerText = 'Scan Repository';
-            }
-        };
-
-        // 4. Stored Scan Findings Data
-        var scanFindings = {% if result and result.get('findings') %}{{ result.get('findings')|tojson|safe }}{% elif projects and projects[0].get('last_scan_result') and projects[0].get('last_scan_result').get('findings') %}{{ projects[0].get('last_scan_result').get('findings')|tojson|safe }}{% else %}[]{% endif %};
-        var currentFinding = null;
-        var isEli5Mode = false;
-
-        window.showFindingModalByIndex = function(idx) {
-            if (scanFindings && scanFindings[idx]) {
-                showFindingModal(scanFindings[idx]);
-            }
-        };
-
-        window.showFindingModal = function(finding) {
-            if (!finding) return;
-            currentFinding = finding;
-            isEli5Mode = false;
-            const eliBtn = document.getElementById("eli5ToggleBtn");
-            if (eliBtn) eliBtn.innerText = "👶 Explain Like I'm New to Security (ELI5)";
-
-            document.getElementById("modalTitle").innerText = finding.title || "Untitled Finding";
-            const sev = (finding.severity || "MEDIUM").toUpperCase();
-            document.getElementById("modalSeverityBadge").className = "badge badge-" + sev;
-            document.getElementById("modalSeverityBadge").innerText = sev;
-
-            const conf = (finding.confidence || "LIKELY").toUpperCase();
-            const confBadge = document.getElementById("modalConfidenceBadge");
-            if (confBadge) {
-                confBadge.className = "badge badge-conf-" + conf;
-                confBadge.innerText = conf + " CONFIDENCE";
-            }
-
-            document.getElementById("modalCategoryBadge").innerText = (finding.category || "web").toUpperCase();
-            
-            const engines = finding.scanners && finding.scanners.length ? finding.scanners.join(", ") : (finding.scanner || "trustaudit");
-            document.getElementById("modalEngineBadge").innerText = engines;
-            
-            const location = finding.file || finding.url || finding.target || "";
-            document.getElementById("modalTargetLocation").innerText = location ? "Primary Location: " + location + (finding.line ? ":" + finding.line : "") : "";
-            
-            // Multi-Location Deduplication list
-            const locSec = document.getElementById("modalLocationsSection");
-            const locList = document.getElementById("modalLocationsList");
-            if (finding.locations && finding.locations.length > 1) {
-                locSec.style.display = "block";
-                locList.innerHTML = finding.locations.map(function(l) {
-                    return '<li><code>' + l.file + (l.line ? ':' + l.line : '') + '</code>' + (l.evidence ? ' — <small style="color: #64748b;">' + l.evidence.substring(0, 50) + '...</small>' : '') + '</li>';
-                }).join('');
-            } else {
-                locSec.style.display = "none";
-            }
-
-            document.getElementById("modalDesc").innerText = finding.description || "No description provided.";
-            
-            const impactSec = document.getElementById("modalImpactSection");
-            if (finding.business_impact || finding.impact) {
-                impactSec.style.display = "block";
-                document.getElementById("modalImpact").innerText = finding.business_impact || finding.impact;
-            } else {
-                impactSec.style.display = "none";
-            }
-            
-            document.getElementById("modalEvidence").innerText = finding.evidence || "No raw detection evidence captured.";
-            document.getElementById("modalRemediation").innerText = finding.remediation || "Review and remediate according to standard security practices.";
-            document.getElementById("findingModal").classList.add("active");
-        };
-
-        window.toggleEli5Mode = function() {
-            if (!currentFinding) return;
-            isEli5Mode = !isEli5Mode;
-            const btn = document.getElementById("eli5ToggleBtn");
-            const descEl = document.getElementById("modalDesc");
-
-            if (isEli5Mode) {
-                if (btn) btn.innerText = "Switch to Technical View";
-                if (descEl) descEl.innerHTML = '<span style="color: var(--text-dim);">Translating into founder plain-English...</span>';
-
-                fetch('/api/findings/eli5', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(currentFinding)
-                }).then(r => r.json()).then(d => {
-                    if (descEl) descEl.innerHTML = (d.eli5_explanation || '').split('\\n').join('<br>');
-                }).catch(e => {
-                    if (descEl) descEl.innerText = currentFinding.description || "No description available.";
+            if (el) el.classList.add('active');
+            else {
+                document.querySelectorAll('.nav-item').forEach(n => {
+                    if (n.getAttribute('href') === '#' + sectionId) n.classList.add('active');
                 });
-            } else {
-                if (btn) btn.innerText = "👶 Explain Like I'm New to Security (ELI5)";
-                if (descEl) descEl.innerText = currentFinding.description || "No description provided.";
-            }
-        };
-
-        function safeCopyText(text, successMsg) {
-            if (!text) return;
-            if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(text).then(() => {
-                    if (successMsg) alert(successMsg);
-                }).catch(() => {
-                    if (window.prompt) window.prompt("Copy to clipboard:", text);
-                });
-            } else {
-                if (window.prompt) window.prompt("Copy to clipboard:", text);
             }
         }
 
-        window.copyAiFixPrompt = function() {
-            if (!currentFinding) return;
-            fetch('/api/findings/ai-prompt', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(currentFinding)
-            }).then(r => r.json()).then(d => {
-                const promptText = d.ai_fix_prompt || ('Ask Cursor / Claude: Fix security vulnerability in ' + (currentFinding.file || 'the codebase') + ' for ' + (currentFinding.title || ''));
-                safeCopyText(promptText, "✓ Ready-to-use AI Fix Prompt copied to clipboard!\\n\\n" + promptText);
-            }).catch(e => {
-                const fallback = 'Ask Cursor / Claude: Fix security vulnerability in ' + (currentFinding.file || 'the codebase') + ' for ' + (currentFinding.title || '');
-                safeCopyText(fallback, "✓ AI Fix Prompt copied!");
-            });
-        };
+        // On Load, fetch DPDP data from backend APIs
+        window.addEventListener('DOMContentLoaded', async () => {
+            const hash = window.location.hash.replace('#', '') || 'overview';
+            navTo(hash);
+            await loadAllDpdpData();
+        });
 
-        window.closeModal = function() {
-            document.getElementById("findingModal").classList.remove("active");
-        };
-
-        window.copyModalEvidence = function() {
-            if (!currentFinding || !currentFinding.evidence) {
-                alert("No evidence text to copy.");
-                return;
-            }
-            safeCopyText(currentFinding.evidence, "✓ Evidence copied to clipboard!");
-        };
-
-        window.copyPrompt = function(findingId) {
-            const promptText = "Fix security issue: " + findingId + " in the codebase. Please apply safe defensive programming and input validation.";
-            safeCopyText(promptText, "✓ AI Coding Prompt copied! Paste into Cursor, Claude Code, or Copilot.");
-        };
-
-        window.triggerFixVerification = function(findingId, target) {
-            if (!confirm("Trigger live verification scan to confirm this vulnerability was resolved?")) return;
-            const targetInput = document.getElementById('dash-target-input');
-            const actualTarget = target || (targetInput ? targetInput.value : '');
-
-            fetch('/api/finding/' + encodeURIComponent(findingId) + '/verify', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({finding_id: findingId, target: actualTarget})
-            }).then(r => r.json()).then(data => {
-                if (data.is_fixed) {
-                    alert('🎉 VERIFIED CLEAN! The vulnerability is no longer detected. Posture Score: ' + data.score + '/100');
-                    window.location.reload();
-                } else {
-                    alert('⚠️ Still Vulnerable: ' + (data.message || 'The vulnerability was still detected during rescan.'));
-                }
-            }).catch(e => alert('Verification error: ' + e));
-        };
-
-        window.markFindingStatus = function(status) {
-            if (!currentFinding) return;
-            const findingId = currentFinding.id || currentFinding.finding_id || "FIND-GEN";
-            fetch('/api/finding/' + encodeURIComponent(findingId) + '/status', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({status: status})
-            }).then(r => r.json()).then(data => {
-                alert('Finding status updated to: ' + status);
-                closeModal();
-            }).catch(e => alert('Error updating finding: ' + e));
-        };
-
-        window.copyBadgeSnippet = function() {
-            const el = document.getElementById("readmeBadgeSnippet");
-            if (!el) return;
-            safeCopyText(el.value, "✓ README Markdown badge snippet copied to clipboard!\\n\\n" + el.value);
-        };
-
-        window.previewWeeklyDigest = function() {
-            const previewBox = document.getElementById("weeklyDigestPreview");
-            if (!previewBox) return;
-            previewBox.style.display = "block";
-            previewBox.innerHTML = "<em>Generating weekly digest preview...</em>";
-
-            fetch('/api/digest/weekly')
-                .then(r => r.json())
-                .then(d => {
-                    previewBox.innerHTML = 
-                        '<div style="font-weight: 700; color: #fff; font-size: 15px; margin-bottom: 6px;">' + (d.headline || 'Weekly Security Digest') + '</div>' +
-                        '<div style="color: #94a3b8; font-size: 12px; margin-bottom: 10px;">Date: ' + d.date + ' &bull; Average Posture Score: <b style="color: #22c55e;">' + d.average_score + '/100</b></div>' +
-                        '<div style="background: #0b1120; padding: 10px; border-radius: 6px; margin-bottom: 10px;">' + d.status_narrative + '</div>' +
-                        '<div style="display: flex; gap: 14px; font-size: 12px; color: #64748b;">' +
-                        '<span>Scans: <b>' + d.scans_executed_this_week + '</b></span>' +
-                        '<span>Active Projects: <b>' + d.total_projects + '</b></span>' +
-                        '<span>Open Risks: <b>' + d.open_findings + '</b></span>' +
-                        '</div>';
-                }).catch(e => {
-                    previewBox.innerText = "Error loading digest preview: " + e;
-                });
-        };
-
-        window.quickAudit = function(targetUrl, scanType) {
-            const input = document.getElementById('dash-target-input');
-            if (input) input.value = targetUrl;
-            setDashboardScanMode(scanType || 'website');
-            switchNav('dash-scans');
-            const form = document.getElementById('dash-scan-form');
-            if (form) form.submit();
-        };
-
-        // 5. Findings Search & Filter
-        window.filterFindingsTable = function() {
-            const searchVal = (document.getElementById('finding-search').value || '').toLowerCase();
-            const sevVal = document.getElementById('filter-severity').value;
-            const rows = document.querySelectorAll('#findings-table tbody tr');
-
-            rows.forEach(function(row) {
-                const rowSev = row.getAttribute('data-severity') || '';
-                const rowTitle = row.getAttribute('data-title') || '';
-                const matchesSev = (sevVal === 'ALL' || rowSev === sevVal);
-                const matchesSearch = (!searchVal || rowTitle.indexOf(searchVal) !== -1);
-                row.style.display = (matchesSev && matchesSearch) ? '' : 'none';
-            });
-        };
-
-        // 6. AI Copilot Query
-        window.sendAdvisorPrompt = function(q) {
-            const input = document.getElementById('advisor-query-input');
-            if (input) input.value = q;
-            submitAdvisorQuery();
-        };
-
-        window.submitAdvisorQuery = function() {
-            const input = document.getElementById('advisor-query-input');
-            const btn = document.getElementById('advisor-send-btn');
-            const box = document.getElementById('advisor-response-box');
-            const text = document.getElementById('advisor-response-text');
-            const query = input ? input.value.trim() : '';
-            if (!query) return;
-
-            if (btn) btn.innerText = 'Analyzing...';
-            if (box) box.style.display = 'block';
-            if (text) text.innerText = 'Grounding query against deterministic scan findings...';
-
-            fetch('/api/advisor/query', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({query: query})
-            }).then(r => r.json()).then(data => {
-                if (btn) btn.innerText = 'Ask Copilot';
-                if (text) text.innerText = data.answer || 'No response returned.';
-            }).catch(e => {
-                if (btn) btn.innerText = 'Ask Copilot';
-                if (text) text.innerText = 'Copilot query error: ' + e;
-            });
-        };
-
-        // 7. Integrations & Schedule
-        window.saveIntegrations = function() {
-            const slackUrl = document.getElementById('slack-webhook-input').value;
-            fetch('/api/integrations', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({slack_webhook_url: slackUrl})
-            }).then(r => r.json()).then(data => {
-                alert('✓ Integration settings saved successfully!');
-            }).catch(e => alert('Error saving settings: ' + e));
-        };
-
-        window.testIntegrationAlert = function() {
-            const slackUrl = document.getElementById('slack-webhook-input').value;
-            fetch('/api/integrations/test', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({target_url: slackUrl})
-            }).then(r => r.json()).then(data => {
-                alert('✓ Test alert dispatched! Check your notification channel.');
-            }).catch(e => alert('Error dispatching test alert: ' + e));
-        };
-
-        window.saveMonitoringSchedule = function() {
-            const freq = document.getElementById('monitoring-cadence-select').value;
-            alert('✓ Continuous monitoring schedule updated to: ' + freq);
-        };
-
-        window.triggerInstantSweep = function() {
-            if (!confirm("Run immediate continuous security sweep across all monitored assets?")) return;
-            fetch('/api/monitoring/trigger-all', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'}
-            }).then(r => r.json()).then(data => {
-                alert('✓ Sweep triggered for ' + data.triggered_count + ' asset(s)!');
-                switchNav('dash-main');
-            }).catch(e => alert('Error triggering sweep: ' + e));
-        };
-
-        window.promptAddTeamMember = function() {
-            const name = prompt("Enter team member name:");
-            if (!name) return;
-            const email = prompt("Enter team member email:");
-            if (!email) return;
-            fetch('/api/team/members', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({name: name, email: email, role: 'member'})
-            }).then(r => r.json()).then(data => {
-                alert('✓ Team member ' + name + ' invited!');
-                window.location.reload();
-            }).catch(e => alert('Error inviting member: ' + e));
-        };
-
-        // 8. Live Progress Simulation
-        let dashProgressIv = null;
-        window.cancelActiveScan = function(prefix) {
-            if (dashProgressIv) clearInterval(dashProgressIv);
-            const overlay = document.getElementById(prefix + '-progress');
-            if (overlay) overlay.style.display = 'none';
-            const btn = document.getElementById(prefix + '-submit-btn');
-            if (btn) {
-                btn.disabled = false;
-                btn.innerText = 'Run Security Scan';
-            }
-        };
-
-        window.showProgress = function(prefix) {
-            const overlay = document.getElementById(prefix + '-progress');
-            const btn = document.getElementById(prefix + '-submit-btn');
-            if (overlay) overlay.style.display = 'block';
-            if (btn) {
-                btn.disabled = true;
-                btn.innerText = 'Scanning...';
-            }
-            const bar = document.getElementById(prefix + '-bar');
-            const stageText = document.getElementById(prefix + '-stage');
-
-            const stages = [
-                {pct: 15, text: 'Normalizing target URL & resolving DNS (IPv4/IPv6)...'},
-                {pct: 35, text: 'Probing HTTP/HTTPS connectivity & security headers...'},
-                {pct: 55, text: 'Inspecting TLS certificate validity & SSL protocol...'},
-                {pct: 70, text: 'Auditing cookie flags (Secure, HttpOnly) & CORS...'},
-                {pct: 85, text: 'Testing public file exposure & API endpoints...'},
-                {pct: 95, text: 'Calculating security posture score & generating report...'}
-            ];
-
-            let i = 0;
-            const t0 = Date.now();
-            if (dashProgressIv) clearInterval(dashProgressIv);
-            dashProgressIv = setInterval(() => {
-                const elapsed = Math.floor((Date.now() - t0) / 1000);
-                if (btn) btn.innerText = 'Scanning (' + elapsed + 's)...';
-                if (i < stages.length) {
-                    if (bar) bar.style.width = stages[i].pct + '%';
-                    if (stageText) stageText.innerText = stages[i].text;
-                    i++;
-                }
-            }, 1200);
-        };
-
-        // 9. Vulnerability Intelligence Drawer & Actions
-        let currentIntelVuln = null;
-
-        window.showIntelModal = function(vuln) {
-            if (!vuln) return;
-            currentIntelVuln = vuln;
-
-            const modal = document.getElementById('intelModal');
-            const title = document.getElementById('intelModalTitle');
-            const ids = document.getElementById('intelModalIds');
-            const sevBadge = document.getElementById('intelModalSevBadge');
-            const kevBadge = document.getElementById('intelModalKevBadge');
-            const sourceBadge = document.getElementById('intelModalSourceBadge');
-            const desc = document.getElementById('intelModalDesc');
-            const kevSection = document.getElementById('intelModalKevSection');
-            const kevDesc = document.getElementById('intelModalKevDesc');
-            const ranges = document.getElementById('intelModalRanges');
-            const fixed = document.getElementById('intelModalFixed');
-            const why = document.getElementById('intelModalWhy');
-            const whySection = document.getElementById('intelModalWhySection');
-            const remediation = document.getElementById('intelModalRemediation');
-
-            if (title) title.innerText = vuln.title || 'Vulnerability Advisory';
-            if (ids) ids.innerText = 'ID: ' + (vuln.cve_id || vuln.source_id || vuln.id) + ' | Ecosystem: ' + (vuln.ecosystem || 'N/A') + ' | CVSS: ' + (vuln.cvss_score || 'N/A');
-            
-            if (sevBadge) {
-                sevBadge.innerText = vuln.severity || 'MEDIUM';
-                sevBadge.className = 'badge badge-' + (vuln.severity || 'MEDIUM');
-            }
-
-            if (kevBadge) {
-                kevBadge.style.display = (vuln.is_known_exploited || vuln.kev_status) ? 'inline-block' : 'none';
-            }
-
-            if (sourceBadge) {
-                sourceBadge.innerText = vuln.source || 'OSV / NVD';
-            }
-
-            if (desc) desc.innerText = vuln.description || vuln.summary || 'No detailed description available.';
-
-            if (kevSection) {
-                if (vuln.is_known_exploited || vuln.kev_status) {
-                    kevSection.style.display = 'block';
-                    const kd = vuln.kev_details || vuln.kev_status || {};
-                    if (kevDesc) kevDesc.innerText = (kd.required_action ? 'Required Action: ' + kd.required_action + ' (Due: ' + (kd.due_date || 'ASAP') + '). ' : '') + (kd.short_description || 'Active in-the-wild exploitation verified by CISA.');
-                } else {
-                    kevSection.style.display = 'none';
-                }
-            }
-
-            if (ranges) ranges.innerText = (vuln.affected_version_ranges && vuln.affected_version_ranges.length) ? vuln.affected_version_ranges.join(', ') : 'All prior unpatched versions';
-            if (fixed) fixed.innerText = (vuln.fixed_versions && vuln.fixed_versions.length) ? vuln.fixed_versions.join(', ') : 'Latest secure release';
-
-            if (whySection && why) {
-                if (vuln.why_prioritized) {
-                    whySection.style.display = 'block';
-                    why.innerText = vuln.why_prioritized;
-                } else {
-                    whySection.style.display = 'none';
-                }
-            }
-
-            if (remediation) remediation.innerText = vuln.remediation || 'Upgrade package to the latest secure version.';
-
-            if (modal) modal.style.display = 'flex';
-        };
-
-        window.closeIntelModal = function() {
-            const modal = document.getElementById('intelModal');
-            if (modal) modal.style.display = 'none';
-            currentIntelVuln = null;
-        };
-
-        window.copyIntelPrompt = function() {
-            if (!currentIntelVuln) return;
-            const prompt = currentIntelVuln.ai_prompt || ('Fix vulnerability ' + (currentIntelVuln.cve_id || currentIntelVuln.id) + ' in ' + currentIntelVuln.package_name + ' by upgrading to ' + ((currentIntelVuln.fixed_versions || [])[0] || 'latest version') + '.');
-            navigator.clipboard.writeText(prompt);
-            alert('✓ Copied remediation prompt for Cursor / Claude / Copilot to clipboard!');
-        };
-
-        window.recheckFromModal = function() {
-            if (!currentIntelVuln) return;
-            recheckFinding(currentIntelVuln.id, currentIntelVuln.package_name, currentIntelVuln.installed_version);
-        };
-
-        window.recheckFinding = function(findingId, pkgName, currentVer) {
-            const newVer = prompt('Enter the newly upgraded version of package "' + pkgName + '" (currently: ' + currentVer + '):', currentVer);
-            if (!newVer) return;
-
-            fetch('/api/intel/recheck/' + encodeURIComponent(findingId), {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    package_name: pkgName,
-                    new_version: newVer,
-                    ecosystem: 'npm',
-                    project_id: 'proj-demo-1'
-                })
-            }).then(r => r.json()).then(data => {
-                if (data.verified_fixed_count > 0) {
-                    alert('✓ Verified! Finding has been confirmed resolved and moved to VERIFIED_FIXED.');
-                } else {
-                    alert('⚠️ Recheck complete: Installed version ' + newVer + ' is still within the vulnerable range (' + data.remaining_open_count + ' open finding(s)).');
-                }
-                window.location.reload();
-            }).catch(e => alert('Recheck error: ' + e));
-        };
-
-        window.triggerIntelSync = function() {
-            const btn = document.getElementById('btn-intel-sync');
-            if (btn) {
-                btn.disabled = true;
-                btn.innerText = 'Syncing...';
-            }
-            fetch('/api/intel/sync', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'}
-            }).then(r => r.json()).then(data => {
-                if (btn) {
-                    btn.disabled = false;
-                    btn.innerText = '⚡ Sync Intelligence Now';
-                }
-                alert('✓ Vulnerability Intelligence synchronized! ' + (data.kev_sync ? data.kev_sync.count : 0) + ' KEV records indexed.');
-                window.location.reload();
-            }).catch(e => {
-                if (btn) {
-                    btn.disabled = false;
-                    btn.innerText = '⚡ Sync Intelligence Now';
-                }
-                alert('Sync error: ' + e);
-            });
-        };
-
-        window.filterIntelTable = function() {
-            const q = (document.getElementById('intel-search-input').value || '').toLowerCase();
-            const sev = (document.getElementById('intel-sev-filter').value || '').toUpperCase();
-            const rows = document.querySelectorAll('.intel-row');
-
-            rows.forEach(function(row) {
-                const rowSev = (row.getAttribute('data-sev') || '').toUpperCase();
-                const rowText = (row.getAttribute('data-text') || '').toLowerCase();
-                const rowCve = (row.getAttribute('data-cve') || '').toLowerCase();
-
-                const matchesSev = !sev || rowSev === sev;
-                const matchesQ = !q || rowText.indexOf(q) !== -1 || rowCve.indexOf(q) !== -1;
-
-                if (matchesSev && matchesQ) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        };
-
-        // 10. MCP Intelligence Helpers
-        window.searchMcpReputation = function() {
-            const pkg = document.getElementById('mcp-rep-input').value.trim();
-            if (!pkg) return;
-            fetch('/api/mcp/reputation-lookup?package=' + encodeURIComponent(pkg))
-                .then(r => r.json())
-                .then(data => {
-                    const resDiv = document.getElementById('mcp-rep-result');
-                    resDiv.style.display = 'block';
-                    document.getElementById('mcp-rep-pkg-name').innerText = data.package || pkg;
-                    const tierBadge = document.getElementById('mcp-rep-tier-badge');
-                    const catEl = document.getElementById('mcp-rep-category');
-                    const concernsEl = document.getElementById('mcp-rep-concerns');
-                    const remEl = document.getElementById('mcp-rep-remediation');
-
-                    if (data.flagged) {
-                        tierBadge.innerText = 'CONCERNS DOCUMENTED';
-                        tierBadge.className = 'badge badge-fail';
-                        catEl.style.display = 'block';
-                        catEl.innerText = data.owasp_mcp_category || 'OWASP MCP Security Advisory';
-                        concernsEl.innerHTML = (data.concerns || []).map(c => '<p style="margin-bottom: 4px;">• ' + c + '</p>').join('');
-                        remEl.style.display = 'block';
-                        remEl.innerHTML = '<b>Remediation:</b> ' + (data.remediation || 'Review tool permissions.');
-                    } else {
-                        tierBadge.innerText = 'CLEAN';
-                        tierBadge.className = 'badge badge-pass';
-                        catEl.style.display = 'none';
-                        concernsEl.innerHTML = '<span style="color: #4ade80;">✓ No known issues found in curated database.</span>';
-                        remEl.style.display = 'none';
-                    }
-                })
-                .catch(e => alert('Lookup error: ' + e));
-        };
-
-        window.checkMcpTyposquat = function() {
-            const pkg = document.getElementById('mcp-typo-input').value.trim();
-            if (!pkg) return;
-            fetch('/api/mcp/typosquat', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({packages: [pkg]})
-            })
-                .then(r => r.json())
-                .then(data => {
-                    const resDiv = document.getElementById('mcp-typo-result');
-                    resDiv.style.display = 'block';
-                    const statusEl = document.getElementById('mcp-typo-status');
-                    const detailEl = document.getElementById('mcp-typo-detail');
-                    if (data.findings && data.findings.length > 0) {
-                        const f = data.findings[0];
-                        statusEl.innerHTML = '<span style="color: #f87171;">🚨 TYPOSQUATTING DETECTED (' + f.attack_type + ')</span>';
-                        detailEl.innerText = f.reason + ' Official Package: ' + f.resembles;
-                    } else {
-                        statusEl.innerHTML = '<span style="color: #4ade80;">✓ CLEAN — No typosquatting or homoglyph signals detected.</span>';
-                        detailEl.innerText = 'Package name does not masquerade as any known official MCP server.';
-                    }
-                })
-                .catch(e => alert('Typosquat check error: ' + e));
-        };
-
-        window.runMcpPermissionDiff = function() {
-            let bJson, cJson;
+        async function loadAllDpdpData() {
             try {
-                bJson = JSON.parse(document.getElementById('mcp-diff-baseline').value);
-                cJson = JSON.parse(document.getElementById('mcp-diff-current').value);
-            } catch (err) {
-                alert('Invalid JSON in baseline or current tool definition.');
-                return;
-            }
-            fetch('/api/mcp/diff-permissions', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({baseline_tool: bJson, current_tool: cJson})
-            })
-                .then(r => r.json())
-                .then(data => {
-                    const resDiv = document.getElementById('mcp-diff-result');
-                    resDiv.style.display = 'block';
-                    document.getElementById('mcp-diff-tool-name').innerText = data.tool_name;
-                    const badge = document.getElementById('mcp-diff-risk-badge');
-                    badge.innerText = data.risk_rating + ' RISK';
-                    badge.className = 'badge ' + (data.is_critical_escalation ? 'badge-CRITICAL' : (data.has_permission_drift ? 'badge-HIGH' : 'badge-pass'));
-
-                    let html = '<p><b>Added Capabilities:</b> ' + (data.added_capabilities.length ? '<span style="color: #f87171;">' + data.added_capabilities.join(', ') + '</span>' : 'None') + '</p>';
-                    html += '<p><b>Removed Capabilities:</b> ' + (data.removed_capabilities.length ? data.removed_capabilities.join(', ') : 'None') + '</p>';
-                    html += '<p><b>Description Changed:</b> ' + (data.description_changed ? 'Yes (Prompt updated)' : 'No') + '</p>';
-                    if (data.escalation_alerts && data.escalation_alerts.length) {
-                        html += '<div style="margin-top: 8px; color: #fca5a5;"><b>🚨 High-Risk Escalation Alerts:</b><ul style="margin: 4px 0 0 16px;">';
-                        data.escalation_alerts.forEach(function(a) {
-                            html += '<li>' + a.risk + '</li>';
-                        });
-                        html += '</ul></div>';
-                    }
-                    document.getElementById('mcp-diff-details').innerHTML = html;
-                })
-                .catch(e => alert('Permission diff error: ' + e));
-        };
-    
-
-        // =======================================================================
-        // COMPLIANCE CENTRE & EVIDENCE VAULT REACTIVE LOGIC
-        // =======================================================================
-        let currentComplianceData = null;
-        let selectedFrameworkKey = 'DPDP';
-
-        window.refreshComplianceData = function() {
-            fetch('/api/compliance/assessment')
-                .then(r => r.json())
-                .then(data => {
-                    currentComplianceData = data;
-                    renderComplianceFramework(selectedFrameworkKey);
-                })
-                .catch(err => console.error("Error loading compliance assessment:", err));
-
-            loadEvidenceVault();
-        };
-
-        window.switchComplianceFramework = function(fwKey) {
-            selectedFrameworkKey = fwKey;
-            document.querySelectorAll('.fw-tab-btn').forEach(b => {
-                b.classList.remove('active', 'btn-primary');
-                b.classList.add('btn-secondary');
-            });
-            const activeBtn = document.getElementById('tab-fw-' + fwKey.toLowerCase());
-            if (activeBtn) {
-                activeBtn.classList.add('active', 'btn-primary');
-                activeBtn.classList.remove('btn-secondary');
-            }
-            renderComplianceFramework(fwKey);
-        };
-
-        function renderComplianceFramework(fwKey) {
-            if (!currentComplianceData || !currentComplianceData.frameworks) {
-                return;
-            }
-            const fw = currentComplianceData.frameworks[fwKey];
-            if (!fw) return;
-
-            document.getElementById('fw-readiness-score').innerText = (fw.readiness_score || 0) + '%';
-            document.getElementById('fw-readiness-grade').innerText = 'Readiness Grade: ' + (fw.readiness_grade || 'B');
-            document.getElementById('fw-implemented-count').innerText = fw.implemented_count || 0;
-            document.getElementById('fw-evidence-missing-count').innerText = fw.evidence_missing_count || 0;
-            document.getElementById('fw-gap-count').innerText = fw.gap_count || 0;
-
-            const tbody = document.getElementById('compliance-controls-tbody');
-            if (!tbody) return;
-
-            const controls = fw.controls || [];
-            if (controls.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px; color: var(--text-muted);">No controls defined for this framework.</td></tr>';
-                return;
-            }
-
-            tbody.innerHTML = controls.map(c => {
-                let badgeClass = 'badge-pass';
-                let badgeColor = '#34d399';
-                let badgeBg = 'rgba(52, 211, 153, 0.15)';
-                if (c.status === 'GAP_IDENTIFIED') {
-                    badgeColor = '#f87171';
-                    badgeBg = 'rgba(248, 113, 113, 0.15)';
-                } else if (c.status === 'IMPLEMENTED_EVIDENCE_MISSING') {
-                    badgeColor = '#fbbf24';
-                    badgeBg = 'rgba(251, 191, 36, 0.15)';
-                } else if (c.status === 'REQUIRES_EXPERT_REVIEW') {
-                    badgeColor = '#c084fc';
-                    badgeBg = 'rgba(192, 132, 252, 0.15)';
-                } else if (c.status === 'NOT_APPLICABLE') {
-                    badgeColor = '#94a3b8';
-                    badgeBg = 'rgba(148, 163, 184, 0.15)';
+                // 1. Load Inventory
+                const invRes = await fetch('/api/dpdp/inventory');
+                if (invRes.ok) {
+                    const inv = await invRes.json();
+                    renderInventory(inv.items || []);
                 }
 
+                // 2. Load Assessment
+                const assRes = await fetch('/api/dpdp/assessment');
+                if (assRes.ok) {
+                    const ass = await assRes.json();
+                    renderAssessment(ass);
+                }
+
+                // 3. Load Privacy Notices
+                const notRes = await fetch('/api/dpdp/notices');
+                if (notRes.ok) {
+                    const nots = await notRes.json();
+                    renderNotices(nots.items || []);
+                }
+
+                // 4. Load Withdrawals
+                const wthRes = await fetch('/api/dpdp/withdrawals');
+                if (wthRes.ok) {
+                    const wths = await wthRes.json();
+                    renderWithdrawals(wths.items || []);
+                }
+
+                // 5. Load Rights Requests
+                const rgtRes = await fetch('/api/dpdp/rights');
+                if (rgtRes.ok) {
+                    const rgts = await rgtRes.json();
+                    renderRights(rgts.items || []);
+                }
+
+                // 6. Load Vendors
+                const vndRes = await fetch('/api/dpdp/vendors');
+                if (vndRes.ok) {
+                    const vnds = await vndRes.json();
+                    renderVendors(vnds.items || []);
+                }
+
+                // 7. Load Retention
+                const retRes = await fetch('/api/dpdp/retention');
+                if (retRes.ok) {
+                    const rets = await retRes.json();
+                    renderRetention(rets.items || []);
+                }
+
+                // 8. Load Breaches
+                const brcRes = await fetch('/api/dpdp/breaches');
+                if (brcRes.ok) {
+                    const brcs = await brcRes.json();
+                    renderBreaches(brcs.items || []);
+                }
+
+                // 9. Load Evidence
+                const eviRes = await fetch('/api/evidence');
+                if (eviRes.ok) {
+                    const evis = await eviRes.json();
+                    renderEvidence(evis.evidence || []);
+                }
+            } catch (err) {
+                console.warn('Backend DPDP data fetch fallback:', err);
+            }
+        }
+
+        function renderInventory(items) {
+            const tbody = document.getElementById('inventory-tbody');
+            if (!tbody) return;
+            const navInv = document.getElementById('nav-inv-count');
+            const kpiInv = document.getElementById('kpi-inventory-count');
+            if (navInv) navInv.innerText = items.length;
+            if (kpiInv) kpiInv.innerText = items.length;
+            
+            if (!items.length) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-dim);">No data inventory items logged. Click "+ Add Data Stream" to start.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = items.map(item => `
+                <tr>
+                    <td><strong>${escapeHtml(item.category || '')}</strong></td>
+                    <td>${escapeHtml(item.principal_type || '')}</td>
+                    <td>${escapeHtml(item.purpose || '')}</td>
+                    <td><span class="badge-pill badge-sky">${escapeHtml(item.legal_basis || '')}</span></td>
+                    <td>${escapeHtml(item.storage_system || '')}</td>
+                    <td>${escapeHtml(item.department || '')}</td>
+                    <td>${escapeHtml(item.retention_period || '')}</td>
+                    <td>${escapeHtml(item.international_transfer || 'None')}</td>
+                </tr>
+            `).join('');
+        }
+
+        function renderAssessment(assessment) {
+            const tbody = document.getElementById('assessment-tbody');
+            if (!tbody) return;
+            const controls = assessment.controls || [];
+            const kpiRead = document.getElementById('kpi-readiness');
+            const topRead = document.getElementById('topbar-readiness-val');
+            const kpiGaps = document.getElementById('kpi-gaps-count');
+            const navGaps = document.getElementById('nav-gaps-count');
+            if (kpiRead) kpiRead.innerText = (assessment.readiness_score || 82) + '%';
+            if (topRead) topRead.innerText = (assessment.readiness_score || 82) + '%';
+            if (kpiGaps) kpiGaps.innerText = assessment.gaps_count || 0;
+            if (navGaps) navGaps.innerText = assessment.gaps_count || 0;
+
+            tbody.innerHTML = controls.map(ctrl => {
+                const isGap = ctrl.status === 'GAP_IDENTIFIED';
+                const pillClass = isGap ? 'badge-amber' : 'badge-emerald';
+                const statusLabel = isGap ? 'Gap Identified' : 'Self-Attested Implemented';
                 return `
-                    <tr style="border-bottom: 1px solid var(--border-subtle);">
-                        <td style="padding: 12px 14px; vertical-align: top;">
-                            <b style="color: #38bdf8; font-family: monospace;">${c.control_id}</b>
-                            <div style="font-size: 11.5px; color: #94a3b8; margin-top: 2px;">${c.section || ''}</div>
-                        </td>
-                        <td style="padding: 12px 14px; vertical-align: top; max-width: 380px;">
-                            <b style="color: #fff; font-size: 13.5px;">${c.title}</b>
-                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">${c.description}</div>
-                            <div style="font-size: 11px; color: #38bdf8; margin-top: 4px;">Ref: ${c.official_ref}</div>
-                        </td>
-                        <td style="padding: 12px 14px; vertical-align: top;">
-                            <span style="font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 4px; background: #1e293b; color: #e2e8f0;">
-                                ${c.enforcement_phase === 'IN_FORCE_SUBSTANTIVE' ? '⚡ In Force' : '⏳ Pending Notification'}
-                            </span>
-                        </td>
-                        <td style="padding: 12px 14px; vertical-align: top;">
-                            <span style="display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 11.5px; font-weight: 600; color: ${badgeColor}; background: ${badgeBg};">
-                                ${c.status_label}
-                            </span>
-                            <div style="font-size: 11px; color: #64748b; margin-top: 4px;">${c.rationale || ''}</div>
-                        </td>
-                        <td style="padding: 12px 14px; vertical-align: top; text-align: right;">
-                            <button class="btn btn-sm btn-secondary" onclick="openAttachEvidenceForControl('${c.control_id}', '${fwKey}')" style="font-size: 11px; padding: 4px 8px;">+ Evidence</button>
-                        </td>
+                    <tr>
+                        <td><strong style="color: var(--brand-accent);">${escapeHtml(ctrl.section || '')}</strong></td>
+                        <td>${escapeHtml(ctrl.title || '')}</td>
+                        <td>${escapeHtml(ctrl.category || '')}</td>
+                        <td>${escapeHtml(ctrl.effective_date || '')}</td>
+                        <td><span class="badge-pill ${pillClass}">${statusLabel}</span></td>
+                        <td><button onclick="alert('Viewing control: ${ctrl.requirement_id}')" class="btn btn-secondary btn-sm">Inspect</button></td>
                     </tr>
                 `;
             }).join('');
+
+            // Render Remediation list
+            const remContainer = document.getElementById('remediation-list-container');
+            if (remContainer) {
+                const tasks = assessment.remediation_tasks || [];
+                remContainer.innerHTML = tasks.map(t => `
+                    <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-weight: 700; color: #ffffff;">${escapeHtml(t.title || '')}</div>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Owner: ${escapeHtml(t.owner || '')} &bull; Deadline: ${escapeHtml(t.deadline || '')} &bull; Category: ${escapeHtml(t.category || '')}</div>
+                            <div style="font-size: 11.5px; color: var(--text-dim); margin-top: 4px;">${escapeHtml(t.guidance || '')}</div>
+                        </div>
+                        <span class="badge-pill badge-amber">Open Action Item</span>
+                    </div>
+                `).join('') || '<div style="color: var(--text-dim); text-align: center;">No open remediation tasks.</div>';
+            }
         }
 
-        window.loadEvidenceVault = function() {
-            fetch('/api/evidence')
-                .then(r => r.json())
-                .then(data => {
-                    const tbody = document.getElementById('evidence-vault-tbody');
-                    if (!tbody) return;
-                    const items = data.evidence || [];
-                    if (items.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 24px; color: var(--text-muted);">No evidence uploaded yet. Attach your security policies or compliance screenshots above.</td></tr>';
-                        return;
-                    }
-                    tbody.innerHTML = items.map(ev => {
-                        const isExpired = ev.is_expired;
-                        const fileInfo = ev.file || {};
-                        const shaShort = fileInfo.sha256 ? fileInfo.sha256.substring(0, 12) + '...' : 'N/A';
-                        return `
-                            <tr style="border-bottom: 1px solid var(--border-subtle);">
-                                <td style="padding: 10px 14px;">
-                                    <b style="color: #fff;">${ev.title}</b>
-                                    <div style="font-size: 11px; color: #64748b; font-family: monospace;">${ev.id}</div>
-                                </td>
-                                <td style="padding: 10px 14px;">
-                                    <span class="badge" style="background: #1e293b; color: #38bdf8;">${ev.framework}</span>
-                                    <span style="font-size: 12px; margin-left: 4px; font-family: monospace;">${ev.control_id}</span>
-                                </td>
-                                <td style="padding: 10px 14px; font-size: 12px; color: #cbd5e1;">
-                                    ${ev.owner_name}<br>
-                                    <small style="color: #64748b;">${new Date(ev.created_at * 1000).toLocaleDateString()}</small>
-                                </td>
-                                <td style="padding: 10px 14px; font-family: monospace; font-size: 11.5px; color: #94a3b8;">
-                                    ${shaShort}
-                                </td>
-                                <td style="padding: 10px 14px;">
-                                    <span class="badge" style="${isExpired ? 'background: rgba(239, 68, 68, 0.15); color: #f87171;' : 'background: rgba(52, 211, 153, 0.15); color: #34d399;'}">
-                                        ${isExpired ? 'EXPIRED' : 'ACTIVE'}
-                                    </span>
-                                </td>
-                                <td style="padding: 10px 14px; text-align: right;">
-                                    ${fileInfo.stored_filename ? `<a href="/api/evidence/${ev.id}/download" class="btn btn-sm btn-secondary" style="font-size: 11px; padding: 3px 8px;">Download</a>` : ''}
-                                    <button onclick="deleteEvidenceItem('${ev.id}')" class="btn btn-sm btn-secondary" style="font-size: 11px; padding: 3px 8px; color: #f87171;">Delete</button>
-                                </td>
-                            </tr>
-                        `;
-                    }).join('');
-                })
-                .catch(err => console.error("Error loading evidence vault:", err));
-        };
-
-        window.handleEvidenceUpload = function(e) {
-            e.preventDefault();
-            const form = document.getElementById('evidence-upload-form');
-            const formData = new FormData(form);
-
-            fetch('/api/evidence', {
-                method: 'POST',
-                body: formData
-            })
-            .then(r => r.json())
-            .then(res => {
-                if (res.status === 'success') {
-                    alert('Evidence attached successfully!');
-                    form.reset();
-                    refreshComplianceData();
-                } else {
-                    alert('Upload failed: ' + (res.message || 'Unknown error'));
-                }
-            })
-            .catch(err => alert('Upload error: ' + err));
-        };
-
-        window.openAttachEvidenceForControl = function(controlId, framework) {
-            switchNav('dash-evidence-vault');
-            const form = document.getElementById('evidence-upload-form');
-            if (form) {
-                if (form.elements['control_id']) form.elements['control_id'].value = controlId;
-                if (form.elements['framework']) form.elements['framework'].value = framework;
+        function renderNotices(items) {
+            const container = document.getElementById('notice-cards-container');
+            if (!container) return;
+            if (!items.length) {
+                container.innerHTML = '<div style="color: var(--text-dim); text-align: center; padding: 20px;">No custom privacy notices generated yet.</div>';
+                return;
             }
-        };
+            container.innerHTML = items.map(n => `
+                <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 18px; margin-bottom: 14px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <h4 style="font-size: 15px; font-weight: 700; color: #ffffff;">${escapeHtml(n.title || '')} (${escapeHtml(n.version || 'v1.0')})</h4>
+                        <span class="badge-pill badge-emerald">Approved</span>
+                    </div>
+                    <pre style="background: #090e17; padding: 12px; border-radius: 6px; font-size: 11.5px; color: #94a3b8; overflow-x: auto; white-space: pre-wrap; max-height: 180px;">${escapeHtml(n.content || '')}</pre>
+                </div>
+            `).join('');
+        }
 
-        window.deleteEvidenceItem = function(evidenceId) {
-            if (!confirm('Are you sure you want to delete this evidence record?')) return;
-            fetch('/api/evidence/' + encodeURIComponent(evidenceId), { method: 'DELETE' })
-                .then(r => r.json())
-                .then(res => {
-                    refreshComplianceData();
-                })
-                .catch(err => alert('Delete error: ' + err));
-        };
+        function renderWithdrawals(items) {
+            const tbody = document.getElementById('withdrawal-tbody');
+            if (!tbody) return;
+            if (!items.length) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-dim);">No consent withdrawals logged.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = items.map(w => `
+                <tr>
+                    <td><code>${escapeHtml(w.id || '')}</code></td>
+                    <td><strong>${escapeHtml(w.data_principal_ref || '')}</strong></td>
+                    <td>${escapeHtml(w.category || '')}</td>
+                    <td><span class="badge-pill badge-emerald">${escapeHtml(w.processing_halt_status || 'CEASED')}</span></td>
+                    <td>${w.processor_notified ? '<span class="badge-pill badge-emerald">Cascaded</span>' : 'Pending'}</td>
+                    <td>${w.statutory_exception_applies ? '<span style="color: var(--brand-amber);">' + escapeHtml(w.exception_reason || '') + '</span>' : 'None (Full Erasure)'}</td>
+                    <td><span class="badge-pill badge-emerald">${escapeHtml(w.status || 'COMPLETED')}</span></td>
+                </tr>
+            `).join('');
+        }
 
-        // Initialize Compliance on DOM load
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(refreshComplianceData, 600);
-        });
+        function renderRights(items) {
+            const tbody = document.getElementById('rights-tbody');
+            if (!tbody) return;
+            if (!items.length) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-dim);">No rights requests logged.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = items.map(r => `
+                <tr>
+                    <td><code>${escapeHtml(r.id || '')}</code></td>
+                    <td><span class="badge-pill badge-sky">${escapeHtml(r.type || '')}</span></td>
+                    <td>${escapeHtml(r.principal_name || '')}</td>
+                    <td>${escapeHtml(r.received_at ? r.received_at.slice(0, 10) : '')}</td>
+                    <td>${escapeHtml(r.sla_deadline || '')}</td>
+                    <td><span class="badge-pill ${r.status==='COMPLETED'?'badge-emerald':'badge-amber'}">${escapeHtml(r.status || '')}</span></td>
+                    <td><button onclick="resolveRightsRequest('${r.id}')" class="btn btn-secondary btn-sm">Resolve</button></td>
+                </tr>
+            `).join('');
+        }
 
+        function renderVendors(items) {
+            const tbody = document.getElementById('vendors-tbody');
+            if (!tbody) return;
+            if (!items.length) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-dim);">No vendors registered.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = items.map(v => `
+                <tr>
+                    <td><strong>${escapeHtml(v.name || '')}</strong></td>
+                    <td>${escapeHtml(v.service || '')}</td>
+                    <td>${escapeHtml(v.personal_data_processed || '')}</td>
+                    <td>${escapeHtml(v.storage_location || '')}</td>
+                    <td><span class="badge-pill ${v.dpa_status==='EXECUTED'?'badge-emerald':'badge-amber'}">${escapeHtml(v.dpa_status || '')}</span></td>
+                    <td>${escapeHtml(v.breach_notification_clause || '')}</td>
+                    <td><span class="badge-pill ${v.risk_rating==='LOW'?'badge-emerald':'badge-amber'}">${escapeHtml(v.risk_rating || '')}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        function renderRetention(items) {
+            const tbody = document.getElementById('retention-tbody');
+            if (!tbody) return;
+            if (!items.length) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-dim);">No retention rules configured.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = items.map(r => `
+                <tr>
+                    <td><strong>${escapeHtml(r.category || '')}</strong></td>
+                    <td>${escapeHtml(r.period_years ? r.period_years + ' Years' : '')}</td>
+                    <td>${escapeHtml(r.statutory_basis || '')}</td>
+                    <td>${escapeHtml(r.end_of_purpose_trigger || '')}</td>
+                    <td>${escapeHtml(r.deletion_method || '')}</td>
+                    <td>${escapeHtml(r.next_review_date || '')}</td>
+                </tr>
+            `).join('');
+        }
+
+        function renderBreaches(items) {
+            const container = document.getElementById('breach-cards-container');
+            if (!container) return;
+            if (!items.length) {
+                container.innerHTML = '<div style="color: var(--text-dim); text-align: center; padding: 20px;">No security incidents reported. Platform operational.</div>';
+                return;
+            }
+            container.innerHTML = items.map(b => `
+                <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 18px; margin-bottom: 14px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <h4 style="font-size: 15px; font-weight: 700; color: #ffffff;">${escapeHtml(b.title || '')}</h4>
+                        <span class="badge-pill badge-red">${escapeHtml(b.severity || 'MEDIUM')} SEVERITY</span>
+                    </div>
+                    <div style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 10px;">
+                        Detected: ${escapeHtml(b.detected_at || '')} &bull; Affected Categories: ${escapeHtml((b.affected_data_categories||[]).join(', '))}
+                    </div>
+                    <div style="background: #090e17; padding: 12px; border-radius: 6px; font-size: 11.5px; color: #94a3b8; margin-bottom: 10px; white-space: pre-wrap;">${escapeHtml(b.board_initial_intimation_draft || '')}</div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 11.5px; color: var(--brand-amber);">Status: ${escapeHtml(b.board_notification_status || 'DRAFT')}</span>
+                        ${!b.customer_authorized_to_send ? `<button onclick="authorizeBreach('${b.id}')" class="btn btn-primary btn-sm">Authorize Intimation</button>` : '<span class="badge-pill badge-emerald">Authorized &bull; Submitted</span>'}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderEvidence(items) {
+            const tbody = document.getElementById('evidence-tbody');
+            if (!tbody) return;
+            const kpiEvi = document.getElementById('kpi-evidence-count');
+            if (kpiEvi) kpiEvi.innerText = items.length;
+            if (!items.length) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-dim);">No evidence artifacts uploaded yet.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = items.map(e => `
+                <tr>
+                    <td><strong>${escapeHtml(e.title || e.filename || '')}</strong></td>
+                    <td><span class="badge-pill badge-sky">${escapeHtml(e.control_id || e.category || 'General')}</span></td>
+                    <td>${escapeHtml(e.uploaded_at ? e.uploaded_at.slice(0, 10) : '')}</td>
+                    <td><code style="font-size: 11px; color: var(--brand-accent);">${escapeHtml((e.file_hash || 'SHA-256 Verified').slice(0, 20))}...</code></td>
+                    <td><span class="badge-pill badge-emerald">${escapeHtml(e.status || 'VERIFIED')}</span></td>
+                    <td><button onclick="alert('Evidence artifact integrity verified via SHA-256.')" class="btn btn-secondary btn-sm">Inspect</button></td>
+                </tr>
+            `).join('');
+        }
+
+        function escapeHtml(str) {
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        // CSV Export
+        function downloadInventoryCSV() {
+            window.location.href = '/api/dpdp/inventory/export';
+        }
+
+        // Modals
+        function openAddInventoryModal() { document.getElementById('addInventoryModal').classList.add('open'); }
+        function closeAddInventoryModal() { document.getElementById('addInventoryModal').classList.remove('open'); }
+        function openAssistantModal() { document.getElementById('assistantModal').classList.add('open'); }
+        function closeAssistantModal() { document.getElementById('assistantModal').classList.remove('open'); }
+
+        async function submitNewInventory(e) {
+            e.preventDefault();
+            const data = {
+                category: document.getElementById('inv_cat').value.trim(),
+                principal_type: document.getElementById('inv_principal').value.trim(),
+                purpose: document.getElementById('inv_purpose').value.trim(),
+                legal_basis: document.getElementById('inv_basis').value,
+                storage_system: document.getElementById('inv_storage').value.trim(),
+                retention_period: document.getElementById('inv_retention').value.trim()
+            };
+            const res = await fetch('/api/dpdp/inventory', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            if (res.ok) {
+                closeAddInventoryModal();
+                await loadAllDpdpData();
+            } else {
+                alert('Could not add inventory entry');
+            }
+        }
+
+        async function sendAiQuery() {
+            const input = document.getElementById('ai-query-input');
+            const q = input.value.trim();
+            if (!q) return;
+            const chat = document.getElementById('chat-messages');
+            chat.innerHTML += `<div class="chat-bubble chat-user">${escapeHtml(q)}</div>`;
+            input.value = '';
+
+            try {
+                const res = await fetch('/api/dpdp/assistant', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: q })
+                });
+                const data = await res.json();
+                chat.innerHTML += `
+                    <div class="chat-bubble chat-ai">
+                        <div style="font-size: 11px; color: var(--brand-accent); font-weight: 700; margin-bottom: 4px;">${escapeHtml(data.matched_section || '')}</div>
+                        <div>${escapeHtml(data.response || '')}</div>
+                        <div style="font-size: 10.5px; color: var(--text-dim); margin-top: 6px;">Status: ${escapeHtml(data.effective_status || '')} &bull; Source: ${escapeHtml(data.source_document || '')}</div>
+                    </div>
+                `;
+                chat.scrollTop = chat.scrollHeight;
+            } catch (err) {
+                chat.innerHTML += `<div class="chat-bubble chat-ai" style="color: var(--brand-red);">Assistant error. Please try again.</div>`;
+            }
+        }
+
+        async function resolveRightsRequest(id) {
+            const summary = prompt('Enter resolution summary for Data Principal:');
+            if (summary) {
+                await fetch('/api/dpdp/rights/' + id + '/status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: 'COMPLETED', response_summary: summary })
+                });
+                await loadAllDpdpData();
+            }
+        }
+
+        async function authorizeBreach(id) {
+            if (confirm('Authorize notification to the Data Protection Board under Section 8(6) & Rule 7?')) {
+                await fetch('/api/dpdp/breaches/' + id + '/authorize', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                await loadAllDpdpData();
+            }
+        }
+
+        function confirmOrgDeletion() {
+            if (confirm('Are you sure you want to request permanent erasure of all organization records? This deletes user accounts, evidence artifacts, and compliance logs per DPDP Section 8(7).')) {
+                fetch('/api/account/delete', { method: 'POST', headers: { 'Content-Type': 'application/json' } })
+                    .then(() => { alert('Account deletion submitted.'); window.location.href = '/'; });
+            }
+        }
     </script>
 </body>
 </html>

@@ -29,7 +29,7 @@ try:
 except ImportError:
     pass
 
-from flask import Flask, request, render_template_string, Response, jsonify, send_file
+from flask import Flask, request, render_template_string, Response, jsonify, send_file, redirect
 
 from badge import generate_badge_svg
 from badge_store import get_last_scan_result
@@ -63,16 +63,27 @@ def add_cache_control_headers(response):
     response.headers["Expires"] = "0"
     return response
 
-# Start continuous security monitoring and vulnerability intelligence workers
-try:
-    scheduler.start_scheduler(poll_interval=30)
-except Exception as e:
-    print(f"[APP] Could not start scheduler: {e}", flush=True)
+# ===========================================================================
+# PRODUCT POSITIONING & FEATURE FLAGS: DPDP COMPLIANCE PLATFORM
+# ===========================================================================
 
-try:
-    vuln_intel_service.start_vulnerability_intelligence_worker()
-except Exception as e:
-    print(f"[APP] Could not start vulnerability intelligence worker: {e}", flush=True)
+FEATURE_LEGACY_SCANNERS = False  # Archived in customer product; dedicated DPDP Platform active
+
+from dpdp_landing_template import DPDP_LANDING_HTML
+from dashboard_template import DASHBOARD_HTML
+import dpdp_engine
+import dpdp_store
+
+if FEATURE_LEGACY_SCANNERS:
+    try:
+        scheduler.start_scheduler(poll_interval=30)
+    except Exception as e:
+        print(f"[APP] Could not start scheduler: {e}", flush=True)
+
+    try:
+        vuln_intel_service.start_vulnerability_intelligence_worker()
+    except Exception as e:
+        print(f"[APP] Could not start vulnerability intelligence worker: {e}", flush=True)
 
 
 def execute_scan(github_url, full_scan=False, auth_confirmed=False):
@@ -100,476 +111,43 @@ def execute_mcp_scan(target, full_scan=False, auth_confirmed=True):
 # HTML TEMPLATES: LANDING PAGE & SAAS DASHBOARD
 # ===========================================================================
 
-LANDING_HTML = """<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TrustAudit — Continuous Security for AI-Coded Applications & MCP</title>
-    <meta name="description" content="TrustAudit continuously scans, tests, and monitors AI-coded applications and MCP systems for security vulnerabilities and regressions.">
-    <style>
-        :root {
-            --bg-main: #090d16;
-            --bg-surface: #111827;
-            --bg-subtle: #0f172a;
-            --bg-hover: #1f2937;
-            --border-subtle: #1e293b;
-            --border-focus: #3b82f6;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --text-dim: #64748b;
-            --brand-blue: #3b82f6;
-            --brand-blue-hover: #2563eb;
-            --brand-indigo: #6366f1;
-            --status-green: #22c55e;
-            --status-yellow: #eab308;
-            --status-red: #ef4444;
-            --status-critical: #dc2626;
-            --card-radius: 12px;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--bg-main); color: var(--text-main); line-height: 1.5; -webkit-font-smoothing: antialiased; }
-        a { color: var(--brand-blue); text-decoration: none; }
-        a:hover { text-decoration: underline; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; font-size: 14px; padding: 10px 20px; border-radius: 8px; cursor: pointer; transition: 0.15s ease; border: none; }
-        .btn-primary { background: var(--brand-blue); color: #fff; }
-        .btn-primary:hover { background: var(--brand-blue-hover); text-decoration: none; }
-        .btn-secondary { background: var(--bg-surface); color: var(--text-main); border: 1px solid var(--border-subtle); }
-        .btn-secondary:hover { background: var(--bg-hover); text-decoration: none; border-color: var(--text-muted); }
-        .badge { display: inline-flex; align-items: center; padding: 3px 8px; font-size: 11px; font-weight: 700; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .badge-CRITICAL { background: #450a0a; color: #f87171; border: 1px solid #7f1d1d; }
-        .badge-HIGH { background: #431407; color: #fb923c; border: 1px solid #7c2d12; }
-        .badge-MEDIUM { background: #422006; color: #facc15; border: 1px solid #713f12; }
-        .badge-LOW { background: #052e16; color: #4ade80; border: 1px solid #14532d; }
-        .card { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--card-radius); padding: 20px; margin-bottom: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
-        th, td { border: 1px solid var(--border-subtle); padding: 10px 14px; text-align: left; }
-        th { background: var(--bg-subtle); color: var(--text-muted); font-weight: 600; }
-        code { background: #1e293b; color: #38bdf8; padding: 2px 6px; border-radius: 4px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12.5px; }
-
-        /* Navbar */
-        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--border-subtle); }
-        .brand-logo { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
-        .brand-logo svg { width: 28px; height: 28px; fill: var(--brand-blue); }
-        .nav-links { display: flex; gap: 24px; align-items: center; font-size: 14px; font-weight: 500; }
-        .nav-links a { color: var(--text-muted); }
-        .nav-links a:hover { color: #fff; text-decoration: none; }
-
-        /* Hero */
-        .hero { text-align: center; padding: 70px 0 50px; }
-        .pill-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: #93c5fd; padding: 6px 14px; border-radius: 9999px; font-size: 13px; font-weight: 600; margin-bottom: 24px; }
-        .hero h1 { font-size: 52px; font-weight: 800; line-height: 1.15; letter-spacing: -1.5px; max-width: 900px; margin: 0 auto 20px; }
-        .hero p { font-size: 19px; color: var(--text-muted); max-width: 720px; margin: 0 auto 36px; line-height: 1.6; }
-        .hero-actions { display: flex; gap: 14px; justify-content: center; margin-bottom: 50px; }
-
-        /* Interactive Scan Box */
-        .scan-container { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 28px; max-width: 820px; margin: 0 auto 80px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); text-align: left; }
-        .mode-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
-        .mode-tab { flex: 1; padding: 10px; text-align: center; border-radius: 8px; font-size: 13.5px; font-weight: 600; cursor: pointer; background: var(--bg-subtle); border: 1px solid var(--border-subtle); color: var(--text-muted); transition: 0.15s; }
-        .mode-tab.active { background: #1e293b; border-color: var(--brand-blue); color: #fff; }
-        .input-row { display: flex; gap: 10px; }
-        .input-row input { flex: 1; background: var(--bg-subtle); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 14px 18px; color: #fff; font-size: 15px; outline: none; }
-        .input-row input:focus { border-color: var(--brand-blue); }
-
-        /* Live Scanning Progress Overlay */
-        .progress-overlay { display: none; margin-top: 20px; padding: 16px; background: #0b1120; border: 1px solid #1e293b; border-radius: 8px; }
-        .progress-bar-container { height: 6px; background: #1e293b; border-radius: 3px; overflow: hidden; margin-bottom: 12px; }
-        .progress-bar-fill { height: 100%; width: 20%; background: var(--brand-blue); transition: width 0.3s ease; }
-        .progress-stage-text { font-size: 13px; color: #93c5fd; font-weight: 600; }
-
-        /* Section Layouts */
-        .section-header { text-align: center; margin-bottom: 50px; }
-        .section-header h2 { font-size: 36px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 12px; }
-        .section-header p { font-size: 16px; color: var(--text-muted); max-width: 600px; margin: 0 auto; }
-        
-        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; margin-bottom: 80px; }
-        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 24px; margin-bottom: 80px; }
-        
-        .feature-card { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 28px; transition: transform 0.2s; }
-        .feature-card:hover { border-color: var(--brand-blue); transform: translateY(-2px); }
-        .feature-icon { width: 44px; height: 44px; border-radius: 10px; background: rgba(59, 130, 246, 0.12); display: flex; align-items: center; justify-content: center; margin-bottom: 18px; color: var(--brand-blue); font-size: 20px; }
-        .feature-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
-        .feature-card p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
-
-        /* Workflow Step Bar */
-        .workflow-bar { display: flex; justify-content: space-between; position: relative; max-width: 900px; margin: 0 auto 80px; padding: 20px 0; }
-        .workflow-step { text-align: center; position: relative; z-index: 2; }
-        .step-bubble { width: 48px; height: 48px; border-radius: 50%; background: var(--bg-surface); border: 2px solid var(--brand-blue); display: flex; align-items: center; justify-content: center; font-weight: 700; margin: 0 auto 10px; font-size: 15px; color: #fff; }
-        .step-label { font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); }
-
-        /* Pricing Table */
-        .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-bottom: 80px; }
-        .pricing-card { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 32px 24px; position: relative; }
-        .pricing-card.featured { border-color: var(--brand-blue); box-shadow: 0 0 30px rgba(59, 130, 246, 0.15); }
-        .featured-pill { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--brand-blue); color: #fff; font-size: 11px; font-weight: 700; padding: 3px 12px; border-radius: 9999px; text-transform: uppercase; }
-        .price-val { font-size: 40px; font-weight: 800; margin: 16px 0 6px; }
-        .price-val span { font-size: 14px; color: var(--text-muted); font-weight: 400; }
-
-        /* Footer */
-        footer { border-top: 1px solid var(--border-subtle); padding: 50px 0 30px; margin-top: 60px; font-size: 13px; color: var(--text-dim); }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <!-- Navigation -->
-        <nav>
-            <div class="brand-logo">
-                <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
-                TRUSTAUDIT
-            </div>
-            <div class="nav-links">
-                <a href="#features">Capabilities</a>
-                <a href="#workflow">How It Works</a>
-                <a href="#findings">Sample Findings</a>
-                <a href="#pricing">Pricing</a>
-                <a href="/dashboard" class="btn btn-secondary" style="padding: 6px 14px;">Open Dashboard</a>
-            </div>
-        </nav>
-
-        <!-- Hero Section -->
-        <section class="hero">
-            <div class="pill-badge">🛡 Continuous Security for AI-Coded Applications & MCP</div>
-            <h1>Security for AI-Built Applications & Connected Agent Tools</h1>
-            <p>Scan AI-generated code, test deployed applications, secure MCP systems, and continuously detect security regressions with integrated open-source engines (Gitleaks, OSV, Trivy, Nuclei, Syft).</p>
-            <div class="hero-actions">
-                <a href="#scanner-anchor" class="btn btn-primary" style="padding: 14px 28px; font-size: 16px;">Start Free Scan</a>
-                <a href="/dashboard" class="btn btn-secondary" style="padding: 14px 28px; font-size: 16px;">View Demo Console</a>
-            </div>
-
-            <!-- Live Interactive Scan Launcher -->
-            <div id="scanner-anchor" class="scan-container">
-                <div style="font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px;">
-                    Instant Security Audit Launcher
-                </div>
-                <form action="/scan" method="POST" id="landing-scan-form" onsubmit="showProgress('landing')">
-                    <div class="mode-tabs">
-                        <div class="mode-tab active" id="tab-repo" onclick="setMode('repository')">📦 GitHub Repository Scan</div>
-                        <div class="mode-tab" id="tab-web" onclick="setMode('website')">🌐 Website / Web App Scan</div>
-                        <div class="mode-tab" id="tab-mcp" onclick="setMode('mcp')">⚡ MCP System Scan</div>
-                    </div>
-                    <input type="hidden" name="scan_type" id="scan_type_input" value="repository">
-                    <div class="input-row">
-                        <input type="text" name="target" id="target_input" placeholder="https://github.com/owner/repository" required>
-                        <button type="submit" class="btn btn-primary" id="landing-submit-btn">Run Audit</button>
-                    </div>
-                    <div style="display: flex; gap: 20px; margin-top: 14px; font-size: 12px; color: var(--text-muted); flex-wrap: wrap;">
-                        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
-                            <input type="checkbox" name="full_scan" value="yes"> Deep AST, Gitleaks, OSV & SAST scan
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; color: #93c5fd;">
-                            <input type="checkbox" name="auth_confirmed" value="yes" checked> Explicit target authorization confirmed
-                        </label>
-                    </div>
-
-                    <div id="landing-progress" class="progress-overlay">
-                        <div class="progress-bar-container">
-                            <div id="landing-bar" class="progress-bar-fill"></div>
-                        </div>
-                        <div id="landing-stage" class="progress-stage-text">Initializing security scanner...</div>
-                    </div>
-                </form>
-            </div>
-        </section>
-
-        <!-- Problem Statement -->
-        <section style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 40px; margin-bottom: 80px; text-align: center;">
-            <h2 style="font-size: 28px; font-weight: 800; margin-bottom: 12px;">"AI lets teams ship software faster. Security review hasn't become faster."</h2>
-            <p style="font-size: 16px; color: var(--text-muted); max-width: 760px; margin: 0 auto;">
-                AI tools generate functional features rapidly, but frequently introduce subtle tenant boundary bypasses, excessive MCP tool permissions, prompt poisoning risks, and exposed credentials. TrustAudit brings automated continuous verification to AI development.
-            </p>
-        </section>
-
-        <!-- Product Capabilities -->
-        <section id="features">
-            <div class="section-header">
-                <h2>Multi-Engine Security Architecture</h2>
-                <p>Combines proprietary MCP analysis with mature open-source security engines.</p>
-            </div>
-
-            <div class="grid-3">
-                <div class="feature-card">
-                    <div class="feature-icon">⚡</div>
-                    <h3>Core MCP Security Engine</h3>
-                    <p>Proprietary engine auditing Model Context Protocol tools for hidden capabilities, zero-width steganography prompt injections, tool shadowing, and permission graphs.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🔑</div>
-                    <h3>Gitleaks Secret Detection</h3>
-                    <p>Integrated Gitleaks core scanning detecting exposed API keys, cloud credentials, tokens, and private keys with zero secret leakage in logs.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📦</div>
-                    <h3>OSV-Scanner & Trivy</h3>
-                    <p>Dual dependency engines auditing package manifests (npm, pip, go) against the open OSV database and Trivy CVE vulnerability feeds.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🌐</div>
-                    <h3>Nuclei Live AppSec</h3>
-                    <p>Safe, non-destructive live application security scanning for authorized targets with SSRF and private-network protections.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📋</div>
-                    <h3>Syft SBOM Generator</h3>
-                    <p>Produces complete Software Bill of Materials tracking runtime dependencies, MCP SDKs, and AI libraries across ecosystems.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📈</div>
-                    <h3>Continuous Monitoring & Drift</h3>
-                    <p>Establishes signed security baselines, continuously monitoring for unauthorized tool expansions and rug-pull events across commits.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Pricing Section -->
-        <section id="pricing">
-            <div class="section-header">
-                <h2>Predictable SaaS Pricing</h2>
-                <p>Tailored for seed to growth-stage startups and teams building applications with AI.</p>
-            </div>
-
-            <div class="pricing-grid">
-                <div class="pricing-card">
-                    <h3 style="font-size: 18px;">Free Community</h3>
-                    <p style="font-size: 13px; color: var(--text-muted);">For individual developers</p>
-                    <div class="price-val">₹0 <span>/ mo ($0)</span></div>
-                    <ul style="font-size: 13px; color: var(--text-muted); margin: 20px 0; padding-left: 18px; line-height: 1.8;">
-                        <li>1 Website &amp; 1 Repository</li>
-                        <li>50 Scans / Month</li>
-                        <li>MCP &amp; AppSec SAST Scan</li>
-                        <li>Executive PDF Reports</li>
-                    </ul>
-                    <a href="/dashboard" class="btn btn-secondary" style="width: 100%;">Get Started</a>
-                </div>
-
-                <div class="pricing-card featured">
-                    <div class="featured-pill">Most Popular for Startups</div>
-                    <h3 style="font-size: 18px; color: #93c5fd;">Startup Starter</h3>
-                    <p style="font-size: 13px; color: var(--text-muted);">For early-stage startups &amp; AI teams</p>
-                    <div class="price-val">₹999 <span>/ mo ($12)</span></div>
-                    <ul style="font-size: 13px; color: #fff; margin: 20px 0; padding-left: 18px; line-height: 1.8;">
-                        <li>Up to 5 Websites &amp; 5 Repositories</li>
-                        <li>Daily Continuous Security Monitoring</li>
-                        <li>Automated 'What Changed?' Delta Engine</li>
-                        <li>'Fix These First' Prioritized Risk Cards</li>
-                        <li>Email Alerts for Critical Risks</li>
-                        <li>Interactive AI Security Advisor</li>
-                    </ul>
-                    <a href="/dashboard" class="btn btn-primary" style="width: 100%;">Get Started</a>
-                </div>
-
-                <div class="pricing-card">
-                    <h3 style="font-size: 18px; color: #c7d2fe;">Growth &amp; Pro</h3>
-                    <p style="font-size: 13px; color: var(--text-muted);">For scaling tech companies</p>
-                    <div class="price-val">₹1,999 <span>/ mo ($24)</span></div>
-                    <ul style="font-size: 13px; color: var(--text-muted); margin: 20px 0; padding-left: 18px; line-height: 1.8;">
-                        <li>Up to 20 Websites &amp; 20 Repositories</li>
-                        <li>Hourly &amp; Daily Continuous Monitoring</li>
-                        <li>Deep AI-Code &amp; MCP Poisoning Scans</li>
-                        <li>1-Click Rescan &amp; Verification Workflow</li>
-                        <li>Slack &amp; Webhook Integration</li>
-                        <li>CI/CD Gate Integration</li>
-                    </ul>
-                    <a href="/dashboard" class="btn btn-secondary" style="width: 100%;">Start Pro</a>
-                </div>
-
-                <div class="pricing-card">
-                    <h3 style="font-size: 18px;">Enterprise</h3>
-                    <p style="font-size: 13px; color: var(--text-muted);">For established organizations</p>
-                    <div class="price-val">Custom</div>
-                    <ul style="font-size: 13px; color: var(--text-muted); margin: 20px 0; padding-left: 18px; line-height: 1.8;">
-                        <li>Unlimited Assets &amp; Repositories</li>
-                        <li>Dedicated VPC / Self-Hosted Runners</li>
-                        <li>Custom Policy Contracts &amp; SLA</li>
-                        <li>Dedicated Security Lead</li>
-                    </ul>
-                    <a href="mailto:sales@trustaudit.io" class="btn btn-secondary" style="width: 100%;">Contact Sales</a>
-                </div>
-            </div>
-        </section>
-
-        <!-- Footer -->
-        <footer>
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
-                <div style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: #fff;">
-                    <svg viewBox="0 0 24 24" style="width: 20px; height: 20px; fill: var(--brand-blue);"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
-                    TRUSTAUDIT
-                </div>
-                <div>
-                    Continuous Security Verification for AI Applications &bull; &copy; 2026 TrustAudit Platform
-                </div>
-            </div>
-        </footer>
-    </div>
-
-    <script>
-        function setMode(mode) {
-            document.getElementById('tab-repo').classList.remove('active');
-            document.getElementById('tab-web').classList.remove('active');
-            document.getElementById('tab-mcp').classList.remove('active');
-            const targetInput = document.getElementById('target_input');
-            const scanType = document.getElementById('scan_type_input');
-
-            if (mode === 'website') {
-                document.getElementById('tab-web').classList.add('active');
-                targetInput.placeholder = "https://example.com";
-                scanType.value = "website";
-            } else if (mode === 'mcp') {
-                document.getElementById('tab-mcp').classList.add('active');
-                targetInput.placeholder = "https://github.com/modelcontextprotocol/servers";
-                scanType.value = "repository";
-            } else {
-                document.getElementById('tab-repo').classList.add('active');
-                targetInput.placeholder = "https://github.com/owner/repository";
-                scanType.value = "repository";
-            }
-        }
-
-        let landingProgressIv = null;
-        function showProgress(prefix) {
-            const overlay = document.getElementById(prefix + '-progress');
-            const btn = document.getElementById(prefix + '-submit-btn');
-            if (overlay) overlay.style.display = 'block';
-            if (btn) {
-                btn.disabled = true;
-                btn.innerText = 'Scanning...';
-            }
-            const bar = document.getElementById(prefix + '-bar');
-            const stageText = document.getElementById(prefix + '-stage');
-            const scanTypeInput = document.getElementById('scan-type');
-            const scanType = scanTypeInput ? scanTypeInput.value : 'repository';
-
-            let stages = [];
-            if (scanType === 'website') {
-                stages = [
-                    {pct: 15, text: 'Normalizing target URL & resolving DNS (IPv4/IPv6)...'},
-                    {pct: 35, text: 'Probing HTTP/HTTPS connectivity & response headers...'},
-                    {pct: 55, text: 'Inspecting TLS certificate validity & SSL protocol...'},
-                    {pct: 70, text: 'Auditing cookie flags (Secure, HttpOnly, SameSite) & CORS...'},
-                    {pct: 85, text: 'Testing public file exposure & API endpoints...'},
-                    {pct: 95, text: 'Calculating security posture score & generating report...'}
-                ];
-            } else if (scanType === 'mcp') {
-                stages = [
-                    {pct: 20, text: 'Discovering MCP tool schemas & prompt definitions...'},
-                    {pct: 40, text: 'Analyzing tool permissions & prompt injection vectors...'},
-                    {pct: 60, text: 'Executing Gitleaks credential & secret audit...'},
-                    {pct: 80, text: 'Auditing package dependencies against OSV database...'},
-                    {pct: 95, text: 'Synthesizing MCP security score & risk paths...'}
-                ];
-            } else {
-                stages = [
-                    {pct: 20, text: 'Downloading & discovering target files...'},
-                    {pct: 35, text: 'Running Semgrep SAST & AST security analyzers...'},
-                    {pct: 50, text: 'Executing Gitleaks secret and credential audit...'},
-                    {pct: 65, text: 'Querying OSV-Scanner & Trivy vulnerability databases...'},
-                    {pct: 80, text: 'Generating Syft Software Bill of Materials (SBOM)...'},
-                    {pct: 95, text: 'Aggregating normalized score & multi-stage attack paths...'}
-                ];
-            }
-
-            let i = 0;
-            const t0 = Date.now();
-            if (landingProgressIv) clearInterval(landingProgressIv);
-            landingProgressIv = setInterval(() => {
-                const elapsed = Math.floor((Date.now() - t0) / 1000);
-                if (btn) btn.innerText = 'Scanning (' + elapsed + 's)...';
-                if (i < stages.length) {
-                    if (bar) bar.style.width = stages[i].pct + '%';
-                    if (stageText) stageText.innerText = stages[i].text;
-                    i++;
-                } else if (elapsed > 15) {
-                    if (stageText) stageText.innerText = 'Processing comprehensive audit (' + elapsed + 's elapsed)...';
-                }
-            }, 1200);
-        }
-    </script>
-</body>
-</html>
-"""
-
-
-# DASHBOARD_HTML is imported from dashboard_template.py
-
-
-# ===========================================================================
-# FLASK ROUTING CONTROLLERS
-# ===========================================================================
-
 @app.route("/dashboard", methods=["GET"])
 def dashboard_view():
-    """Renders the authenticated TrustAudit multi-tenant SaaS dashboard."""
-    projects = saas_store.list_projects_for_org("org-default")
-    tools_health = scan_manager.orchestrator.get_tool_health_records()
-    active_proj = projects[0] if projects else {}
-    last_res = active_proj.get("last_scan_result") if active_proj else None
-    prioritized_fixes = prioritizer.prioritize_findings(
-        (last_res or {}).get("findings", []) if last_res else []
-    )
-    what_changed = active_proj.get("last_delta") or (delta_engine.get_project_what_changed(active_proj.get("id")) if active_proj else None)
-    timeline = delta_engine.get_project_timeline(active_proj.get("id")) if active_proj else []
-    monitoring_summary = scheduler.get_monitoring_summary("org-default")
-    org_info = saas_store.get_organization("org-default")
-    assets = saas_store.get_organization_assets("org-default")
-    team_members = saas_store.list_team_members("org-default")
-    integrations = saas_store.get_integration_settings("org-default")
-    vuln_intel_summary = vuln_intel_store.get_intelligence_sync_summary()
-    affecting_vulnerabilities = correlation_engine.get_vulnerabilities_affecting_customer("org-default")
-    inventory_components = inventory_engine.get_all_inventory_components("org-default")
-    all_intel_vulnerabilities = vuln_intel_store.get_all_vulnerabilities(limit=50)
-
+    """Renders the authenticated TrustAudit multi-tenant DPDP compliance dashboard."""
+    org_id, user = get_current_tenant_and_user()
+    org_id = org_id or "org-default"
+    org_info = saas_store.get_organization(org_id)
+    team_members = saas_store.list_team_members(org_id)
     return render_template_string(
         DASHBOARD_HTML,
-        result=last_res,
-        projects=projects,
-        tools_health=tools_health,
-        prioritized_fixes=prioritized_fixes,
-        what_changed=what_changed,
-        timeline=timeline,
-        monitoring_summary=monitoring_summary,
         org_info=org_info,
-        assets=assets,
         team_members=team_members,
-        integrations=integrations,
-        vuln_intel_summary=vuln_intel_summary,
-        affecting_vulnerabilities=affecting_vulnerabilities,
-        inventory_components=inventory_components,
-        all_intel_vulnerabilities=all_intel_vulnerabilities,
         plans=saas_store.PLANS,
-        error=None,
-        warning=None,
-        target=None,
-        scan_type="website",
-        full_scan=False,
-        debug=False,
     )
 
 
 @app.route("/tools", methods=["GET"])
 def tools_health_view():
-    """Renders the tool health and setup guidance page."""
-    projects = saas_store.list_projects_for_org("org-default")
-    tools_health = scan_manager.orchestrator.get_tool_health_records()
-    return render_template_string(
-        DASHBOARD_HTML,
-        result=None,
-        projects=projects,
-        tools_health=tools_health,
-        error=None,
-        warning=None,
-        target=None,
-        scan_type="repository",
-        full_scan=False,
-        debug=False,
-    )
+    """Archived tools view; redirects to DPDP dashboard."""
+    return redirect("/dashboard")
 
 
 @app.route("/", methods=["GET", "POST"])
+def home_endpoint():
+    """Renders the Certinal-inspired DPDP Compliance Platform landing page."""
+    return render_template_string(DPDP_LANDING_HTML)
+
+
 @app.route("/scan", methods=["GET", "POST"])
 def scan_endpoint():
-    """Executes target security audit across Website, Repository, or MCP modes."""
-    if request.path == "/" and request.method == "GET" and not any(request.args.get(k) for k in ("target", "repo", "url", "github_url")):
-        return render_template_string(LANDING_HTML)
+    """Archived scanner endpoint with backward compatibility."""
+    if not FEATURE_LEGACY_SCANNERS:
+        if request.headers.get("Accept") == "application/json" or request.is_json:
+            return jsonify({
+                "status": "archived",
+                "message": "Security scanner features have been archived in this release. TrustAudit is now a dedicated DPDP Compliance Management Platform."
+            }), 200
+        return redirect("/")
 
     result = None
     error = None
@@ -1990,34 +1568,235 @@ def api_remediation_sync():
     return jsonify({"status": "success", "tasks_count": len(tasks)}), 200
 
 
+
+# ==============================================================================
+# DPDP COMPLIANCE PLATFORM APIS
+# ==============================================================================
+
+@app.route("/api/dpdp/onboarding", methods=["GET", "POST"])
+def api_dpdp_onboarding():
+    """Manages organization onboarding, industry selection, and data flows."""
+    org_id, _ = get_current_tenant_and_user()
+    org_id = org_id or "org-default"
+    if request.method == "POST":
+        data = request.get_json(silent=True) or {}
+        profile = dpdp_store.save_onboarding_profile(org_id, data)
+        return jsonify({"status": "success", "profile": profile}), 200
+    profile = dpdp_store.get_onboarding_profile(org_id)
+    return jsonify({"status": "success", "profile": profile, "templates": list(dpdp_engine.INDUSTRY_TEMPLATES.keys())}), 200
+
+
+@app.route("/api/dpdp/inventory", methods=["GET", "POST"])
+def api_dpdp_inventory():
+    """Lists and adds personal data inventory records."""
+    org_id, _ = get_current_tenant_and_user()
+    org_id = org_id or "org-default"
+    if request.method == "POST":
+        data = request.get_json(silent=True) or {}
+        entry = dpdp_store.add_inventory_entry(org_id, data)
+        return jsonify({"status": "success", "entry": entry}), 201
+    items = dpdp_store.get_data_inventory(org_id)
+    return jsonify({"status": "success", "items": items, "count": len(items)}), 200
+
+
+@app.route("/api/dpdp/inventory/<entry_id>", methods=["PUT", "DELETE"])
+def api_dpdp_inventory_item(entry_id):
+    """Updates or deletes an inventory stream."""
+    org_id, _ = get_current_tenant_and_user()
+    org_id = org_id or "org-default"
+    if request.method == "DELETE":
+        deleted = dpdp_store.delete_inventory_entry(org_id, entry_id)
+        return jsonify({"status": "success" if deleted else "not_found"}), 200 if deleted else 404
+    data = request.get_json(silent=True) or {}
+    updated = dpdp_store.update_inventory_entry(org_id, entry_id, data)
+    return jsonify({"status": "success", "entry": updated}), 200 if updated else 404
+
+
+@app.route("/api/dpdp/inventory/export", methods=["GET"])
+def api_dpdp_inventory_export():
+    """Exports personal data inventory as CSV."""
+    org_id, _ = get_current_tenant_and_user()
+    org_id = org_id or "org-default"
+    csv_data = dpdp_store.export_inventory_csv(org_id)
+    return Response(
+        csv_data,
+        mimetype="text/csv",
+        headers={"Content-Disposition": f"attachment; filename=personal_data_inventory_{org_id}.csv"}
+    )
+
+
+@app.route("/api/dpdp/inventory/import", methods=["POST"])
+def api_dpdp_inventory_import():
+    """Imports personal data inventory from CSV."""
+    org_id, _ = get_current_tenant_and_user()
+    org_id = org_id or "org-default"
+    file = request.files.get("file")
+    if not file:
+        return jsonify({"status": "error", "message": "CSV file required"}), 400
+    content = file.read().decode("utf-8")
+    count = dpdp_store.import_inventory_csv(org_id, content)
+    return jsonify({"status": "success", "imported_count": count}), 200
+
+
+@app.route("/api/dpdp/assessment", methods=["GET"])
+def api_dpdp_assessment():
+    """Returns statutory DPDP assessment, readiness score, and gaps."""
+    org_id, _ = get_current_tenant_and_user()
+    org_id = org_id or "org-default"
+    assessment = dpdp_store.get_assessment(org_id)
+    return jsonify(assessment), 200
+
+
+@app.route("/api/dpdp/assessment/control/<requirement_id>", methods=["POST"])
+def api_dpdp_update_control(requirement_id):
+    """Updates self-attestation or status of an assessment requirement."""
+    org_id, _ = get_current_tenant_and_user()
+    org_id = org_id or "org-default"
+    data = request.get_json(silent=True) or {}
+    status = data.get("status", "SELF_ATTESTED_IMPLEMENTED")
+    notes = data.get("notes", "")
+    updated = dpdp_store.update_assessment_control(org_id, requirement_id, status, notes)
+    return jsonify({"status": "success", "assessment": updated}), 200
+
+
+@app.route("/api/dpdp/notices", methods=["GET"])
+def api_dpdp_notices():
+    """Lists published privacy notices."""
+    org_id, _ = get_current_tenant_and_user()
+    org_id = org_id or "org-default"
+    notices = dpdp_store.get_privacy_notices(org_id)
+    return jsonify({"status": "success", "items": notices}), 200
+
+
+@app.route("/api/dpdp/notices/generate", methods=["POST"])
+def api_dpdp_generate_notice():
+    """Generates an itemised Section 5 privacy notice."""
+    org_id, _ = get_current_tenant_and_user()
+    org_id = org_id or "org-default"
+    data = request.get_json(silent=True) or {}
+    notice = dpdp_store.generate_privacy_notice(org_id, data)
+    return jsonify({"status": "success", "notice": notice}), 201
+
+
+@app.route("/api/dpdp/consent", methods=["GET", "POST"])
+def api_dpdp_consent():
+    """Logs or lists affirmative consent records."""
+    org_id, _ = get_current_tenant_and_user()
+    org_id = org_id or "org-default"
+    if request.method == "POST":
+        data = request.get_json(silent=True) or {}
+        rec = dpdp_store.record_consent(org_id, data)
+        return jsonify({"status": "success", "record": rec}), 201
+    records = dpdp_store.get_consent_records(org_id)
+    return jsonify({"status": "success", "items": records}), 200
+
+
+@app.route("/api/dpdp/withdrawals", methods=["GET", "POST"])
+def api_dpdp_withdrawals():
+    """Handles Section 6(4)-(6) consent withdrawal and processor cascading."""
+    org_id, _ = get_current_tenant_and_user()
+    org_id = org_id or "org-default"
+    if request.method == "POST":
+        data = request.get_json(silent=True) or {}
+        wth = dpdp_store.submit_consent_withdrawal(org_id, data)
+        return jsonify({"status": "success", "withdrawal": wth}), 201
+    items = dpdp_store.get_withdrawal_requests(org_id)
+    return jsonify({"status": "success", "items": items}), 200
+
+
+@app.route("/api/dpdp/rights", methods=["GET", "POST"])
+def api_dpdp_rights():
+    """Submits or lists Data Principal rights requests (Access, Correction, Erasure, Grievance, Nomination)."""
+    org_id, _ = get_current_tenant_and_user()
+    org_id = org_id or "org-default"
+    if request.method == "POST":
+        data = request.get_json(silent=True) or {}
+        req_item = dpdp_store.submit_rights_request(org_id, data)
+        return jsonify({"status": "success", "request": req_item}), 201
+    items = dpdp_store.get_rights_requests(org_id)
+    return jsonify({"status": "success", "items": items}), 200
+
+
+@app.route("/api/dpdp/rights/<request_id>/status", methods=["POST"])
+def api_dpdp_rights_status(request_id):
+    """Updates status and response for a rights request."""
+    org_id, _ = get_current_tenant_and_user()
+    org_id = org_id or "org-default"
+    data = request.get_json(silent=True) or {}
+    status = data.get("status", "COMPLETED")
+    summary = data.get("response_summary", "")
+    updated = dpdp_store.update_rights_request_status(org_id, request_id, status, summary)
+    return jsonify({"status": "success", "request": updated}), 200
+
+
+@app.route("/api/dpdp/vendors", methods=["GET", "POST"])
+def api_dpdp_vendors():
+    """Lists or adds vendors and data processors under Section 8(2)."""
+    org_id, _ = get_current_tenant_and_user()
+    org_id = org_id or "org-default"
+    if request.method == "POST":
+        data = request.get_json(silent=True) or {}
+        vendor = dpdp_store.add_vendor(org_id, data)
+        return jsonify({"status": "success", "vendor": vendor}), 201
+    vendors = dpdp_store.get_vendors(org_id)
+    return jsonify({"status": "success", "items": vendors}), 200
+
+
+@app.route("/api/dpdp/retention", methods=["GET", "POST"])
+def api_dpdp_retention():
+    """Manages Rule 8 retention schedules."""
+    org_id, _ = get_current_tenant_and_user()
+    org_id = org_id or "org-default"
+    if request.method == "POST":
+        data = request.get_json(silent=True) or {}
+        sched = dpdp_store.add_retention_schedule(org_id, data)
+        return jsonify({"status": "success", "schedule": sched}), 201
+    schedules = dpdp_store.get_retention_schedules(org_id)
+    return jsonify({"status": "success", "items": schedules}), 200
+
+
+@app.route("/api/dpdp/breaches", methods=["GET", "POST"])
+def api_dpdp_breaches():
+    """Logs and lists breach incidents under Section 8(6) & Rule 7."""
+    org_id, _ = get_current_tenant_and_user()
+    org_id = org_id or "org-default"
+    if request.method == "POST":
+        data = request.get_json(silent=True) or {}
+        incident = dpdp_store.log_breach_incident(org_id, data)
+        return jsonify({"status": "success", "incident": incident}), 201
+    incidents = dpdp_store.get_breach_incidents(org_id)
+    return jsonify({"status": "success", "items": incidents}), 200
+
+
+@app.route("/api/dpdp/breaches/<incident_id>/authorize", methods=["POST"])
+def api_dpdp_authorize_breach(incident_id):
+    """Authorizes regulatory intimation submission under Section 8(6)."""
+    org_id, user = get_current_tenant_and_user()
+    org_id = org_id or "org-default"
+    user_name = user.get("name", "Organization Administrator") if isinstance(user, dict) else "Administrator"
+    updated = dpdp_store.authorize_breach_intimation(org_id, incident_id, user_name)
+    return jsonify({"status": "success", "incident": updated}), 200
+
+
+@app.route("/api/dpdp/assistant", methods=["POST"])
+def api_dpdp_assistant():
+    """AI DPDP grounded query assistant."""
+    data = request.get_json(silent=True) or {}
+    query = data.get("query", "").strip()
+    if not query:
+        return jsonify({"status": "error", "message": "Query required"}), 400
+    res = dpdp_engine.query_dpdp_assistant(query)
+    return jsonify(res), 200
+
 # ==============================================================================
 # PUBLIC TRUST, SECURITY & PRIVACY PORTAL
 # ==============================================================================
 
 @app.route("/trust", methods=["GET"])
 def trust_portal_view():
-    """Renders public Security & Trust portal showcasing verified implemented controls."""
+    """Renders public Security & Trust portal showcasing verified implemented DPDP controls."""
     from trust_centre_template import TRUST_CENTRE_HTML_TEMPLATE
-    import vuln_intel_sources
-    import vuln_intel_store
-
-    # Query live CISA KEV synchronization telemetry
-    cisa_stats = vuln_intel_sources.get_cisa_kev_stats()
-    sync_summary = vuln_intel_store.get_intelligence_sync_summary()
-    kev_source = sync_summary.get("sources", {}).get("cisa_kev", {})
-
-    cisa_records_count = kev_source.get("records_count") or cisa_stats.get("count") or 1782
-    cisa_status = kev_source.get("status") or cisa_stats.get("status") or "Healthy"
-    cisa_last_sync = kev_source.get("last_successful_sync") or cisa_stats.get("last_updated") or time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime())
-    cisa_error_status = kev_source.get("errors") or "None"
-
-    return render_template_string(
-        TRUST_CENTRE_HTML_TEMPLATE,
-        cisa_records_count=cisa_records_count,
-        cisa_status=cisa_status,
-        cisa_last_sync=cisa_last_sync,
-        cisa_error_status=cisa_error_status
-    ), 200
+    return render_template_string(TRUST_CENTRE_HTML_TEMPLATE), 200
 
 
 _PUBLIC_TRUST_CACHE = {"data": None, "cached_at": 0}

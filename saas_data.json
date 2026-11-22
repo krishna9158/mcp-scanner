@@ -872,6 +872,24 @@
       "created_at": 1795034491.640742,
       "max_projects": 10,
       "scans_count": 0
+    },
+    "org-ee1df7de": {
+      "id": "org-ee1df7de",
+      "name": "Arogya Diagnostics Clinic",
+      "slug": "arogya-diagnostics-clinic",
+      "plan": "starter",
+      "created_at": 1795344420.1769197,
+      "max_projects": 10,
+      "scans_count": 0
+    },
+    "org-75d3d4a3": {
+      "id": "org-75d3d4a3",
+      "name": "Apollo Diagnostics Clinic ae9d",
+      "slug": "apollo-diagnostics-clinic-ae9d",
+      "plan": "starter",
+      "created_at": 1795344420.7724123,
+      "max_projects": 10,
+      "scans_count": 0
     }
   },
   "users": {
@@ -881,7 +899,7 @@
       "email": "security@acme.ai",
       "name": "Tech Lead (Admin)",
       "role": "admin",
-      "created_at": 1794989473.3889554
+      "created_at": 1795344421.2088923
     },
     "usr-901a40ce": {
       "id": "usr-901a40ce",
@@ -1978,6 +1996,34 @@
       "mfa_enabled": false,
       "mfa_secret": null,
       "created_at": 1795034491.6407444
+    },
+    "usr-909e21b3": {
+      "id": "usr-909e21b3",
+      "org_id": "org-ee1df7de",
+      "email": "clinic_admin_9c732a@arogyaclinic.in",
+      "name": "Dr. Sunita Sharma",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$5c6d35e5999d7135aa9ffd569b38a1e3$8ec5e7f59bc6cbb16d9ad81d809b1428118cf3155f5e2257dabd17a763b7a77a",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "5c6d35e5999d7135aa9ffd569b38a1e3",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795344420.1769218
+    },
+    "usr-85c3147b": {
+      "id": "usr-85c3147b",
+      "org_id": "org-75d3d4a3",
+      "email": "dr_apollo_be4fc8@apolloclinic.in",
+      "name": "Dr. Apollo Lead",
+      "role": "admin",
+      "pwd_hash": "pbkdf2_sha256$600000$e2609dd84e377007e07bc76d48f645b9$21bd31584a31ca372f378c5d3f7703754e39dbffb97d1bddeacbc41916673ae9",
+      "pwd_algo": "pbkdf2_sha256",
+      "pwd_iterations": 600000,
+      "salt": "e2609dd84e377007e07bc76d48f645b9",
+      "mfa_enabled": false,
+      "mfa_secret": null,
+      "created_at": 1795344420.7724147
     }
   },
   "projects": {
@@ -40743,6 +40789,58 @@
     },
     "org-56e19ce1": {
       "company_name": "Corp Beta",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-ee1df7de": {
+      "company_name": "Arogya Diagnostics Clinic",
+      "country": "India",
+      "industry": "SaaS / B2B Software",
+      "website": "",
+      "company_size": "1-10 (Early Stage)",
+      "employee_count": "1-10 (Early Stage)",
+      "business_activities": "Software Development & Technology Services",
+      "customer_types": [
+        "Indian Businesses (B2B)",
+        "US / Global Businesses"
+      ],
+      "personal_data_categories": [
+        "Basic Contact Data (Name, Email, Phone)"
+      ],
+      "infrastructure": [
+        "AWS (US / Global)",
+        "Render / Vercel / PaaS"
+      ],
+      "vendors": [],
+      "selected_frameworks": [
+        "DPDP",
+        "SOC2",
+        "ISO27001"
+      ]
+    },
+    "org-75d3d4a3": {
+      "company_name": "Apollo Diagnostics Clinic ae9d",
       "country": "India",
       "industry": "SaaS / B2B Software",
       "website": "",
