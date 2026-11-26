@@ -1,0 +1,147 @@
+{% extends "app_base.html" %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Business Data Inventory</h1>
+    <p class="page-sub">Organised across 8 understandable categories with CSV/XLSX import, duplicate detection, bulk review, and version history.</p>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+    <button type="button" class="btn btn-outline btn-sm" onclick="bulkConfirm()">Bulk Confirm Drafts</button>
+    <button type="button" class="btn btn-outline btn-sm" onclick="checkDuplicates()">Check Duplicates</button>
+    <a href="/api/dpdp/inventory/export" class="btn btn-outline btn-sm">Export CSV</a>
+    <button type="button" class="btn btn-primary btn-sm" onclick="openAddInvModal()">+ Add Data Record</button>
+  </div>
+</div>
+
+<div class="card" style="margin-bottom:18px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+  <input id="inv-search" class="input" style="max-width:300px;" placeholder="Filter by field, purpose, system..." oninput="renderInventory()">
+  <select id="inv-cat-filter" class="input" style="max-width:250px;" onchange="renderInventory()">
+    <option value="">All 8 Categories</option>
+    <option>Contact information</option><option>Customer accounts</option><option>Billing information</option>
+    <option>Employee information</option><option>Health information</option><option>Student information</option>
+    <option>Website and application information</option><option>Other personal information</option>
+  </select>
+  <label class="btn btn-outline btn-sm" style="cursor:pointer;">
+    Import CSV / XLSX
+    <input type="file" accept=".csv,.xlsx" style="display:none;" onchange="importSheet(this)">
+  </label>
+</div>
+
+<div id="inv-table-wrap"></div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  let INV_ROWS = [];
+  async function loadInventory() {
+    const d = await TA.apiJson('/api/dpdp/inventory');
+    INV_ROWS = d.items || d.inventory || [];
+    renderInventory();
+  }
+
+  function renderInventory() {
+    const q = (document.getElementById('inv-search').value || '').toLowerCase();
+    const cat = document.getElementById('inv-cat-filter').value;
+    const rows = INV_ROWS.filter(function (r) {
+      if (cat && r.category !== cat) return false;
+      const hay = (r.category + ' ' + r.purpose + ' ' + r.storage_system + ' ' + (r.fields || []).join(' ')).toLowerCase();
+      return !q || hay.indexOf(q) !== -1;
+    });
+    const el = document.getElementById('inv-table-wrap');
+    if (!rows.length) {
+      el.innerHTML = '<div class="empty-state"><h3 style="margin-bottom:6px;">No data inventory records match</h3><p class="ta-muted">Add a record manually, complete Guided Onboarding, or import a CSV/XLSX sheet.</p></div>';
+      return;
+    }
+    el.innerHTML = '<div class="tbl-wrap"><table><thead><tr><th>Category &amp; Fields</th><th>Source &amp; Purpose</th><th>Storage &amp; Vendors</th><th>Status</th><th>Actions</th></tr></thead><tbody>' +
+      rows.map(function (r) {
+        const st = r.confirmation_status || 'Confirmed by business';
+        const bCls = st.indexOf('Confirmed') !== -1 ? 'badge-emerald' : 'badge-amber';
+        return '<tr><td><strong>' + TA.esc(r.category) + '</strong><div class="ta-muted" style="font-size:12px;">' + TA.esc((r.fields || []).join(', ') || r.principal_type) + '</div></td>' +
+          '<td>' + TA.esc(r.source) + '<div class="ta-muted" style="font-size:12px;">' + TA.esc(r.purpose) + '</div></td>' +
+          '<td>' + TA.esc(r.storage_system) + '<div class="ta-muted" style="font-size:12px;">Vendors: ' + TA.esc(r.external_recipients || r.processor || 'None') + ' &bull; Ret: ' + TA.esc(r.retention_period || 'Review') + '</div></td>' +
+          '<td><span class="badge ' + bCls + '">' + TA.esc(st) + '</span><div class="ta-muted" style="font-size:11px;">v' + TA.esc(r.version || 1) + '</div></td>' +
+          '<td style="white-space:nowrap;">' +
+          '<button type="button" class="btn btn-outline btn-sm" onclick=\'inspectHistory(' + JSON.stringify(r) + ')\'>History</button> ' +
+          '<button type="button" class="btn btn-ghost btn-sm" onclick="delInv(\'' + TA.esc(r.id) + '\')">Delete</button></td></tr>';
+      }).join('') + '</tbody></table></div>';
+  }
+
+  function inspectHistory(r) {
+    const hist = r.version_history || [];
+    TA.openDrawer('Inventory Version History',
+      '<h4>' + TA.esc(r.category) + '</h4><p class="ta-muted" style="margin-bottom:12px;">' + TA.esc(r.purpose) + '</p>' +
+      hist.map(function (h) {
+        return '<div style="padding:10px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px;"><strong>v' + TA.esc(h.version) + ' &mdash; ' + TA.esc(h.status) + '</strong><div class="ta-muted" style="font-size:12px;">' + TA.esc(h.note) + ' &bull; ' + TA.esc((h.timestamp || '').slice(0, 16)) + '</div></div>';
+      }).join('')
+    );
+  }
+
+  function openAddInvModal() {
+    TA.openModal('Add Personal Data Record',
+      '<form onsubmit="saveNewInv(event)">' +
+      '<div class="field"><label>Data Category</label><select id="n-cat" class="input"><option>Contact information</option><option>Customer accounts</option><option>Billing information</option><option>Employee information</option><option>Health information</option><option>Student information</option><option>Website and application information</option><option>Other personal information</option></select></div>' +
+      '<div class="field"><label>Fields (comma-separated)</label><input id="n-fields" class="input" required placeholder="Full Name, Phone, Email"></div>' +
+      '<div class="field"><label>Purpose</label><input id="n-purp" class="input" required placeholder="Appointment scheduling and billing"></div>' +
+      '<div class="grid-2">' +
+      '<div class="field"><label>Storage System</label><input id="n-sys" class="input" value="Cloud Database"></div>' +
+      '<div class="field"><label>Vendors Receiving It</label><input id="n-vnd" class="input" value="None"></div>' +
+      '</div><button type="submit" class="btn btn-primary" style="width:100%;">Save Record</button></form>'
+    );
+  }
+
+  async function saveNewInv(ev) {
+    ev.preventDefault();
+    try {
+      await TA.apiJson('/api/dpdp/inventory', {
+        method: 'POST',
+        body: JSON.stringify({
+          category: document.getElementById('n-cat').value,
+          fields: document.getElementById('n-fields').value,
+          purpose: document.getElementById('n-purp').value,
+          storage_system: document.getElementById('n-sys').value,
+          external_recipients: document.getElementById('n-vnd').value,
+          confirmation_status: 'Confirmed by business',
+        }),
+      });
+      TA.closeModal();
+      TA.toast('Inventory entry added');
+      loadInventory();
+    } catch (e) { TA.toast(e.message, 'err'); }
+  }
+
+  async function delInv(id) {
+    await TA.apiJson('/api/dpdp/inventory/' + encodeURIComponent(id), { method: 'DELETE' });
+    TA.toast('Deleted entry');
+    loadInventory();
+  }
+
+  async function bulkConfirm() {
+    const draftIds = INV_ROWS.filter(function (r) { return (r.confirmation_status || '').indexOf('Confirmed') === -1; }).map(function (r) { return r.id; });
+    if (!draftIds.length) return TA.toast('All items already confirmed');
+    const res = await TA.apiJson('/api/dpdp/inventory/bulk-review', { method: 'POST', body: JSON.stringify({ entry_ids: draftIds, status: 'Confirmed by business' }) });
+    TA.toast('Confirmed ' + (res.updated_count || 0) + ' draft record(s)');
+    loadInventory();
+  }
+
+  async function checkDuplicates() {
+    const res = await TA.apiJson('/api/dpdp/inventory/duplicates');
+    const dups = res.duplicates || [];
+    TA.openModal('Duplicate Inventory Check', dups.length ? dups.map(function (d) {
+      return '<div style="padding:10px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px;"><strong>' + TA.esc(d.category) + '</strong> (' + d.count + ' records) &mdash; ' + TA.esc(d.purpose) + '</div>';
+    }).join('') : '<p class="ta-muted">No duplicate category + purpose pairs detected.</p>');
+  }
+
+  async function importSheet(inp) {
+    const f = inp.files[0];
+    if (!f) return;
+    const fd = new FormData(); fd.append('file', f);
+    try {
+      const res = await TA.apiJson('/api/dpdp/extraction/upload', { method: 'POST', body: fd });
+      TA.toast('Imported sheet for confirmation in Discovery Centre');
+      window.location.href = '/app/discovery';
+    } catch (e) { TA.toast(e.message, 'err'); }
+  }
+
+  loadInventory();
+</script>
+{% endblock %}

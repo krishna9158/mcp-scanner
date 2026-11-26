@@ -59,20 +59,23 @@ class TestPublicLaunchPagesAndLegalAccuracy:
         res = client.get("/")
         assert res.status_code == 200
         html = res.get_data(as_text=True)
-        assert "Know What Happens to Your Customer Data." in html
+        assert "Your Business Has Customer Data. We Help You Stay in Control." in html
         assert "Start My Free Assessment" in html
-        assert "See How It Works" in html
-        assert "DISCOVER" in html and "ASSESS" in html and "MANAGE" in html
-        assert "13 Nov 2025" in html
-        assert "13 Nov 2026" in html
+        assert "Explore the Platform" in html
+        assert "DISCOVER" in html and "UNDERSTAND" in html and "ASSESS" in html and "PROVE" in html
+        assert "13 November 2025" in html
+        assert "13 November 2026" in html
         assert "13 May 2027" in html
-        assert "Removal of Difficulties Order" in html
-        assert "₹250 crore" in html or "&#8377;250 crore" in html
-        assert "₹200 crore" in html or "&#8377;200 crore" in html
-        assert "Starter" in html and "Growth" in html and "Business" in html
+        assert "S.O. 5458(E)" in html
         assert "999" in html and "1,999" in html and "2,999" in html
         assert "Rule 5(1)" not in html
         assert "Draft Rules 2025" not in html
+
+        res_sec = client.get("/resources")
+        assert res_sec.status_code == 200
+        res_html = res_sec.get_data(as_text=True)
+        assert "₹250 crore" in res_html or "&#8377;250 crore" in res_html
+        assert "₹200 crore" in res_html or "&#8377;200 crore" in res_html
 
     def test_legal_accuracy_engine_penalties_and_commencement(self):
         # Section 3 scheduled for 13 May 2027 (NOT IN_FORCE)

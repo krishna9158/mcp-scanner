@@ -1,0 +1,68 @@
+{% extends "app_base.html" %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Evidence Vault</h1>
+    <p class="page-sub">Physical file storage (5 MB limit, safe extension &amp; magic-byte verification, version tracking, and 5-state review workflow).</p>
+  </div>
+  <button type="button" class="btn btn-primary btn-sm" onclick="openUploadModal()">+ Upload Evidence File</button>
+</div>
+
+<div id="evidence-table-wrap">Loading Evidence Vault...</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  async function loadEvidence() {
+    const d = await TA.apiJson('/api/dpdp/evidence/list');
+    const items = d.artifacts || [];
+    const el = document.getElementById('evidence-table-wrap');
+    if (!items.length) {
+      el.innerHTML = '<div class="empty-state"><h3>Evidence Vault is Empty</h3><p class="ta-muted">Upload signed vendor DPAs, Privacy Notice screenshots, retention logs, or security proof (.pdf, .png, .jpg, .docx, .xlsx, .csv, .txt).</p></div>';
+      return;
+    }
+    el.innerHTML = '<div class="tbl-wrap"><table><thead><tr><th>Title &amp; File</th><th>Control / Category</th><th>Status &amp; Version</th><th>Actions</th></tr></thead><tbody>' +
+      items.map(function (ev) {
+        const cls = ev.status === 'Verified' ? 'badge-emerald' : (ev.status === 'Rejected' ? 'badge-rose' : 'badge-amber');
+        return '<tr><td><strong>' + TA.esc(ev.title || ev.filename) + '</strong><div class="ta-muted" style="font-size:12px;">' + TA.esc(ev.filename) + '</div></td>' +
+          '<td>' + TA.esc(ev.category || 'General') + '<div class="ta-muted" style="font-size:12px;">' + TA.esc(ev.control_id || '') + '</div></td>' +
+          '<td><span class="badge ' + cls + '">' + TA.esc(ev.status || 'Evidence uploaded') + '</span><div class="ta-muted" style="font-size:11.5px;">v' + TA.esc(ev.version || 1) + '</div></td>' +
+          '<td style="white-space:nowrap;">' +
+          '<a class="btn btn-outline btn-sm" href="/api/dpdp/evidence/' + TA.esc(ev.id) + '/download">Download</a> ' +
+          '<button type="button" class="btn btn-emerald btn-sm" onclick="setEvStatus(\'' + TA.esc(ev.id) + '\', \'Verified\')">Verify</button> ' +
+          '<button type="button" class="btn btn-ghost btn-sm" onclick="delEv(\'' + TA.esc(ev.id) + '\')">Delete</button></td></tr>';
+      }).join('') + '</tbody></table></div>';
+  }
+
+  function openUploadModal() {
+    TA.openModal('Upload Evidence Artifact',
+      '<form onsubmit="uploadEv(event)">' +
+      '<div class="field"><label>Evidence Title</label><input id="ev-title" class="input" required placeholder="Signed AWS DPA / Published Privacy Notice Screenshot"></div>' +
+      '<div class="field"><label>Category</label><select id="ev-cat" class="input"><option>Privacy Notice</option><option>Vendor DPA</option><option>Security Safeguards</option><option>Retention &amp; Deletion</option><option>Training &amp; Governance</option></select></div>' +
+      '<div class="field"><label>File (.pdf, .png, .jpg, .docx, .xlsx, .csv, .txt — max 5 MB)</label><input id="ev-file" type="file" class="input" required></div>' +
+      '<button type="submit" class="btn btn-primary" style="width:100%;">Upload Safely</button></form>'
+    );
+  }
+  async function uploadEv(ev) {
+    ev.preventDefault();
+    const fd = new FormData();
+    fd.append('title', document.getElementById('ev-title').value.trim());
+    fd.append('category', document.getElementById('ev-cat').value);
+    fd.append('file', document.getElementById('ev-file').files[0]);
+    try {
+      await TA.apiJson('/api/dpdp/evidence/upload', { method: 'POST', body: fd });
+      TA.closeModal(); TA.toast('Evidence uploaded'); loadEvidence();
+    } catch (e) { TA.toast(e.message, 'err'); }
+  }
+  async function setEvStatus(id, status) {
+    await TA.apiJson('/api/dpdp/evidence/' + encodeURIComponent(id) + '/status', { method: 'POST', body: JSON.stringify({ status: status }) });
+    TA.toast('Evidence marked ' + status); loadEvidence();
+  }
+  async function delEv(id) {
+    await TA.apiJson('/api/dpdp/evidence/' + encodeURIComponent(id), { method: 'DELETE' });
+    TA.toast('Evidence removed'); loadEvidence();
+  }
+
+  loadEvidence();
+</script>
+{% endblock %}

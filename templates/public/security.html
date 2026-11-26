@@ -1,0 +1,119 @@
+{% extends "public_base.html" %}
+{% block title %}Security &amp; Trust Centre — TrustAudit{% endblock %}
+{% block content %}
+<section class="ta-section ta-section-forest" style="padding:64px 0;">
+  <div class="ta-container">
+    <span class="ta-eyebrow">Verified Security &amp; Transparency Centre</span>
+    <h1 class="ta-h1" style="color:#FFFFFF;">How TrustAudit Protects Customer Information</h1>
+    <p class="ta-lead" style="color:#C2D0C8;">This Trust Centre reports strictly verified engineering controls active inside the TrustAudit platform. We never publish unobtained compliance certifications or exaggerated security badges.</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:22px;">
+      <a href="/api/public/trust-pack/download?format=zip" class="btn btn-lime">Download Trust Pack (.zip)</a>
+      <a href="/.well-known/security.txt" class="btn btn-outline" style="background:transparent;color:#FFFFFF;border-color:rgba(255,255,255,0.28);">RFC 9116 security.txt</a>
+    </div>
+  </div>
+</section>
+
+<section class="ta-section">
+  <div class="ta-container">
+    <div class="grid-3">
+      <div class="card">
+        <span class="badge badge-emerald">Authentication &amp; Sessions</span>
+        <h3 class="ta-h3" style="margin-top:10px;">PBKDF2 600k + MFA</h3>
+        <p class="ta-muted">Passwords use PBKDF2-HMAC-SHA256 at 600,000 iterations. Persistent sessions and single-use reset tokens store only SHA-256 hashes, with TOTP MFA and login rate limiting.</p>
+      </div>
+      <div class="card">
+        <span class="badge badge-emerald">Authorisation &amp; Isolation</span>
+        <h3 class="ta-h3" style="margin-top:10px;">Strict Tenant RBAC</h3>
+        <p class="ta-muted">Every tenant API validates session ownership against the caller's organisation ID, enforces Admin/Member/Viewer roles, blocks cross-origin CSRF writes, and guards platform admin consoles.</p>
+      </div>
+      <div class="card">
+        <span class="badge badge-emerald">Website &amp; Upload Security</span>
+        <h3 class="ta-h3" style="margin-top:10px;">SSRF &amp; Magic-Byte Guards</h3>
+        <p class="ta-muted">Public URL inspections block loopback, RFC1918, CGNAT 100.64.0.0/10, IPv4-mapped IPv6, metadata IPs, and unsafe redirects. File uploads allowlist safe extensions under 5 MB with magic-byte checks and <code>X-Content-Type-Options: nosniff</code>.</p>
+      </div>
+      <div class="card">
+        <span class="badge badge-neutral">Infrastructure &amp; Storage</span>
+        <h3 class="ta-h3" style="margin-top:10px;">Hosting &amp; Encryption</h3>
+        <p class="ta-muted">Hosted on Render compute and persistent storage with optional Fernet file encryption at rest when configured, atomic file writes, and SHA-256 verified backup snapshots.</p>
+      </div>
+      <div class="card">
+        <span class="badge badge-neutral">AI Data Disclosures</span>
+        <h3 class="ta-h3" style="margin-top:10px;">Local Grounded Engine</h3>
+        <p class="ta-muted">Default AI guidance runs locally on TrustAudit's DPDP statutory corpus. If an external LLM key is ever enabled by operator configuration, direct PII emails/phones/tax IDs are scrubbed before prompt construction.</p>
+      </div>
+      <div class="card">
+        <span class="badge badge-neutral">Retention &amp; Deletion</span>
+        <h3 class="ta-h3" style="margin-top:10px;">Data Minimisation &amp; Account Purge</h3>
+        <p class="ta-muted"><strong>Zero Raw Patient Data Collection:</strong> TrustAudit manages categories and workflow metadata without requesting patient medical histories. Administrators can trigger complete deletion via <code>/api/account/delete</code>. Privacy contact: <a href="mailto:grievance@trustaudit.io">grievance@trustaudit.io</a> | Security: <a href="mailto:security@trustaudit.io">security@trustaudit.io</a>.</p>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:28px;">
+      <h3 class="ta-h3">Verified Security Architecture &amp; Statutory Disclaimers</h3>
+      <p class="ta-muted">1. <strong>Not a Government Certification Body:</strong> Neither MeitY nor the Data Protection Board of India certifies compliance tools under the Digital Personal Data Protection Act, 2023. TrustAudit assists operational readiness and is not an accredited SOC 2/ISO registrar or law firm.<br>
+      2. <strong>Not a Statutory Consent Manager:</strong> Institutional Board provisions commenced on 13 November 2025, Section 6(9) and Rule 4 (Consent Managers) commenced on 13 November 2026, and substantive obligations (Sections 3–17, including Section 8(5) reasonable security safeguards, and Rules 3, 5–16, 22–23) are scheduled to commence on 13 May 2027. TrustAudit is not a registered Consent Manager under Section 6(9).</p>
+    </div>
+
+    <!-- INTERACTIVE SECURITY VERIFICATION TOOLS (Preserving Trust Centre explorer & redaction sandbox) -->
+    <div class="card ta-section-muted" style="margin-top:28px;">
+      <span class="ta-eyebrow">Interactive Verification</span>
+      <h3 class="ta-h3" style="margin-top:10px;">Live Security Telemetry &amp; PII Masking Sandbox</h3>
+      <div class="grid-2" style="margin-top:14px;">
+        <div>
+          <label class="field" style="font-size:13px;font-weight:700;">Test PII Scrubbing Layer Before AI Context</label>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <input id="sandbox-input-val" class="input" style="flex:1;" value="Customer ravi@clinic.in (+91 9876543210, ABCDE1234F) requested invoice copy">
+            <button type="button" class="btn btn-primary btn-sm" onclick="runMaskingDemo()">Simulate Redaction</button>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;">
+          <button type="button" class="btn btn-outline btn-sm" onclick="runQuestionnaireSimulator()">Query Live /api/public/trust-status</button>
+          <button type="button" class="btn btn-outline btn-sm" onclick="inspectNode('ssrf-and-upload')">Inspect SSRF &amp; Upload Safeguards</button>
+          <button type="button" class="btn btn-outline btn-sm" onclick="openGrievanceModal()">Submit Privacy Grievance</button>
+        </div>
+      </div>
+      <pre id="trust-interactive-output" style="display:none;margin-top:16px;padding:14px;border-radius:10px;background:var(--forest-950);color:#E5EFE9;font-family:var(--font-mono);font-size:12.5px;white-space:pre-wrap;"></pre>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block extra_scripts %}
+<script>
+  function showTrustOutput(txt) {
+    const box = document.getElementById('trust-interactive-output');
+    box.style.display = 'block';
+    box.textContent = txt;
+  }
+  function runMaskingDemo() {
+    const raw = document.getElementById('sandbox-input-val').value || '';
+    const masked = raw
+      .replace(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g, '[EMAIL_REDACTED]')
+      .replace(/(?:\+91[- ]?)?[6-9]\d{9}/g, '[PHONE_REDACTED]')
+      .replace(/\b[A-Z]{5}[0-9]{4}[A-Z]\b/g, '[TAX_ID_REDACTED]');
+    showTrustOutput('Sanitized Output Passed to AI Layer:\n' + masked);
+  }
+  async function runQuestionnaireSimulator() {
+    try {
+      const data = await TA.apiJson('/api/public/trust-status');
+      const sc = data.security_controls || {};
+      showTrustOutput(
+        'Live Server Verification (' + (data.timestamp || '') + '):\n' +
+        '- Password Hashing: ' + (sc.password_hashing || '') + '\n' +
+        '- Sessions: ' + (sc.session_security || '') + '\n' +
+        '- Storage Encryption: ' + (sc.encryption_at_rest || '') + '\n' +
+        '- SSRF Defense: ' + (sc.ssrf_protection || '') + '\n' +
+        '- AI Privacy: ' + (sc.ai_assistant_privacy || '')
+      );
+    } catch (e) {
+      showTrustOutput('Failed querying trust status: ' + e.message);
+    }
+  }
+  function inspectNode(id) {
+    showTrustOutput(
+      'Safeguard Control Verification (' + id + '):\n' +
+      '1. SSRF Protection: Blocks loopback, RFC1918, CGNAT (100.64.0.0/10), IPv4-mapped IPv6, link-local metadata IPs, and validates redirects + connected peer socket IPs.\n' +
+      '2. File Upload Security: Allowlists .pdf/.png/.jpg/.jpeg/.txt/.csv/.md/.docx/.xlsx/.json under 5 MB with magic-byte checks and nosniff headers.'
+    );
+  }
+</script>
+{% endblock %}

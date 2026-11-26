@@ -122,8 +122,8 @@ DPDP_STATUTORY_PENALTIES: Dict[str, Dict[str, Any]] = {
         "applicability": "Entities processing personal data of individuals under 18 years of age or persons with disabilities",
         "explanation": (
             "Applies to failures in parental/guardian consent verification, tracking or behavioural monitoring, or targeted "
-            "advertising directed at children under 18 or persons with disabilities with lawful guardians. Note: Subject to "
-            "drafting/cross-reference clarifications issued under the October 2026 Removal of Difficulties Order."
+            "advertising directed at children under 18 or persons with disabilities with lawful guardians. Subject to textual "
+            "clarifications in Section 9(1) issued under S.O. 5458(E) (Removal of Difficulties Order, October 2026)."
         ),
         "legal_source": OFFICIAL_SOURCE,
         "last_reviewed_date": LAST_REVIEWED_DATE,
@@ -142,7 +142,8 @@ DPDP_STATUTORY_PENALTIES: Dict[str, Dict[str, Any]] = {
         "applicability": "Entities officially designated as Significant Data Fiduciaries by Central Government",
         "explanation": (
             "Applies to entities designated as SDFs based on volume, sensitivity, national sovereignty risk, or public order. "
-            "Covers Data Protection Officer appointment, Data Protection Impact Assessments (DPIA), and independent audits."
+            "Covers Data Protection Officer appointment, Data Protection Impact Assessments (DPIA), and independent data audits "
+            "(S.O. 5458(E) Removal of Difficulties Order, October 2026 updated Section 10(2)(c)(ii) reference from 'audit' to 'data audit')."
         ),
         "legal_source": OFFICIAL_SOURCE,
         "last_reviewed_date": LAST_REVIEWED_DATE,

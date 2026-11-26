@@ -1,0 +1,83 @@
+{% extends "app_base.html" %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Platform Administrator Console</h1>
+    <p class="page-sub">Restricted operator console for multi-tenant oversight, configurable pricing plans, support tickets, audit trail, and platform health.</p>
+  </div>
+</div>
+
+<div class="grid-4" style="margin-bottom:20px;">
+  <div class="card"><div class="ta-muted">Organisations</div><div id="ad-orgs" style="font-size:26px;font-weight:850;">&mdash;</div></div>
+  <div class="card"><div class="ta-muted">Users</div><div id="ad-usrs" style="font-size:26px;font-weight:850;">&mdash;</div></div>
+  <div class="card"><div class="ta-muted">Support Tickets</div><div id="ad-tix" style="font-size:26px;font-weight:850;">&mdash;</div></div>
+  <div class="card"><div class="ta-muted">Walkthrough Requests</div><div id="ad-wlk" style="font-size:26px;font-weight:850;">&mdash;</div></div>
+</div>
+
+<div class="card" style="margin-bottom:22px;">
+  <h2 class="ta-h3" style="margin-bottom:12px;">Configurable Pricing Plans (Synced With /pricing &amp; /api/plans)</h2>
+  <div id="admin-plans-grid" class="grid-4"></div>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <h2 class="ta-h3" style="margin-bottom:10px;">Registered Organisations</h2>
+    <div id="admin-orgs-tbl">Loading...</div>
+  </div>
+  <div class="card">
+    <h2 class="ta-h3" style="margin-bottom:10px;">Grievance &amp; Walkthrough Inbox</h2>
+    <div id="admin-tix-tbl">Loading...</div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  async function loadAdminConsole() {
+    try {
+      const d = await TA.apiJson('/api/admin/overview');
+      const p = d.platform_summary || d;
+      document.getElementById('ad-orgs').textContent = p.total_organizations || 0;
+      document.getElementById('ad-usrs').textContent = p.total_users || 0;
+      document.getElementById('ad-tix').textContent = (p.support_tickets || []).length;
+      document.getElementById('ad-wlk').textContent = (p.walkthrough_requests || []).length;
+
+      document.getElementById('admin-plans-grid').innerHTML = (p.plans || []).map(function (pl) {
+        return '<div class="card" style="padding:14px;"><strong>' + TA.esc(pl.name) + '</strong>' +
+          '<div class="field" style="margin-top:8px;"><label>INR / Month</label><input id="ap-inr-' + TA.esc(pl.key) + '" type="number" class="input" value="' + TA.esc(pl.price_monthly_inr) + '"></div>' +
+          '<div class="field"><label>Max Websites</label><input id="ap-dom-' + TA.esc(pl.key) + '" type="number" class="input" value="' + TA.esc(pl.max_domains) + '"></div>' +
+          '<button type="button" class="btn btn-primary btn-sm" style="width:100%;" onclick="saveAdminPlan(\'' + TA.esc(pl.key) + '\')">Save Plan</button></div>';
+      }).join('');
+
+      document.getElementById('admin-orgs-tbl').innerHTML = '<div class="tbl-wrap"><table><thead><tr><th>Name</th><th>Plan</th><th>Members</th></tr></thead><tbody>' +
+        (p.organizations || []).map(function (o) {
+          return '<tr><td><strong>' + TA.esc(o.name) + '</strong><div class="ta-muted" style="font-size:11.5px;">' + TA.esc(o.id) + '</div></td><td>' + TA.esc(o.plan) + '</td><td>' + (o.members_count || 0) + '</td></tr>';
+        }).join('') + '</tbody></table></div>';
+
+      const tixHtml = (p.support_tickets || []).map(function (t) {
+        return '<div style="padding:8px 0;border-bottom:1px solid var(--border);"><strong>' + TA.esc(t.reference_id) + '</strong> (' + TA.esc(t.category) + ')<div class="ta-muted" style="font-size:12px;">' + TA.esc(t.description) + '</div></div>';
+      }).join('') + (p.walkthrough_requests || []).map(function (w) {
+        return '<div style="padding:8px 0;border-bottom:1px solid var(--border);"><strong>' + TA.esc(w.reference_id) + '</strong> Walkthrough: ' + TA.esc(w.company || w.name) + '</div>';
+      }).join('');
+      document.getElementById('admin-tix-tbl').innerHTML = tixHtml || '<div class="ta-muted">No public support tickets or walkthroughs yet.</div>';
+    } catch (e) {
+      document.querySelector('.app-content').innerHTML = '<div class="card" style="color:var(--rose);"><strong>Access Restricted:</strong> ' + TA.esc(e.message) + '</div>';
+    }
+  }
+
+  async function saveAdminPlan(key) {
+    await TA.apiJson('/api/admin/plans', {
+      method: 'POST',
+      body: JSON.stringify({
+        plan_key: key,
+        price_monthly_inr: parseInt(document.getElementById('ap-inr-' + key).value || '0', 10),
+        max_domains: parseInt(document.getElementById('ap-dom-' + key).value || '1', 10),
+      }),
+    });
+    TA.toast('Plan "' + key + '" updated globally');
+    loadAdminConsole();
+  }
+
+  loadAdminConsole();
+</script>
+{% endblock %}

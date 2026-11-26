@@ -1,0 +1,114 @@
+{% extends "app_base.html" %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Consent &amp; Lawful Basis Records</h1>
+    <p class="page-sub">Record purpose-based consents alongside non-consent Section 7 grounds. <strong>Notice:</strong> TrustAudit is a business readiness log, not a statutory registered Consent Manager, and does not claim live real-time enforcement unless a tested integration exists.</p>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+    <label class="btn btn-outline btn-sm" style="cursor:pointer;">
+      Import Consent CSV
+      <input type="file" accept=".csv" style="display:none;" onchange="importConsentCsvFile(this)">
+    </label>
+    <button type="button" class="btn btn-outline btn-sm" onclick="openWithdrawModal()">Log Consent Withdrawal</button>
+    <button type="button" class="btn btn-primary btn-sm" onclick="openAddConsentModal()">+ Record Consent / Lawful Ground</button>
+  </div>
+</div>
+
+<div class="grid-split">
+  <div class="card">
+    <h2 class="ta-h3" style="margin-bottom:12px;">Recorded Customer Consents &amp; Section 7 Grounds</h2>
+    <div id="consent-list">Loading records...</div>
+  </div>
+  <div class="card">
+    <h2 class="ta-h3" style="margin-bottom:12px;">Withdrawal Log &amp; Processor Cascade</h2>
+    <div id="withdrawal-list">Loading withdrawals...</div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  async function loadConsent() {
+    const [cRes, wRes] = await Promise.all([
+      TA.apiJson('/api/dpdp/consent'),
+      TA.apiJson('/api/dpdp/withdrawals'),
+    ]);
+    const recs = cRes.consent_records || [];
+    const elC = document.getElementById('consent-list');
+    elC.innerHTML = recs.length ? '<div class="tbl-wrap"><table><thead><tr><th>Customer Ref &amp; Purpose</th><th>Lawful Ground</th><th>Source &amp; Status</th></tr></thead><tbody>' +
+      recs.map(function (r) {
+        return '<tr><td><strong>' + TA.esc(r.principal_ref || r.id) + '</strong><div class="ta-muted" style="font-size:12px;">' + TA.esc(r.purpose) + '</div></td>' +
+          '<td><span class="badge badge-neutral">' + TA.esc(r.lawful_ground || 'Consent (Section 6)') + '</span></td>' +
+          '<td>' + TA.esc(r.source || 'Web Form') + '<div class="ta-muted" style="font-size:11.5px;">' + TA.esc(r.status || 'ACTIVE') + '</div></td></tr>';
+      }).join('') + '</tbody></table></div>' : '<div class="empty-state"><p class="ta-muted">No consent or Section 7 lawful records logged yet.</p></div>';
+
+    const wds = wRes.withdrawals || [];
+    const elW = document.getElementById('withdrawal-list');
+    elW.innerHTML = wds.length ? wds.map(function (w) {
+      return '<div style="padding:10px 12px;border:1px solid var(--border);border-radius:9px;margin-bottom:8px;">' +
+        '<strong>' + TA.esc(w.principal_ref || w.id) + '</strong> &bull; <span class="badge badge-emerald">' + TA.esc(w.status || 'RECORDED') + '</span>' +
+        '<div class="ta-muted" style="font-size:12px;margin-top:4px;">Reason: ' + TA.esc(w.reason || 'Consent withdrawn') + '<br>Processors flagged: ' + TA.esc((w.processors_notified_list || []).join(', ') || 'Internal log updated') + '</div></div>';
+    }).join('') : '<div class="empty-state"><p class="ta-muted">No withdrawal requests recorded yet.</p></div>';
+  }
+
+  function openAddConsentModal() {
+    TA.openModal('Log Consent or Lawful Processing Ground',
+      '<form onsubmit="saveConsent(event)">' +
+      '<div class="field"><label>Customer / Data Principal Reference (Avoid storing unnecessary PII)</label><input id="cn-ref" class="input" required placeholder="CUST-1042"></div>' +
+      '<div class="field"><label>Processing Purpose</label><input id="cn-pur" class="input" required placeholder="Sending lab test updates or promotional offers"></div>' +
+      '<div class="field"><label>Lawful Ground Under DPDP Act</label><select id="cn-ground" class="input">' +
+      '<option>Consent (Section 6)</option>' +
+      '<option>Certain Legitimate Uses — Voluntary Provision (Section 7(a))</option>' +
+      '<option>Certain Legitimate Uses — Employment (Section 7(i))</option>' +
+      '<option>Compliance with Indian Law (Section 7(b)/(c))</option></select></div>' +
+      '<div class="field"><label>Collection Source</label><input id="cn-src" class="input" value="Public Signup Form (Notice v1.0)"></div>' +
+      '<button type="submit" class="btn btn-primary" style="width:100%;">Save Record</button></form>'
+    );
+  }
+  async function saveConsent(ev) {
+    ev.preventDefault();
+    await TA.apiJson('/api/dpdp/consent', {
+      method: 'POST',
+      body: JSON.stringify({
+        principal_ref: document.getElementById('cn-ref').value.trim(),
+        purpose: document.getElementById('cn-pur').value.trim(),
+        lawful_ground: document.getElementById('cn-ground').value,
+        source: document.getElementById('cn-src').value.trim(),
+      }),
+    });
+    TA.closeModal();
+    TA.toast('Consent / lawful basis recorded');
+    loadConsent();
+  }
+
+  function openWithdrawModal() {
+    TA.openModal('Record Consent Withdrawal',
+      '<form onsubmit="saveWithdraw(event)">' +
+      '<div class="field"><label>Customer Reference</label><input id="wd-ref" class="input" required placeholder="CUST-1042"></div>' +
+      '<div class="field"><label>Withdrawal Purpose / Scope</label><input id="wd-rsn" class="input" required value="Withdrew marketing notifications consent"></div>' +
+      '<button type="submit" class="btn btn-primary" style="width:100%;">Log Withdrawal &amp; Flag Processors</button></form>'
+    );
+  }
+  async function saveWithdraw(ev) {
+    ev.preventDefault();
+    await TA.apiJson('/api/dpdp/withdrawals', {
+      method: 'POST',
+      body: JSON.stringify({ principal_ref: document.getElementById('wd-ref').value.trim(), reason: document.getElementById('wd-rsn').value.trim() }),
+    });
+    TA.closeModal();
+    TA.toast('Withdrawal logged & processor notification list prepared');
+    loadConsent();
+  }
+
+  async function importConsentCsvFile(inp) {
+    const f = inp.files[0]; if (!f) return;
+    const text = await f.text();
+    const res = await TA.apiJson('/api/dpdp/consent/import', { method: 'POST', body: JSON.stringify({ csv_content: text }) });
+    TA.toast('Imported ' + (res.imported_count || 0) + ' record(s)');
+    loadConsent();
+  }
+
+  loadConsent();
+</script>
+{% endblock %}

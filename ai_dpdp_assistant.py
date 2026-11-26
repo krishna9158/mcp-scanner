@@ -40,14 +40,14 @@ from security_utils import (
 
 STARTER_QUESTIONS: List[str] = [
     "What does DPDP mean for my business?",
-    "What must my Privacy Notice include?",
+    "Review my privacy notice.",
+    "Explain my three most important findings.",
+    "What should my clinic do next?",
+    "How do I handle a customer deletion request?",
+    "Explain the relevant legal requirement in simple language.",
     "When do we need customer consent and when is Section 7 applicable?",
-    "How should we handle customer requests to view or delete their data?",
     "What should we check with software or lab vendors?",
-    "How long should we keep customer or patient records?",
-    "What should we do if there is a data breach?",
-    "What rules apply if we handle children's data?",
-    "What evidence should we keep ready?",
+    "What did the S.O. 5458(E) Removal of Difficulties Order change?",
 ]
 
 INJECTION_PATTERNS = [
@@ -494,6 +494,28 @@ DPDP_KNOWLEDGE_CORPUS: List[Dict[str, Any]] = [
         "penalties": "Up to ₹50 crore (Schedule Item 6: General Contravention)",
         "action_guidance": "Keep clear records of consent sources and withdrawal dates in TrustAudit's Consent Records module.",
     },
+    {
+        "id": "KB-REMOVAL-DIFF-2026",
+        "section": "Section 9(1) & Section 10(2)(c)(ii) (S.O. 5458(E))",
+        "rules": ["S.O. 5458(E)", "G.S.R. 843(E)", "G.S.R. 846(E)", "Section 9", "Section 10"],
+        "title": "Removal of Difficulties Order, 2026 (S.O. 5458(E))",
+        "effective_date": "October 2026 (Aligns Sections 9 & 10 ahead of 13 May 2027)",
+        "commencement_status": "Gazette Order Issued",
+        "keywords": ["s.o. 5458", "5458", "removal of difficulties", "data audit", "section 10", "october 2026", "clarification"],
+        "summary": (
+            "The Digital Personal Data Protection (Removal of Difficulties) Order, 2026 (S.O. 5458(E)) clarified textual wording "
+            "in Section 9(1) (children's & persons with disabilities data processing) and amended Section 10(2)(c)(ii) to replace "
+            "'audit' with 'data audit' for Significant Data Fiduciaries, alongside notifications G.S.R. 843(E) and G.S.R. 846(E)."
+        ),
+        "plain_summary": (
+            "An October 2026 government Gazette order refined the exact phrasing in Section 9(1) on children's data and clarified that "
+            "large Significant Data Fiduciaries must carry out an independent periodic 'data audit' rather than a generic audit."
+        ),
+        "source_doc": "DPDP Act, 2023; S.O. 5458(E) Removal of Difficulties Order, Oct 2026; G.S.R. 843(E) & G.S.R. 846(E)",
+        "source_url": "https://www.meity.gov.in/content/digital-personal-data-protection-act-2023",
+        "penalties": "Up to ₹150 crore (Sec 10) / Up to ₹200 crore (Sec 9) Schedule ceiling",
+        "action_guidance": "Review whether your business handles minor/student/pediatric data (Section 9) or is designated as a Significant Data Fiduciary (Section 10) inside Assessment.",
+    },
 ]
 
 ASSISTANT_DISCLAIMER = (
@@ -513,17 +535,37 @@ def _history_file_path() -> str:
 
 
 def _load_assistant_store() -> Dict[str, Any]:
-    return safe_read_json(_history_file_path, lambda: {"history": {}, "feedback": {}})
+    return safe_read_json(_history_file_path(), lambda: {"history": {}, "feedback": {}, "conversations": {}})
 
 
 def _save_assistant_store(store: Dict[str, Any]) -> None:
     atomic_write_json(_history_file_path(), store)
 
 
-def get_assistant_history(org_id: str, limit: int = 30) -> List[Dict[str, Any]]:
+def get_assistant_history(org_id: str, limit: int = 30, conversation_id: Optional[str] = None) -> List[Dict[str, Any]]:
     store = _load_assistant_store()
     entries = store.get("history", {}).get(org_id, [])
+    if conversation_id:
+        entries = [e for e in entries if e.get("conversation_id") == conversation_id]
     return entries[-max(1, min(limit, 100)):]
+
+
+def list_assistant_conversations(org_id: str) -> List[Dict[str, Any]]:
+    store = _load_assistant_store()
+    entries = store.get("history", {}).get(org_id, [])
+    convs: Dict[str, Dict[str, Any]] = {}
+    for e in entries:
+        cid = e.get("conversation_id") or "default"
+        if cid not in convs:
+            convs[cid] = {
+                "conversation_id": cid,
+                "title": sanitize_plain_text(e.get("query") or "DPDP Readiness Session", 70),
+                "message_count": 0,
+                "updated_at": e.get("timestamp", ""),
+            }
+        convs[cid]["message_count"] += 1
+        convs[cid]["updated_at"] = e.get("timestamp", convs[cid]["updated_at"])
+    return sorted(convs.values(), key=lambda x: x.get("updated_at", ""), reverse=True)[:25]
 
 
 def clear_assistant_history(org_id: str) -> None:
@@ -556,21 +598,44 @@ def _detect_prompt_injection(raw_query: str) -> bool:
 
 
 def _get_tenant_context(org_id: str) -> Dict[str, Any]:
-    """Safely retrieves ONLY the authenticated org's non-sensitive summary."""
+    """Safely retrieves ONLY the authenticated org's non-sensitive operational summary (zero PII leaked)."""
     profile = dpdp_store.get_onboarding_profile(org_id) or {}
     inventory = dpdp_store.get_data_inventory(org_id)
     vendors = dpdp_store.get_vendors(org_id)
     assessment = dpdp_store.get_assessment(org_id)
+    notices = dpdp_store.get_privacy_notices(org_id)
+    tasks = dpdp_store.get_remediation_tasks(org_id)
+    open_tasks = [t for t in tasks if str(t.get("status", "")).upper() not in ("CLOSED", "COMPLETED", "VERIFIED", "NOT_APPLICABLE")]
+    setup = dpdp_store.get_setup_progress(org_id) if hasattr(dpdp_store, "get_setup_progress") else {}
+    top_findings = [
+        {
+            "title": sanitize_plain_text(t.get("title") or t.get("action") or "Privacy readiness item", 120),
+            "severity": t.get("severity") or t.get("priority") or "MEDIUM",
+            "section": sanitize_plain_text(t.get("section") or t.get("requirement_id") or "DPDP Readiness", 60),
+        }
+        for t in open_tasks[:3]
+    ]
+    if not top_findings:
+        top_findings = [
+            {"title": sanitize_plain_text(g.get("title") or g.get("requirement_id"), 120), "severity": g.get("severity", "HIGH"), "section": g.get("section", "DPDP Act")}
+            for g in (assessment.get("gaps") or [])[:3]
+        ]
     return {
         "org_name": sanitize_plain_text(profile.get("company_name") or "Your Business", 120),
         "industry": sanitize_plain_text(profile.get("industry") or "Business", 80),
         "inventory_count": len(inventory),
         "vendor_count": len(vendors),
+        "notices_count": len(notices),
+        "latest_notice_status": notices[0].get("status", "NONE") if notices else "NONE",
+        "open_tasks_count": len(open_tasks),
+        "setup_completed": setup.get("completed_count", 0),
+        "setup_total": setup.get("total_count", 6),
+        "top_findings": top_findings,
         "gaps_count": len(assessment.get("gaps", [])),
     }
 
 
-def query_ai_dpdp_assistant(query: str, org_id: Optional[str] = None, save_to_history: bool = True) -> Dict[str, Any]:
+def query_ai_dpdp_assistant(query: str, org_id: Optional[str] = None, save_to_history: bool = True, conversation_id: Optional[str] = None) -> Dict[str, Any]:
     """
     Grounded RAG assistant for Indian DPDP compliance.
     Defends against prompt injection, masks accidental PII before external calls,
@@ -699,43 +764,77 @@ def query_ai_dpdp_assistant(query: str, org_id: Optional[str] = None, save_to_hi
             synthesized_answer = None
 
     if not synthesized_answer:
+        ctx_bullets = []
+        if "notice" in clean_q:
+            ctx_bullets.append(
+                f"Your organisation currently has {tenant_ctx['notices_count']} saved Privacy Notice(s) "
+                f"(latest status: {tenant_ctx['latest_notice_status']}). Ensure your Section 5 notice clearly states itemised purposes, "
+                "data categories from your Data Inventory, and accessible Grievance contact details before publishing."
+            )
+        elif "finding" in clean_q or "three" in clean_q or "gap" in clean_q:
+            if tenant_ctx.get("top_findings"):
+                lines_f = [f"  - [{f['severity']}] {f['title']} ({f['section']})" for f in tenant_ctx["top_findings"]]
+                ctx_bullets.append("Top open readiness items in your workspace:\n" + "\n".join(lines_f))
+            else:
+                ctx_bullets.append(
+                    f"No unresolved critical tasks are currently queued ({tenant_ctx['inventory_count']} data records, "
+                    f"{tenant_ctx['vendor_count']} vendors tracked)."
+                )
+        elif "clinic" in clean_q or "next" in clean_q:
+            ctx_bullets.append(
+                f"Workspace setup progress for {tenant_ctx['org_name']} ({tenant_ctx['industry']}): "
+                f"{tenant_ctx['setup_completed']} of {tenant_ctx['setup_total']} setup milestones completed, "
+                f"{tenant_ctx['open_tasks_count']} open privacy task(s)."
+            )
+
+        ctx_section = ("\n\n**Your Live Organisation Context:**\n" + "\n".join(ctx_bullets)) if ctx_bullets else ""
         synthesized_answer = (
             f"**In Plain Language ({best_entry['title']}):**\n"
-            f"{best_entry.get('plain_summary', best_entry['summary'])}\n\n"
+            f"{best_entry.get('plain_summary', best_entry['summary'])}"
+            f"{ctx_section}\n\n"
             f"**What the Law Says ({best_entry['section']}):**\n"
             f"{best_entry['summary']}\n\n"
+            f"**Rule Reference:** {', '.join(best_entry.get('rules', []))} | "
             f"**Commencement Status:** {commencement_info['commencement_status']} ({best_entry['effective_date']})\n\n"
             f"**Maximum Statutory Penalty Ceiling:** {penalty_info['max_penalty_text']} "
             f"(Note: Not an automatic fine — determined under Section 33 factors.)\n\n"
-            f"**What to Do Next in TrustAudit ({tenant_ctx['org_name']}):**\n{best_entry['action_guidance']}"
+            f"**Suggested Next Action ({tenant_ctx['org_name']}):**\n{best_entry['action_guidance']}"
         )
 
+    conv_id = sanitize_plain_text(conversation_id or "conv-default", 64) or "conv-default"
     result = {
         "status": "success",
         "message_id": msg_id,
+        "conversation_id": conv_id,
         "query": raw_query,
         "answer": synthesized_answer,
         "plain_english_summary": best_entry.get("plain_summary", ""),
         "matched_section": best_entry["section"],
+        "rule_ref": ", ".join(best_entry.get("rules", [])),
         "effective_status": commencement_info["commencement_status"],
+        "commencement_status": commencement_info["commencement_status"],
         "effective_date": best_entry["effective_date"],
         "enforceable_now": commencement_info["enforceable_now"],
         "max_penalty_ceiling": penalty_info["max_penalty_text"],
         "statutory_penalty_disclaimer": dpdp_penalties.STATUTORY_PENALTY_DISCLAIMER,
         "source_document": best_entry["source_doc"],
+        "official_source": best_entry["source_doc"],
         "source_url": best_entry["source_url"],
         "recommended_action": best_entry["action_guidance"],
+        "suggested_next_action": best_entry["action_guidance"],
         "organization_context_applied": {
             "org_name": tenant_ctx["org_name"],
             "industry": tenant_ctx["industry"],
             "inventory_streams_mapped": tenant_ctx["inventory_count"],
             "active_vendors": tenant_ctx["vendor_count"],
+            "notices_count": tenant_ctx["notices_count"],
+            "open_tasks_count": tenant_ctx["open_tasks_count"],
         },
         "engine": ai_engine,
         "external_ai_used": external_ai_used,
         "data_handling_notice": data_handling_notice,
         "prompt_injection_blocked": False,
-        "suggested_questions": [q for q in STARTER_QUESTIONS if q.lower() != clean_q][:4],
+        "suggested_questions": [q for q in STARTER_QUESTIONS if q.lower() != clean_q][:5],
         "starter_questions": STARTER_QUESTIONS,
         "disclaimer": ASSISTANT_DISCLAIMER,
         "timestamp": utc_now_iso(),
@@ -747,11 +846,15 @@ def query_ai_dpdp_assistant(query: str, org_id: Optional[str] = None, save_to_hi
             hist = store.setdefault("history", {}).setdefault(org_id, [])
             hist.append({
                 "message_id": msg_id,
+                "conversation_id": conv_id,
                 "query": raw_query,
                 "answer": synthesized_answer,
                 "matched_section": best_entry["section"],
+                "rule_ref": result["rule_ref"],
+                "effective_status": result["effective_status"],
                 "effective_date": best_entry["effective_date"],
                 "source_document": best_entry["source_doc"],
+                "suggested_next_action": best_entry["action_guidance"],
                 "engine": ai_engine,
                 "external_ai_used": external_ai_used,
                 "timestamp": result["timestamp"],

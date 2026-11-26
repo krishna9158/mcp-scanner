@@ -1,0 +1,155 @@
+{% extends "app_base.html" %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">AI Privacy Assistant</h1>
+    <p class="page-sub">Source-grounded guidance built from DPDP Act 2023, DPDP Rules 2025, G.S.R. 843(E)/846(E), and S.O. 5458(E). PII is minimised before prompt handling.</p>
+  </div>
+  <button type="button" class="btn btn-outline btn-sm" onclick="startNewChat()">+ New Conversation</button>
+</div>
+
+<style>
+  .ai-ws-grid { display:grid; grid-template-columns:240px 1fr 310px; gap:18px; align-items:start; }
+  @media (max-width: 1080px) { .ai-ws-grid { grid-template-columns: 1fr; } }
+</style>
+<div class="ai-ws-grid">
+  <!-- Sidebar -->
+  <div class="card" style="padding:14px;">
+    <strong style="font-size:13px;">Conversation History</strong>
+    <div id="ai-conv-list" style="margin-top:10px;display:flex;flex-direction:column;gap:6px;">Loading...</div>
+  </div>
+
+  <!-- Main Chat Area -->
+  <div class="card" style="display:flex;flex-direction:column;gap:14px;min-height:520px;">
+    <div>
+      <div style="font-size:12px;font-weight:700;color:var(--ink-muted);margin-bottom:8px;">SUGGESTED PROMPTS</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;">
+        {% for prompt in [
+          "What does DPDP mean for my business?",
+          "Review my privacy notice.",
+          "Explain my three most important findings.",
+          "What should my clinic do next?",
+          "How do I handle a customer deletion request?",
+          "Explain the relevant legal requirement in simple language."
+        ] %}
+        <button type="button" class="btn btn-outline btn-sm" style="font-size:12px;" onclick="askPrompt(this.textContent)">{{ prompt }}</button>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div id="ai-chat-feed" style="flex:1;display:flex;flex-direction:column;gap:12px;max-height:430px;overflow-y:auto;padding-right:4px;">
+      <div class="empty-state" style="padding:28px;"><p class="ta-muted">Click a prompt above or ask any question below about Indian DPDP readiness, your notices, vendors, retention, or requests.</p></div>
+    </div>
+
+    <form onsubmit="submitAiQuestion(event)" style="display:flex;gap:8px;padding-top:10px;border-top:1px solid var(--border);">
+      <input id="ai-q-input" class="input" style="flex:1;" placeholder="Ask a plain-language privacy question..." required>
+      <button id="ai-q-btn" type="submit" class="btn btn-primary" style="white-space:nowrap;">Ask Assistant</button>
+    </form>
+  </div>
+
+  <!-- Legal Source Panel -->
+  <div class="card" style="padding:16px;">
+    <span class="badge badge-forest">Legal Source Panel</span>
+    <div id="ai-source-panel" style="margin-top:12px;font-size:13px;display:flex;flex-direction:column;gap:10px;">
+      <div class="ta-muted">Send a question to inspect the exact statutory section, Rules, commencement status, official source, and next action.</div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  let CUR_CONV_ID = 'conv-' + Date.now();
+
+  function startNewChat() {
+    CUR_CONV_ID = 'conv-' + Date.now();
+    document.getElementById('ai-chat-feed').innerHTML = '<div class="empty-state" style="padding:28px;"><p class="ta-muted">Started a new privacy consultation thread.</p></div>';
+  }
+
+  async function loadConversations() {
+    try {
+      const d = await TA.apiJson('/api/dpdp/assistant/history');
+      const convs = d.conversations || [];
+      const el = document.getElementById('ai-conv-list');
+      if (!convs.length) {
+        el.innerHTML = '<div class="ta-muted" style="font-size:12px;">No saved chats yet.</div>';
+        return;
+      }
+      el.innerHTML = convs.map(function (c) {
+        return '<button type="button" class="btn btn-ghost btn-sm" style="justify-content:flex-start;text-align:left;font-size:12px;white-space:normal;" onclick="loadConvMessages(\'' + TA.esc(c.conversation_id) + '\')">' +
+          TA.esc(c.title) + '</button>';
+      }).join('');
+    } catch (e) {}
+  }
+
+  async function loadConvMessages(convId) {
+    CUR_CONV_ID = convId;
+    const d = await TA.apiJson('/api/dpdp/assistant/history?conversation_id=' + encodeURIComponent(convId));
+    const msgs = d.history || [];
+    const feed = document.getElementById('ai-chat-feed');
+    feed.innerHTML = '';
+    msgs.forEach(function (m) { appendChatItem(m); });
+  }
+
+  function askPrompt(txt) {
+    document.getElementById('ai-q-input').value = txt;
+    submitAiQuestion();
+  }
+
+  function appendChatItem(res) {
+    const feed = document.getElementById('ai-chat-feed');
+    if (feed.querySelector('.empty-state')) feed.innerHTML = '';
+    const ansText = res.answer || res.response || '';
+    const card = document.createElement('div');
+    card.style.cssText = 'padding:14px;border:1px solid var(--border);border-radius:12px;background:var(--bg);';
+    card.innerHTML =
+      '<div style="font-weight:800;font-size:13.5px;margin-bottom:8px;">You: ' + TA.esc(res.query) + '</div>' +
+      '<div style="white-space:pre-wrap;font-size:13.5px;line-height:1.6;">' + TA.esc(ansText) + '</div>' +
+      '<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">' +
+      '<button type="button" class="btn btn-outline btn-sm" style="font-size:11.5px;" onclick=\'copyAns(' + JSON.stringify(ansText) + ')\'>Copy Answer</button>' +
+      '<button type="button" class="btn btn-ghost btn-sm" style="font-size:11.5px;" onclick="sendFb(\'' + TA.esc(res.message_id || '') + '\', \'helpful\')">Helpful</button>' +
+      '<button type="button" class="btn btn-ghost btn-sm" style="font-size:11.5px;" onclick="sendFb(\'' + TA.esc(res.message_id || '') + '\', \'not_helpful\')">Needs Detail</button></div>';
+    feed.appendChild(card);
+    feed.scrollTop = feed.scrollHeight;
+
+    document.getElementById('ai-source-panel').innerHTML =
+      '<div><strong>Matched Section:</strong><br>' + TA.esc(res.matched_section || 'DPDP Act, 2023') + '</div>' +
+      '<div><strong>Rule / Order Ref:</strong><br>' + TA.esc(res.rule_ref || 'DPDP Rules, 2025') + '</div>' +
+      '<div><strong>Commencement Status:</strong><br><span class="badge badge-amber">' + TA.esc(res.commencement_status || res.effective_status || '') + '</span><div class="ta-muted" style="font-size:12px;margin-top:3px;">' + TA.esc(res.effective_date || '') + '</div></div>' +
+      '<div><strong>Official Source:</strong><br><span class="ta-muted">' + TA.esc(res.official_source || res.source_document || '') + '</span></div>' +
+      '<div><strong>Suggested Next Action:</strong><br><span class="ta-muted">' + TA.esc(res.suggested_next_action || res.recommended_action || '') + '</span></div>' +
+      '<div style="padding:10px;border-radius:8px;background:var(--bg-muted);font-size:11.5px;"><strong>AI Processing Disclosure:</strong> ' + TA.esc(res.data_handling_notice || 'Processed locally on verified statutory engine.') + '</div>';
+  }
+
+  function copyAns(txt) {
+    if (navigator.clipboard) navigator.clipboard.writeText(txt);
+    TA.toast('Answer copied to clipboard');
+  }
+
+  async function sendFb(msgId, rating) {
+    await TA.apiJson('/api/dpdp/assistant/feedback', { method: 'POST', body: JSON.stringify({ message_id: msgId, rating: rating }) });
+    TA.toast('Feedback recorded');
+  }
+
+  async function submitAiQuestion(ev) {
+    if (ev) ev.preventDefault();
+    const inp = document.getElementById('ai-q-input');
+    const q = inp.value.trim();
+    if (!q) return;
+    const btn = document.getElementById('ai-q-btn');
+    btn.disabled = true;
+    try {
+      const res = await TA.apiJson('/api/dpdp/assistant', {
+        method: 'POST',
+        body: JSON.stringify({ query: q, conversation_id: CUR_CONV_ID }),
+      });
+      inp.value = '';
+      appendChatItem(res);
+      loadConversations();
+    } catch (e) { TA.toast(e.message, 'err'); }
+    finally { btn.disabled = false; }
+  }
+
+  loadConversations();
+</script>
+{% endblock %}

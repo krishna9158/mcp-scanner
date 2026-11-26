@@ -156,9 +156,52 @@ PLANS = {
 }
 
 
+def _merge_plan_with_overrides(plan_key: str, data: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    clean = (plan_key or "starter").strip().lower()
+    alias_map = {"pro": "growth", "enterprise": "business"}
+    canonical = alias_map.get(clean, clean)
+    base = dict(PLANS.get(canonical, PLANS["starter"]))
+    if data is None:
+        data = safe_read_json(DATA_FILE, dict) if os.path.exists(DATA_FILE) else {}
+    overrides = (data.get("custom_plans") or {}).get(canonical) or {}
+    for k, v in overrides.items():
+        if v is not None:
+            base[k] = v
+    return base
+
+
 def get_public_plans() -> List[Dict[str, Any]]:
-    """Returns canonical launch pricing tiers without legacy aliases."""
-    return [PLANS["free"], PLANS["starter"], PLANS["growth"], PLANS["business"]]
+    """Returns canonical launch pricing tiers with any admin-configured overrides."""
+    data = _load_data()
+    return [_merge_plan_with_overrides(k, data) for k in ("free", "starter", "growth", "business")]
+
+
+def update_plan_config(plan_key: str, updates: Dict[str, Any]) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
+    """Allows platform administrators to customize pricing and quotas safely."""
+    clean = (plan_key or "").strip().lower()
+    if clean not in ("free", "starter", "growth", "business"):
+        return False, "Plan key must be free, starter, growth, or business.", None
+    data = _load_data()
+    custom = data.setdefault("custom_plans", {})
+    cur = dict(custom.get(clean, {}))
+    int_fields = (
+        "price_monthly_inr", "price_monthly_usd", "max_domains", "max_repositories",
+        "max_projects", "max_team_members", "max_data_streams", "max_vendors",
+        "max_evidence_items", "max_scans_per_month", "ai_queries_per_month",
+    )
+    for f in int_fields:
+        if f in updates and updates[f] is not None:
+            try:
+                cur[f] = max(0, int(updates[f]))
+            except (TypeError, ValueError):
+                return False, f"Invalid integer value for {f}.", None
+    if "name" in updates and str(updates["name"]).strip():
+        cur["name"] = sanitize_plain_text(str(updates["name"]), 60)
+    if "features" in updates and isinstance(updates["features"], list):
+        cur["features"] = [sanitize_plain_text(str(item), 140) for item in updates["features"][:12] if str(item).strip()]
+    custom[clean] = cur
+    _save_data(data)
+    return True, f"Plan '{clean}' configuration saved.", _merge_plan_with_overrides(clean, data)
 
 
 def _load_data() -> Dict[str, Any]:
@@ -246,10 +289,24 @@ def get_organization(org_id: str = "org-default") -> Optional[Dict[str, Any]]:
         _save_data(data)
     if org:
         plan_key = org.get("plan", "starter").lower()
-        plan_info = PLANS.get(plan_key, PLANS["starter"])
+        plan_info = _merge_plan_with_overrides(plan_key, data)
         org_copy = dict(org)
         org_copy["plan_details"] = plan_info
         return org_copy
+    return None
+
+
+def get_organization_by_slug(slug: str) -> Optional[Dict[str, Any]]:
+    """Resolves an active real or demo organization by URL slug safely."""
+    clean = re.sub(r"[^a-z0-9-]", "", (slug or "").strip().lower())
+    if not clean:
+        return None
+    data = _load_data()
+    for oid, org in data.get("organizations", {}).items():
+        if (org.get("slug") or "").lower() == clean or oid.lower() == clean:
+            return get_organization(oid)
+    if clean in ("demo-sandbox", "demo"):
+        return get_organization("org-default")
     return None
 
 
@@ -262,15 +319,16 @@ def upgrade_org_plan(org_id: str, new_plan: str) -> Tuple[bool, str, Optional[Di
     org = data.get("organizations", {}).get(org_id)
     if not org:
         return False, "Organization not found.", None
+    plan_info = _merge_plan_with_overrides(clean, data)
     org["plan"] = clean
-    org["max_projects"] = PLANS[clean]["max_projects"]
+    org["max_projects"] = plan_info["max_projects"]
     _save_data(data)
-    return True, f"Plan updated to {PLANS[clean]['name']}.", get_organization(org_id)
+    return True, f"Plan updated to {plan_info['name']}.", get_organization(org_id)
 
 
 def get_plan_limits(plan_name: str) -> Dict[str, Any]:
     """Returns limit parameters for the specified plan."""
-    return PLANS.get((plan_name or "starter").lower(), PLANS["starter"])
+    return _merge_plan_with_overrides(plan_name or "starter")
 
 
 def check_plan_limits(org_id: str, resource_type: str, current_count: Optional[int] = None) -> Tuple[bool, Optional[str]]:
@@ -1570,4 +1628,81 @@ def submit_grievance(
 
 def list_grievances() -> List[Dict[str, Any]]:
     return _load_grievances()
+
+
+def record_walkthrough_request(
+    name: str,
+    email: str,
+    company: str = "",
+    industry: str = "",
+    team_size: str = "",
+    notes: str = "",
+) -> Dict[str, Any]:
+    """Logs genuine product walkthrough requests cleanly with a reference ID."""
+    import secrets
+    data = _load_data()
+    reqs = data.setdefault("walkthrough_requests", [])
+    ref_id = f"WLK-{int(time.time())}-{secrets.token_hex(2).upper()}"
+    entry = {
+        "reference_id": ref_id,
+        "name": sanitize_plain_text(name, 100),
+        "email": sanitize_plain_text(email, 120).lower(),
+        "company": sanitize_plain_text(company, 140),
+        "industry": sanitize_plain_text(industry, 80),
+        "team_size": sanitize_plain_text(team_size, 40),
+        "notes": sanitize_plain_text(notes, 600),
+        "status": "REQUESTED",
+        "created_at": time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime()),
+    }
+    reqs.insert(0, entry)
+    data["walkthrough_requests"] = reqs[:200]
+    _save_data(data)
+    return entry
+
+
+def list_admin_oversight_summary() -> Dict[str, Any]:
+    """
+    Returns non-secret multi-tenant platform administration summary strictly
+    for verified platform administrators. Never exposes password hashes or MFA secrets.
+    """
+    data = _load_data()
+    orgs_raw = data.get("organizations", {})
+    users_raw = data.get("users", {})
+    user_counts: Dict[str, int] = {}
+    users_safe: List[Dict[str, Any]] = []
+    for uid, u in users_raw.items():
+        oid = u.get("org_id", "")
+        user_counts[oid] = user_counts.get(oid, 0) + 1
+        users_safe.append({
+            "id": uid,
+            "name": u.get("name", ""),
+            "email": u.get("email", ""),
+            "org_id": oid,
+            "role": u.get("role", "member"),
+            "mfa_enabled": bool(u.get("mfa_enabled")),
+            "is_platform_admin": bool(u.get("is_platform_admin")),
+        })
+
+    orgs_safe = []
+    for oid, o in orgs_raw.items():
+        orgs_safe.append({
+            "id": oid,
+            "name": o.get("name", oid),
+            "slug": o.get("slug", ""),
+            "plan": o.get("plan", "starter"),
+            "is_demo": bool(o.get("is_demo")),
+            "members_count": user_counts.get(oid, 0),
+            "created_at": o.get("created_at"),
+        })
+
+    return {
+        "total_organizations": len(orgs_safe),
+        "total_users": len(users_safe),
+        "organizations": orgs_safe[:100],
+        "users": users_safe[:150],
+        "plans": get_public_plans(),
+        "support_tickets": list_grievances()[:50],
+        "walkthrough_requests": data.get("walkthrough_requests", [])[:50],
+        "deletion_audit_count": len(data.get("deletion_audit_log", [])),
+    }
 

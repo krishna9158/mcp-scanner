@@ -1,0 +1,66 @@
+{% extends "public_base.html" %}
+{% block title %}DPDP Resources &amp; Statutory Library — TrustAudit{% endblock %}
+{% block content %}
+<section class="ta-section" style="padding-bottom:42px;border-bottom:1px solid var(--border);">
+  <div class="ta-container">
+    <span class="ta-eyebrow">Official Sources &amp; Legal Registry</span>
+    <h1 class="ta-h1">DPDP Act, 2023, DPDP Rules, 2025 &amp; Gazette Orders</h1>
+    <p class="ta-lead">Maintained from official Gazette notifications including G.S.R. 843(E), G.S.R. 846(E), applicable corrigenda, and S.O. 5458(E) Removal of Difficulties Order, 2026.</p>
+  </div>
+</section>
+<section class="ta-section">
+  <div class="ta-container" style="display:flex;flex-direction:column;gap:24px;">
+    <div class="card">
+      <h2 class="ta-h3">Official Phased Commencement Timeline</h2>
+      <div class="tbl-wrap" style="margin-top:12px;">
+        <table>
+          <thead><tr><th>Milestone Date</th><th>Phase / Notification</th><th>Status</th><th>Key Scope</th></tr></thead>
+          <tbody>
+            {% for m in milestones %}
+            <tr>
+              <td><strong>{{ m.milestone_date }}</strong></td>
+              <td>{{ m.phase_name }}</td>
+              <td><span class="badge {% if m.status == 'In force' %}badge-emerald{% else %}badge-amber{% endif %}">{{ m.status }}</span></td>
+              <td class="ta-muted">{{ m.description }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="ta-h3">S.O. 5458(E) Removal of Difficulties Order, October 2026</h2>
+      <p class="ta-muted" style="margin-top:8px;">Reflects the October 2026 Central Government Order clarifying statutory wording in <strong>Section 9(1)</strong> (children's &amp; persons with disabilities personal data) and updating <strong>Section 10(2)(c)(ii)</strong> reference from <code>audit</code> to <code>data audit</code> for Significant Data Fiduciaries.</p>
+    </div>
+
+    <div class="card">
+      <h2 class="ta-h3">Statutory Penalty Schedule Ceilings &amp; Section 33 Factors</h2>
+      <p class="ta-muted" style="margin:6px 0 14px;">{{ penalty_disclaimer }}</p>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Provision</th><th>Subject Matter</th><th>Maximum Statutory Ceiling</th><th>Commencement Status</th></tr></thead>
+          <tbody>
+            {% for item in penalties %}
+            <tr>
+              <td><strong>{{ item.section }}</strong></td>
+              <td>{{ item.violation_category }}</td>
+              <td><strong>{{ item.max_penalty_text }}</strong></td>
+              <td><span class="badge badge-amber">{{ item.effective_date }}</span></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <h3 style="margin-top:18px;margin-bottom:8px;font-size:15px;">Seven Factors Considered Under Section 33(2)</h3>
+      <div class="grid-2" style="gap:10px;">
+        {% for f in factors %}
+        <div style="padding:10px 12px;border:1px solid var(--border);border-radius:9px;font-size:13px;">
+          <strong>{{ f.clause }} &mdash; {{ f.title }}:</strong> <span class="ta-muted">{{ f.plain_english }}</span>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

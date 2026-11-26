@@ -1,0 +1,39 @@
+{% extends "public_base.html" %}
+{% block title %}Industry Solutions — TrustAudit{% endblock %}
+{% block content %}
+<section class="ta-section" style="padding-bottom:42px;border-bottom:1px solid var(--border);">
+  <div class="ta-container">
+    <span class="ta-eyebrow">Built for Indian Businesses</span>
+    <h1 class="ta-h1">Tailored Starting Templates Across Five Core Sectors</h1>
+    <p class="ta-lead">Select your sector during onboarding to receive realistic suggested activities marked for team confirmation.</p>
+  </div>
+</section>
+<section class="ta-section">
+  <div class="ta-container" style="display:flex;flex-direction:column;gap:22px;">
+    {% set sectors = [
+      ("Healthcare, Clinics & Hospitals", "Health information & patient workflows", ["Patient appointments", "Contact details", "Diagnostic reports", "Billing", "Insurance information", "Website enquiries", "Doctor referrals"], "Focuses strictly on personal data categories and clinic software metadata without unnecessarily storing patient medical record contents."),
+      ("SaaS & Technology Startups", "User accounts, cloud & analytics", ["Registration", "User profiles", "Subscription billing", "Authentication", "Product analytics", "Customer support", "Marketing communications"], "Helps startups map hosting, payment gateways, CRM tools, and publish a shareable Privacy Profile for enterprise buyers."),
+      ("E-Commerce & D2C Retail", "Orders, logistics & ad pixels", ["Customer accounts", "Order history", "Delivery information", "Payment processing", "Returns", "Marketing campaigns"], "Identifies third-party tracking scripts, checkout consent checkboxes, and courier/payment processor contracts."),
+      ("Education & EdTech", "Students, parents & Section 9 duties", ["Student registration", "Parent contact information", "Attendance", "Fee records", "Examination records"], "Includes explicit guidance for verifiable parental consent and bans on child tracking/targeted advertising under Section 9."),
+      ("Professional Services, CA & Legal Firms", "Client matters & employment records", ["Client information", "Contracts", "Billing", "Communication records", "Employee data"], "Separates consent-based client marketing from Section 7(i) employment processing and statutory tax retention.")
+    ] %}
+    {% for title, tag, items, desc in sectors %}
+    <div class="card">
+      <div class="grid-split" style="align-items:center;">
+        <div>
+          <span class="badge badge-emerald">{{ tag }}</span>
+          <h2 class="ta-h3" style="margin-top:10px;font-size:22px;">{{ title }}</h2>
+          <p class="ta-muted" style="margin-top:6px;">{{ desc }}</p>
+        </div>
+        <div>
+          <div style="font-size:12.5px;font-weight:700;color:var(--ink-muted);margin-bottom:8px;">SUGGESTED ACTIVITIES GENERATED AT ONBOARDING</div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;">
+            {% for it in items %}<span class="badge badge-neutral">{{ it }}</span>{% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

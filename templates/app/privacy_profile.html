@@ -1,0 +1,67 @@
+{% extends "app_base.html" %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Shareable Privacy Profile</h1>
+    <p class="page-sub">Choose strictly what approved information your business shares publicly. Internal inventory, vendor contracts, customer requests, security settings, and Vault files are never exposed.</p>
+  </div>
+  <a id="pp-live-link" href="/p/{{ org_slug }}" target="_blank" class="btn btn-primary btn-sm">Preview Public Profile &rarr;</a>
+</div>
+
+<div class="card">
+  <form onsubmit="saveProfileCfg(event)">
+    <div class="grid-2">
+      <div class="field"><label>Public Organisation Display Name</label><input id="pr-head" class="input" required></div>
+      <div class="field"><label>Privacy / Grievance Contact Name</label><input id="pr-cname" class="input" required></div>
+      <div class="field"><label>Public Privacy Contact Email</label><input id="pr-cemail" type="email" class="input" required></div>
+      <div class="field"><label>Shareable Public URL</label><input id="pr-url" class="input ta-mono" readonly onclick="this.select()"></div>
+    </div>
+    <div style="display:flex;gap:18px;flex-wrap:wrap;margin:10px 0 18px;font-size:13.5px;font-weight:600;">
+      <label><input id="pr-pub" type="checkbox"> Enable Public Profile</label>
+      <label><input id="pr-not" type="checkbox"> Show Approved Privacy Notice</label>
+      <label><input id="pr-port" type="checkbox"> Show Customer Privacy Portal Link</label>
+      <label><input id="pr-dt" type="checkbox"> Show Last Reviewed Date</label>
+    </div>
+    <div class="field"><label>Selected Public Privacy Practices (one per line)</label><textarea id="pr-prac" class="input" rows="4"></textarea></div>
+    <button type="submit" class="btn btn-primary">Save &amp; Update Shareable Profile</button>
+  </form>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  const P_SLUG = {{ org_slug|tojson }};
+  async function loadProfCfg() {
+    const d = await TA.apiJson('/api/dpdp/privacy-profile');
+    const c = d.config || {};
+    document.getElementById('pr-head').value = c.headline || '';
+    document.getElementById('pr-cname').value = c.privacy_contact_name || '';
+    document.getElementById('pr-cemail').value = c.privacy_contact_email || '';
+    document.getElementById('pr-pub').checked = c.published !== false;
+    document.getElementById('pr-not').checked = c.show_approved_notice !== false;
+    document.getElementById('pr-port').checked = c.show_portal_link !== false;
+    document.getElementById('pr-dt').checked = c.show_last_review_date !== false;
+    document.getElementById('pr-prac').value = (c.selected_practices || []).join('\n');
+    document.getElementById('pr-url').value = window.location.origin + '/p/' + P_SLUG;
+  }
+  async function saveProfileCfg(ev) {
+    ev.preventDefault();
+    const lines = document.getElementById('pr-prac').value.split('\n').map(function (s) { return s.trim(); }).filter(Boolean);
+    await TA.apiJson('/api/dpdp/privacy-profile', {
+      method: 'POST',
+      body: JSON.stringify({
+        headline: document.getElementById('pr-head').value.trim(),
+        privacy_contact_name: document.getElementById('pr-cname').value.trim(),
+        privacy_contact_email: document.getElementById('pr-cemail').value.trim(),
+        published: document.getElementById('pr-pub').checked,
+        show_approved_notice: document.getElementById('pr-not').checked,
+        show_portal_link: document.getElementById('pr-port').checked,
+        show_last_review_date: document.getElementById('pr-dt').checked,
+        selected_practices: lines,
+      }),
+    });
+    TA.toast('Public Privacy Profile updated');
+  }
+  loadProfCfg();
+</script>
+{% endblock %}

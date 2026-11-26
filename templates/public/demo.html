@@ -1,0 +1,93 @@
+{% extends "public_base.html" %}
+{% block title %}Interactive Demo Sandbox — TrustAudit{% endblock %}
+{% block content %}
+<div style="background:var(--amber-soft);border-bottom:1px solid rgba(180,83,9,0.2);padding:10px 24px;text-align:center;font-size:13.5px;font-weight:700;color:var(--amber);">
+  DEMO MODE &mdash; Viewing clearly labeled sample clinic workspace (Arogya Diagnostics Clinic Ltd). Create a free account for your real organisation workspace.
+</div>
+<section class="ta-section" style="padding-top:40px;">
+  <div class="ta-container">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;margin-bottom:24px;">
+      <div>
+        <span class="badge badge-amber">Sample Business Preview</span>
+        <h1 style="font-size:30px;margin-top:8px;">Arogya Diagnostics Clinic Ltd (Demo Sandbox)</h1>
+        <p class="ta-muted">Explore real workflow modules before signing up—every card below shows representative sample clinic data.</p>
+      </div>
+      <a href="/register" class="btn btn-primary btn-lg">Create My Real Workspace</a>
+    </div>
+
+    <div id="demo-stats" class="grid-4" style="margin-bottom:24px;">
+      <div class="card"><div class="ta-muted">Setup Milestones</div><div id="dm-setup" style="font-size:26px;font-weight:850;margin-top:4px;">5 of 6</div></div>
+      <div class="card"><div class="ta-muted">Data Categories Listed</div><div id="dm-inv" style="font-size:26px;font-weight:850;margin-top:4px;">4</div></div>
+      <div class="card"><div class="ta-muted">Vendors Tracked</div><div id="dm-vnd" style="font-size:26px;font-weight:850;margin-top:4px;">3</div></div>
+      <div class="card"><div class="ta-muted">Priority Open Tasks</div><div id="dm-tsk" style="font-size:26px;font-weight:850;margin-top:4px;">3</div></div>
+    </div>
+
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;">
+      <button class="btn btn-primary btn-sm demo-tab" onclick="showDemoPanel('datamap', this)">Visual Data Map</button>
+      <button class="btn btn-outline btn-sm demo-tab" onclick="showDemoPanel('tasks', this)">Priority Action Plan</button>
+      <button class="btn btn-outline btn-sm demo-tab" onclick="showDemoPanel('portal', this)">Customer Privacy Portal Preview</button>
+      <button class="btn btn-outline btn-sm demo-tab" onclick="showDemoPanel('scanner', this)">Sample Website Check</button>
+    </div>
+
+    <div id="demo-panel-body" class="card"></div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  let DEMO_DATA = null;
+  async function loadDemo() {
+    try {
+      const d = await TA.apiJson('/api/demo/workspace');
+      DEMO_DATA = d;
+      const c = d.counts || {};
+      const st = d.setup_progress || {};
+      document.getElementById('dm-setup').textContent = (st.completed_count || 5) + ' of ' + (st.total_steps || 6);
+      document.getElementById('dm-inv').textContent = c.inventory || 0;
+      document.getElementById('dm-vnd').textContent = c.vendors || 0;
+      document.getElementById('dm-tsk').textContent = (d.attention_tasks || []).length;
+    } catch (e) {}
+    showDemoPanel('datamap');
+  }
+  function showDemoPanel(key, btn) {
+    document.querySelectorAll('.demo-tab').forEach(function (b) { b.className = 'btn btn-outline btn-sm demo-tab'; });
+    if (btn) btn.className = 'btn btn-primary btn-sm demo-tab';
+    const el = document.getElementById('demo-panel-body');
+    if (key === 'datamap') {
+      el.innerHTML =
+        '<h3 class="ta-h3">Sample Confirmed Data Map (Demo Only)</h3>' +
+        '<p class="ta-muted" style="margin-bottom:14px;">Inside your real workspace under <code>/app/data-map</code>, click any node or line for lawful basis, retention, and DPA status.</p>' +
+        '<div style="background:var(--forest-950);border-radius:12px;padding:18px;color:#fff;">' +
+        '<svg viewBox="0 0 740 160" width="100%" height="auto">' +
+        '<path d="M135 80 L220 80 M350 80 L435 80 M565 80 L635 80" stroke="#B7EC54" stroke-width="2" class="flow-edge-anim"/>' +
+        '<rect x="15" y="52" width="120" height="56" rx="10" fill="#183228" stroke="#2D5746"/><text x="75" y="84" fill="#fff" font-size="12" font-weight="700" text-anchor="middle">Patients</text>' +
+        '<rect x="220" y="52" width="130" height="56" rx="10" fill="#183228" stroke="#2D5746"/><text x="285" y="84" fill="#fff" font-size="12" font-weight="700" text-anchor="middle">Booking Form</text>' +
+        '<rect x="435" y="52" width="130" height="56" rx="10" fill="#183228" stroke="#2D5746"/><text x="500" y="84" fill="#fff" font-size="12" font-weight="700" text-anchor="middle">Clinic DB</text>' +
+        '<rect x="615" y="52" width="115" height="56" rx="10" fill="#0E7C5B" stroke="#B7EC54"/><text x="672" y="84" fill="#fff" font-size="12" font-weight="700" text-anchor="middle">Lab &amp; Payment</text>' +
+        '</svg></div>';
+    } else if (key === 'tasks') {
+      const tasks = (DEMO_DATA && DEMO_DATA.attention_tasks) || [
+        { title: 'Review Data Processing Agreement with external Diagnostic Lab', severity: 'HIGH', why: 'Section 8(2) requires written contracts with external labs receiving patient records.' },
+        { title: 'Unbundle marketing opt-in on patient booking form', severity: 'CRITICAL', why: 'Affirmative unchecked consent required under Section 6.' }
+      ];
+      el.innerHTML = '<h3 class="ta-h3">Sample Priority Action Items</h3>' +
+        tasks.map(function (t) {
+          return '<div style="padding:12px;border:1px solid var(--border);border-radius:10px;margin-top:10px;display:flex;justify-content:space-between;gap:12px;align-items:center;">' +
+            '<div><strong>' + TA.esc(t.title) + '</strong><div class="ta-muted" style="font-size:13px;">' + TA.esc(t.why || '') + '</div></div>' +
+            '<span class="badge badge-amber">' + TA.esc(t.severity || 'MEDIUM') + '</span></div>';
+        }).join('');
+    } else if (key === 'portal') {
+      el.innerHTML = '<h3 class="ta-h3">Customer Privacy Request Portal Preview</h3>' +
+        '<p class="ta-muted">Every organisation can publish a branded request page so customers submit access, correction, erasure, or grievance requests safely.</p>' +
+        '<div style="margin-top:14px;"><a href="/portal/demo-sandbox" class="btn btn-primary btn-sm">Open Sample Privacy Portal &rarr;</a> <a href="/p/demo-sandbox" class="btn btn-outline btn-sm">Open Sample Privacy Profile &rarr;</a></div>';
+    } else {
+      el.innerHTML = '<h3 class="ta-h3">Sample Website Check Result (DEMO DATA)</h3>' +
+        '<p class="ta-muted">Shows 4 honest buckets: What Was Found, What Was Not Found, What Needs Business Input, and What Cannot Be Checked Externally.</p>' +
+        '<div class="grid-2" style="margin-top:12px;"><div class="card"><strong>Found</strong><div class="ta-muted" style="margin-top:4px;">HTTPS active, public enquiry form observed.</div></div>' +
+        '<div class="card"><strong>Not Found</strong><div class="ta-muted" style="margin-top:4px;">Public Grievance Officer email missing on booking page.</div></div></div>';
+    }
+  }
+  loadDemo();
+</script>
+{% endblock %}

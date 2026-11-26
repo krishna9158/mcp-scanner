@@ -349,35 +349,27 @@ class TestDPOperationsPlatform:
         assert res.status_code == 200
         body = res.data.decode("utf-8")
 
-        assert "Know What Happens to Your Customer Data." in body
+        assert "Your Business Has Customer Data. We Help You Stay in Control." in body
         assert "Start My Free Assessment" in body
-        assert "See How It Works" in body
+        assert "Explore the Platform" in body
 
-        required_anchors = [
-            "website-scanner",
-            "how-it-works",
-            "features",
-            "timeline",
-            "pricing",
-        ]
-        for anc in required_anchors:
-            assert anc in body, f"Missing required homepage section: {anc}"
+        for route_link in ["/features", "/industries", "/pricing", "/how-it-works", "/security", "/resources", "/demo"]:
+            assert route_link in body, f"Missing routed website link: {route_link}"
 
-        # Plain-language core modules
-        assert "Customer Data List" in body
-        assert "Website Privacy Check" in body
-        assert "Privacy Notice Generator" in body
-        assert "Companies You Share Data With" in body
-        assert "Customer Privacy Requests" in body
-        assert "Evidence Vault &amp; Reports" in body or "Evidence Vault & Reports" in body
+        assert "Data Inventory" in body or "Customer Data" in body
+        assert "Visual Data Map" in body or "Data Map" in body
+        assert "Action Management" in body or "Action Plan" in body
+        assert "Vendor Operations" in body or "Vendor" in body
+        assert "Customer Privacy Portal" in body
 
-        # Statutory Schedule Penalties
-        assert "₹250 crore" in body
-        assert "₹50 crore" in body
+        res_lib = client.get("/resources")
+        lib_body = res_lib.data.decode("utf-8")
+        assert "₹250 crore" in lib_body
+        assert "₹50 crore" in lib_body
 
         # Phased Statutory Commencement Roadmap
-        assert "13 Nov 2025" in body
-        assert "13 Nov 2026" in body
+        assert "13 November 2025" in body
+        assert "13 November 2026" in body
         assert "13 May 2027" in body
 
         # Pricing plans

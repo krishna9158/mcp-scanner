@@ -1,0 +1,107 @@
+{% extends "app_base.html" %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Data Retention &amp; Guided Deletion Workflow</h1>
+    <p class="page-sub">Define keeping durations, note Indian legal retention exceptions, and track manual 6-step deletion workflows with verification proof. TrustAudit never claims external automated deletion unless confirmed by a connected system.</p>
+  </div>
+  <div style="display:flex;gap:8px;">
+    <button type="button" class="btn btn-outline btn-sm" onclick="openAddErasureModal()">+ Start Guided Deletion</button>
+    <button type="button" class="btn btn-primary btn-sm" onclick="openAddRetModal()">+ Add Retention Rule</button>
+  </div>
+</div>
+
+<div class="card" style="margin-bottom:20px;">
+  <h2 class="ta-h3" style="margin-bottom:8px;">6-Step Guided Deletion Workflow</h2>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;font-size:12.5px;">
+    <span class="badge badge-neutral">1. Identify record / request</span>
+    <span class="badge badge-neutral">2. Identify connected systems</span>
+    <span class="badge badge-neutral">3. Review Indian legal exceptions</span>
+    <span class="badge badge-neutral">4. Assign owner deletion task</span>
+    <span class="badge badge-neutral">5. Record completion evidence</span>
+    <span class="badge badge-emerald">6. Close after manager review</span>
+  </div>
+</div>
+
+<div class="grid-split">
+  <div class="card">
+    <h2 class="ta-h3" style="margin-bottom:12px;">Retention Schedules &amp; Statutory Exceptions</h2>
+    <div id="ret-list">Loading...</div>
+  </div>
+  <div class="card">
+    <h2 class="ta-h3" style="margin-bottom:12px;">Active Deletion Workflows</h2>
+    <div id="erasure-list">Loading...</div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  async function loadRetention() {
+    const [rRes, eRes] = await Promise.all([
+      TA.apiJson('/api/dpdp/retention'),
+      TA.apiJson('/api/dpdp/erasure-tasks'),
+    ]);
+    const rList = rRes.schedules || [];
+    document.getElementById('ret-list').innerHTML = rList.length ? rList.map(function (r) {
+      return '<div style="padding:12px;border:1px solid var(--border);border-radius:10px;margin-bottom:8px;">' +
+        '<div style="display:flex;justify-content:space-between;"><strong>' + TA.esc(r.data_category) + '</strong><span class="badge badge-emerald">' + TA.esc(r.retention_period) + '</span></div>' +
+        '<div class="ta-muted" style="font-size:12.5px;margin-top:4px;">Legal exception check: ' + TA.esc(r.legal_exception || 'None declared') + '</div></div>';
+    }).join('') : '<div class="empty-state"><p class="ta-muted">No retention schedules configured yet.</p></div>';
+
+    const eList = eRes.erasure_tasks || [];
+    document.getElementById('erasure-list').innerHTML = eList.length ? eList.map(function (t) {
+      return '<div style="padding:12px;border:1px solid var(--border);border-radius:10px;margin-bottom:8px;">' +
+        '<div style="display:flex;justify-content:space-between;"><strong>' + TA.esc(t.subject_ref || t.id) + '</strong><span class="badge badge-amber">' + TA.esc(t.status || 'PENDING') + '</span></div>' +
+        '<div class="ta-muted" style="font-size:12.5px;margin:4px 0;">System: ' + TA.esc(t.target_system || 'Manual DB + Vendor review') + '</div>' +
+        (t.status !== 'VERIFIED_DELETED' ? '<button type="button" class="btn btn-emerald btn-sm" onclick="verifyErase(\'' + TA.esc(t.id) + '\')">Record Proof &amp; Close</button>' : '') +
+        '</div>';
+    }).join('') : '<div class="empty-state"><p class="ta-muted">No active deletion tasks.</p></div>';
+  }
+
+  function openAddRetModal() {
+    TA.openModal('Add Retention Schedule',
+      '<form onsubmit="saveRet(event)">' +
+      '<div class="field"><label>Data Category</label><input id="rt-cat" class="input" required placeholder="Billing Invoices &amp; GST Vouchers"></div>' +
+      '<div class="field"><label>Retention Duration</label><input id="rt-dur" class="input" required placeholder="8 Years from financial year-end"></div>' +
+      '<div class="field"><label>Indian Legal Exception (Section 8(8))</label><input id="rt-exc" class="input" value="Income Tax Act Section 44AB / GST Rules"></div>' +
+      '<button type="submit" class="btn btn-primary" style="width:100%;">Save Schedule</button></form>'
+    );
+  }
+  async function saveRet(ev) {
+    ev.preventDefault();
+    await TA.apiJson('/api/dpdp/retention', {
+      method: 'POST',
+      body: JSON.stringify({ data_category: document.getElementById('rt-cat').value, retention_period: document.getElementById('rt-dur').value, legal_exception: document.getElementById('rt-exc').value }),
+    });
+    TA.closeModal(); TA.toast('Retention rule added'); loadRetention();
+  }
+
+  function openAddErasureModal() {
+    TA.openModal('Start 6-Step Guided Deletion Workflow',
+      '<form onsubmit="saveErase(event)">' +
+      '<div class="field"><label>Record / Customer Reference</label><input id="er-ref" class="input" required placeholder="REQ-109 / Inactive Lead Batch"></div>' +
+      '<div class="field"><label>Connected Systems to Check</label><input id="er-sys" class="input" required value="Primary DB + Zoho CRM (Manual Owner Review)"></div>' +
+      '<div class="field"><label>Legal Exception Check Completed?</label><select id="er-ok" class="input"><option>No statutory hold applies — clear for manual deletion</option><option>Hold confirmed — only erase marketing/optional fields</option></select></div>' +
+      '<button type="submit" class="btn btn-primary" style="width:100%;">Assign Deletion Task</button></form>'
+    );
+  }
+  async function saveErase(ev) {
+    ev.preventDefault();
+    await TA.apiJson('/api/dpdp/erasure-tasks', {
+      method: 'POST',
+      body: JSON.stringify({ subject_ref: document.getElementById('er-ref').value, target_system: document.getElementById('er-sys').value, notes: document.getElementById('er-ok').value }),
+    });
+    TA.closeModal(); TA.toast('Deletion task created'); loadRetention();
+  }
+  async function verifyErase(id) {
+    await TA.apiJson('/api/dpdp/erasure-tasks/' + encodeURIComponent(id), {
+      method: 'POST',
+      body: JSON.stringify({ status: 'VERIFIED_DELETED', notes: 'Owner confirmed manual deletion and uploaded record check.' }),
+    });
+    TA.toast('Deletion closed with review note'); loadRetention();
+  }
+
+  loadRetention();
+</script>
+{% endblock %}

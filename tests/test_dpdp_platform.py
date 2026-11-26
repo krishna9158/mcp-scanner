@@ -316,31 +316,40 @@ class TestDPDPCompleteSuite:
         team = saas_store.list_team_members(org_id)
         assert isinstance(team, list)
 
-    # W. Responsive dashboard rendering
+    # W. Responsive routed workspace rendering (authenticated user opens /app/home cleanly)
     def test_w_dashboard_rendering(self, client):
-        res = client.get("/dashboard")
+        res_public = client.get("/dashboard")
+        assert res_public.status_code == 200
+        # Register & verify routed /app/home sidebar renders all plain-language modules
+        reg = client.post("/api/auth/register", json={
+            "name": "UI Tester", "company_name": "Clinic UI", "industry": "healthcare",
+            "email": f"uit_{uuid.uuid4().hex[:6]}@clinic.in", "password": "Password123!"
+        })
+        assert reg.status_code == 201
+        res = client.get("/app/home")
         assert res.status_code == 200
-        assert b"Customer Data List" in res.data
-        assert b"Privacy Notice" in res.data
+        assert b"Data Inventory" in res.data
+        assert b"Privacy Notices" in res.data
         assert b"Consent Records" in res.data
-        assert b"Customer Privacy Requests" in res.data
-        assert b"Companies I Share Data With" in res.data
-        assert b"Data Retention &amp; Deletion" in res.data
-        assert b"Privacy Incident Response" in res.data
+        assert b"Privacy Requests" in res.data
+        assert b"Vendors &amp; Processors" in res.data
+        assert b"Retention &amp; Deletion" in res.data
+        assert b"Incident Response" in res.data
         assert b"Evidence Vault" in res.data
-        assert b"My Action Plan" in res.data
+        assert b"Action Plan" in res.data
 
-    # X. Homepage links & Part 8 public launch sections
+    # X. Homepage links & GTM hero sections
     def test_x_homepage_links(self, client):
         res = client.get("/")
         assert res.status_code == 200
-        assert b"Know What Happens to Your Customer Data." in res.data
+        assert b"Your Business Has Customer Data. We Help You Stay in Control." in res.data
         assert b"Start My Free Assessment" in res.data
-        assert b"See How It Works" in res.data
-        assert b"Clinics &amp; Hospitals" in res.data
+        assert b"Explore the Platform" in res.data
+        assert b"Healthcare" in res.data
         assert b"DISCOVER" in res.data
+        assert b"UNDERSTAND" in res.data
         assert b"ASSESS" in res.data
-        assert b"MANAGE" in res.data
+        assert b"MAINTAIN" in res.data
 
     # Y. Pricing and subscription limits
     def test_y_pricing_and_plans(self, client):

@@ -1,0 +1,55 @@
+{% extends "app_base.html" %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Integrations &amp; Connectors</h1>
+    <p class="page-sub">Clearly separates active discovery &amp; webhook capabilities from planned database connectors.</p>
+  </div>
+</div>
+
+<div class="grid-2" style="margin-bottom:22px;">
+  <div class="card">
+    <span class="badge badge-emerald">Active Today</span>
+    <h2 class="ta-h3" style="margin-top:8px;">Document, Spreadsheet &amp; Public Web Extraction</h2>
+    <p class="ta-muted">CSV/XLSX sheet mapping, DOCX/PDF text extraction, and SSRF-guarded website inspections are live inside Discovery Centre.</p>
+    <div style="margin-top:12px;"><a href="/app/discovery" class="btn btn-outline btn-sm">Open Discovery Centre &rarr;</a></div>
+  </div>
+  <div class="card">
+    <span class="badge badge-amber">Planned Roadmap Connector</span>
+    <h2 class="ta-h3" style="margin-top:8px;">Direct Internal DB / ERP Schema Connectors</h2>
+    <p class="ta-muted">Automated discovery inside private PostgreSQL, MySQL, S3, or Zoho APIs is a planned roadmap feature—currently managed via authorised human inventory or CSV/XLSX imports.</p>
+  </div>
+</div>
+
+<div class="card">
+  <h2 class="ta-h3" style="margin-bottom:12px;">Notification Webhook Configuration (Supported on Growth &amp; Business)</h2>
+  <form onsubmit="saveIntSettings(event)" class="grid-2">
+    <div class="field"><label>Slack / Webhook Endpoint URL</label><input id="int-slack" type="url" class="input" placeholder="https://hooks.slack.com/services/..."></div>
+    <div class="field"><label>Alert Email Recipients</label><input id="int-email" class="input" placeholder="privacy@yourcompany.in"></div>
+    <div style="grid-column:1 / -1;"><button type="submit" class="btn btn-primary btn-sm">Save Webhook Settings</button></div>
+  </form>
+</div>
+{% endblock %}
+{% block extra_scripts %}
+<script>
+  async function loadInt() {
+    try {
+      const d = await TA.apiJson('/api/integrations');
+      const s = d.settings || {};
+      document.getElementById('int-slack').value = s.slack_webhook || '';
+      document.getElementById('int-email').value = s.alert_email || '';
+    } catch (e) {}
+  }
+  async function saveIntSettings(ev) {
+    ev.preventDefault();
+    try {
+      await TA.apiJson('/api/integrations', {
+        method: 'POST',
+        body: JSON.stringify({ slack_webhook: document.getElementById('int-slack').value.trim(), alert_email: document.getElementById('int-email').value.trim() }),
+      });
+      TA.toast('Integration settings saved');
+    } catch (e) { TA.toast(e.message, 'err'); }
+  }
+  loadInt();
+</script>
+{% endblock %}

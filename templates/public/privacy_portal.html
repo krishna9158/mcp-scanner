@@ -1,0 +1,113 @@
+{% extends "public_base.html" %}
+{% block title %}Privacy Request Portal — {{ portal.brand_name }}{% endblock %}
+{% block content %}
+<section class="ta-section" style="padding-top:44px;">
+  <div class="ta-container" style="max-width:940px;">
+    <div style="margin-bottom:24px;">
+      <span class="badge badge-forest">Customer Privacy Request Portal</span>
+      <h1 class="ta-h2" style="margin-top:10px;">{{ portal.brand_name }}</h1>
+      <p class="ta-muted" style="font-size:15px;">{{ portal.intro_text }}</p>
+      <div class="ta-muted" style="font-size:13px;margin-top:6px;">Organisational Privacy Contact: <strong>{{ portal.contact_email }}</strong></div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h2 class="ta-h3">Submit a Privacy Request</h2>
+        <p class="ta-muted" style="font-size:13px;margin-bottom:14px;">Submit only minimum details required for {{ portal.brand_name }} to identify your record safely.</p>
+        <form onsubmit="submitPortalReq(event)">
+          <div class="field"><label>Request Type</label>
+            <select id="pt-type" class="input">
+              <option value="ACCESS">Access Summary of My Data (Section 11)</option>
+              <option value="CORRECTION">Correct / Update Inaccurate Details (Section 12)</option>
+              <option value="ERASURE">Request Data Erasure (Section 12)</option>
+              <option value="GRIEVANCE">Raise a Privacy Grievance (Section 13)</option>
+            </select>
+          </div>
+          <div class="field"><label>Full Name</label><input id="pt-name" class="input" required></div>
+          <div class="field"><label>Email or Registered Contact</label><input id="pt-email" type="email" class="input" required></div>
+          <div class="field"><label>Request Details</label><textarea id="pt-desc" class="input" rows="3" required placeholder="Describe the data record, correction, or privacy concern..."></textarea></div>
+          <div class="field">
+            <label>Verification Check: What is {{ challenge_prompt }}?</label>
+            <input id="pt-ch-ans" class="input" required placeholder="Enter number to prevent automated spam">
+            <input id="pt-ch-tok" type="hidden" value="{{ challenge_token }}">
+          </div>
+          <button id="pt-btn" type="submit" class="btn btn-primary" style="width:100%;">Submit Request Safely</button>
+        </form>
+        <div id="pt-out" style="margin-top:14px;font-size:13.5px;"></div>
+      </div>
+
+      <div class="card">
+        <h2 class="ta-h3">Check Request Status</h2>
+        <p class="ta-muted" style="font-size:13px;margin-bottom:14px;">Enter both your Reference ID and Verification Code generated upon submission. Email lookup alone is disabled to protect customer privacy.</p>
+        <form onsubmit="checkPortalStatus(event)">
+          <div class="field"><label>Reference ID</label><input id="st-ref" class="input ta-mono" required placeholder="DPR-..."></div>
+          <div class="field"><label>Verification Code</label><input id="st-code" class="input ta-mono" required placeholder="6-character code"></div>
+          <button type="submit" class="btn btn-outline" style="width:100%;">Check Status</button>
+        </form>
+        <div id="st-out" style="margin-top:14px;font-size:13.5px;"></div>
+
+        <div style="margin-top:22px;padding:12px;border-radius:10px;background:var(--bg-muted);font-size:12.5px;color:var(--ink-soft);">
+          Requests are handled directly by <strong>{{ portal.brand_name }}</strong> under published grievance redressal timelines and identity verification checks.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  const PORTAL_SLUG = {{ org_slug|tojson }};
+  async function submitPortalReq(ev) {
+    ev.preventDefault();
+    const out = document.getElementById('pt-out');
+    const btn = document.getElementById('pt-btn');
+    btn.disabled = true;
+    try {
+      const res = await TA.apiJson('/api/public/portal/' + encodeURIComponent(PORTAL_SLUG) + '/submit', {
+        method: 'POST',
+        body: JSON.stringify({
+          type: document.getElementById('pt-type').value,
+          name: document.getElementById('pt-name').value.trim(),
+          email: document.getElementById('pt-email').value.trim(),
+          description: document.getElementById('pt-desc').value.trim(),
+          challenge_token: document.getElementById('pt-ch-tok').value,
+          challenge_answer: document.getElementById('pt-ch-ans').value.trim(),
+        }),
+      });
+      out.innerHTML =
+        '<div style="padding:12px;border-radius:10px;background:var(--emerald-soft);color:var(--ink);">' +
+        '<strong>Request Received.</strong><br>' +
+        'Reference ID: <code class="ta-mono">' + TA.esc(res.reference_id) + '</code><br>' +
+        'Verification Code: <code class="ta-mono">' + TA.esc(res.verification_code) + '</code><br>' +
+        '<span style="font-size:12.5px;">Save both values to check request progress securely.</span></div>';
+    } catch (e) {
+      out.innerHTML = '<div style="padding:10px;border-radius:8px;background:var(--rose-soft);color:var(--rose);">' + TA.esc(e.message) + '</div>';
+    } finally {
+      btn.disabled = false;
+    }
+  }
+  async function checkPortalStatus(ev) {
+    ev.preventDefault();
+    const out = document.getElementById('st-out');
+    try {
+      const res = await TA.apiJson('/api/public/portal/' + encodeURIComponent(PORTAL_SLUG) + '/status', {
+        method: 'POST',
+        body: JSON.stringify({
+          reference_id: document.getElementById('st-ref').value.trim(),
+          verification_code: document.getElementById('st-code').value.trim(),
+        }),
+      });
+      if (res.match) {
+        out.innerHTML = '<div style="padding:12px;border-radius:10px;background:var(--emerald-soft);">' +
+          '<strong>Status:</strong> <span class="badge badge-emerald">' + TA.esc(res.match.status) + '</span><br>' +
+          '<span class="ta-muted" style="font-size:12.5px;">Type: ' + TA.esc(res.match.type) + ' &bull; Received: ' + TA.esc((res.match.received_at || '').slice(0, 10)) + '</span></div>';
+      } else {
+        out.innerHTML = '<div class="ta-muted">No request matching both Reference ID and Verification Code was found.</div>';
+      }
+    } catch (e) {
+      out.innerHTML = '<div style="color:var(--rose);">' + TA.esc(e.message) + '</div>';
+    }
+  }
+</script>
+{% endblock %}

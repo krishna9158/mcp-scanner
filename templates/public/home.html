@@ -1,0 +1,348 @@
+{% extends "public_base.html" %}
+{% block title %}TrustAudit — Your Business Has Customer Data. We Help You Stay in Control.{% endblock %}
+
+{% block content %}
+<!-- 01. PREMIUM HERO -->
+<section class="ta-section" style="padding-top:58px;padding-bottom:64px;border-bottom:1px solid var(--border);background:radial-gradient(circle at 88% 12%, rgba(14,124,91,0.08), transparent 45%), var(--bg);">
+  <div class="ta-container">
+    <div class="grid-split" style="align-items:center;gap:42px;">
+      <div>
+        <span class="ta-eyebrow">Privacy operations, made manageable &bull; India DPDP Readiness</span>
+        <h1 class="ta-h1">Your Business Has Customer Data. We Help You Stay in Control.</h1>
+        <p class="ta-lead">Understand your DPDP readiness, map how personal information moves through your business and manage privacy operations from one simple platform.</p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:26px;">
+          <a href="/register" class="btn btn-primary btn-lg">Start My Free Assessment</a>
+          <a href="/demo" class="btn btn-outline btn-lg">Explore the Platform</a>
+        </div>
+        <div style="display:flex;gap:22px;flex-wrap:wrap;margin-top:24px;font-size:13.5px;color:var(--ink-soft);font-weight:600;">
+          <span>&#10003; Assisted onboarding &bull; zero blank-page guesswork</span>
+          <span>&#10003; Human-confirmed inventory &bull; zero fabricated records</span>
+          <span>&#10003; Evidence-linked workflows</span>
+        </div>
+      </div>
+
+      <!-- INTERACTIVE ANIMATED DATA-FLOW ILLUSTRATION -->
+      <div class="hero-flow-shell">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+          <div style="font-size:13px;font-weight:700;color:var(--lime);letter-spacing:0.03em;">INTERACTIVE DATA FLOW PREVIEW</div>
+          <span class="badge badge-lime">Click any node</span>
+        </div>
+        <svg viewBox="0 0 540 340" width="100%" height="auto" role="img" aria-label="Interactive customer data flow diagram">
+          <defs>
+            <marker id="arrowLime" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+              <path d="M0,1 L7,4 L0,7 z" fill="#B7EC54"/>
+            </marker>
+          </defs>
+          <!-- Animated connecting paths -->
+          <path d="M270 54 L270 84" stroke="#B7EC54" stroke-width="2" class="flow-edge-anim" marker-end="url(#arrowLime)"/>
+          <path d="M270 130 L270 160" stroke="#B7EC54" stroke-width="2" class="flow-edge-anim" marker-end="url(#arrowLime)"/>
+          <path d="M270 206 L270 234" stroke="#B7EC54" stroke-width="2" class="flow-edge-anim" marker-end="url(#arrowLime)"/>
+          <path d="M270 280 L270 304" stroke="#10B981" stroke-width="2" class="flow-edge-anim" marker-end="url(#arrowLime)"/>
+
+          <g class="flow-node active" data-node="customer" onclick="selectHeroNode('customer')">
+            <rect x="95" y="10" width="350" height="44" rx="10" fill="#183228" stroke="#2D5746" stroke-width="1.5"/>
+            <text x="270" y="37" fill="#F8FAF8" font-size="13" font-weight="800" text-anchor="middle">CUSTOMER</text>
+          </g>
+          <g class="flow-node" data-node="form" onclick="selectHeroNode('form')">
+            <rect x="95" y="84" width="350" height="46" rx="10" fill="#183228" stroke="#2D5746" stroke-width="1.5"/>
+            <text x="270" y="112" fill="#F8FAF8" font-size="13" font-weight="800" text-anchor="middle">WEBSITE FORM</text>
+          </g>
+          <g class="flow-node" data-node="db" onclick="selectHeroNode('db')">
+            <rect x="95" y="160" width="350" height="46" rx="10" fill="#183228" stroke="#2D5746" stroke-width="1.5"/>
+            <text x="270" y="188" fill="#F8FAF8" font-size="13" font-weight="800" text-anchor="middle">BUSINESS DATABASE</text>
+          </g>
+          <g class="flow-node" data-node="vendors" onclick="selectHeroNode('vendors')">
+            <rect x="45" y="234" width="450" height="46" rx="10" fill="#183228" stroke="#2D5746" stroke-width="1.5"/>
+            <text x="270" y="262" fill="#F8FAF8" font-size="12.5" font-weight="800" text-anchor="middle">PAYMENT / CRM / COMMUNICATION SERVICE</text>
+          </g>
+          <g class="flow-node" data-node="workspace" onclick="selectHeroNode('workspace')">
+            <rect x="65" y="302" width="410" height="34" rx="9" fill="#0E7C5B" stroke="#B7EC54" stroke-width="1.6"/>
+            <text x="270" y="324" fill="#FFFFFF" font-size="12.5" font-weight="800" text-anchor="middle">TRUSTAUDIT PRIVACY WORKSPACE</text>
+          </g>
+        </svg>
+        <div id="hero-node-detail" style="margin-top:14px;padding:12px 14px;border-radius:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);font-size:13.5px;color:#E4EDE7;">
+          <strong style="color:var(--lime);">CUSTOMER:</strong> Shares contact details, bookings, account data, or documents and holds statutory DPDP access, correction, erasure, and grievance rights.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 02. ANIMATED PRODUCT DEMONSTRATION (LIVE PUBLIC WEBSITE CHECK) -->
+<section id="quick-check" class="ta-section ta-section-muted">
+  <div class="ta-container">
+    <div class="card" style="padding:32px;box-shadow:var(--shadow-sm);">
+      <div class="grid-split" style="align-items:center;">
+        <div>
+          <span class="badge badge-emerald">02 &bull; Live Discovery Demonstration</span>
+          <h2 class="ta-h2" style="margin-top:10px;">Run an Instant Public Website Check</h2>
+          <p class="ta-muted" style="font-size:15px;">Inspect public HTTPS transport, privacy notice links, enquiry forms, and visible tracking scripts before writing a single spreadsheet row. <em>Note: website inspection cannot read internal private databases.</em></p>
+          <form onsubmit="runHomeQuickScan(event)" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;">
+            <input id="home-scan-url" type="url" class="input" style="flex:1;min-width:240px;" placeholder="https://yourcompany.in" required>
+            <button id="home-scan-btn" type="submit" class="btn btn-primary">Inspect Public Website</button>
+          </form>
+          <div id="home-scan-result" style="margin-top:16px;"></div>
+        </div>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:14px;padding:20px;">
+          <div style="font-weight:800;font-size:14px;margin-bottom:10px;">What TrustAudit checks transparently</div>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:9px;font-size:13.5px;color:var(--ink-soft);">
+            <li><strong>Found:</strong> Observed links, HTTPS headers, forms & scripts</li>
+            <li><strong>Not Found:</strong> Missing public Privacy Notice or grievance email</li>
+            <li><strong>Needs Business Input:</strong> Lawful basis, offline & database storage</li>
+            <li><strong>Cannot Be Checked Externally:</strong> Internal servers & employee HR files</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03. THE BUSINESS PROBLEM -->
+<section class="ta-section reveal">
+  <div class="ta-container">
+    <span class="ta-eyebrow">03 &bull; Why Traditional Spreadsheets Fail</span>
+    <h2 class="ta-h2">Most Businesses Don't Have a Dedicated Privacy Team</h2>
+    <p class="ta-lead">Personal data sits scattered across intake forms, billing software, diagnostic labs, WhatsApp threads, payment gateways, and cloud hosts—yet most compliance tools start with a daunting 100-question legal spreadsheet.</p>
+    <div class="grid-3" style="margin-top:26px;">
+      <div class="card card-hover"><h3 class="ta-h3">Hidden Data Spread</h3><p class="ta-muted">Founders and clinic managers often do not realise how many software vendors or analytics scripts receive customer details every day.</p></div>
+      <div class="card card-hover"><h3 class="ta-h3">Confusing Legal Jargon</h3><p class="ta-muted">Teams struggle to map Sections 5, 6, 7, 8, and Rules 3–16 to everyday customer journeys without translating every term.</p></div>
+      <div class="card card-hover"><h3 class="ta-h3">Unverified Promises</h3><p class="ta-muted">Draft notices, missing DPAs, and scattered PDFs break down when customers ask to delete records or an audit arrives.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 04. HOW TRUSTAUDIT WORKS -->
+<section class="ta-section ta-section-muted reveal">
+  <div class="ta-container">
+    <span class="ta-eyebrow">04 &bull; Guided 6-Stage Operating Model</span>
+    <h2 class="ta-h2">DISCOVER &rarr; UNDERSTAND &rarr; ASSESS &rarr; FIX &rarr; PROVE &rarr; MAINTAIN</h2>
+    <p class="ta-lead">Every screen connects to one shared business profile, data inventory, vendor register, action plan, and Evidence Vault.</p>
+    <div class="grid-3" style="margin-top:26px;">
+      <div class="card"><strong>01. Discover</strong><p class="ta-muted" style="margin-top:6px;">Industry suggestions, public website inspection, and CSV/XLSX/DOCX/PDF upload extraction create draft records marked for confirmation.</p></div>
+      <div class="card"><strong>02. Understand</strong><p class="ta-muted" style="margin-top:6px;">See a visual SVG data-flow map plus plain-English legal guidance and a source-grounded AI Assistant.</p></div>
+      <div class="card"><strong>03. Assess</strong><p class="ta-muted" style="margin-top:6px;">Review 10 plain-language privacy topics distinguishing self-attestation from evidence verification.</p></div>
+      <div class="card"><strong>04. Fix</strong><p class="ta-muted" style="margin-top:6px;">Manage prioritised action items across Kanban, List, and Calendar views with clear owners and due dates.</p></div>
+      <div class="card"><strong>05. Prove</strong><p class="ta-muted" style="margin-top:6px;">Generate Privacy Notices, SOP drafts, PDF/DOCX reports, and verified ZIP Evidence Bundles.</p></div>
+      <div class="card"><strong>06. Maintain</strong><p class="ta-muted" style="margin-top:6px;">Operate consent tracking, vendor questionnaires, deletion workflows, incident checklists, and a customer Privacy Portal.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 TO 11 CORE PRODUCT WORKSPACES -->
+<section class="ta-section reveal">
+  <div class="ta-container">
+    <span class="ta-eyebrow">05–11 &bull; Connected Privacy Operations Suite</span>
+    <h2 class="ta-h2">Every Module Shares Your Live Organisation Profile</h2>
+    <div class="grid-3" style="margin-top:26px;">
+      <div class="card card-hover"><div class="badge badge-neutral" style="margin-bottom:10px;">05 &bull; Discovery &amp; Mapping</div><h3 class="ta-h3">Assisted Extraction &amp; Visual Data Map</h3><p class="ta-muted">Import registers (.CSV/.XLSX) or policies (.DOCX/.PDF) and inspect confirmed customer-to-vendor flows on an interactive SVG canvas.</p></div>
+      <div class="card card-hover"><div class="badge badge-neutral" style="margin-bottom:10px;">06 &bull; Privacy Assessment</div><h3 class="ta-h3">10-Topic Guided Readiness</h3><p class="ta-muted">Supports Yes, No, Partially, Not sure, and Not applicable across 5 verification states without fake readiness scores.</p></div>
+      <div class="card card-hover"><div class="badge badge-neutral" style="margin-bottom:10px;">07 &bull; Action Management</div><h3 class="ta-h3">Kanban, List &amp; Calendar Tasks</h3><p class="ta-muted">Every assessment gap and onboarding action maps to responsible owners, deadlines, and required proof.</p></div>
+      <div class="card card-hover"><div class="badge badge-neutral" style="margin-bottom:10px;">08 &bull; Vendor Operations</div><h3 class="ta-h3">DPA Contracts &amp; Questionnaires</h3><p class="ta-muted">Send restricted vendor questionnaires, review hosting regions, and document the transparent basis for each status.</p></div>
+      <div class="card card-hover"><div class="badge badge-neutral" style="margin-bottom:10px;">09 &bull; Customer Privacy Portal</div><h3 class="ta-h3">Branded Request Intake Desk</h3><p class="ta-muted">Publish a secure link so customers can submit access, correction, erasure, or grievance requests with verification codes.</p></div>
+      <div class="card card-hover"><div class="badge badge-neutral" style="margin-bottom:10px;">10 &bull; Evidence &amp; Documents</div><h3 class="ta-h3">9 Draft Templates &amp; Vault</h3><p class="ta-muted">Edit Privacy Notices, Retention SOPs, and Breach Plans with version history, PDF/DOCX export, and 5-state Vault review.</p></div>
+      <div class="card card-hover"><div class="badge badge-neutral" style="margin-bottom:10px;">11 &bull; AI Privacy Assistant</div><h3 class="ta-h3">Source-Grounded Legal Guidance</h3><p class="ta-muted">Answers cite exact DPDP Act 2023 Sections, Rules 2025, S.O. 5458(E), commencement status, and concrete next steps.</p></div>
+      <div class="card card-hover"><div class="badge badge-neutral" style="margin-bottom:10px;">11b &bull; Consent &amp; Deletion</div><h3 class="ta-h3">Purpose Tracking &amp; Guided Erasure</h3><p class="ta-muted">Separate Consent (Section 6) from Section 7 Legitimate Uses and execute 6-step manual deletion checks with proof.</p></div>
+      <div class="card card-hover"><div class="badge badge-neutral" style="margin-bottom:10px;">11c &bull; Incident Response</div><h3 class="ta-h3">Dual-Stage Notification Prep</h3><p class="ta-muted">Track incident timelines, containment checklists, and separate preparation vs notification status ahead of 13 May 2027.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 12. INDUSTRY TEMPLATES -->
+<section class="ta-section ta-section-muted reveal">
+  <div class="ta-container">
+    <span class="ta-eyebrow">12 &bull; Built for Your Industry</span>
+    <h2 class="ta-h2">Start With Suggested Activities—Confirm Only What Applies</h2>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin:20px 0;">
+      <button type="button" class="btn btn-primary btn-sm ind-tab" onclick="showIndustryPreview('healthcare', this)">Healthcare &amp; Clinics</button>
+      <button type="button" class="btn btn-outline btn-sm ind-tab" onclick="showIndustryPreview('saas', this)">SaaS &amp; Startups</button>
+      <button type="button" class="btn btn-outline btn-sm ind-tab" onclick="showIndustryPreview('ecommerce', this)">E-Commerce &amp; D2C</button>
+      <button type="button" class="btn btn-outline btn-sm ind-tab" onclick="showIndustryPreview('education', this)">Education &amp; EdTech</button>
+      <button type="button" class="btn btn-outline btn-sm ind-tab" onclick="showIndustryPreview('professional_services', this)">Professional Services</button>
+    </div>
+    <div id="industry-preview-box" class="card"></div>
+  </div>
+</section>
+
+<!-- 13. SECURITY & TRUST + LEGAL TIMELINE PREVIEW -->
+<section class="ta-section ta-section-forest reveal">
+  <div class="ta-container">
+    <div class="grid-2" style="align-items:center;gap:36px;">
+      <div>
+        <span class="ta-eyebrow">13 &bull; Security &amp; Transparent Governance</span>
+        <h2 class="ta-h2" style="color:#FFFFFF;">Evidence-Driven Safeguards Without Exaggerated Claims</h2>
+        <p style="color:#B4C5BC;font-size:15px;">We protect your privacy workspace with OWASP-aligned controls while transparently stating what our platform verifies—never displaying unobtained external certifications.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px;">
+          <div style="padding:14px;border-radius:10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);">
+            <strong style="color:var(--lime);">600k PBKDF2 + MFA</strong>
+            <div style="font-size:13px;color:#B4C5BC;margin-top:4px;">SHA-256 hashed persistent sessions &amp; TOTP 2FA.</div>
+          </div>
+          <div style="padding:14px;border-radius:10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);">
+            <strong style="color:var(--lime);">Tenant Isolation &amp; RBAC</strong>
+            <div style="font-size:13px;color:#B4C5BC;margin-top:4px;">Strict per-org isolation and Admin/Member/Viewer roles.</div>
+          </div>
+          <div style="padding:14px;border-radius:10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);">
+            <strong style="color:var(--lime);">SSRF &amp; Upload Guards</strong>
+            <div style="font-size:13px;color:#B4C5BC;margin-top:4px;">Private/CGNAT IP blocking &amp; 5 MB magic-byte upload checks.</div>
+          </div>
+          <div style="padding:14px;border-radius:10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);">
+            <strong style="color:var(--lime);">PII-Minimised AI</strong>
+            <div style="font-size:13px;color:#B4C5BC;margin-top:4px;">Local deterministic legal corpus without sharing customer files.</div>
+          </div>
+        </div>
+        <div style="margin-top:22px;"><a href="/security" class="btn btn-lime">Visit Security &amp; Trust Centre &rarr;</a></div>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:16px;padding:24px;">
+        <h3 style="color:#FFFFFF;margin-bottom:12px;">Phased DPDP Commencement (Reference Date: Nov 2026)</h3>
+        <div style="display:flex;flex-direction:column;gap:12px;font-size:13.5px;">
+          <div style="padding:10px 12px;border-left:3px solid #10B981;background:rgba(16,185,129,0.1);"><strong>13 November 2025 (In Force):</strong> G.S.R. 843(E) / 846(E) — Institutional Data Protection Board provisions.</div>
+          <div style="padding:10px 12px;border-left:3px solid #10B981;background:rgba(16,185,129,0.1);"><strong>13 November 2026 (In Force):</strong> Section 6(9), Section 27(1)(d) &amp; Rule 4 Consent Managers.</div>
+          <div style="padding:10px 12px;border-left:3px solid var(--lime);background:rgba(183,236,84,0.1);"><strong>October 2026 Gazette Order:</strong> S.O. 5458(E) clarifies Section 9(1) &amp; updates Section 10(2)(c)(ii) to "data audit".</div>
+          <div style="padding:10px 12px;border-left:3px solid #F59E0B;background:rgba(245,158,11,0.12);"><strong>13 May 2027 (Scheduled):</strong> Core corporate duties (Sections 3–17 &amp; Rules 3, 5–16, 22–23).</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 14. PRICING -->
+<section id="pricing" class="ta-section reveal">
+  <div class="ta-container">
+    <span class="ta-eyebrow">14 &bull; Transparent Plans for Indian Businesses</span>
+    <h2 class="ta-h2">Simple Monthly Pricing &mdash; Start Free</h2>
+    <p class="ta-lead">Every paid feature advertised here is active inside TrustAudit today. Future external DB connectors are clearly marked as roadmap integrations.</p>
+    <div class="grid-4" style="margin-top:26px;">
+      {% for plan in plans %}
+      <div class="card {% if plan.key == 'growth' %}card-hover{% endif %}" style="display:flex;flex-direction:column;{% if plan.key == 'growth' %}border-color:var(--emerald);box-shadow:var(--shadow-sm);{% endif %}">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <h3 style="margin:0;font-size:18px;">{{ plan.name }}</h3>
+          {% if plan.key == 'growth' %}<span class="badge badge-emerald">Recommended</span>{% endif %}
+        </div>
+        <div style="font-size:30px;font-weight:850;margin:12px 0 4px;">&#8377;{{ "{:,}".format(plan.price_monthly_inr) }}<span style="font-size:13px;font-weight:600;color:var(--ink-muted);">/mo</span></div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--ink-soft);margin:14px 0 20px;flex:1;">
+          {% for feat in plan.features %}
+          <li>&#10003; {{ feat }}</li>
+          {% endfor %}
+        </ul>
+        <a href="/register?plan={{ plan.key }}" class="btn {% if plan.key == 'growth' %}btn-primary{% else %}btn-outline{% endif %}" style="width:100%;">Start {{ plan.name }}</a>
+      </div>
+      {% endfor %}
+    </div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:24px;">
+      <a href="/pricing" class="btn btn-outline">Compare All Plan Quotas</a>
+      <button type="button" class="btn btn-ghost" onclick="openWalkthroughModal()">Book a Product Walkthrough</button>
+    </div>
+  </div>
+</section>
+
+<!-- 15. FAQ -->
+<section class="ta-section ta-section-muted reveal">
+  <div class="ta-container">
+    <span class="ta-eyebrow">15 &bull; Frequently Asked Questions</span>
+    <h2 class="ta-h2">Clear Answers Before You Start</h2>
+    <div class="grid-2" style="margin-top:22px;">
+      <div class="card">
+        <h3 class="ta-h3">Does TrustAudit certify legal compliance?</h3>
+        <p class="ta-muted">No. Neither MeitY nor the Data Protection Board certifies SaaS compliance tools. TrustAudit organises your inventory, assessments, action tasks, and evidence files cleanly so your team and legal counsel stay prepared.</p>
+      </div>
+      <div class="card">
+        <h3 class="ta-h3">Do I have to type every customer data record manually?</h3>
+        <p class="ta-muted">No. Onboarding proposes industry-specific activities, inspects public website forms/scripts, and parses uploaded CSV, XLSX, DOCX, or PDF documents into draft suggestions for you to confirm, edit, or reject.</p>
+      </div>
+      <div class="card">
+        <h3 class="ta-h3">Is TrustAudit a registered Consent Manager under Section 6(9)?</h3>
+        <p class="ta-muted">No. TrustAudit helps Data Fiduciaries organise consent records and notices internally and is not a Section 6(9) Consent Manager.</p>
+      </div>
+      <div class="card">
+        <h3 class="ta-h3">Are the ₹50 crore to ₹250 crore DPDP penalties automatic?</h3>
+        <p class="ta-muted">No. These are statutory maximum ceilings in the Schedule to the DPDP Act, 2023. Penalties are determined case by case by the Data Protection Board under Section 33 factors.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 16. FINAL CTA -->
+<section class="ta-section reveal" style="text-align:center;">
+  <div class="ta-container" style="max-width:760px;">
+    <span class="badge badge-emerald">Privacy operations, made manageable.</span>
+    <h2 class="ta-h2" style="margin-top:14px;">Discover Customer Data &amp; Organise Readiness in Minutes</h2>
+    <p class="ta-lead" style="margin:0 auto 26px;">Create an isolated workspace for your business or test our sample clinic inside the interactive Demo Sandbox first.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <a href="/register" class="btn btn-primary btn-lg">Start My Free Assessment</a>
+      <a href="/demo" class="btn btn-outline btn-lg">View Interactive Demo</a>
+      <button type="button" class="btn btn-ghost btn-lg" onclick="openWalkthroughModal()">Book a Product Walkthrough</button>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  const HERO_NODE_EXPLANATIONS = {
+    customer: '<strong>CUSTOMER:</strong> Submits enquiries, bookings, orders, or support tickets and holds DPDP access, correction, erasure, and grievance rights.',
+    form: '<strong>WEBSITE FORM:</strong> Public intake forms, cookie notices, and third-party tracking scripts evaluated safely by TrustAudit Discovery.',
+    db: '<strong>BUSINESS DATABASE:</strong> Where billing, clinical, account, or employee categories are stored—mapped with retention rules and owners.',
+    vendors: '<strong>PAYMENT / CRM / COMMUNICATION SERVICE:</strong> External Data Processors requiring written Section 8(2) DPAs and periodic review.',
+    workspace: '<strong>TRUSTAUDIT PRIVACY WORKSPACE:</strong> Connects onboarding, data inventory, interactive data map, action tasks, portals, and Evidence Vault.'
+  };
+  function selectHeroNode(key) {
+    document.querySelectorAll('.flow-node').forEach(function (g) {
+      g.classList.toggle('active', g.getAttribute('data-node') === key);
+    });
+    const box = document.getElementById('hero-node-detail');
+    if (box && HERO_NODE_EXPLANATIONS[key]) box.innerHTML = HERO_NODE_EXPLANATIONS[key];
+  }
+
+  const IND_PREVIEWS = {
+    healthcare: { title: 'Healthcare, Clinics &amp; Hospitals', activities: ['Patient appointments', 'Contact details', 'Diagnostic reports', 'Billing', 'Insurance information', 'Website enquiries', 'Doctor referrals'], note: 'Focuses strictly on data categories and storage locations—never collecting patient clinical record contents unnecessarily.' },
+    saas: { title: 'SaaS &amp; Technology Startups', activities: ['Registration', 'User profiles', 'Subscription billing', 'Authentication', 'Product analytics', 'Customer support', 'Marketing communications'], note: 'Tracks AWS/GCP, payment gateways, analytics scripts, and B2B privacy profile sharing.' },
+    ecommerce: { title: 'E-Commerce &amp; D2C Brands', activities: ['Customer accounts', 'Order history', 'Delivery information', 'Payment processing', 'Returns', 'Marketing campaigns'], note: 'Maps shipping partners, payment gateways, ad pixels, and unbundled consent checkboxes.' },
+    education: { title: 'Schools, Colleges &amp; EdTech', activities: ['Student registration', 'Parent contact information', 'Attendance', 'Fee records', 'Examination records'], note: 'Includes Section 9 verifiable parental consent checks and ban on minor tracking/targeted ads.' },
+    professional_services: { title: 'CA Firms, Legal &amp; Agencies', activities: ['Client information', 'Contracts', 'Billing', 'Communication records', 'Employee data'], note: 'Distinguishes client consent duties from Section 7(i) employment processing.' }
+  };
+  function showIndustryPreview(key, btn) {
+    document.querySelectorAll('.ind-tab').forEach(function (b) {
+      b.className = 'btn btn-outline btn-sm ind-tab';
+    });
+    if (btn) btn.className = 'btn btn-primary btn-sm ind-tab';
+    const d = IND_PREVIEWS[key] || IND_PREVIEWS.healthcare;
+    document.getElementById('industry-preview-box').innerHTML =
+      '<h3 style="margin-bottom:10px;">' + d.title + '</h3>' +
+      '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;">' +
+      d.activities.map(function (a) { return '<span class="badge badge-emerald">' + TA.esc(a) + '</span>'; }).join('') +
+      '</div><p class="ta-muted">' + TA.esc(d.note) + '</p>';
+  }
+  showIndustryPreview('healthcare');
+
+  async function runHomeQuickScan(ev) {
+    ev.preventDefault();
+    const url = document.getElementById('home-scan-url').value.trim();
+    const out = document.getElementById('home-scan-result');
+    const btn = document.getElementById('home-scan-btn');
+    btn.disabled = true;
+    out.innerHTML = '<div class="skeleton" style="width:100%;height:48px;"></div>';
+    try {
+      const res = await TA.apiJson('/api/public/quick-check', {
+        method: 'POST',
+        body: JSON.stringify({ url: url }),
+      });
+      const sc = res.scan || res;
+      if (sc.status && sc.status !== 'COMPLETED' && sc.error) {
+        out.innerHTML = '<div style="padding:12px;border-radius:10px;background:var(--rose-soft);color:var(--rose);font-size:13.5px;">' + TA.esc(sc.error) + '</div>';
+      } else {
+        const found = (sc.what_was_found || []).slice(0, 3);
+        const missing = (sc.what_was_not_found || []).slice(0, 3);
+        out.innerHTML =
+          '<div style="padding:14px;border-radius:10px;background:var(--bg);border:1px solid var(--border);font-size:13.5px;">' +
+          '<div style="font-weight:800;margin-bottom:6px;">Public Inspection Complete &bull; ' + TA.esc(sc.target_url || url) + '</div>' +
+          '<div style="margin-bottom:6px;"><strong>Observed:</strong> ' + (found.length ? found.map(TA.esc).join('; ') : 'Public page checked') + '</div>' +
+          '<div><strong>Missing / Needs Review:</strong> ' + (missing.length ? missing.map(TA.esc).join('; ') : 'Create a workspace account for full multi-page discovery') + '</div>' +
+          '</div>';
+      }
+    } catch (e) {
+      out.innerHTML = '<div style="padding:12px;border-radius:10px;background:var(--rose-soft);color:var(--rose);font-size:13.5px;">' + TA.esc(e.message) + '</div>';
+    } finally {
+      btn.disabled = false;
+    }
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "public_base.html" %}
+{% block title %}How TrustAudit Works — TrustAudit{% endblock %}
+{% block content %}
+<section class="ta-section" style="padding-bottom:42px;border-bottom:1px solid var(--border);">
+  <div class="ta-container">
+    <span class="ta-eyebrow">DISCOVER &rarr; UNDERSTAND &rarr; ASSESS &rarr; FIX &rarr; PROVE &rarr; MAINTAIN</span>
+    <h1 class="ta-h1">One Guided Flow From Zero Clarity to Organised Readiness</h1>
+    <p class="ta-lead">Built specifically for business owners, clinic managers, and startup teams who do not have a privacy lawyer sitting in the office.</p>
+  </div>
+</section>
+<section class="ta-section">
+  <div class="ta-container" style="display:flex;flex-direction:column;gap:18px;">
+    {% set stages = [
+      ("Stage 1: Discover", "Assisted Onboarding, Website Checks & Document Import", "Answer five quick questions about your sector, run a safe public website inspection, or upload CSV/XLSX/DOCX/PDF policies. TrustAudit proposes structured records marked 'SUGGESTED — NEEDS CONFIRMATION'."),
+      ("Stage 2: Understand", "Interactive Data Map & Source-Grounded AI Assistant", "Visualise how customer data enters forms, sits in databases, and reaches payment gateways, CRMs, labs, or messaging tools while asking plain-language questions."),
+      ("Stage 3: Assess", "10-Topic Guided Review With Honest Verification States", "Step through notices, consent, vendors, requests, retention, safeguards, and incidents with 'Yes / No / Partially / Not sure / Not applicable' and 5 real verification stages."),
+      ("Stage 4: Fix", "Prioritised Action Plan in Kanban, List & Calendar Views", "Every gap becomes a concrete task with owner, deadline, steps, and required proof."),
+      ("Stage 5: Prove", "9 Document Templates, DOCX/PDF/ZIP Bundles & Evidence Vault", "Draft Privacy Notices, Retention SOPs, and Breach Plans, save them to Evidence Vault, and export audit-ready ZIP bundles."),
+      ("Stage 6: Maintain", "Branded Customer Privacy Portal & Shareable Privacy Profile", "Publish your organisation's request intake portal and approved Privacy Profile while tracking renewals and ongoing requests.")
+    ] %}
+    {% for s, h, b in stages %}
+    <div class="card">
+      <span class="badge badge-emerald">{{ s }}</span>
+      <h2 class="ta-h3" style="margin-top:8px;">{{ h }}</h2>
+      <p class="ta-muted">{{ b }}</p>
+    </div>
+    {% endfor %}
+    <div style="text-align:center;margin-top:14px;"><a href="/register" class="btn btn-primary btn-lg">Start Step 1 Now</a></div>
+  </div>
+</section>
+{% endblock %}

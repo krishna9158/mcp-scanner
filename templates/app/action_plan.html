@@ -1,0 +1,184 @@
+{% extends "app_base.html" %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Action Plan &amp; Remediation Centre</h1>
+    <p class="page-sub">Manage privacy fixes by owner, due date, and required evidence across Kanban, List, and Calendar layouts.</p>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+    <button type="button" class="btn btn-outline btn-sm" onclick="setLayout('kanban')">Kanban View</button>
+    <button type="button" class="btn btn-outline btn-sm" onclick="setLayout('list')">List View</button>
+    <button type="button" class="btn btn-outline btn-sm" onclick="setLayout('calendar')">Calendar View</button>
+    <button type="button" class="btn btn-primary btn-sm" onclick="openNewTaskModal()">+ Add Task</button>
+  </div>
+</div>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;">
+  {% for fkey, flabel in [
+    ("all", "Team Tasks"), ("mine", "My Tasks"), ("critical", "Critical Tasks"),
+    ("upcoming", "Upcoming"), ("overdue", "Overdue"), ("completed", "Completed")
+  ] %}
+  <button type="button" class="btn btn-sm {% if fkey == 'all' %}btn-primary{% else %}btn-outline{% endif %} filter-tab" onclick="setFilter('{{ fkey }}', this)">{{ flabel }}</button>
+  {% endfor %}
+</div>
+
+<div id="tasks-view-body">Loading action tasks...</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  let ALL_TASKS = [];
+  let CUR_FILTER = 'all';
+  let CUR_LAYOUT = 'kanban';
+  let CUR_USER_NAME = {{ (current_user.name if current_user else '')|tojson }};
+
+  async function loadTasks() {
+    const d = await TA.apiJson('/api/dpdp/tasks');
+    ALL_TASKS = d.tasks || [];
+    renderTasks();
+  }
+
+  function setFilter(f, btn) {
+    CUR_FILTER = f;
+    document.querySelectorAll('.filter-tab').forEach(function (b) { b.className = 'btn btn-sm btn-outline filter-tab'; });
+    if (btn) btn.className = 'btn btn-sm btn-primary filter-tab';
+    renderTasks();
+  }
+  function setLayout(l) { CUR_LAYOUT = l; renderTasks(); }
+
+  function filteredTasks() {
+    const today = new Date().toISOString().slice(0, 10);
+    return ALL_TASKS.filter(function (t) {
+      const st = (t.status || 'Open').toLowerCase();
+      const isDone = (st === 'resolved' || st === 'completed' || st === 'not applicable');
+      if (CUR_FILTER === 'mine') return (t.owner || t.assignee || '').toLowerCase().indexOf(CUR_USER_NAME.toLowerCase()) !== -1 || !t.owner;
+      if (CUR_FILTER === 'critical') return (t.priority || t.severity || '').toUpperCase() === 'CRITICAL';
+      if (CUR_FILTER === 'completed') return isDone;
+      if (CUR_FILTER === 'overdue') return !isDone && t.due_date && t.due_date < today;
+      if (CUR_FILTER === 'upcoming') return !isDone && (!t.due_date || t.due_date >= today);
+      return true;
+    });
+  }
+
+  function renderTasks() {
+    const list = filteredTasks();
+    const wrap = document.getElementById('tasks-view-body');
+    if (!list.length) {
+      wrap.innerHTML = '<div class="empty-state"><h3>No tasks in this view</h3><p class="ta-muted">Create an action item above or run Website Discovery to convert findings into tasks.</p></div>';
+      return;
+    }
+
+    if (CUR_LAYOUT === 'list') {
+      wrap.innerHTML = '<div class="tbl-wrap"><table><thead><tr><th>Task &amp; Why It Matters</th><th>Legal Ref</th><th>Owner &amp; Due Date</th><th>Status</th><th>Update</th></tr></thead><tbody>' +
+        list.map(function (t) {
+          return '<tr><td><strong>' + TA.esc(t.title) + '</strong><div class="ta-muted" style="font-size:12px;">' + TA.esc(t.why_it_matters || t.description || '') + '</div></td>' +
+            '<td><span class="badge badge-neutral">' + TA.esc(t.legal_reference || 'DPDP Act') + '</span></td>' +
+            '<td>' + TA.esc(t.owner || t.assignee || 'Owner') + '<div class="ta-muted" style="font-size:12px;">Due: ' + TA.esc(t.due_date || 'Flexible') + '</div></td>' +
+            '<td><span class="badge badge-amber">' + TA.esc(t.status || 'Open') + '</span></td>' +
+            '<td><button type="button" class="btn btn-outline btn-sm" onclick=\'openTaskModal(' + JSON.stringify(t) + ')\'>Edit</button></td></tr>';
+        }).join('') + '</tbody></table></div>';
+    } else if (CUR_LAYOUT === 'calendar') {
+      const byDate = {};
+      list.forEach(function (t) {
+        const d = t.due_date || 'Unscheduled';
+        byDate[d] = byDate[d] || [];
+        byDate[d].push(t);
+      });
+      wrap.innerHTML = '<div class="grid-3">' + Object.keys(byDate).sort().map(function (d) {
+        return '<div class="card"><div class="badge badge-forest" style="margin-bottom:10px;">Due: ' + TA.esc(d) + '</div>' +
+          byDate[d].map(function (t) {
+            return '<div style="padding:8px 0;border-bottom:1px solid var(--border);"><strong>' + TA.esc(t.title) + '</strong>' +
+              '<div class="ta-muted" style="font-size:12px;">' + TA.esc(t.status) + ' &bull; ' + TA.esc(t.owner || 'Owner') + '</div></div>';
+          }).join('') + '</div>';
+      }).join('') + '</div>';
+    } else {
+      const cols = [
+        { key: 'Open', title: 'Open' },
+        { key: 'In progress', title: 'In Progress' },
+        { key: 'Awaiting evidence', title: 'Awaiting Proof' },
+        { key: 'Resolved', title: 'Completed / Resolved' },
+      ];
+      wrap.innerHTML = '<div class="kanban-grid">' + cols.map(function (col) {
+        const colItems = list.filter(function (t) {
+          const s = (t.status || 'Open').toLowerCase();
+          if (col.key === 'Resolved') return s === 'resolved' || s === 'completed';
+          return s === col.key.toLowerCase();
+        });
+        return '<div class="kanban-col"><div style="display:flex;justify-content:space-between;align-items:center;"><strong>' + col.title + '</strong><span class="badge badge-neutral">' + colItems.length + '</span></div>' +
+          colItems.map(function (t) {
+            return '<div class="kanban-card"><div style="display:flex;justify-content:space-between;gap:6px;"><strong style="font-size:13px;">' + TA.esc(t.title) + '</strong><span class="badge badge-amber" style="font-size:10.5px;">' + TA.esc(t.priority || t.severity || 'MEDIUM') + '</span></div>' +
+              '<div class="ta-muted" style="font-size:12px;margin:6px 0;">Owner: ' + TA.esc(t.owner || 'Owner') + ' &bull; Due: ' + TA.esc((t.due_date || '').slice(0, 10) || 'TBD') + '</div>' +
+              '<button type="button" class="btn btn-outline btn-sm" style="width:100%;" onclick=\'openTaskModal(' + JSON.stringify(t) + ')\'>Update / Attach Proof</button></div>';
+          }).join('') + '</div>';
+      }).join('') + '</div>';
+    }
+  }
+
+  function openNewTaskModal() {
+    TA.openModal('Add Privacy Action Task',
+      '<form onsubmit="createTaskSubmit(event)">' +
+      '<div class="field"><label>Task Title</label><input id="tk-title" class="input" required placeholder="Sign Data Processing Agreement with Zoho"></div>' +
+      '<div class="field"><label>Why It Matters</label><input id="tk-why" class="input" required placeholder="Required under Section 8(2) before processing customer records"></div>' +
+      '<div class="grid-2">' +
+      '<div class="field"><label>Responsible Owner</label><input id="tk-owner" class="input" value="' + TA.esc(CUR_USER_NAME || 'Privacy Lead') + '"></div>' +
+      '<div class="field"><label>Due Date</label><input id="tk-due" type="date" class="input"></div>' +
+      '</div>' +
+      '<div class="grid-2">' +
+      '<div class="field"><label>Priority</label><select id="tk-prio" class="input"><option>HIGH</option><option>CRITICAL</option><option>MEDIUM</option><option>LOW</option></select></div>' +
+      '<div class="field"><label>Legal Reference</label><input id="tk-ref" class="input" value="Section 8(2)"></div>' +
+      '</div>' +
+      '<button type="submit" class="btn btn-primary" style="width:100%;">Create Action Task</button></form>'
+    );
+  }
+  async function createTaskSubmit(ev) {
+    ev.preventDefault();
+    try {
+      await TA.apiJson('/api/dpdp/tasks', {
+        method: 'POST',
+        body: JSON.stringify({
+          title: document.getElementById('tk-title').value.trim(),
+          why_it_matters: document.getElementById('tk-why').value.trim(),
+          owner: document.getElementById('tk-owner').value.trim(),
+          due_date: document.getElementById('tk-due').value,
+          priority: document.getElementById('tk-prio').value,
+          legal_reference: document.getElementById('tk-ref').value.trim(),
+        }),
+      });
+      TA.closeModal();
+      TA.toast('Action task created');
+      loadTasks();
+    } catch (e) { TA.toast(e.message, 'err'); }
+  }
+
+  function openTaskModal(t) {
+    TA.openModal('Manage Task: ' + (t.title || ''),
+      '<p class="ta-muted" style="margin-bottom:10px;">' + TA.esc(t.why_it_matters || t.description || '') + '</p>' +
+      '<p style="font-size:13px;margin-bottom:12px;"><strong>Evidence Required:</strong> ' + TA.esc(t.evidence_required || 'Upload supporting document in Evidence Vault') + '</p>' +
+      '<div class="field"><label>Status</label><select id="ut-st" class="input">' +
+      ['Open', 'In progress', 'Awaiting evidence', 'Under review', 'Resolved', 'Accepted risk', 'Not applicable'].map(function (s) {
+        return '<option ' + (t.status === s ? 'selected' : '') + '>' + s + '</option>';
+      }).join('') + '</select></div>' +
+      '<div class="field"><label>Responsible Person</label><input id="ut-own" class="input" value="' + TA.esc(t.owner || '') + '"></div>' +
+      '<div class="field"><label>Completion Notes</label><textarea id="ut-note" class="input" rows="3"></textarea></div>' +
+      '<button type="button" class="btn btn-primary" style="width:100%;" onclick="saveTaskUpdate(\'' + TA.esc(t.id) + '\')">Save Task Update</button>'
+    );
+  }
+  async function saveTaskUpdate(id) {
+    try {
+      await TA.apiJson('/api/dpdp/tasks/' + encodeURIComponent(id) + '/update', {
+        method: 'POST',
+        body: JSON.stringify({
+          status: document.getElementById('ut-st').value,
+          owner: document.getElementById('ut-own').value.trim(),
+          notes: document.getElementById('ut-note').value.trim(),
+        }),
+      });
+      TA.closeModal();
+      TA.toast('Task updated');
+      loadTasks();
+    } catch (e) { TA.toast(e.message, 'err'); }
+  }
+
+  loadTasks();
+</script>
+{% endblock %}

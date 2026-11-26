@@ -31,15 +31,15 @@ STATUTORY_TIMELINE = [
     },
     {
         "date": "13 November 2025",
-        "title": "DPDP Rules Notified & Phase 1 Institutional Commencement",
-        "description": "Ministry of Electronics and Information Technology (MeitY) notified the DPDP Rules, 2025 and commenced preliminary and Data Protection Board institutional provisions (Sections 1, 2, 18–26, 33–35, 40).",
+        "title": "DPDP Rules Notified (G.S.R. 846(E)) & Commencement Notification (G.S.R. 843(E))",
+        "description": "Ministry of Electronics and Information Technology (MeitY) notified the DPDP Rules, 2025 under G.S.R. 846(E) alongside commencement notification G.S.R. 843(E), bringing preliminary and Data Protection Board institutional provisions into force (Sections 1, 2, 18–26, 33–35, 40).",
         "status": "COMPLETED",
         "badge": "In Force"
     },
     {
         "date": "October 2026",
-        "title": "Removal of Difficulties Order (Sections 9 & 10)",
-        "description": "Central Government order aligning textual and statutory cross-references relating to Section 9 and Section 10 under the Act.",
+        "title": "S.O. 5458(E) Removal of Difficulties Order, 2026",
+        "description": "Official Gazette Order S.O. 5458(E) clarifying wording in Section 9(1) and changing the Section 10(2)(c)(ii) reference from 'audit' to 'data audit'.",
         "status": "COMPLETED",
         "badge": "Gazette Order"
     },
@@ -602,18 +602,18 @@ DPDP_REQUIREMENTS: List[Dict[str, Any]] = [
         "verification_procedure": "Inspect website scanner trackers and test minor registration / pediatric intake forms for guardian consent steps.",
         "last_reviewed_date": "2026-11-22",
         "rule_version": "v2.1",
-        "official_source_reference": "DPDP Act 2023, Section 9; DPDP Rules 2025, Rule 10; Schedule Item 3",
+        "official_source_reference": "DPDP Act 2023, Section 9 (clarified under S.O. 5458(E) Removal of Difficulties Order, 2026); G.S.R. 846(E) Rule 10; Schedule Item 3",
         "expert_review_required": True
     },
     {
         "id": "DPDP-SEC-10",
         "rule_id": "DPDP-SEC-10",
         "section": "Section 10",
-        "legal_reference": "Section 10 (read with Removal of Difficulties Order, Oct 2026)",
-        "rule_ref": "Section 10",
+        "legal_reference": "Section 10 (read with S.O. 5458(E) Removal of Difficulties Order, Oct 2026)",
+        "rule_ref": "Section 10 & Rule 11",
         "title": "Significant Data Fiduciary (SDF) Obligations",
-        "rule_title": "Significant Data Fiduciary Obligations (DPO, DPIA & Periodic Audits)",
-        "description": "Entities notified as Significant Data Fiduciaries must appoint a resident Data Protection Officer, engage an independent data auditor, and conduct periodic Data Protection Impact Assessments (DPIA).",
+        "rule_title": "Significant Data Fiduciary Obligations (DPO, DPIA & Periodic Data Audits)",
+        "description": "Entities notified as Significant Data Fiduciaries must appoint a resident Data Protection Officer, engage an independent data auditor (updated from 'audit' to 'data audit' in Section 10(2)(c)(ii) via S.O. 5458(E)), and conduct periodic Data Protection Impact Assessments (DPIA).",
         "explanation": "Applies conditionally to high-volume or high-risk entities designated by the Central Government based on data volume, sensitivity, and risk to sovereignty.",
         "applicability_conditions": ["designated_as_sdf"],
         "industry_conditions": ["hospitals", "large_diagnostic_chains", "fintech", "large_saas", "telecom"],

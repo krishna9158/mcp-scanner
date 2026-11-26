@@ -1,0 +1,54 @@
+{% extends "public_base.html" %}
+{% block title %}Vendor Security &amp; Privacy Intake — {{ info.org_name }}{% endblock %}
+{% block content %}
+<section class="ta-section" style="padding-top:44px;">
+  <div class="ta-container" style="max-width:680px;">
+    <div class="card">
+      <span class="badge badge-forest">Restricted Vendor Intake Link</span>
+      <h1 class="ta-h2" style="margin-top:10px;">Security &amp; Privacy Questionnaire</h1>
+      <p class="ta-muted">Requested by <strong>{{ info.org_name }}</strong> for vendor record <strong>{{ info.vendor.name }}</strong>. This link grants access strictly to this questionnaire—no customer workspace data is exposed.</p>
+      <form onsubmit="submitVendorIntake(event)" style="margin-top:20px;">
+        <div class="field"><label>Your Name &amp; Title</label><input id="vi-by" class="input" required placeholder="Security / Account Lead"></div>
+        <div class="field"><label>Primary Hosting / Data Storage Location</label><input id="vi-loc" class="input" required placeholder="e.g., AWS Mumbai (ap-south-1), India"></div>
+        <div class="field"><label><input id="vi-enc" type="checkbox"> Customer personal data is encrypted at rest and over HTTPS/TLS</label></div>
+        <div class="field"><label><input id="vi-acc" type="checkbox"> Role-based access controls restrict internal access</label></div>
+        <div class="field"><label><input id="vi-br" type="checkbox"> Committed to prompt personal data breach notification</label></div>
+        <div class="field"><label><input id="vi-dpa" type="checkbox"> Executed Data Processing Agreement (DPA) in place</label></div>
+        <div class="field"><label>Subprocessors &amp; Notes</label><textarea id="vi-notes" class="input" rows="3" placeholder="List sub-processors or attach certificate reference..."></textarea></div>
+        <button id="vi-btn" type="submit" class="btn btn-primary" style="width:100%;">Submit Questionnaire</button>
+      </form>
+      <div id="vi-out" style="margin-top:14px;font-size:13.5px;"></div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block extra_scripts %}
+<script>
+  const V_TOK = {{ token|tojson }};
+  async function submitVendorIntake(ev) {
+    ev.preventDefault();
+    const out = document.getElementById('vi-out');
+    const btn = document.getElementById('vi-btn');
+    btn.disabled = true;
+    try {
+      await TA.apiJson('/api/public/vendor-intake/' + encodeURIComponent(V_TOK), {
+        method: 'POST',
+        body: JSON.stringify({
+          submitted_by: document.getElementById('vi-by').value.trim(),
+          data_location: document.getElementById('vi-loc').value.trim(),
+          encryption_at_rest: document.getElementById('vi-enc').checked,
+          access_controls: document.getElementById('vi-acc').checked,
+          breach_notification_24h: document.getElementById('vi-br').checked,
+          dpa_signed_confirmed: document.getElementById('vi-dpa').checked,
+          notes: document.getElementById('vi-notes').value.trim(),
+        }),
+      });
+      out.innerHTML = '<div style="padding:12px;border-radius:9px;background:var(--emerald-soft);">Thank you. Questionnaire submitted securely for review by ' + TA.esc({{ info.org_name|tojson }}) + '.</div>';
+    } catch (e) {
+      out.innerHTML = '<span style="color:var(--rose);">' + TA.esc(e.message) + '</span>';
+    } finally {
+      btn.disabled = false;
+    }
+  }
+</script>
+{% endblock %}

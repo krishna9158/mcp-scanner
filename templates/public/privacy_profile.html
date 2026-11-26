@@ -1,0 +1,61 @@
+{% extends "public_base.html" %}
+{% block title %}Privacy Profile — {{ profile.org_name }}{% endblock %}
+{% block content %}
+<section class="ta-section" style="padding-top:44px;">
+  <div class="ta-container" style="max-width:920px;">
+    <div style="padding:14px 18px;border-radius:12px;background:var(--amber-soft);color:var(--amber);font-size:13.5px;font-weight:700;margin-bottom:24px;">
+      {{ profile.mandatory_disclaimer }}
+    </div>
+
+    <div class="card" style="margin-bottom:20px;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:14px;">
+        <div>
+          <span class="badge badge-emerald">Organisational Privacy Profile</span>
+          <h1 class="ta-h2" style="margin-top:8px;">{{ profile.org_name }}</h1>
+          {% if profile.last_reviewed_at %}
+          <div class="ta-muted">Last Reviewed by Organisation: <strong>{{ profile.last_reviewed_at }}</strong></div>
+          {% endif %}
+        </div>
+        {% if profile.portal_url %}
+        <a href="{{ profile.portal_url }}" class="btn btn-primary">Open Customer Privacy Portal</a>
+        {% endif %}
+      </div>
+
+      <div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--border);">
+        <strong>Privacy &amp; Grievance Contact:</strong> {{ profile.privacy_contact_name }} &mdash; <a href="mailto:{{ profile.privacy_contact_email }}">{{ profile.privacy_contact_email }}</a>
+      </div>
+    </div>
+
+    {% if profile.selected_practices %}
+    <div class="card" style="margin-bottom:20px;">
+      <h2 class="ta-h3">Organisation-Published Privacy Practices</h2>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;margin-top:10px;font-size:14px;color:var(--ink-soft);">
+        {% for p in profile.selected_practices %}
+        <li>&#10003; {{ p }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+    {% if profile.approved_notice %}
+    <div class="card" style="margin-bottom:20px;">
+      <h2 class="ta-h3">{{ profile.approved_notice.title }} ({{ profile.approved_notice.version }})</h2>
+      <pre style="white-space:pre-wrap;font-family:inherit;font-size:14px;color:var(--ink-soft);margin-top:10px;">{{ profile.approved_notice.content }}</pre>
+    </div>
+    {% endif %}
+
+    {% if profile.approved_documents %}
+    <div class="card">
+      <h2 class="ta-h3">Approved Public Policy Documents</h2>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;margin-top:10px;">
+        {% for d in profile.approved_documents %}
+        <li style="padding:10px 12px;border:1px solid var(--border);border-radius:9px;">
+          <strong>{{ d.title }}</strong> <span class="badge badge-neutral">{{ d.version }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

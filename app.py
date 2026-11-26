@@ -29,10 +29,16 @@ try:
 except ImportError:
     pass
 
-from flask import Flask, request, render_template_string, Response, jsonify, send_file, redirect
+from flask import Flask, request, render_template, render_template_string, Response, jsonify, send_file, redirect, abort
 
+import hashlib
+import hmac
+import secrets
 import security_utils
 import dpdp_reports
+import dpdp_commencement
+import dpdp_penalties
+import extraction_engine
 
 from badge import generate_badge_svg
 from badge_store import get_last_scan_result
@@ -138,31 +144,181 @@ def execute_mcp_scan(target, full_scan=False, auth_confirmed=True):
 # HTML TEMPLATES: LANDING PAGE & SAAS DASHBOARD
 # ===========================================================================
 
+APP_PAGE_META = {
+    "home": ("app/home.html", "Home Overview"),
+    "onboarding": ("app/onboarding.html", "Guided Onboarding"),
+    "discovery": ("app/discovery.html", "Discovery Centre"),
+    "data-inventory": ("app/data_inventory.html", "Business Data Inventory"),
+    "data-map": ("app/data_map.html", "Visual Data Map"),
+    "assessment": ("app/assessment.html", "Privacy Assessment"),
+    "action-plan": ("app/action_plan.html", "Action Plan"),
+    "vendors": ("app/vendors.html", "Vendors & Processors"),
+    "notices": ("app/notices.html", "Privacy Notices"),
+    "consent": ("app/consent.html", "Consent Records"),
+    "privacy-requests": ("app/privacy_requests.html", "Customer Privacy Requests"),
+    "retention": ("app/retention.html", "Retention & Deletion"),
+    "incidents": ("app/incidents.html", "Incident Response"),
+    "document-centre": ("app/document_centre.html", "Document Centre"),
+    "evidence": ("app/evidence.html", "Evidence Vault"),
+    "reports": ("app/reports.html", "Reports & Bundles"),
+    "privacy-assistant": ("app/privacy_assistant.html", "AI Privacy Assistant"),
+    "privacy-portal": ("app/privacy_portal.html", "Customer Privacy Portal"),
+    "privacy-profile": ("app/privacy_profile.html", "Shareable Privacy Profile"),
+    "integrations": ("app/integrations.html", "Integrations"),
+    "settings": ("app/settings.html", "Workspace Settings"),
+    "admin": ("app/admin.html", "Platform Admin Console"),
+}
+
+_PORTAL_CHALLENGE_SECRET = os.environ.get("TRUSTAUDIT_CHALLENGE_SECRET") or os.environ.get("SECRET_KEY") or "trustaudit-dev-portal-hmac-secret"
+
+
+def _make_portal_challenge():
+    import random
+    a = random.randint(2, 9)
+    b = random.randint(2, 9)
+    ts = str(int(time.time()))
+    ans = str(a + b)
+    sig = hmac.new(_PORTAL_CHALLENGE_SECRET.encode("utf-8"), f"{ts}:{ans}".encode("utf-8"), hashlib.sha256).hexdigest()[:24]
+    return f"{a} + {b}", f"{ts}.{sig}"
+
+
+def _verify_portal_challenge(token: str, answer: str) -> bool:
+    try:
+        ts_str, sig = str(token or "").split(".", 1)
+        ts_val = int(ts_str)
+        if abs(int(time.time()) - ts_val) > 3600:
+            return False
+        expected = hmac.new(_PORTAL_CHALLENGE_SECRET.encode("utf-8"), f"{ts_str}:{str(answer or '').strip()}".encode("utf-8"), hashlib.sha256).hexdigest()[:24]
+        return hmac.compare_digest(sig, expected)
+    except Exception:
+        return False
+
+
+def _render_app_page(page_key: str):
+    if page_key not in APP_PAGE_META:
+        abort(404)
+    org_id, user = get_current_tenant_and_user(require_auth=True)
+    if not org_id or not user:
+        return redirect(f"/login?next=/app/{page_key}")
+    if page_key == "admin" and not user.get("is_platform_admin"):
+        return Response("Forbidden: Platform administrator privileges required.", status=403, mimetype="text/plain")
+    tpl, title = APP_PAGE_META[page_key]
+    org_info = saas_store.get_organization(org_id)
+    org_slug = (org_info.get("slug") if org_info else None) or org_id
+    return render_template(
+        tpl,
+        active_page=page_key,
+        page_title=title,
+        org_info=org_info,
+        org_slug=org_slug,
+        current_user=user,
+        plans=saas_store.get_public_plans(),
+    )
+
+
+@app.route("/app/<page_key>", methods=["GET"])
+def app_workspace_route(page_key):
+    """Routed authenticated customer application workspace pages."""
+    return _render_app_page(page_key)
+
+
 @app.route("/dashboard", methods=["GET"])
 def dashboard_view():
-    """Renders the TrustAudit DPDP Compliance & Data Operations workspace shell."""
+    """Preserves /dashboard: serves authenticated Home workspace or Sign-In screen cleanly at 200 OK."""
     org_id, user = get_current_tenant_and_user(require_auth=True)
-    org_info = saas_store.get_organization(org_id) if org_id else None
-    team_members = saas_store.list_team_members(org_id) if org_id else []
-    return render_template_string(
-        DASHBOARD_HTML,
-        org_info=org_info,
-        team_members=team_members,
-        plans=saas_store.get_public_plans(),
-        current_user=user,
-    )
+    if org_id and user:
+        return _render_app_page("home")
+    return render_template("public/auth.html", mode="login", next_url="/app/home", selected_plan=""), 200
 
 
 @app.route("/tools", methods=["GET"])
 def tools_health_view():
-    """Archived tools view; redirects to DPDP dashboard."""
-    return redirect("/dashboard")
+    """Archived tools view; redirects cleanly."""
+    return redirect("/app/home")
 
 
 @app.route("/", methods=["GET", "POST"])
 def home_endpoint():
-    """Renders the Certinal-inspired DPDP Compliance Platform landing page."""
-    return render_template_string(DPDP_LANDING_HTML)
+    """Renders the redesigned TrustAudit public homepage."""
+    return render_template("public/home.html", plans=saas_store.get_public_plans(), active_nav="home")
+
+
+@app.route("/features", methods=["GET"])
+def public_features_view():
+    return render_template("public/features.html", active_nav="features")
+
+
+@app.route("/industries", methods=["GET"])
+def public_industries_view():
+    return render_template("public/industries.html", active_nav="industries")
+
+
+@app.route("/pricing", methods=["GET"])
+def public_pricing_view():
+    return render_template("public/pricing.html", plans=saas_store.get_public_plans(), active_nav="pricing")
+
+
+@app.route("/how-it-works", methods=["GET"])
+def public_how_it_works_view():
+    return render_template("public/how_it_works.html", active_nav="how_it_works")
+
+
+@app.route("/resources", methods=["GET"])
+def public_resources_view():
+    return render_template(
+        "public/resources.html",
+        active_nav="resources",
+        milestones=dpdp_commencement.COMMENCEMENT_MILESTONES,
+        penalties=list(dpdp_penalties.DPDP_STATUTORY_PENALTIES.values()),
+        factors=dpdp_penalties.get_section_33_factors(),
+        penalty_disclaimer=dpdp_penalties.STATUTORY_PENALTY_DISCLAIMER,
+    )
+
+
+@app.route("/about", methods=["GET"])
+def public_about_view():
+    return render_template("public/about.html", active_nav="about")
+
+
+@app.route("/login", methods=["GET"])
+def public_login_view():
+    return render_template("public/auth.html", mode="login", next_url=request.args.get("next", "/app/home"), selected_plan="")
+
+
+@app.route("/register", methods=["GET"])
+def public_register_view():
+    return render_template("public/auth.html", mode="register", next_url="/app/onboarding", selected_plan=request.args.get("plan", "free"))
+
+
+@app.route("/portal/<org_slug>", methods=["GET"])
+def public_customer_portal_view(org_slug):
+    org = saas_store.get_organization_by_slug(org_slug)
+    if not org:
+        abort(404)
+    portal = dpdp_store.get_portal_config(org["id"], default_name=org.get("name", "Business"), default_slug=org.get("slug", org["id"]))
+    if not portal.get("enabled", True):
+        abort(404)
+    prompt, tok = _make_portal_challenge()
+    return render_template("public/privacy_portal.html", portal=portal, org_slug=org_slug, challenge_prompt=prompt, challenge_token=tok)
+
+
+@app.route("/p/<org_slug>", methods=["GET"])
+def public_privacy_profile_view(org_slug):
+    org = saas_store.get_organization_by_slug(org_slug)
+    if not org:
+        abort(404)
+    profile = dpdp_store.get_public_privacy_profile(org["id"], org.get("slug") or org["id"])
+    if not profile:
+        abort(404)
+    return render_template("public/privacy_profile.html", profile=profile, org_slug=org_slug)
+
+
+@app.route("/vendor-intake/<token>", methods=["GET"])
+def public_vendor_intake_view(token):
+    info = dpdp_store.resolve_vendor_intake_token(token)
+    if not info:
+        abort(404)
+    return render_template("public/vendor_intake.html", info=info, token=token)
 
 
 @app.route("/scan", methods=["GET", "POST"])
@@ -1937,6 +2093,7 @@ def api_dpdp_home_summary():
         "is_demo": bool(org.get("is_demo")),
         "user": user,
         "organization": org,
+        "organisation": org,
         "profile": profile,
         "setup_progress": setup,
         "attention_tasks": attention,
@@ -1944,14 +2101,18 @@ def api_dpdp_home_summary():
         "counts": {
             "inventory_count": len(inventory),
             "vendor_count": len(vendors),
+            "vendors_count": len(vendors),
             "notice_count": len(notices),
             "consent_count": len(consents),
             "request_count": len(requests_list),
+            "rights_requests_count": len(requests_list),
             "open_requests_count": sum(1 for r in requests_list if r.get("status") not in ("COMPLETED", "REJECTED")),
             "retention_count": len(retention),
             "incident_count": len(incidents),
             "evidence_count": len(evidence),
+            "evidence_awaiting_review_count": sum(1 for e in evidence if e.get("status") in ("Uploaded", "Pending review")),
             "scan_count": len(scans),
+            "website_scans_count": len(scans),
         },
         "latest_scan": scans[0] if scans else None,
         "encryption_status": security_utils.encryption_status_summary(),
@@ -2043,7 +2204,7 @@ def api_dpdp_inventory():
         )
         return jsonify({"status": "success", "entry": entry}), 201
     items = dpdp_store.get_data_inventory(org_id)
-    return jsonify({"status": "success", "items": items, "count": len(items)}), 200
+    return jsonify({"status": "success", "items": items, "inventory": items, "count": len(items)}), 200
 
 
 @app.route("/api/dpdp/inventory/<entry_id>", methods=["PUT", "DELETE"])
@@ -2136,7 +2297,7 @@ def api_dpdp_notices():
     if err:
         return err
     notices = dpdp_store.get_privacy_notices(org_id)
-    return jsonify({"status": "success", "items": notices}), 200
+    return jsonify({"status": "success", "items": notices, "notices": notices}), 200
 
 
 @app.route("/api/dpdp/notices/generate", methods=["POST"])
@@ -2189,7 +2350,7 @@ def api_dpdp_consent():
         records = [r for r in records if q in (str(r.get("data_principal_ref", "")) + " " + str(r.get("purpose", "")) + " " + str(r.get("data_category", ""))).lower()]
     if st:
         records = [r for r in records if str(r.get("status", "")).upper() == st]
-    return jsonify({"status": "success", "items": records}), 200
+    return jsonify({"status": "success", "items": records, "consent_records": records}), 200
 
 
 @app.route("/api/dpdp/withdrawals", methods=["GET", "POST"])
@@ -2203,7 +2364,7 @@ def api_dpdp_withdrawals():
         wth = dpdp_store.submit_consent_withdrawal(org_id, data)
         return jsonify({"status": "success", "withdrawal": wth}), 201
     items = dpdp_store.get_withdrawal_requests(org_id)
-    return jsonify({"status": "success", "items": items}), 200
+    return jsonify({"status": "success", "items": items, "withdrawals": items}), 200
 
 
 @app.route("/api/dpdp/rights", methods=["GET", "POST"])
@@ -2217,7 +2378,7 @@ def api_dpdp_rights():
         req_item = dpdp_store.submit_rights_request(org_id, data)
         return jsonify({"status": "success", "request": req_item}), 201
     items = dpdp_store.get_rights_requests(org_id)
-    return jsonify({"status": "success", "items": items}), 200
+    return jsonify({"status": "success", "items": items, "requests": items}), 200
 
 
 @app.route("/api/dpdp/rights/<request_id>/status", methods=["POST", "PUT"])
@@ -2256,8 +2417,12 @@ def api_dpdp_vendors():
             resource_id=vendor.get("id", ""), actor_user_id=actor.get("id", ""), actor_email=actor.get("email", ""),
         )
         return jsonify({"status": "success", "vendor": vendor}), 201
-    vendors = dpdp_store.get_vendors(org_id)
-    return jsonify({"status": "success", "items": vendors}), 200
+    vendors = []
+    for v in dpdp_store.get_vendors(org_id):
+        v_copy = dict(v)
+        v_copy.update(dpdp_store.compute_vendor_risk_basis(v))
+        vendors.append(v_copy)
+    return jsonify({"status": "success", "items": vendors, "vendors": vendors}), 200
 
 
 @app.route("/api/dpdp/vendors/<vendor_id>", methods=["PUT", "DELETE"])
@@ -2293,7 +2458,7 @@ def api_dpdp_retention():
         sched = dpdp_store.add_retention_schedule(org_id, data)
         return jsonify({"status": "success", "schedule": sched}), 201
     schedules = dpdp_store.get_retention_schedules(org_id)
-    return jsonify({"status": "success", "items": schedules}), 200
+    return jsonify({"status": "success", "items": schedules, "schedules": schedules}), 200
 
 
 @app.route("/api/dpdp/retention/<schedule_id>", methods=["PUT", "DELETE"])
@@ -2325,7 +2490,7 @@ def api_dpdp_erasure_tasks():
         task = dpdp_store.create_erasure_task(org_id, data)
         return jsonify({"status": "success", "task": task}), 201
     tasks = dpdp_store.get_erasure_tasks(org_id)
-    return jsonify({"status": "success", "items": tasks}), 200
+    return jsonify({"status": "success", "items": tasks, "erasure_tasks": tasks}), 200
 
 
 @app.route("/api/dpdp/erasure-tasks/<task_id>", methods=["POST", "PUT"])
@@ -2353,7 +2518,22 @@ def api_dpdp_data_flow():
         return err
     import data_discovery
     flow_map = data_discovery.generate_data_flow_map(org_id)
-    return jsonify({"status": "success", "data_flow": flow_map}), 200
+    inventory = dpdp_store.get_data_inventory(org_id)
+    flows = []
+    for item in inventory:
+        if "Rejected" in str(item.get("confirmation_status", "")):
+            continue
+        flows.append({
+            "id": item.get("id"),
+            "source": item.get("source") or item.get("collection_method") or "Website / Form",
+            "category": item.get("category") or "Personal Data",
+            "system": item.get("storage_system") or "Internal Database",
+            "vendor": item.get("external_recipients") or item.get("processor") or "Internal Only",
+            "purpose": item.get("purpose") or "Service Delivery",
+            "retention": item.get("retention_period") or "Review Schedule",
+            "status": item.get("confirmation_status") or "Confirmed by business",
+        })
+    return jsonify({"status": "success", "data_flow": flow_map, "flows": flows}), 200
 
 
 @app.route("/api/dpdp/discovery/inspect", methods=["POST"])
@@ -2439,7 +2619,7 @@ def api_dpdp_breaches():
         )
         return jsonify({"status": "success", "incident": incident}), 201
     incidents = dpdp_store.get_breach_incidents(org_id)
-    return jsonify({"status": "success", "items": incidents}), 200
+    return jsonify({"status": "success", "items": incidents, "incidents": incidents}), 200
 
 
 @app.route("/api/dpdp/breaches/<incident_id>", methods=["PUT", "POST"])
@@ -2481,10 +2661,11 @@ def api_dpdp_assistant():
         return err
     data = request.get_json(silent=True) or {}
     query = data.get("query", "").strip()
+    conv_id = data.get("conversation_id")
     if not query:
         return jsonify({"status": "error", "message": "Query required"}), 400
     import ai_dpdp_assistant
-    res = ai_dpdp_assistant.query_ai_dpdp_assistant(query, org_id=org_id)
+    res = ai_dpdp_assistant.query_ai_dpdp_assistant(query, org_id=org_id, conversation_id=conv_id)
     code = 429 if "limit reached" in str(res.get("message", "")).lower() else 200
     return jsonify(res), code
 
@@ -2499,9 +2680,11 @@ def api_dpdp_assistant_history():
     if request.method == "DELETE":
         ai_dpdp_assistant.clear_assistant_history(org_id)
         return jsonify({"status": "success"}), 200
+    conv_id = request.args.get("conversation_id")
     return jsonify({
         "status": "success",
-        "history": ai_dpdp_assistant.get_assistant_history(org_id),
+        "history": ai_dpdp_assistant.get_assistant_history(org_id, conversation_id=conv_id),
+        "conversations": ai_dpdp_assistant.list_assistant_conversations(org_id),
         "starter_questions": ai_dpdp_assistant.STARTER_QUESTIONS,
     }), 200
 
@@ -2609,7 +2792,7 @@ def api_dpdp_start_website_scan():
         return jsonify({"status": "error", "message": f"Hourly website scan limit reached. Retry in {retry}s."}), 429
 
     data = request.get_json(silent=True) or {}
-    target_url = data.get("website_url", "").strip()
+    target_url = (data.get("website_url") or data.get("target_url") or "").strip()
     business_name = data.get("business_name", "").strip() or "Organisation"
     industry = data.get("industry", "healthcare").strip()
     country = data.get("country", "India").strip()
@@ -2665,6 +2848,22 @@ def api_dpdp_start_website_scan():
     )
     scan_report = scanner.run_scan()
     dpdp_store.save_website_scan(org_id, scan_report)
+    # Also surface observed scripts/forms/policies into Discovery Centre suggestions for human review
+    disc_items = []
+    for f in scan_report.get("findings", [])[:20]:
+        disc_items.append({
+            "extracted_type": "tracker" if "script" in str(f.get("category", "")).lower() or "cookie" in str(f.get("title", "")).lower() else "website_form",
+            "value": f.get("title", "Observed Website Privacy Item"),
+            "category": "Website and application information",
+            "fields": f.get("observed_items", []) or [f.get("description", "")[:100]],
+            "purpose": f.get("remediation", "Review public form/notice alignment"),
+            "storage_location": target_url,
+            "source_document": target_url,
+            "confidence": f.get("confidence", "MEDIUM"),
+            "status": "Needs review",
+        })
+    if disc_items:
+        dpdp_store.save_discovery_suggestions(org_id, disc_items)
     security_utils.append_audit_log(
         org_id=org_id, action="scanner.website_scanned", resource_type="website_scan",
         resource_id=scan_report.get("scan_id", ""), actor_user_id=actor.get("id", ""), actor_email=actor.get("email", ""),
@@ -2727,12 +2926,8 @@ def api_dpdp_scanner_convert_task():
 
 @app.route("/demo", methods=["GET"])
 def demo_view():
-    """Renders the 60-second interactive guided DPDP compliance assessment demo."""
-    try:
-        from demo_template import DEMO_HTML
-        return render_template_string(DEMO_HTML), 200
-    except Exception:
-        return redirect("/dashboard")
+    """Renders the public Demo Sandbox showcasing TrustAudit safely without creating a tenant."""
+    return render_template("public/demo.html", active_nav="demo"), 200
 
 
 @app.route("/api/dpdp/assessment/organisational", methods=["GET", "POST"])
@@ -3108,7 +3303,24 @@ def api_admin_system_metrics():
     if err:
         return err
     metrics = dpdp_store.get_admin_system_metrics(user.get("email"))
-    return jsonify({"status": "success", "metrics": metrics}), 200
+    summary = saas_store.list_admin_oversight_summary()
+    return jsonify({"status": "success", "metrics": metrics, "platform_summary": summary}), 200
+
+
+@app.route("/api/admin/plans", methods=["GET", "POST"])
+def api_admin_plans():
+    """Allows verified platform administrators to configure plans & quotas."""
+    _org_id, _user, err = require_platform_admin()
+    if err:
+        return err
+    if request.method == "POST":
+        data = request.get_json(silent=True) or {}
+        key = data.get("plan_key") or data.get("key") or ""
+        ok, msg, plan = saas_store.update_plan_config(key, data)
+        if not ok:
+            return jsonify({"status": "error", "message": msg}), 400
+        return jsonify({"status": "success", "message": msg, "plan": plan}), 200
+    return jsonify({"status": "success", "plans": saas_store.get_public_plans()}), 200
 
 
 # ==============================================================================
@@ -3116,10 +3328,10 @@ def api_admin_system_metrics():
 # ==============================================================================
 
 @app.route("/trust", methods=["GET"])
+@app.route("/security", methods=["GET"])
 def trust_portal_view():
-    """Renders public Security & Trust portal showcasing verified controls."""
-    from trust_centre_template import TRUST_CENTRE_HTML_TEMPLATE
-    return render_template_string(TRUST_CENTRE_HTML_TEMPLATE), 200
+    """Renders public Security & Trust Centre showcasing verified controls."""
+    return render_template("public/security.html", active_nav="security"), 200
 
 
 _PUBLIC_TRUST_CACHE = {"data": None, "cached_at": 0}
@@ -3190,6 +3402,411 @@ def api_public_trust_pack_download():
             mimetype="text/markdown",
             headers={"Content-Disposition": 'attachment; filename="TrustAudit_Enterprise_Trust_Pack.md"'}
         )
+
+
+# ==============================================================================
+# GTM PLATFORM APIS: ONBOARDING ACTIVITIES, EXTRACTION, TOPICS, TASKS, PORTALS
+# ==============================================================================
+
+@app.route("/api/public/walkthrough", methods=["POST"])
+def api_public_walkthrough():
+    """Rate-limited endpoint for booking product walkthroughs."""
+    client_ip = request.remote_addr or "unknown"
+    allowed, retry = security_utils.rate_limiter.allow(f"walkthrough:{client_ip}", max_requests=12, window_seconds=3600)
+    if not allowed:
+        return jsonify({"status": "error", "message": f"Too many walkthrough requests. Retry in {retry}s."}), 429
+    data = request.get_json(silent=True) or {}
+    name = (data.get("name") or "").strip()
+    email = (data.get("email") or "").strip()
+    if not name or not email or "@" not in email:
+        return jsonify({"status": "error", "message": "Valid name and work email are required."}), 400
+    rec = saas_store.record_walkthrough_request(
+        name=name,
+        email=email,
+        company=data.get("company", ""),
+        industry=data.get("industry", ""),
+        team_size=data.get("team_size", ""),
+        notes=data.get("notes", ""),
+    )
+    return jsonify({"status": "success", "data": rec}), 201
+
+
+@app.route("/api/public/portal/<org_slug>/submit", methods=["POST"])
+def api_public_portal_submit(org_slug):
+    """Receives public customer privacy requests with HMAC anti-spam verification and strict non-enumeration."""
+    client_ip = request.remote_addr or "unknown"
+    allowed, retry = security_utils.rate_limiter.allow(f"portal_submit:{org_slug}:{client_ip}", max_requests=15, window_seconds=3600)
+    if not allowed:
+        return jsonify({"status": "error", "message": f"Too many submissions. Retry in {retry}s."}), 429
+
+    org = saas_store.get_organization_by_slug(org_slug)
+    if not org:
+        return jsonify({"status": "error", "message": "Organisation portal not found."}), 404
+    cfg = dpdp_store.get_portal_config(org["id"], default_name=org.get("name", "Business"), default_slug=org_slug)
+    if not cfg.get("enabled", True):
+        return jsonify({"status": "error", "message": "Portal is disabled by the organisation."}), 403
+
+    data = request.get_json(silent=True) or {}
+    if cfg.get("require_human_verification", True):
+        if not _verify_portal_challenge(data.get("challenge_token", ""), data.get("challenge_answer", "")):
+            return jsonify({"status": "error", "message": "Human verification check failed or expired. Refresh the portal and retry."}), 400
+
+    name = (data.get("name") or "").strip()
+    email = (data.get("email") or "").strip()
+    desc = (data.get("description") or "").strip()
+    if not name or not email or not desc:
+        return jsonify({"status": "error", "message": "Name, contact email, and request description are required."}), 400
+
+    res = dpdp_store.submit_portal_request_public(org["id"], data)
+    return jsonify({"status": "success", **res}), 201
+
+
+@app.route("/api/public/portal/<org_slug>/status", methods=["POST"])
+def api_public_portal_status(org_slug):
+    """Checks request status matching BOTH Reference ID and Verification Code without leaking account existence."""
+    client_ip = request.remote_addr or "unknown"
+    allowed, retry = security_utils.rate_limiter.allow(f"portal_status:{client_ip}", max_requests=30, window_seconds=900)
+    if not allowed:
+        return jsonify({"status": "error", "message": f"Rate limit exceeded. Retry in {retry}s."}), 429
+    org = saas_store.get_organization_by_slug(org_slug)
+    if not org:
+        return jsonify({"status": "error", "message": "Portal not found."}), 404
+    data = request.get_json(silent=True) or {}
+    match = dpdp_store.lookup_portal_request_public(org["id"], data.get("reference_id", ""), data.get("verification_code", ""))
+    return jsonify({"status": "success", "match": match}), 200
+
+
+@app.route("/api/public/privacy-profile/<org_slug>", methods=["GET"])
+def api_public_privacy_profile(org_slug):
+    """Returns strictly whitelisted approved public Privacy Profile metadata."""
+    org = saas_store.get_organization_by_slug(org_slug)
+    if not org:
+        return jsonify({"status": "error", "message": "Privacy profile not found."}), 404
+    prof = dpdp_store.get_public_privacy_profile(org["id"], org.get("slug") or org["id"])
+    if not prof:
+        return jsonify({"status": "error", "message": "Privacy profile is private or unpublished."}), 404
+    return jsonify({"status": "success", "profile": prof}), 200
+
+
+@app.route("/api/public/vendor-intake/<token>", methods=["POST"])
+def api_public_vendor_intake(token):
+    """Accepts restricted vendor questionnaire submission scoped solely to one vendor record."""
+    info = dpdp_store.resolve_vendor_intake_token(token)
+    if not info:
+        return jsonify({"status": "error", "message": "Invalid or expired vendor questionnaire token."}), 404
+    data = request.get_json(silent=True) or {}
+    rec = dpdp_store.save_vendor_questionnaire(info["org_id"], info["vendor"]["id"], data)
+    return jsonify({"status": "success", "questionnaire": rec}), 200
+
+
+@app.route("/api/dpdp/onboarding/activities", methods=["GET", "POST"])
+def api_dpdp_onboarding_activities():
+    """Returns industry activity cards or saves selected drafts marked 'SUGGESTED — NEEDS CONFIRMATION'."""
+    org_id, actor, err = require_authenticated_tenant()
+    if err:
+        return err
+    if request.method == "POST":
+        data = request.get_json(silent=True) or {}
+        industry = data.get("industry") or "saas"
+        selected_keys = data.get("selected_keys") or []
+        created = dpdp_store.prepopulate_industry_activities(org_id, industry, selected_keys)
+        security_utils.append_audit_log(
+            org_id=org_id, action="onboarding.activities_suggested", resource_type="data_inventory",
+            actor_user_id=actor.get("id", ""), actor_email=actor.get("email", ""),
+            details={"industry": industry, "created_count": len(created)},
+        )
+        return jsonify({"status": "success", "created_count": len(created), "items": created}), 201
+    industry = request.args.get("industry") or "saas"
+    return jsonify({"status": "success", "activities": dpdp_store.get_industry_activity_suggestions(industry)}), 200
+
+
+@app.route("/api/dpdp/inventory/duplicates", methods=["GET"])
+def api_dpdp_inventory_duplicates():
+    org_id, _, err = require_authenticated_tenant()
+    if err:
+        return err
+    dups = dpdp_store.find_inventory_duplicates(org_id)
+    return jsonify({"status": "success", "duplicates": dups}), 200
+
+
+@app.route("/api/dpdp/inventory/bulk-review", methods=["POST"])
+def api_dpdp_inventory_bulk_review():
+    org_id, actor, err = require_authenticated_tenant()
+    if err:
+        return err
+    data = request.get_json(silent=True) or {}
+    cnt = dpdp_store.bulk_confirm_inventory(org_id, data.get("entry_ids", []), status=data.get("status", "Confirmed by business"))
+    security_utils.append_audit_log(
+        org_id=org_id, action="inventory.bulk_confirmed", resource_type="data_inventory",
+        actor_user_id=actor.get("id", ""), actor_email=actor.get("email", ""), details={"count": cnt},
+    )
+    return jsonify({"status": "success", "updated_count": cnt}), 200
+
+
+@app.route("/api/dpdp/extraction/upload", methods=["POST"])
+def api_dpdp_extraction_upload():
+    """Extracts candidate DPDP records from uploaded CSV, XLSX, DOCX, PDF, TXT, MD, or JSON files."""
+    org_id, actor, err = require_authenticated_tenant()
+    if err:
+        return err
+    up_file = request.files.get("file")
+    if not up_file or not up_file.filename:
+        return jsonify({"status": "error", "message": "File required for extraction."}), 400
+    raw_bytes = up_file.read()
+    ok, err_msg, meta = security_utils.validate_uploaded_file(up_file.filename, raw_bytes)
+    if not ok:
+        return jsonify({"status": "error", "error": err_msg, "message": err_msg}), 400
+
+    res = extraction_engine.extract_from_uploaded_file(meta["safe_filename"], raw_bytes)
+    if res.get("suggestions"):
+        dpdp_store.save_discovery_suggestions(org_id, res["suggestions"])
+    security_utils.append_audit_log(
+        org_id=org_id, action="discovery.file_extracted", resource_type="discovery",
+        actor_user_id=actor.get("id", ""), actor_email=actor.get("email", ""),
+        details={"filename": meta["safe_filename"], "suggestions": res.get("suggestions_count", 0)},
+    )
+    return jsonify({"status": "success", "extraction": res}), 200
+
+
+@app.route("/api/dpdp/extraction/suggestions", methods=["GET"])
+def api_dpdp_extraction_suggestions():
+    org_id, _, err = require_authenticated_tenant()
+    if err:
+        return err
+    st = request.args.get("status")
+    items = dpdp_store.get_discovery_suggestions(org_id, status_filter=st)
+    return jsonify({"status": "success", "suggestions": items}), 200
+
+
+@app.route("/api/dpdp/extraction/suggestions/<sug_id>/review", methods=["POST"])
+def api_dpdp_extraction_review(sug_id):
+    org_id, actor, err = require_authenticated_tenant()
+    if err:
+        return err
+    data = request.get_json(silent=True) or {}
+    out = dpdp_store.review_discovery_suggestion(
+        org_id=org_id,
+        suggestion_id=sug_id,
+        action=data.get("action", "accept"),
+        edited_fields=data.get("edited_fields"),
+    )
+    if not out:
+        return jsonify({"status": "error", "message": "Suggestion not found."}), 404
+    security_utils.append_audit_log(
+        org_id=org_id, action="discovery.suggestion_reviewed", resource_type="discovery",
+        resource_id=sug_id, actor_user_id=actor.get("id", ""), actor_email=actor.get("email", ""),
+        details={"action": data.get("action", "accept")},
+    )
+    return jsonify({"status": "success", **out}), 200
+
+
+@app.route("/api/dpdp/assessment/topics", methods=["GET", "POST"])
+def api_dpdp_assessment_topics():
+    """10-topic plain-language guided privacy assessment with 5 verification states."""
+    org_id, actor, err = require_authenticated_tenant()
+    if err:
+        return err
+    if request.method == "POST":
+        data = request.get_json(silent=True) or {}
+        topic_id = data.get("topic_id", "")
+        if not topic_id:
+            return jsonify({"status": "error", "message": "topic_id is required."}), 400
+        updated = dpdp_store.save_assessment_topic_answer(
+            org_id, topic_id, data.get("answer", "Not sure"),
+            notes=data.get("notes", ""), evidence_id=data.get("evidence_id", ""),
+        )
+        security_utils.append_audit_log(
+            org_id=org_id, action="assessment.topic_updated", resource_type="assessment",
+            resource_id=topic_id, actor_user_id=actor.get("id", ""), actor_email=actor.get("email", ""),
+        )
+        return jsonify({"status": "success", **updated}), 200
+    return jsonify({"status": "success", **dpdp_store.get_assessment_topics(org_id)}), 200
+
+
+@app.route("/api/dpdp/tasks", methods=["GET", "POST"])
+def api_dpdp_tasks():
+    org_id, actor, err = require_authenticated_tenant()
+    if err:
+        return err
+    if request.method == "POST":
+        data = request.get_json(silent=True) or {}
+        data["actor"] = actor.get("email") or actor.get("name") or "Owner"
+        task = dpdp_store.create_remediation_task(org_id, data)
+        return jsonify({"status": "success", "task": task}), 201
+    tasks = dpdp_store.get_remediation_tasks(org_id)
+    return jsonify({"status": "success", "tasks": tasks}), 200
+
+
+@app.route("/api/dpdp/vendors/directory", methods=["GET"])
+def api_dpdp_vendors_directory():
+    org_id, _, err = require_authenticated_tenant()
+    if err:
+        return err
+    return jsonify({"status": "success", "directory": extraction_engine.KNOWN_VENDOR_DIRECTORY}), 200
+
+
+@app.route("/api/dpdp/vendors/<vendor_id>/intake-link", methods=["POST"])
+def api_dpdp_vendor_intake_link(vendor_id):
+    org_id, _, err = require_authenticated_tenant()
+    if err:
+        return err
+    tok = dpdp_store.create_vendor_intake_token(org_id, vendor_id)
+    if not tok:
+        return jsonify({"status": "error", "message": "Vendor not found."}), 404
+    return jsonify({"status": "success", "token": tok, "intake_path": f"/vendor-intake/{tok}"}), 200
+
+
+@app.route("/api/dpdp/documents", methods=["GET"])
+def api_dpdp_documents_list():
+    org_id, _, err = require_authenticated_tenant()
+    if err:
+        return err
+    return jsonify({"status": "success", "documents": dpdp_store.get_generated_documents(org_id)}), 200
+
+
+@app.route("/api/dpdp/documents/<doc_id>", methods=["GET", "PUT"])
+def api_dpdp_document_detail(doc_id):
+    org_id, actor, err = require_authenticated_tenant()
+    if err:
+        return err
+    if request.method == "PUT":
+        data = request.get_json(silent=True) or {}
+        updated = dpdp_store.update_generated_document(
+            org_id, doc_id, content=data.get("content"), status=data.get("status"),
+            title=data.get("title"), actor=actor.get("email") or actor.get("name") or "Owner",
+        )
+        if not updated:
+            return jsonify({"status": "error", "message": "Document not found."}), 404
+        return jsonify({"status": "success", "document": updated}), 200
+    doc = dpdp_store.get_generated_document(org_id, doc_id)
+    if not doc:
+        return jsonify({"status": "error", "message": "Document not found."}), 404
+    return jsonify({"status": "success", "document": doc}), 200
+
+
+@app.route("/api/dpdp/documents/<doc_id>/export", methods=["GET"])
+def api_dpdp_document_export(doc_id):
+    org_id, _, err = require_authenticated_tenant()
+    if err:
+        return err
+    doc = dpdp_store.get_generated_document(org_id, doc_id)
+    if not doc:
+        return jsonify({"status": "error", "message": "Document not found."}), 404
+    fmt = (request.args.get("format") or "docx").lower()
+    safe_base = security_utils.sanitize_filename(doc.get("doc_type") or doc_id)
+    if fmt == "docx":
+        raw = extraction_engine.generate_docx_bytes(doc.get("title", "TrustAudit Draft"), doc.get("content", ""), doc.get("company_name", "Organisation"))
+        return Response(raw, mimetype="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                        headers={"Content-Disposition": f'attachment; filename="{safe_base}_{doc_id}.docx"', "X-Content-Type-Options": "nosniff"})
+    return Response(doc.get("content", ""), mimetype="text/plain; charset=utf-8",
+                    headers={"Content-Disposition": f'attachment; filename="{safe_base}_{doc_id}.txt"', "X-Content-Type-Options": "nosniff"})
+
+
+@app.route("/api/dpdp/documents/<doc_id>/save-evidence", methods=["POST"])
+def api_dpdp_document_save_evidence(doc_id):
+    org_id, actor, err = require_authenticated_tenant()
+    if err:
+        return err
+    ev = dpdp_store.save_generated_doc_to_evidence(org_id, doc_id, actor=actor.get("email") or "Owner")
+    if not ev:
+        return jsonify({"status": "error", "message": "Document not found."}), 404
+    return jsonify({"status": "success", "evidence": ev}), 201
+
+
+@app.route("/api/dpdp/notices/<notice_id>/export", methods=["GET"])
+def api_dpdp_notice_export(notice_id):
+    org_id, _, err = require_authenticated_tenant()
+    if err:
+        return err
+    notice = next((n for n in dpdp_store.get_privacy_notices(org_id) if n.get("id") == notice_id), None)
+    if not notice:
+        return jsonify({"status": "error", "message": "Privacy Notice not found."}), 404
+    fmt = (request.args.get("format") or "docx").lower()
+    if fmt == "docx":
+        raw = extraction_engine.generate_docx_bytes(notice.get("title", "Privacy Notice"), notice.get("content", ""))
+        return Response(raw, mimetype="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                        headers={"Content-Disposition": f'attachment; filename="Privacy_Notice_{notice_id}.docx"', "X-Content-Type-Options": "nosniff"})
+    return Response(notice.get("content", ""), mimetype="text/plain; charset=utf-8",
+                    headers={"Content-Disposition": f'attachment; filename="Privacy_Notice_{notice_id}.txt"', "X-Content-Type-Options": "nosniff"})
+
+
+@app.route("/api/dpdp/consent/import", methods=["POST"])
+def api_dpdp_consent_import():
+    org_id, _, err = require_authenticated_tenant()
+    if err:
+        return err
+    data = request.get_json(silent=True) or {}
+    cnt = dpdp_store.import_consent_csv(org_id, data.get("csv_content", ""))
+    return jsonify({"status": "success", "imported_count": cnt}), 200
+
+
+@app.route("/api/dpdp/portal/config", methods=["GET", "POST"])
+def api_dpdp_portal_config():
+    org_id, _, err = require_authenticated_tenant()
+    if err:
+        return err
+    org = saas_store.get_organization(org_id) or {}
+    if request.method == "POST":
+        data = request.get_json(silent=True) or {}
+        cfg = dpdp_store.save_portal_config(org_id, data)
+        return jsonify({"status": "success", "config": cfg}), 200
+    cfg = dpdp_store.get_portal_config(org_id, default_name=org.get("name", "Business"), default_slug=org.get("slug", org_id))
+    return jsonify({"status": "success", "config": cfg}), 200
+
+
+@app.route("/api/dpdp/privacy-profile", methods=["GET", "POST"])
+def api_dpdp_privacy_profile():
+    org_id, _, err = require_authenticated_tenant()
+    if err:
+        return err
+    org = saas_store.get_organization(org_id) or {}
+    if request.method == "POST":
+        data = request.get_json(silent=True) or {}
+        cfg = dpdp_store.save_privacy_profile_config(org_id, data)
+        return jsonify({"status": "success", "config": cfg}), 200
+    cfg = dpdp_store.get_privacy_profile_config(org_id, default_name=org.get("name", "Business"))
+    return jsonify({"status": "success", "config": cfg}), 200
+
+
+@app.route("/api/dpdp/search", methods=["GET"])
+def api_dpdp_search():
+    org_id, _, err = require_authenticated_tenant()
+    if err:
+        return err
+    q = request.args.get("q", "")
+    results = dpdp_store.search_org_workspace(org_id, q)
+    return jsonify({"status": "success", "results": results}), 200
+
+
+@app.route("/api/dpdp/backup/export", methods=["GET"])
+def api_dpdp_backup_export():
+    """Exports tenant-isolated backup JSON snapshot cleanly for the authenticated organisation."""
+    org_id, actor, err = require_authenticated_tenant()
+    if err:
+        return err
+    payload = {
+        "exported_at": security_utils.utc_now_iso(),
+        "exported_by": actor.get("email", ""),
+        "organization": saas_store.get_organization(org_id),
+        "onboarding_profile": dpdp_store.get_onboarding_profile(org_id),
+        "data_inventory": dpdp_store.get_data_inventory(org_id),
+        "vendors": dpdp_store.get_vendors(org_id),
+        "privacy_notices": dpdp_store.get_privacy_notices(org_id),
+        "consent_records": dpdp_store.get_consent_records(org_id),
+        "rights_requests": dpdp_store.get_rights_requests(org_id),
+        "retention_schedules": dpdp_store.get_retention_schedules(org_id),
+        "breach_incidents": dpdp_store.get_breach_incidents(org_id),
+        "assessment_topics": dpdp_store.get_assessment_topics(org_id),
+        "tasks": dpdp_store.get_remediation_tasks(org_id),
+        "portal_config": dpdp_store.get_portal_config(org_id),
+        "privacy_profile_config": dpdp_store.get_privacy_profile_config(org_id),
+    }
+    raw = json.dumps(payload, indent=2, ensure_ascii=False, default=str)
+    return Response(
+        raw,
+        mimetype="application/json; charset=utf-8",
+        headers={"Content-Disposition": f'attachment; filename="TrustAudit_Backup_{org_id}.json"', "X-Content-Type-Options": "nosniff"},
+    )
 
 
 if __name__ == "__main__":

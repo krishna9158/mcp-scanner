@@ -1,0 +1,308 @@
+{% extends "app_base.html" %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Guided Business Setup (Zero Blank-Page Typing)</h1>
+    <p class="page-sub">Save progress anytime, skip optional steps, and confirm only what applies. Extracted items always stay drafts until you confirm them.</p>
+  </div>
+  <button type="button" class="btn btn-outline btn-sm" onclick="saveProgress(false)">Save Progress &amp; Continue Later</button>
+</div>
+
+<div class="stepper" id="onb-stepper">
+  <button type="button" class="step-pill active" onclick="goStep(1)">1. Your Business</button>
+  <button type="button" class="step-pill" onclick="goStep(2)">2. What You Do</button>
+  <button type="button" class="step-pill" onclick="goStep(3)">3. Website Check</button>
+  <button type="button" class="step-pill" onclick="goStep(4)">4. Import Docs</button>
+  <button type="button" class="step-pill" onclick="goStep(5)">5. External Services</button>
+  <button type="button" class="step-pill" onclick="goStep(6)">6. Review &amp; Finish</button>
+</div>
+
+<!-- STEP 1 -->
+<div id="step-1" class="card">
+  <h2 class="ta-h3">Step 1 &mdash; Your Business</h2>
+  <p class="ta-muted" style="margin-bottom:16px;">Choose an industry card to tailor suggested customer activities automatically.</p>
+  <div class="grid-3" id="ind-cards" style="margin-bottom:18px;">
+    {% for key, title, sub in [
+      ("healthcare", "Healthcare / Clinic / Hospital", "Appointments, lab reports, billing & insurance"),
+      ("saas", "SaaS &amp; Technology", "Signups, auth, billing, product analytics"),
+      ("ecommerce", "E-Commerce &amp; Retail", "Orders, delivery addresses, payments, pixels"),
+      ("education", "Education &amp; EdTech", "Student records, guardians, attendance, fees"),
+      ("professional_services", "Professional Services", "Client matters, contracts, GST billing, staff")
+    ] %}
+    <div class="card card-hover ind-card" data-ind="{{ key }}" style="cursor:pointer;padding:16px;" onclick="pickIndustry('{{ key }}', this)">
+      <strong>{{ title|safe }}</strong>
+      <div class="ta-muted" style="font-size:12.5px;margin-top:4px;">{{ sub }}</div>
+    </div>
+    {% endfor %}
+  </div>
+  <div class="grid-2">
+    <div class="field"><label>Business Name</label><input id="ob-name" class="input" placeholder="e.g., Kaveri Care Clinic"></div>
+    <div class="field"><label>Public Website (Optional)</label><input id="ob-web" type="url" class="input" placeholder="https://clinic.in"></div>
+    <div class="field"><label>Business Size</label><select id="ob-size" class="input"><option>1-10 employees</option><option>11-50 employees</option><option>51-250 employees</option><option>250+ employees</option></select></div>
+    <div class="field"><label>Privacy / Grievance Email</label><input id="ob-email" type="email" class="input" placeholder="privacy@clinic.in"></div>
+  </div>
+  <input id="ob-ind" type="hidden" value="healthcare">
+  <div style="display:flex;justify-content:space-between;margin-top:12px;">
+    <button type="button" class="btn btn-outline" onclick="saveProgress(false)">Save Draft</button>
+    <button type="button" class="btn btn-primary" onclick="saveProgress(true, 2)">Continue to Step 2 &rarr;</button>
+  </div>
+</div>
+
+<!-- STEP 2 -->
+<div id="step-2" class="card" style="display:none;">
+  <h2 class="ta-h3">Step 2 &mdash; What Does Your Business Do?</h2>
+  <p class="ta-muted" style="margin-bottom:14px;">Select activities that apply. Selected items create draft Customer Data Inventory entries marked <code>SUGGESTED — NEEDS CONFIRMATION</code>.</p>
+  <div id="act-grid" class="grid-3" style="margin-bottom:18px;"></div>
+  <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+    <button type="button" class="btn btn-outline" onclick="goStep(1)">&larr; Back</button>
+    <div style="display:flex;gap:8px;">
+      <button type="button" class="btn btn-ghost" onclick="goStep(3)">Skip Optional Step</button>
+      <button type="button" class="btn btn-primary" onclick="confirmActivities()">Generate Draft Inventory &amp; Next &rarr;</button>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 3 -->
+<div id="step-3" class="card" style="display:none;">
+  <h2 class="ta-h3">Step 3 &mdash; Discover Public Website Information</h2>
+  <p class="ta-muted" style="margin-bottom:14px;">Inspect public privacy notice links, enquiry forms, cookies, and third-party scripts cleanly with SSRF protection.</p>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;">
+    <input id="ob-scan-url" type="url" class="input" style="flex:1;" placeholder="https://yourcompany.in">
+    <button type="button" class="btn btn-primary" onclick="runOnboardingScan()">Inspect Website</button>
+  </div>
+  <div id="ob-scan-out"></div>
+  <div style="display:flex;justify-content:space-between;margin-top:18px;">
+    <button type="button" class="btn btn-outline" onclick="goStep(2)">&larr; Back</button>
+    <button type="button" class="btn btn-primary" onclick="goStep(4)">Next: Import Docs &rarr;</button>
+  </div>
+</div>
+
+<!-- STEP 4 -->
+<div id="step-4" class="card" style="display:none;">
+  <h2 class="ta-h3">Step 4 &mdash; Import Existing Information (CSV, XLSX, DOCX, PDF)</h2>
+  <p class="ta-muted" style="margin-bottom:14px;">Upload existing privacy policies or spreadsheets. TrustAudit extracts candidate fields and vendor names as unverified drafts for your review.</p>
+  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px;">
+    <input id="ob-extract-file" type="file" accept=".csv,.xlsx,.docx,.pdf,.txt,.md,.json" class="input" style="max-width:420px;">
+    <button type="button" class="btn btn-primary" onclick="runOnboardingExtract()">Extract Draft Suggestions</button>
+  </div>
+  <div id="ob-extract-out"></div>
+  <div style="display:flex;justify-content:space-between;margin-top:18px;">
+    <button type="button" class="btn btn-outline" onclick="goStep(3)">&larr; Back</button>
+    <button type="button" class="btn btn-primary" onclick="goStep(5)">Next: External Services &rarr;</button>
+  </div>
+</div>
+
+<!-- STEP 5 -->
+<div id="step-5" class="card" style="display:none;">
+  <h2 class="ta-h3">Step 5 &mdash; Add External Services &amp; Software Tools</h2>
+  <p class="ta-muted" style="margin-bottom:12px;">Search by service or category. Clicking <strong>Confirm Vendor</strong> saves that provider into your Vendor Register.</p>
+  <input id="vnd-search" class="input" placeholder="Search Razorpay, AWS, Zoho CRM, WhatsApp, Google Analytics, Freshdesk..." oninput="renderServiceDirectory()" style="margin-bottom:14px;">
+  <div id="svc-dir-grid" class="grid-3"></div>
+  <div style="display:flex;justify-content:space-between;margin-top:18px;">
+    <button type="button" class="btn btn-outline" onclick="goStep(4)">&larr; Back</button>
+    <button type="button" class="btn btn-primary" onclick="goStep(6)">Next: Review &amp; Launch &rarr;</button>
+  </div>
+</div>
+
+<!-- STEP 6 -->
+<div id="step-6" class="card" style="display:none;">
+  <h2 class="ta-h3">Step 6 &mdash; Review Your Initial Privacy Workspace</h2>
+  <p class="ta-muted" style="margin-bottom:16px;">Finish guided onboarding to review suggested items, generate initial action items, and jump straight to your Home Command Centre.</p>
+  <div id="ob-review-summary" class="grid-3" style="margin-bottom:18px;"></div>
+  <div style="display:flex;justify-content:space-between;">
+    <button type="button" class="btn btn-outline" onclick="goStep(5)">&larr; Back</button>
+    <button type="button" class="btn btn-emerald" onclick="finishOnboarding()">Complete Setup &amp; Open Home &rarr;</button>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  let DIRECTORY = [];
+  let SELECTED_ACTIVITIES = new Set();
+
+  function goStep(n) {
+    for (let i = 1; i <= 6; i++) {
+      document.getElementById('step-' + i).style.display = (i === n) ? 'block' : 'none';
+    }
+    document.querySelectorAll('#onb-stepper .step-pill').forEach(function (el, idx) {
+      el.classList.remove('active');
+      if (idx + 1 < n) el.classList.add('done');
+      if (idx + 1 === n) el.classList.add('active');
+    });
+    if (n === 2) loadActivitySuggestions();
+    if (n === 5 && !DIRECTORY.length) loadServiceDirectory();
+    if (n === 6) loadReviewSummary();
+  }
+
+  function pickIndustry(key, el) {
+    document.getElementById('ob-ind').value = key;
+    document.querySelectorAll('.ind-card').forEach(function (c) { c.style.borderColor = 'var(--border)'; });
+    if (el) el.style.borderColor = 'var(--emerald)';
+  }
+
+  async function initOnboarding() {
+    try {
+      const d = await TA.apiJson('/api/dpdp/onboarding');
+      const p = d.profile || {};
+      if (p.company_name) document.getElementById('ob-name').value = p.company_name;
+      if (p.website_url) {
+        document.getElementById('ob-web').value = p.website_url;
+        document.getElementById('ob-scan-url').value = p.website_url;
+      }
+      if (p.contact_email) document.getElementById('ob-email').value = p.contact_email;
+      if (p.industry) {
+        document.getElementById('ob-ind').value = p.industry;
+        const c = document.querySelector('.ind-card[data-ind="' + p.industry + '"]');
+        if (c) c.style.borderColor = 'var(--emerald)';
+      }
+    } catch (e) {}
+  }
+
+  async function saveProgress(advance, nextStep) {
+    try {
+      const urlVal = document.getElementById('ob-web').value.trim();
+      if (urlVal) document.getElementById('ob-scan-url').value = urlVal;
+      await TA.apiJson('/api/dpdp/onboarding', {
+        method: 'POST',
+        body: JSON.stringify({
+          company_name: document.getElementById('ob-name').value.trim(),
+          website_url: urlVal,
+          industry: document.getElementById('ob-ind').value,
+          business_size: document.getElementById('ob-size').value,
+          contact_email: document.getElementById('ob-email').value.trim(),
+          apply_industry_template: false,
+        }),
+      });
+      TA.toast('Progress saved');
+      if (advance && nextStep) goStep(nextStep);
+    } catch (e) { TA.toast(e.message, 'err'); }
+  }
+
+  async function loadActivitySuggestions() {
+    const ind = document.getElementById('ob-ind').value;
+    const d = await TA.apiJson('/api/dpdp/onboarding/activities?industry=' + encodeURIComponent(ind));
+    const list = d.activities || [];
+    document.getElementById('act-grid').innerHTML = list.map(function (a) {
+      const active = SELECTED_ACTIVITIES.has(a.key);
+      return '<div class="card card-hover" style="cursor:pointer;padding:14px;' + (active ? 'border-color:var(--emerald);background:var(--emerald-soft);' : '') + '" onclick="toggleActivity(\'' + TA.esc(a.key) + '\', this)">' +
+        '<strong>' + TA.esc(a.label) + '</strong>' +
+        '<div class="ta-muted" style="font-size:12px;margin-top:4px;">' + TA.esc(a.category) + ' &bull; ' + TA.esc((a.fields || []).slice(0, 3).join(', ')) + '</div></div>';
+    }).join('');
+  }
+
+  function toggleActivity(key, el) {
+    if (SELECTED_ACTIVITIES.has(key)) {
+      SELECTED_ACTIVITIES.delete(key);
+      el.style.borderColor = 'var(--border)';
+      el.style.background = 'var(--surface)';
+    } else {
+      SELECTED_ACTIVITIES.add(key);
+      el.style.borderColor = 'var(--emerald)';
+      el.style.background = 'var(--emerald-soft)';
+    }
+  }
+
+  async function confirmActivities() {
+    try {
+      const res = await TA.apiJson('/api/dpdp/onboarding/activities', {
+        method: 'POST',
+        body: JSON.stringify({
+          industry: document.getElementById('ob-ind').value,
+          selected_keys: Array.from(SELECTED_ACTIVITIES),
+        }),
+      });
+      TA.toast((res.created_count || 0) + ' draft record(s) marked SUGGESTED — NEEDS CONFIRMATION');
+      goStep(3);
+    } catch (e) { TA.toast(e.message, 'err'); }
+  }
+
+  async function runOnboardingScan() {
+    const u = document.getElementById('ob-scan-url').value.trim();
+    const out = document.getElementById('ob-scan-out');
+    if (!u) return TA.toast('Enter website URL', 'err');
+    out.innerHTML = '<div class="skeleton" style="height:56px;"></div>';
+    try {
+      const res = await TA.apiJson('/api/dpdp/scanner/start', { method: 'POST', body: JSON.stringify({ website_url: u, target_url: u, authorization_confirmed: true }) });
+      const sc = res.scan || {};
+      const findings = sc.findings || [];
+      out.innerHTML = '<div style="padding:14px;border-radius:10px;border:1px solid var(--border);"><strong>Scan saved (' + findings.length + ' item(s) observed)</strong>' +
+        '<div class="ta-muted" style="margin-top:6px;">Open Discovery Centre to confirm or reject website findings cleanly.</div></div>';
+      TA.toast('Website discovery complete');
+    } catch (e) { out.innerHTML = '<span style="color:var(--rose);">' + TA.esc(e.message) + '</span>'; }
+  }
+
+  async function runOnboardingExtract() {
+    const f = document.getElementById('ob-extract-file').files[0];
+    const out = document.getElementById('ob-extract-out');
+    if (!f) return TA.toast('Select a CSV, XLSX, DOCX, or PDF file', 'err');
+    const fd = new FormData();
+    fd.append('file', f);
+    out.innerHTML = '<div class="skeleton" style="height:56px;"></div>';
+    try {
+      const res = await TA.apiJson('/api/dpdp/extraction/upload', { method: 'POST', body: fd });
+      const ex = res.extraction || {};
+      out.innerHTML = '<div style="padding:14px;border-radius:10px;border:1px solid var(--border);">' +
+        '<strong>Extracted ' + (ex.suggestions_count || 0) + ' unverified draft(s) from ' + TA.esc(ex.filename || f.name) + '</strong>' +
+        (ex.warnings && ex.warnings.length ? '<div style="color:var(--amber);font-size:13px;margin-top:4px;">' + TA.esc(ex.warnings.join(' ')) + '</div>' : '') +
+        '<div style="margin-top:8px;"><a href="/app/discovery" class="btn btn-outline btn-sm">Review &amp; Confirm Drafts in Discovery &rarr;</a></div></div>';
+      TA.toast('Document extraction complete');
+    } catch (e) { out.innerHTML = '<span style="color:var(--rose);">' + TA.esc(e.message) + '</span>'; }
+  }
+
+  async function loadServiceDirectory() {
+    const res = await TA.apiJson('/api/dpdp/vendors/directory');
+    DIRECTORY = res.directory || [];
+    renderServiceDirectory();
+  }
+
+  function renderServiceDirectory() {
+    const q = (document.getElementById('vnd-search').value || '').toLowerCase();
+    const list = DIRECTORY.filter(function (v) { return (v.name + ' ' + v.category + ' ' + v.role).toLowerCase().indexOf(q) !== -1; });
+    document.getElementById('svc-dir-grid').innerHTML = list.slice(0, 12).map(function (v) {
+      return '<div class="card" style="padding:14px;"><span class="badge badge-neutral">' + TA.esc(v.category) + '</span>' +
+        '<div style="font-weight:800;margin:8px 0 4px;">' + TA.esc(v.name) + '</div>' +
+        '<div class="ta-muted" style="font-size:12px;margin-bottom:10px;">' + TA.esc(v.role) + '</div>' +
+        '<button type="button" class="btn btn-outline btn-sm" onclick=\'confirmService(' + JSON.stringify(v) + ', this)\'>Confirm Vendor</button></div>';
+    }).join('');
+  }
+
+  async function confirmService(v, btn) {
+    try {
+      await TA.apiJson('/api/dpdp/vendors', {
+        method: 'POST',
+        body: JSON.stringify({ name: v.name, category: v.category, service: v.role, data_location: v.data_location, dpa_status: 'PENDING_REVIEW' }),
+      });
+      btn.textContent = 'Added';
+      btn.disabled = true;
+      TA.toast(v.name + ' added to Vendors');
+    } catch (e) { TA.toast(e.message, 'err'); }
+  }
+
+  async function loadReviewSummary() {
+    const d = await TA.apiJson('/api/dpdp/home-summary');
+    const c = d.counts || {};
+    document.getElementById('ob-review-summary').innerHTML =
+      '<div class="card"><div class="ta-muted">Data Inventory Drafts/Confirmed</div><div style="font-size:26px;font-weight:850;">' + (c.inventory_count || 0) + '</div></div>' +
+      '<div class="card"><div class="ta-muted">Confirmed Vendors</div><div style="font-size:26px;font-weight:850;">' + (c.vendors_count || 0) + '</div></div>' +
+      '<div class="card"><div class="ta-muted">Website Scans</div><div style="font-size:26px;font-weight:850;">' + (c.website_scans_count || 0) + '</div></div>';
+  }
+
+  async function finishOnboarding() {
+    try {
+      await TA.apiJson('/api/dpdp/onboarding', {
+        method: 'POST',
+        body: JSON.stringify({
+          company_name: document.getElementById('ob-name').value.trim(),
+          website_url: document.getElementById('ob-web').value.trim(),
+          industry: document.getElementById('ob-ind').value,
+          onboarding_completed: true,
+        }),
+      });
+      window.location.href = '/app/home';
+    } catch (e) { TA.toast(e.message, 'err'); }
+  }
+
+  initOnboarding();
+</script>
+{% endblock %}

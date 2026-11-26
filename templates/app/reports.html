@@ -1,0 +1,42 @@
+{% extends "app_base.html" %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Reports &amp; Evidence Bundles</h1>
+    <p class="page-sub">Every download is generated live from your verified database records and physical Evidence Vault files—never fabricated compliance scores.</p>
+  </div>
+</div>
+
+<div class="grid-2">
+  <div class="card card-hover">
+    <span class="badge badge-emerald">PDF 1.4 Report</span>
+    <h2 class="ta-h3" style="margin-top:10px;">DPDP Readiness Executive PDF</h2>
+    <p class="ta-muted" style="margin-bottom:14px;">Multi-page PDF containing your business profile, customer data summary, vendor DPA ledger, topic assessment, and Evidence Vault inventory.</p>
+    <a href="/api/dpdp/reports/pdf" class="btn btn-primary btn-sm">Download Readiness PDF &rarr;</a>
+  </div>
+
+  <div class="card card-hover">
+    <span class="badge badge-forest">ZIP Evidence Bundle</span>
+    <h2 class="ta-h3" style="margin-top:10px;">Complete Audit Evidence ZIP</h2>
+    <p class="ta-muted" style="margin-bottom:14px;">Bundles manifest metadata, saved Privacy Notices, CSV inventory exports, and all uploaded physical files from your Evidence Vault.</p>
+    <a href="/api/dpdp/reports/bundle" class="btn btn-primary btn-sm">Download ZIP Bundle &rarr;</a>
+  </div>
+
+  <div class="card card-hover">
+    <span class="badge badge-neutral">HTML &amp; CSV</span>
+    <h2 class="ta-h3" style="margin-top:10px;">Printable HTML &amp; CSV Registers</h2>
+    <p class="ta-muted" style="margin-bottom:14px;">Shareable browser printout or spreadsheet export for internal leadership and external counsel review.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <a href="/api/dpdp/reports/html" target="_blank" class="btn btn-outline btn-sm">Open Printable HTML</a>
+      <a href="/api/dpdp/reports/csv" class="btn btn-outline btn-sm">Download Readiness CSV</a>
+    </div>
+  </div>
+
+  <div class="card card-hover">
+    <span class="badge badge-neutral">Data Portability</span>
+    <h2 class="ta-h3" style="margin-top:10px;">Tenant Snapshot Backup</h2>
+    <p class="ta-muted" style="margin-bottom:14px;">Download a structured JSON backup of your organisation's workspace state for disaster recovery testing.</p>
+    <a href="/api/dpdp/backup/export" class="btn btn-outline btn-sm">Download Workspace Snapshot</a>
+  </div>
+</div>
+{% endblock %}

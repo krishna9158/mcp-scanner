@@ -76,6 +76,11 @@ def _empty_store() -> Dict[str, Any]:
         "evidence_vault": {},
         "organisational_assessments": {},
         "generated_documents": {},
+        "discovery_suggestions": {},
+        "portal_configs": {},
+        "privacy_profiles": {},
+        "vendor_questionnaires": {},
+        "vendor_intake_tokens": {},
     }
 
 
@@ -148,15 +153,20 @@ def add_inventory_entry(org_id: str, entry_data: Dict[str, Any]) -> Dict[str, An
         store["data_inventories"][org_id] = []
         
     now = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    raw_fields = entry_data.get("fields") or entry_data.get("data_fields") or []
+    if isinstance(raw_fields, str):
+        raw_fields = [f.strip() for f in raw_fields.split(",") if f.strip()]
+    conf_status = entry_data.get("confirmation_status") or "Confirmed by business"
     entry = {
         "id": f"inv-{uuid.uuid4().hex[:8]}",
-        "category": entry_data.get("category", "General Personal Data"),
-        "principal_type": entry_data.get("principal_type", "Customers / Users"),
+        "category": entry_data.get("category", "Contact information"),
+        "fields": raw_fields if isinstance(raw_fields, list) else [],
+        "principal_type": entry_data.get("principal_type") or entry_data.get("data_subject", "Customers / Users"),
         "source": entry_data.get("source", "Direct Registration"),
         "purpose": entry_data.get("purpose", "Service Delivery"),
-        "legal_basis": entry_data.get("legal_basis", "DPDP Section 6 (Consent)"),
+        "legal_basis": entry_data.get("legal_basis") or entry_data.get("lawful_basis", "DPDP Section 6 (Consent)"),
         "collection_method": entry_data.get("collection_method", "Web Form / Registration"),
-        "storage_system": entry_data.get("storage_system", "Primary Database"),
+        "storage_system": entry_data.get("storage_system") or entry_data.get("storage_location", "Primary Database"),
         "department": entry_data.get("department", "Operations"),
         "owner": entry_data.get("owner", "Data Protection Lead"),
         "external_recipients": entry_data.get("external_recipients", "None"),
@@ -164,6 +174,12 @@ def add_inventory_entry(org_id: str, entry_data: Dict[str, Any]) -> Dict[str, An
         "retention_period": entry_data.get("retention_period", "3 Years"),
         "deletion_method": entry_data.get("deletion_method", "Database Purge"),
         "international_transfer": entry_data.get("international_transfer", "None (India hosted)"),
+        "confirmation_status": conf_status,
+        "evidence_id": entry_data.get("evidence_id", ""),
+        "version": 1,
+        "version_history": [
+            {"version": 1, "timestamp": now, "status": conf_status, "note": "Record created"}
+        ],
         "created_at": now,
         "updated_at": now
     }
@@ -177,7 +193,18 @@ def update_inventory_entry(org_id: str, entry_id: str, entry_data: Dict[str, Any
     for idx, item in enumerate(items):
         if item.get("id") == entry_id:
             now = datetime.datetime.now(datetime.timezone.utc).isoformat()
-            updated = {**item, **entry_data, "updated_at": now}
+            patch = dict(entry_data)
+            if "fields" in patch and isinstance(patch["fields"], str):
+                patch["fields"] = [f.strip() for f in patch["fields"].split(",") if f.strip()]
+            new_ver = int(item.get("version", 1)) + 1
+            hist = list(item.get("version_history", []))
+            hist.append({
+                "version": new_ver,
+                "timestamp": now,
+                "status": patch.get("confirmation_status", item.get("confirmation_status", "Confirmed by business")),
+                "note": patch.get("edit_note", "Updated record details"),
+            })
+            updated = {**item, **patch, "version": new_ver, "version_history": hist[-20:], "updated_at": now}
             store["data_inventories"][org_id][idx] = updated
             _save_dpdp_store(store)
             return updated
@@ -1996,8 +2023,8 @@ Billing Invoices & GST Vouchers      | 8 Years from financial year-end   | Secti
 Staff Employment & Payroll Records   | 7 Years post exit / separation    | Employees' Provident Funds & ESI Acts
 Website Server Connection Logs       | 180 Days                          | CERT-In Cyber Security Directions, 2022
 
-3. AUTOMATED DELETION PROCEDURES
-Upon expiry of the prescribed retention period, digital databases must execute automated cryptographic scrubbing or secure record deletion with generated SHA-256 disposal certificates.
+3. RETENTION REVIEW & DELETION WORKFLOW
+Upon expiry of the prescribed retention period, responsible owners should identify affected systems, verify no Indian law mandates continued retention, perform record deletion, and upload deletion confirmation evidence.
 """
 
     elif doc_type == "breach_procedure":
@@ -2407,6 +2434,707 @@ def get_recent_activity(org_id: str, limit: int = 12) -> List[Dict[str, Any]]:
     return events[:limit]
 
 
+# ==============================================================================
+# GTM PLATFORM EXTENSIONS: DISCOVERY, ASSESSMENT TOPICS, KANBAN TASKS, PORTALS
+# ==============================================================================
+
+INDUSTRY_SUGGESTED_ACTIVITIES: Dict[str, List[Dict[str, Any]]] = {
+    "healthcare": [
+        {"key": "patient_appointments", "label": "Patient appointments", "category": "Health information", "fields": ["Patient Name", "Phone Number", "Appointment Date", "Doctor Requested"], "purpose": "Scheduling consultations and sending appointment reminders", "storage_system": "Clinic Booking Software / Register"},
+        {"key": "contact_details", "label": "Contact details", "category": "Contact information", "fields": ["Full Name", "Mobile Number", "Email", "Emergency Contact"], "purpose": "Patient communication and follow-up care", "storage_system": "Reception CRM / Clinic Database"},
+        {"key": "diagnostic_reports", "label": "Diagnostic reports", "category": "Health information", "fields": ["Patient ID", "Test Results", "Sample Type", "Clinical Notes"], "purpose": "Laboratory testing and medical report delivery", "storage_system": "Lab Management System"},
+        {"key": "billing", "label": "Billing", "category": "Billing information", "fields": ["Patient Name", "Invoice Number", "Payment Mode", "GST/Receipt Details"], "purpose": "Medical billing and statutory tax records", "storage_system": "Billing Software"},
+        {"key": "insurance_information", "label": "Insurance information", "category": "Billing information", "fields": ["Policyholder Name", "Policy Number", "Insurer/TPA Name"], "purpose": "Cashless or reimbursement insurance claim processing", "storage_system": "Insurance Desk Portal"},
+        {"key": "website_enquiries", "label": "Website enquiries", "category": "Website and application information", "fields": ["Visitor Name", "Phone", "Message", "Session Analytics"], "purpose": "Answering patient enquiries from public website", "storage_system": "Website Form & Email"},
+        {"key": "doctor_referrals", "label": "Doctor referrals", "category": "Health information", "fields": ["Referring Doctor Name", "Patient Name", "Clinical Summary"], "purpose": "Coordinating specialist referrals", "storage_system": "Clinical Records System"},
+    ],
+    "saas": [
+        {"key": "registration", "label": "Registration", "category": "Customer accounts", "fields": ["Full Name", "Work Email", "Organisation Name"], "purpose": "Creating customer workspace accounts", "storage_system": "Application Database"},
+        {"key": "user_profiles", "label": "User profiles", "category": "Customer accounts", "fields": ["Name", "Email", "Job Role", "Preferences"], "purpose": "Managing team member roles and workspace access", "storage_system": "Application Database"},
+        {"key": "subscription_billing", "label": "Subscription billing", "category": "Billing information", "fields": ["Company Billing Name", "GSTIN", "Payment Method Token", "Invoices"], "purpose": "SaaS subscription invoicing and payment collection", "storage_system": "Payment Gateway & Billing Software"},
+        {"key": "authentication", "label": "Authentication", "category": "Customer accounts", "fields": ["Email", "Hashed Password", "MFA Secret", "Login Logs"], "purpose": "Securing user logins and preventing unauthorised access", "storage_system": "Auth Store"},
+        {"key": "product_analytics", "label": "Product analytics", "category": "Website and application information", "fields": ["User ID", "Page/Feature Events", "IP Address", "Browser"], "purpose": "Improving product reliability and feature usability", "storage_system": "Analytics Platform"},
+        {"key": "customer_support", "label": "Customer support", "category": "Contact information", "fields": ["Name", "Email", "Support Ticket History"], "purpose": "Resolving customer technical issues", "storage_system": "Helpdesk Software"},
+        {"key": "marketing_communications", "label": "Marketing communications", "category": "Contact information", "fields": ["Name", "Business Email", "Opt-in Status"], "purpose": "Product updates and webinar announcements", "storage_system": "Email Marketing Platform"},
+    ],
+    "ecommerce": [
+        {"key": "customer_accounts", "label": "Customer accounts", "category": "Customer accounts", "fields": ["Name", "Email", "Mobile Number", "Saved Passwords"], "purpose": "Order tracking and customer login profiles", "storage_system": "Storefront Database"},
+        {"key": "order_history", "label": "Order history", "category": "Customer accounts", "fields": ["Order ID", "Purchased Items", "Order Timestamps"], "purpose": "Order fulfilment, warranty, and support", "storage_system": "Order Management System"},
+        {"key": "delivery_information", "label": "Delivery information", "category": "Contact information", "fields": ["Recipient Name", "Street Address", "PIN Code", "Delivery Phone"], "purpose": "Shipping parcels via logistics partners", "storage_system": "Shipping & Courier Partners"},
+        {"key": "payment_processing", "label": "Payment processing", "category": "Billing information", "fields": ["Transaction ID", "UPI/Card Token", "Amount"], "purpose": "Checkout payment collection and refunds", "storage_system": "Payment Gateway"},
+        {"key": "returns", "label": "Returns", "category": "Billing information", "fields": ["Order ID", "Pickup Address", "Refund Account / UPI"], "purpose": "Processing product exchanges and refunds", "storage_system": "Returns Desk & Finance"},
+        {"key": "marketing_campaigns", "label": "Marketing campaigns", "category": "Website and application information", "fields": ["Email", "Phone", "Ad Pixels", "Cart Activity"], "purpose": "Promotional messaging with opt-out support", "storage_system": "Marketing & Analytics Tools"},
+    ],
+    "education": [
+        {"key": "student_registration", "label": "Student registration", "category": "Student information", "fields": ["Student Name", "Date of Birth", "Admission ID", "Grade/Course"], "purpose": "Student enrolment and academic records", "storage_system": "School / EdTech MIS"},
+        {"key": "parent_contact", "label": "Parent contact information", "category": "Contact information", "fields": ["Parent/Guardian Name", "Mobile Number", "Email", "Residential Address"], "purpose": "Guardian notifications and Section 9 consent", "storage_system": "MIS & Messaging Tool"},
+        {"key": "attendance", "label": "Attendance", "category": "Student information", "fields": ["Student ID", "Daily Attendance Status", "Timetable"], "purpose": "Daily attendance monitoring and safety alerts", "storage_system": "Attendance Register / App"},
+        {"key": "fee_records", "label": "Fee records", "category": "Billing information", "fields": ["Student ID", "Payer Name", "Fee Receipt", "Payment Reference"], "purpose": "Tuition fee collection and accounting", "storage_system": "Fee Billing System"},
+        {"key": "examination_records", "label": "Examination records", "category": "Student information", "fields": ["Student ID", "Roll Number", "Assessment Marks", "Report Cards"], "purpose": "Academic grading and certificate issuance", "storage_system": "Examination Database"},
+    ],
+    "professional_services": [
+        {"key": "client_information", "label": "Client information", "category": "Contact information", "fields": ["Client Contact Name", "Work Email", "Phone", "Organisation"], "purpose": "Client onboarding and advisory engagements", "storage_system": "Practice CRM"},
+        {"key": "contracts", "label": "Contracts", "category": "Other personal information", "fields": ["Signatory Name", "Authorised Signatory Details", "Signed SOW/NDA"], "purpose": "Executing client agreements and compliance audits", "storage_system": "Document Storage"},
+        {"key": "billing", "label": "Billing", "category": "Billing information", "fields": ["Billing Contact", "Invoice", "PAN/GST Details", "Bank Reference"], "purpose": "Fee invoicing and tax compliance", "storage_system": "Accounting Software"},
+        {"key": "communication_records", "label": "Communication records", "category": "Contact information", "fields": ["Email Threads", "Meeting Notes", "Call Logs"], "purpose": "Client advisory records and project follow-up", "storage_system": "Business Email / Cloud Drive"},
+        {"key": "employee_data", "label": "Employee data", "category": "Employee information", "fields": ["Employee Name", "PAN", "Bank Account", "PF/ESI Details"], "purpose": "Employment administration under Section 7(i)", "storage_system": "HR & Payroll Software"},
+    ],
+}
+
+
+def get_industry_activity_suggestions(industry: str) -> List[Dict[str, Any]]:
+    low = (industry or "saas").strip().lower()
+    if any(k in low for k in ("health", "clinic", "hospital", "diag", "medical")):
+        return list(INDUSTRY_SUGGESTED_ACTIVITIES["healthcare"])
+    if any(k in low for k in ("ecom", "retail", "shop", "store", "d2c")):
+        return list(INDUSTRY_SUGGESTED_ACTIVITIES["ecommerce"])
+    if any(k in low for k in ("edu", "school", "college", "edtech", "academy")):
+        return list(INDUSTRY_SUGGESTED_ACTIVITIES["education"])
+    if any(k in low for k in ("prof", "legal", "ca", "consult", "agency")):
+        return list(INDUSTRY_SUGGESTED_ACTIVITIES["professional_services"])
+    return list(INDUSTRY_SUGGESTED_ACTIVITIES["saas"])
+
+
+def prepopulate_industry_activities(org_id: str, industry: str, selected_keys: List[str]) -> List[Dict[str, Any]]:
+    """Generates draft inventory items marked 'SUGGESTED — NEEDS CONFIRMATION' from selected activity cards."""
+    catalog = get_industry_activity_suggestions(industry)
+    selected_set = {str(k).strip().lower() for k in (selected_keys or []) if str(k).strip()}
+    existing = get_data_inventory(org_id)
+    existing_labels = {str(e.get("source", "")).lower() for e in existing}
+    created: List[Dict[str, Any]] = []
+    for item in catalog:
+        if selected_set and item["key"].lower() not in selected_set and item["label"].lower() not in selected_set:
+            continue
+        if item["label"].lower() in existing_labels:
+            continue
+        rec = add_inventory_entry(org_id, {
+            "category": item["category"],
+            "fields": item["fields"],
+            "principal_type": "Patients & Customers" if "health" in industry.lower() else ("Students & Guardians" if "edu" in industry.lower() else "Customers / Users"),
+            "source": item["label"],
+            "purpose": item["purpose"],
+            "legal_basis": "Review needed (Consent Sec 6 or Legitimate Use Sec 7)",
+            "storage_system": item["storage_system"],
+            "confirmation_status": "SUGGESTED — NEEDS CONFIRMATION",
+        })
+        created.append(rec)
+    return created
+
+
+def find_inventory_duplicates(org_id: str) -> List[Dict[str, Any]]:
+    items = get_data_inventory(org_id)
+    groups: Dict[Tuple[str, str], List[Dict[str, Any]]] = {}
+    for it in items:
+        key = (
+            str(it.get("category", "")).strip().lower(),
+            str(it.get("purpose", "")).strip().lower(),
+        )
+        groups.setdefault(key, []).append(it)
+    duplicates = []
+    for (cat, purp), grp in groups.items():
+        if len(grp) > 1:
+            duplicates.append({
+                "category": grp[0].get("category"),
+                "purpose": grp[0].get("purpose"),
+                "count": len(grp),
+                "entry_ids": [g["id"] for g in grp],
+            })
+    return duplicates
+
+
+def bulk_confirm_inventory(org_id: str, entry_ids: List[str], status: str = "Confirmed by business") -> int:
+    clean_status = status if status in ("Confirmed by business", "SUGGESTED — NEEDS CONFIRMATION", "Needs review", "Rejected") else "Confirmed by business"
+    target_set = set(entry_ids or [])
+    store = _load_dpdp_store()
+    items = store.get("data_inventories", {}).get(org_id, [])
+    now = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    changed = 0
+    for it in items:
+        if not target_set or it.get("id") in target_set:
+            it["confirmation_status"] = clean_status
+            it["updated_at"] = now
+            new_ver = int(it.get("version", 1)) + 1
+            it["version"] = new_ver
+            it.setdefault("version_history", []).append({
+                "version": new_ver, "timestamp": now, "status": clean_status, "note": f"Bulk status set to {clean_status}"
+            })
+            changed += 1
+    if changed:
+        _save_dpdp_store(store)
+    return changed
+
+
+def save_discovery_suggestions(org_id: str, suggestions: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    store = _load_dpdp_store()
+    bucket = store.setdefault("discovery_suggestions", {}).setdefault(org_id, [])
+    existing_sigs = {(s.get("extracted_type"), str(s.get("value", "")).lower()) for s in bucket}
+    added = []
+    for sug in suggestions or []:
+        sig = (sug.get("extracted_type"), str(sug.get("value", "")).lower())
+        if sig in existing_sigs:
+            continue
+        item = {
+            "id": sug.get("id") or f"ext-{uuid.uuid4().hex[:8]}",
+            "extracted_type": sug.get("extracted_type", "data_activity"),
+            "value": sanitize_plain_text(sug.get("value", ""), 200),
+            "category": sug.get("category", "Other personal information"),
+            "fields": sug.get("fields", []),
+            "purpose": sug.get("purpose", ""),
+            "storage_location": sug.get("storage_location", "To be confirmed"),
+            "retention_period": sug.get("retention_period", ""),
+            "source_document": sug.get("source_document", "Manual / Discovery"),
+            "confidence": sug.get("confidence", "MEDIUM"),
+            "status": sug.get("status", "Needs review"),
+            "verified": False,
+            "created_at": sug.get("created_at") or datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        }
+        bucket.insert(0, item)
+        added.append(item)
+        existing_sigs.add(sig)
+    store["discovery_suggestions"][org_id] = bucket[:400]
+    _save_dpdp_store(store)
+    return added
+
+
+def get_discovery_suggestions(org_id: str, status_filter: Optional[str] = None) -> List[Dict[str, Any]]:
+    store = _load_dpdp_store()
+    items = list(store.get("discovery_suggestions", {}).get(org_id, []))
+    if status_filter:
+        low = status_filter.strip().lower()
+        items = [i for i in items if str(i.get("status", "")).lower() == low]
+    return items
+
+
+def review_discovery_suggestion(
+    org_id: str,
+    suggestion_id: str,
+    action: str,
+    edited_fields: Optional[Dict[str, Any]] = None,
+) -> Optional[Dict[str, Any]]:
+    """
+    Human review screen for extracted or discovered suggestions: accept | edit | reject.
+    Accepting adds a draft/confirmed record cleanly without silently overwriting existing confirmed records.
+    """
+    store = _load_dpdp_store()
+    items = store.get("discovery_suggestions", {}).get(org_id, [])
+    now = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    target = next((i for i in items if i.get("id") == suggestion_id), None)
+    if not target:
+        return None
+
+    act = (action or "").strip().lower()
+    if edited_fields:
+        for k in ("value", "category", "purpose", "storage_location", "retention_period", "fields"):
+            if k in edited_fields and edited_fields[k] is not None:
+                target[k] = edited_fields[k]
+
+    if act == "reject":
+        target["status"] = "Rejected"
+        target["updated_at"] = now
+        _save_dpdp_store(store)
+        return {"suggestion": target, "created_record": None}
+
+    if act in ("accept", "edit", "confirm"):
+        target["status"] = "Confirmed by business"
+        target["updated_at"] = now
+        _save_dpdp_store(store)
+        etype = target.get("extracted_type", "data_activity")
+        created = None
+        if etype == "vendor":
+            created = add_vendor(org_id, {
+                "name": target.get("value", "Vendor"),
+                "category": target.get("category", "Third-Party Processor"),
+                "service": target.get("purpose", "Confirmed from discovery"),
+                "data_shared": ", ".join(target.get("fields", [])) or "Personal information",
+                "dpa_status": "PENDING_REVIEW",
+                "data_location": target.get("storage_location", "India / Verify region"),
+                "status": "Not reviewed",
+            })
+        elif etype == "retention":
+            created = add_retention_schedule(org_id, {
+                "data_category": target.get("category", "General Data"),
+                "retention_period": target.get("retention_period") or "Review duration",
+                "trigger": target.get("value", ""),
+                "legal_exception": "Review statutory exceptions",
+            })
+        elif etype in ("data_activity", "website_form", "tracker"):
+            created = add_inventory_entry(org_id, {
+                "category": target.get("category", "Contact information"),
+                "fields": target.get("fields", []),
+                "source": target.get("source_document", "Discovery"),
+                "purpose": target.get("purpose") or target.get("value", "Business operations"),
+                "storage_system": target.get("storage_location", "To be confirmed"),
+                "retention_period": target.get("retention_period") or "Review schedule",
+                "confirmation_status": "Confirmed by business",
+            })
+        return {"suggestion": target, "created_record": created}
+
+    target["status"] = "Needs review"
+    target["updated_at"] = now
+    _save_dpdp_store(store)
+    return {"suggestion": target, "created_record": None}
+
+
+def create_remediation_task(org_id: str, task_data: Dict[str, Any]) -> Dict[str, Any]:
+    """Creates a genuine tracked Action Plan task persisted cleanly in assessments[org_id]['remediation_tasks']."""
+    store = _load_dpdp_store()
+    assessment = get_assessment(org_id)
+    now = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    default_due = (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=14)).strftime("%Y-%m-%d")
+    task = {
+        "id": f"TSK-{uuid.uuid4().hex[:7].upper()}",
+        "title": sanitize_plain_text(task_data.get("title") or "Complete privacy action", 160),
+        "description": sanitize_plain_text(task_data.get("description") or "", 600),
+        "why_it_matters": sanitize_plain_text(task_data.get("why_it_matters") or task_data.get("why") or "Supports DPDP readiness.", 300),
+        "legal_reference": sanitize_plain_text(task_data.get("legal_reference") or task_data.get("section") or "DPDP Act, 2023", 120),
+        "priority": (task_data.get("priority") or task_data.get("severity") or "MEDIUM").upper(),
+        "severity": (task_data.get("priority") or task_data.get("severity") or "MEDIUM").upper(),
+        "owner": sanitize_plain_text(task_data.get("owner") or task_data.get("assignee") or "Owner", 80),
+        "assignee": sanitize_plain_text(task_data.get("assignee") or task_data.get("owner") or "Owner", 80),
+        "due_date": sanitize_plain_text(task_data.get("due_date") or default_due, 30),
+        "steps": task_data.get("steps") if isinstance(task_data.get("steps"), list) else [],
+        "evidence_required": sanitize_plain_text(task_data.get("evidence_required") or "Upload supporting proof in Evidence Vault", 200),
+        "status": task_data.get("status") if task_data.get("status") in VALID_TASK_STATUSES else "Open",
+        "completion_notes": sanitize_plain_text(task_data.get("completion_notes") or "", 500),
+        "created_at": now,
+        "updated_at": now,
+        "audit_trail": [{"action": "TASK_CREATED", "timestamp": now, "actor": task_data.get("actor", "Workspace User")}],
+    }
+    assessment.setdefault("remediation_tasks", []).insert(0, task)
+    store.setdefault("assessments", {})[org_id] = assessment
+    _save_dpdp_store(store)
+    return task
+
+
+ASSESSMENT_TOPICS: List[Dict[str, Any]] = [
+    {"id": "topic_collection", "order": 1, "title": "1. Information collection", "legal_ref": "Sections 3, 4 & 7", "commencement": "Scheduled 13 May 2027", "question": "Have you listed only the customer personal information needed for clear business purposes?", "why_it_matters": "Collecting excessive details increases privacy risk and notice/deletion obligations.", "evidence_required": "Confirmed Customer Data List & intake form review", "not_sure_guidance": "Start in Discovery or Data Inventory to list your enquiry, billing, and user signup fields."},
+    {"id": "topic_notices", "order": 2, "title": "2. Privacy notices", "legal_ref": "Section 5 & Rule 3", "commencement": "Scheduled 13 May 2027", "question": "Do customers see an itemised plain-language Privacy Notice before or when giving data?", "why_it_matters": "Section 5 requires telling individuals what data you collect, why, and how they can complain or withdraw consent.", "evidence_required": "Published Privacy Notice draft & website footer screenshot", "not_sure_guidance": "Use TrustAudit Privacy Notices to draft an itemised notice matching your inventory."},
+    {"id": "topic_consent", "order": 3, "title": "3. Consent and other lawful grounds", "legal_ref": "Sections 4, 6 & 7", "commencement": "Sec 6(9) In Force 13 Nov 2026; Sec 6(1)-(8) & Sec 7 Scheduled 13 May 2027", "question": "Are consent checkboxes unchecked by default, and are non-consent Section 7 legitimate uses identified separately?", "why_it_matters": "Pre-ticked consent or treating mandatory billing/employment data identically as consent creates errors.", "evidence_required": "Form screenshots & Consent Records log", "not_sure_guidance": "Run Website Privacy Check on your public signup or appointment forms to inspect checkboxes."},
+    {"id": "topic_sharing", "order": 4, "title": "4. Data sharing", "legal_ref": "Sections 8(1), 8(2) & 16", "commencement": "Scheduled 13 May 2027", "question": "Do software, cloud, payment, and external lab vendors sign binding written contracts with security duties?", "why_it_matters": "Businesses remain legally responsible for personal data handled by third-party processors.", "evidence_required": "Executed Vendor Data Processing Agreement (DPA)", "not_sure_guidance": "Add external providers in Vendors & Processors and send our built-in Vendor Questionnaire."},
+    {"id": "topic_requests", "order": 5, "title": "5. Customer requests", "legal_ref": "Sections 8(10), 11–14 & Rule 9, 14", "commencement": "Scheduled 13 May 2027", "question": "Is there a published privacy contact and workflow for customer access, correction, erasure, nomination, and grievance requests?", "why_it_matters": "Individuals must have an accessible grievance contact before escalating to the Data Protection Board.", "evidence_required": "Published Grievance contact & Request handling log", "not_sure_guidance": "Enable TrustAudit's Branded Customer Privacy Request Portal in one click."},
+    {"id": "topic_retention", "order": 6, "title": "6. Retention and deletion", "legal_ref": "Sections 8(7)–8(8) & Rule 8", "commencement": "Scheduled 13 May 2027", "question": "Have you defined how long customer records stay active and when expired data is deleted unless another Indian law mandates keeping it?", "why_it_matters": "Old personal data cannot be stored forever once the service purpose ends.", "evidence_required": "Retention Policy & verified deletion completion logs", "not_sure_guidance": "Review tax (Income Tax / GST) and sector rules before creating schedules in Data Retention."},
+    {"id": "topic_security", "order": 7, "title": "7. Security safeguards", "legal_ref": "Section 8(5) & Rule 6", "commencement": "Scheduled 13 May 2027 (Ceiling up to ₹250 crore)", "question": "Are reasonable safeguards active across your systems (access controls, transport encryption, backups, logs, and storage safeguards)?", "why_it_matters": "Rule 6 outlines encryption/obfuscation, access control, logging, backups, and security reviews to prevent breaches.", "evidence_required": "Security policy, HTTPS check, backup & access review evidence", "not_sure_guidance": "Upload IT security notes or access review checklists into Evidence Vault."},
+    {"id": "topic_incidents", "order": 8, "title": "8. Privacy incident response", "legal_ref": "Section 8(6) & Rule 7", "commencement": "Scheduled 13 May 2027 (Ceiling up to ₹200 crore)", "question": "Does your team have an Incident Response Plan covering containment, internal approvals, and Board/customer notifications?", "why_it_matters": "Prompt containment and prepared Rule 7 intimation drafts prevent chaotic incident handling.", "evidence_required": "Incident Response SOP & drill/log records", "not_sure_guidance": "Generate an Incident Response Plan draft from Document Centre and review roles."},
+    {"id": "topic_children", "order": 9, "title": "9. Children's data (where applicable)", "legal_ref": "Section 9 (clarified by S.O. 5458(E), Oct 2026) & Rule 10", "commencement": "Scheduled 13 May 2027 (Ceiling up to ₹200 crore)", "question": "If you process data of minors under 18, do you verify parent/guardian consent and disable behavioral tracking or targeted ads?", "why_it_matters": "Strict prohibition on behavioral profiling and targeted advertising to children.", "evidence_required": "Guardian verification workflow & tracker audit (or N/A declaration)", "not_sure_guidance": "Select 'Not applicable' if you strictly serve adult B2B or adult consumers with zero minor intake."},
+    {"id": "topic_sdf", "order": 10, "title": "10. Significant Data Fiduciary duties (where applicable)", "legal_ref": "Section 10 (updated to 'data audit' under S.O. 5458(E), Oct 2026) & Rule 11", "commencement": "Conditional upon Central Government notification (13 May 2027)", "question": "If notified as a Significant Data Fiduciary, have you planned for a resident DPO, periodic DPIA, and independent data audit?", "why_it_matters": "Applies only to high-volume/high-sensitivity fiduciaries notified by the Central Government.", "evidence_required": "SDF applicability note / DPO resolution (or N/A assessment)", "not_sure_guidance": "Most SMEs and startups are NOT Significant Data Fiduciaries unless notified by the Government; pick 'Not sure' or 'Not applicable' for guidance."},
+]
+
+
+def get_assessment_topics(org_id: str) -> Dict[str, Any]:
+    """
+    Returns the 10 understandable guided assessment topics mapped with saved topic responses
+    and honest 5-stage verification state: Not assessed -> Business self-attested -> Evidence uploaded -> Evidence reviewed -> Verified.
+    """
+    store = _load_dpdp_store()
+    saved_map = store.setdefault("organisational_assessments", {}).get(f"{org_id}::topics", {})
+    evidence = get_evidence_artifacts(org_id)
+    verified_ev = [e for e in evidence if e.get("status") == "Verified"]
+    reviewed_ev = [e for e in evidence if e.get("status") in ("Verified", "Evidence reviewed", "Under review")]
+
+    topics_out = []
+    answered = 0
+    for top in ASSESSMENT_TOPICS:
+        ans = saved_map.get(top["id"], {})
+        choice = ans.get("answer", "Not assessed")  # Yes | No | Partially | Not sure | Not applicable | Not assessed
+        if choice != "Not assessed":
+            answered += 1
+        ev_id = ans.get("evidence_id", "")
+        linked_ev = next((e for e in evidence if e.get("id") == ev_id), None) if ev_id else None
+        if linked_ev:
+            ev_st = linked_ev.get("status", "")
+            if ev_st == "Verified":
+                v_state = "Verified"
+            elif ev_st in ("Under review", "Rejected"):
+                v_state = "Evidence reviewed"
+            else:
+                v_state = "Evidence uploaded"
+        elif choice in ("Yes", "No", "Partially", "Not applicable"):
+            v_state = "Business self-attested"
+        else:
+            v_state = "Not assessed"
+
+        topics_out.append({
+            **top,
+            "answer": choice,
+            "notes": ans.get("notes", ""),
+            "evidence_id": ev_id,
+            "verification_state": v_state,
+            "updated_at": ans.get("updated_at"),
+        })
+
+    return {
+        "topics": topics_out,
+        "answered_count": answered,
+        "total_topics": len(topics_out),
+        "evidence_uploaded_count": len(evidence),
+        "evidence_reviewed_count": len(reviewed_ev),
+        "evidence_verified_count": len(verified_ev),
+        "certification_disclaimer": "Assessment outputs organise internal business readiness only and are not a government certification or legal approval.",
+    }
+
+
+def save_assessment_topic_answer(org_id: str, topic_id: str, answer: str, notes: str = "", evidence_id: str = "") -> Dict[str, Any]:
+    allowed = ("Yes", "No", "Partially", "Not sure", "Not applicable", "Not assessed")
+    clean_ans = answer if answer in allowed else "Not sure"
+    store = _load_dpdp_store()
+    bucket = store.setdefault("organisational_assessments", {}).setdefault(f"{org_id}::topics", {})
+    now = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    bucket[topic_id] = {
+        "answer": clean_ans,
+        "notes": sanitize_plain_text(notes, 600),
+        "evidence_id": sanitize_plain_text(evidence_id, 60),
+        "updated_at": now,
+    }
+    _save_dpdp_store(store)
+    return get_assessment_topics(org_id)
+
+
+def compute_vendor_risk_basis(vendor: Dict[str, Any]) -> Dict[str, Any]:
+    """Returns transparent explanation of vendor review factors without fake numerical scores."""
+    reasons = []
+    dpa = str(vendor.get("dpa_status", "PENDING")).upper()
+    if any(k in dpa for k in ("SIGNED", "EXECUTED", "ACTIVE")):
+        reasons.append("Written Data Processing Agreement (DPA) recorded as signed")
+    else:
+        reasons.append("No executed Data Processing Agreement (DPA) confirmed yet")
+    loc = str(vendor.get("data_location", "")).strip() or "Unspecified"
+    reasons.append(f"Declared hosting/processing location: {loc}")
+    if vendor.get("security_review"):
+        reasons.append(f"Security review note recorded: {vendor.get('security_review')}")
+    else:
+        reasons.append("Vendor security questionnaire / SOC/ISO evidence not yet reviewed")
+    return {
+        "review_status": vendor.get("status") or ("Approved" if "SIGNED" in dpa or "EXECUTED" in dpa else "Not reviewed"),
+        "risk_basis": reasons,
+    }
+
+
+def create_vendor_intake_token(org_id: str, vendor_id: str) -> Optional[str]:
+    vendors = get_vendors(org_id)
+    if not any(v.get("id") == vendor_id for v in vendors):
+        return None
+    store = _load_dpdp_store()
+    token = f"vint-{uuid.uuid4().hex[:14]}"
+    store.setdefault("vendor_intake_tokens", {})[token] = {
+        "org_id": org_id,
+        "vendor_id": vendor_id,
+        "created_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    }
+    _save_dpdp_store(store)
+    return token
+
+
+def resolve_vendor_intake_token(token: str) -> Optional[Dict[str, Any]]:
+    store = _load_dpdp_store()
+    meta = store.get("vendor_intake_tokens", {}).get(token)
+    if not meta:
+        return None
+    v = next((x for x in get_vendors(meta["org_id"]) if x.get("id") == meta["vendor_id"]), None)
+    if not v:
+        return None
+    profile = get_onboarding_profile(meta["org_id"]) or {}
+    return {"org_id": meta["org_id"], "org_name": profile.get("company_name") or "TrustAudit Business", "vendor": v}
+
+
+def save_vendor_questionnaire(org_id: str, vendor_id: str, responses: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    store = _load_dpdp_store()
+    now = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    q_rec = {
+        "vendor_id": vendor_id,
+        "encryption_at_rest": bool(responses.get("encryption_at_rest")),
+        "access_controls": bool(responses.get("access_controls")),
+        "breach_notification_24h": bool(responses.get("breach_notification_24h")),
+        "subprocessor_disclosure": sanitize_plain_text(responses.get("subprocessor_disclosure", ""), 400),
+        "data_location": sanitize_plain_text(responses.get("data_location", ""), 120),
+        "dpa_signed_confirmed": bool(responses.get("dpa_signed_confirmed")),
+        "submitted_by": sanitize_plain_text(responses.get("submitted_by", "Vendor Contact"), 120),
+        "notes": sanitize_plain_text(responses.get("notes", ""), 500),
+        "submitted_at": now,
+    }
+    store.setdefault("vendor_questionnaires", {}).setdefault(org_id, {})[vendor_id] = q_rec
+    _save_dpdp_store(store)
+    update_vendor(org_id, vendor_id, {
+        "security_review": f"Questionnaire submitted {now[:10]}",
+        "status": "Reviewing",
+        "data_location": q_rec["data_location"] or "Declared in questionnaire",
+    })
+    return q_rec
+
+
+def get_portal_config(org_id: str, default_name: str = "Your Business", default_slug: str = "") -> Dict[str, Any]:
+    store = _load_dpdp_store()
+    cfg = store.get("portal_configs", {}).get(org_id)
+    if cfg:
+        return dict(cfg)
+    profile = get_onboarding_profile(org_id) or {}
+    clean_slug = re.sub(r"[^a-z0-9-]", "-", (default_slug or org_id).lower()).strip("-")
+    return {
+        "enabled": True,
+        "slug": clean_slug,
+        "brand_name": profile.get("company_name") or default_name,
+        "contact_email": profile.get("contact_email") or "privacy@yourcompany.in",
+        "intro_text": "Submit a privacy request (view data summary, request correction, ask for deletion, or raise a privacy grievance). Submitted details are handled strictly by this organisation.",
+        "custom_domain_preview": f"privacy.{clean_slug}.in" if clean_slug else "privacy.yourcompany.in",
+        "require_human_verification": True,
+        "updated_at": "",
+    }
+
+
+def save_portal_config(org_id: str, updates: Dict[str, Any]) -> Dict[str, Any]:
+    cur = get_portal_config(org_id)
+    store = _load_dpdp_store()
+    cur.update({
+        "enabled": bool(updates.get("enabled", cur.get("enabled", True))),
+        "brand_name": sanitize_plain_text(updates.get("brand_name") or cur["brand_name"], 120),
+        "contact_email": sanitize_plain_text(updates.get("contact_email") or cur["contact_email"], 120),
+        "intro_text": sanitize_plain_text(updates.get("intro_text") or cur["intro_text"], 500),
+        "custom_domain_preview": sanitize_plain_text(updates.get("custom_domain_preview") or cur["custom_domain_preview"], 140),
+        "require_human_verification": bool(updates.get("require_human_verification", True)),
+        "updated_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    })
+    store.setdefault("portal_configs", {})[org_id] = cur
+    _save_dpdp_store(store)
+    return cur
+
+
+def submit_portal_request_public(org_id: str, payload: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Stores a public Data Principal privacy request with a random verification token
+    for status checking without ever disclosing whether an email exists in any DB.
+    """
+    import secrets
+    verification_code = secrets.token_hex(3).upper()
+    req = submit_rights_request(org_id, {
+        "type": payload.get("type", "ACCESS"),
+        "requester_name": sanitize_plain_text(payload.get("name", ""), 120),
+        "requester_email": sanitize_plain_text(payload.get("email", ""), 120).lower(),
+        "description": sanitize_plain_text(payload.get("description", ""), 1000),
+        "verification_code": verification_code,
+        "source_channel": "Customer Privacy Portal",
+    })
+    # Persist verification code on the stored record safely
+    store = _load_dpdp_store()
+    for r in store.get("rights_requests", {}).get(org_id, []):
+        if r.get("id") == req.get("id"):
+            r["verification_code"] = verification_code
+            r["source_channel"] = "Customer Privacy Portal"
+            break
+    _save_dpdp_store(store)
+    return {
+        "reference_id": req["id"],
+        "verification_code": verification_code,
+        "status": req.get("status", "RECEIVED"),
+        "message": "If this organisation holds matching records, your request will be verified and reviewed per published grievance processes.",
+    }
+
+
+def lookup_portal_request_public(org_id: str, reference_id: str, verification_code: str) -> Optional[Dict[str, Any]]:
+    """Checks request status STRICTLY matching both reference_id AND verification_code without exposing personal details."""
+    ref = (reference_id or "").strip().upper()
+    code = (verification_code or "").strip().upper()
+    if not ref or not code:
+        return None
+    for r in get_rights_requests(org_id):
+        if str(r.get("id", "")).upper() == ref and str(r.get("verification_code", "")).upper() == code:
+            return {
+                "reference_id": r["id"],
+                "type": r.get("type"),
+                "status": r.get("status"),
+                "received_at": r.get("received_at"),
+                "updated_at": r.get("updated_at"),
+                "public_status_note": "Verified reference matched. Status updates are posted by the organisation administrator.",
+            }
+    return None
+
+
+def get_privacy_profile_config(org_id: str, default_name: str = "Your Business") -> Dict[str, Any]:
+    store = _load_dpdp_store()
+    cfg = store.get("privacy_profiles", {}).get(org_id)
+    if cfg:
+        return dict(cfg)
+    profile = get_onboarding_profile(org_id) or {}
+    return {
+        "published": True,
+        "headline": profile.get("company_name") or default_name,
+        "privacy_contact_name": profile.get("grievance_officer") or "Privacy & Grievance Contact",
+        "privacy_contact_email": profile.get("contact_email") or "privacy@yourcompany.in",
+        "show_approved_notice": True,
+        "show_portal_link": True,
+        "show_last_review_date": True,
+        "selected_practices": [
+            "Dedicated Grievance Officer contact published",
+            "Customer Privacy Request Portal active for access & correction enquiries",
+            "Written vendor agreements & retention schedules actively tracked",
+        ],
+        "approved_document_ids": [],
+        "last_reviewed_at": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d"),
+    }
+
+
+def save_privacy_profile_config(org_id: str, updates: Dict[str, Any]) -> Dict[str, Any]:
+    cur = get_privacy_profile_config(org_id)
+    store = _load_dpdp_store()
+    cur.update({
+        "published": bool(updates.get("published", cur["published"])),
+        "headline": sanitize_plain_text(updates.get("headline") or cur["headline"], 140),
+        "privacy_contact_name": sanitize_plain_text(updates.get("privacy_contact_name") or cur["privacy_contact_name"], 100),
+        "privacy_contact_email": sanitize_plain_text(updates.get("privacy_contact_email") or cur["privacy_contact_email"], 120),
+        "show_approved_notice": bool(updates.get("show_approved_notice", True)),
+        "show_portal_link": bool(updates.get("show_portal_link", True)),
+        "show_last_review_date": bool(updates.get("show_last_review_date", True)),
+        "selected_practices": [sanitize_plain_text(p, 160) for p in updates.get("selected_practices", cur["selected_practices"]) if str(p).strip()][:10],
+        "approved_document_ids": list(updates.get("approved_document_ids", cur.get("approved_document_ids", [])))[:20],
+        "last_reviewed_at": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d"),
+    })
+    store.setdefault("privacy_profiles", {})[org_id] = cur
+    _save_dpdp_store(store)
+    return cur
+
+
+def get_public_privacy_profile(org_id: str, org_slug: str) -> Optional[Dict[str, Any]]:
+    """
+    Returns ONLY public-approved fields for an organisation's Shareable Privacy Profile.
+    STRICTLY excludes inventory, vendor contracts, customer requests, security configs, evidence files, or internal assessments.
+    """
+    cfg = get_privacy_profile_config(org_id)
+    if not cfg.get("published"):
+        return None
+    notices = [n for n in get_privacy_notices(org_id) if n.get("status") == "APPROVED_PUBLISHED"]
+    latest_notice = notices[0] if (notices and cfg.get("show_approved_notice")) else None
+    allowed_doc_ids = set(cfg.get("approved_document_ids", []))
+    approved_docs = [
+        {"id": d["id"], "title": d.get("title"), "version": d.get("version", "v1.0"), "updated_at": d.get("updated_at") or d.get("generated_at")}
+        for d in get_generated_documents(org_id)
+        if d.get("id") in allowed_doc_ids and d.get("status") == "APPROVED"
+    ]
+    return {
+        "org_name": cfg["headline"],
+        "privacy_contact_name": cfg["privacy_contact_name"],
+        "privacy_contact_email": cfg["privacy_contact_email"],
+        "portal_url": f"/portal/{org_slug}" if cfg.get("show_portal_link") else None,
+        "approved_notice": {"title": latest_notice.get("title"), "version": latest_notice.get("version"), "content": latest_notice.get("content")} if latest_notice else None,
+        "approved_documents": approved_docs,
+        "selected_practices": cfg.get("selected_practices", []),
+        "last_reviewed_at": cfg.get("last_reviewed_at") if cfg.get("show_last_review_date") else None,
+        "mandatory_disclaimer": "This profile is information supplied and approved by the organisation. It is not a government certification or independent compliance approval.",
+    }
+
+
+def get_generated_documents(org_id: str) -> List[Dict[str, Any]]:
+    store = _load_dpdp_store()
+    return store.get("generated_documents", {}).get(org_id, [])
+
+
+def get_generated_document(org_id: str, doc_id: str) -> Optional[Dict[str, Any]]:
+    return next((d for d in get_generated_documents(org_id) if d.get("id") == doc_id), None)
+
+
+def update_generated_document(org_id: str, doc_id: str, content: Optional[str] = None, status: Optional[str] = None, title: Optional[str] = None, actor: str = "Owner") -> Optional[Dict[str, Any]]:
+    store = _load_dpdp_store()
+    docs = store.get("generated_documents", {}).get(org_id, [])
+    now = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    for d in docs:
+        if d.get("id") == doc_id:
+            if content is not None:
+                d["content"] = content
+            if title is not None and title.strip():
+                d["title"] = sanitize_plain_text(title, 200)
+            if status in ("DRAFT", "UNDER_REVIEW", "APPROVED"):
+                d["status"] = status
+                if status == "APPROVED":
+                    d["approved_by"] = actor
+                    d["approved_at"] = now
+            cur_v = str(d.get("version", "v1.0"))
+            m = re.match(r"v(\d+)", cur_v)
+            next_v = f"v{(int(m.group(1)) + 1) if m else 2}.0"
+            d["version"] = next_v
+            d["updated_at"] = now
+            d.setdefault("version_history", []).append({"version": next_v, "status": d.get("status", "DRAFT"), "actor": actor, "timestamp": now})
+            _save_dpdp_store(store)
+            return d
+    return None
+
+
+def save_generated_doc_to_evidence(org_id: str, doc_id: str, actor: str = "Owner") -> Optional[Dict[str, Any]]:
+    """Persists an approved or draft compliance document into Evidence Vault as a genuine artifact."""
+    doc = get_generated_document(org_id, doc_id)
+    if not doc:
+        return None
+    title = doc.get("title") or f"DPDP Document ({doc.get('doc_type', 'policy')})"
+    fname = f"{re.sub(r'[^a-zA-Z0-9_-]', '_', title[:40]).strip('_')}_{doc_id}.txt"
+    content_bytes = (doc.get("content") or "").encode("utf-8")
+    return add_evidence_artifact(
+        org_id=org_id,
+        title=f"{title} ({doc.get('version', 'v1.0')})",
+        category="Policy & Document Draft",
+        control_id=doc.get("doc_type", "DPDP-DOC"),
+        file_bytes=content_bytes,
+        file_name=fname,
+        uploaded_by=actor,
+        review_notes=f"Saved directly from TrustAudit Document Centre by {actor}.",
+    )
+
+
+def import_consent_csv(org_id: str, csv_content: str) -> int:
+    reader = csv.DictReader(io.StringIO(csv_content or ""))
+    imported = 0
+    for row in reader:
+        if not any(row.values()):
+            continue
+        record_consent(org_id, {
+            "principal_ref": row.get("principal_ref") or row.get("customer_id") or row.get("Data Principal") or f"DP-{uuid.uuid4().hex[:6]}",
+            "purpose": row.get("purpose") or row.get("Purpose") or "Service Delivery",
+            "lawful_ground": row.get("lawful_ground") or row.get("Legal Basis") or "Consent (Section 6)",
+            "notice_version": row.get("notice_version") or "v1.0",
+            "source": row.get("source") or row.get("Source") or "CSV Import",
+            "status": row.get("status") or "ACTIVE",
+        })
+        imported += 1
+        if imported >= 250:
+            break
+    return imported
+
+
+def search_org_workspace(org_id: str, query: str, limit: int = 20) -> List[Dict[str, Any]]:
+    """Global Cmd+K search across the authenticated organisation's workspace + DPDP legal index."""
+    q = (query or "").strip().lower()
+    if len(q) < 2:
+        return []
+    hits: List[Dict[str, Any]] = []
+
+    for inv in get_data_inventory(org_id):
+        hay = f"{inv.get('category', '')} {inv.get('purpose', '')} {inv.get('source', '')} {' '.join(inv.get('fields', []))}".lower()
+        if q in hay:
+            hits.append({"kind": "Data Inventory", "title": inv.get("category", "Record"), "subtitle": inv.get("purpose", ""), "href": "/app/data-inventory"})
+
+    for v in get_vendors(org_id):
+        hay = f"{v.get('name', '')} {v.get('category', '')} {v.get('service', '')}".lower()
+        if q in hay:
+            hits.append({"kind": "Vendor", "title": v.get("name", "Vendor"), "subtitle": f"{v.get('category', '')} — {v.get('dpa_status', '')}", "href": "/app/vendors"})
+
+    for t in get_remediation_tasks(org_id):
+        hay = f"{t.get('title', '')} {t.get('description', '')} {t.get('legal_reference', '')}".lower()
+        if q in hay:
+            hits.append({"kind": "Action Task", "title": t.get("title", "Task"), "subtitle": f"{t.get('status', '')} • {t.get('priority', '')}", "href": "/app/action-plan"})
+
+    for n in get_privacy_notices(org_id):
+        hay = f"{n.get('title', '')} {n.get('status', '')}".lower()
+        if q in hay:
+            hits.append({"kind": "Privacy Notice", "title": n.get("title", "Notice"), "subtitle": n.get("version", "v1.0"), "href": "/app/notices"})
+
+    for ev in get_evidence_artifacts(org_id):
+        hay = f"{ev.get('title', '')} {ev.get('filename', '')} {ev.get('category', '')}".lower()
+        if q in hay:
+            hits.append({"kind": "Evidence", "title": ev.get("title", ev.get("filename", "File")), "subtitle": ev.get("status", ""), "href": "/app/evidence"})
+
+    for rule in DPDP_REQUIREMENTS:
+        hay = f"{rule.get('section', '')} {rule.get('title', '')} {rule.get('description', '')}".lower()
+        if q in hay:
+            hits.append({"kind": "DPDP Legal Rule", "title": f"{rule.get('section')}: {rule.get('title')}", "subtitle": rule.get("effective_date", ""), "href": "/app/assessment"})
+
+    return hits[:limit]
+
+
 def delete_all_org_dpdp_data(org_id: str) -> None:
     """Purges all DPDP operational records and physical DPDP evidence files for org_id."""
     store = _load_dpdp_store()
@@ -2415,6 +3143,7 @@ def delete_all_org_dpdp_data(org_id: str) -> None:
         "withdrawal_requests", "rights_requests", "vendors", "retention_schedules",
         "breach_incidents", "remediation_tasks", "onboarding_profiles", "erasure_tasks",
         "website_scans", "evidence_vault", "organisational_assessments", "generated_documents",
+        "discovery_suggestions", "portal_configs", "privacy_profiles", "vendor_questionnaires",
     ):
         store.get(bucket, {}).pop(org_id, None)
     _save_dpdp_store(store)

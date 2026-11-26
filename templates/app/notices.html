@@ -1,0 +1,124 @@
+{% extends "app_base.html" %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Privacy Notices (Section 5 &amp; Rule 3)</h1>
+    <p class="page-sub">Drafted dynamically from your Customer Data Inventory and Grievance Officer details. Always labeled Draft until approved by your team.</p>
+  </div>
+  <button type="button" class="btn btn-primary btn-sm" onclick="openGenNoticeModal()">+ Generate Notice Draft</button>
+</div>
+
+<div class="grid-split">
+  <div class="card">
+    <h2 class="ta-h3" style="margin-bottom:12px;">Saved Notice Versions</h2>
+    <div id="notices-list">Loading notices...</div>
+  </div>
+  <div class="card" id="notice-editor-card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+      <h2 class="ta-h3" style="margin:0;">Notice Editor &amp; Approval</h2>
+      <span id="ne-badge" class="badge badge-amber">Select a notice</span>
+    </div>
+    <input id="ne-id" type="hidden">
+    <div class="field"><label>Notice Title</label><input id="ne-title" class="input" placeholder="Select or generate a Privacy Notice"></div>
+    <div class="field"><label>Notice Text (Plain Language + Eighth Schedule Notice)</label><textarea id="ne-content" class="input" rows="13"></textarea></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button type="button" class="btn btn-outline btn-sm" onclick="saveNoticeEdits('DRAFT')">Save Draft Version</button>
+      <button type="button" class="btn btn-emerald btn-sm" onclick="saveNoticeEdits('APPROVED_PUBLISHED')">Approve &amp; Mark Ready for Profile</button>
+      <button type="button" class="btn btn-outline btn-sm" onclick="exportNoticeDocx()">Download .DOCX</button>
+      <button type="button" class="btn btn-ghost btn-sm" onclick="deleteSelectedNotice()">Delete</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  let NOTICES = [];
+  async function loadNotices() {
+    const d = await TA.apiJson('/api/dpdp/notices');
+    NOTICES = d.notices || [];
+    const el = document.getElementById('notices-list');
+    if (!NOTICES.length) {
+      el.innerHTML = '<div class="empty-state"><p class="ta-muted">No Privacy Notice drafted yet. Click <strong>+ Generate Notice Draft</strong> to build one from your Data Inventory.</p></div>';
+      return;
+    }
+    el.innerHTML = NOTICES.map(function (n) {
+      const pub = n.status === 'APPROVED_PUBLISHED';
+      return '<div style="padding:12px;border:1px solid var(--border);border-radius:10px;margin-bottom:10px;cursor:pointer;" onclick="selectNotice(\'' + TA.esc(n.id) + '\')">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;"><strong>' + TA.esc(n.title) + '</strong>' +
+        '<span class="badge ' + (pub ? 'badge-emerald' : 'badge-amber') + '">' + TA.esc(n.status) + '</span></div>' +
+        '<div class="ta-muted" style="font-size:12px;margin-top:4px;">' + TA.esc(n.version || 'v1.0') + ' &bull; Grievance: ' + TA.esc(n.grievance_email || '') + '</div></div>';
+    }).join('');
+    if (!document.getElementById('ne-id').value && NOTICES[0]) selectNotice(NOTICES[0].id);
+  }
+
+  function selectNotice(id) {
+    const n = NOTICES.find(function (x) { return x.id === id; });
+    if (!n) return;
+    document.getElementById('ne-id').value = n.id;
+    document.getElementById('ne-title').value = n.title || '';
+    document.getElementById('ne-content').value = n.content || '';
+    const b = document.getElementById('ne-badge');
+    b.textContent = (n.status || 'DRAFT') + ' (' + (n.version || 'v1.0') + ')';
+    b.className = 'badge ' + (n.status === 'APPROVED_PUBLISHED' ? 'badge-emerald' : 'badge-amber');
+  }
+
+  function openGenNoticeModal() {
+    TA.openModal('Generate Itemised Privacy Notice Draft',
+      '<p class="ta-muted" style="margin-bottom:12px;">Generates a draft notice aligned to your Business Data Inventory. Review with business &amp; legal stakeholders before publishing.</p>' +
+      '<div class="field"><label>Grievance Officer / Contact Name</label><input id="gn-off" class="input" value="Privacy &amp; Grievance Contact"></div>' +
+      '<div class="field"><label>Grievance Email</label><input id="gn-email" type="email" class="input" value="privacy@yourcompany.in"></div>' +
+      '<div class="field"><label>Registered Address</label><input id="gn-addr" class="input" value="Bengaluru, Karnataka, India"></div>' +
+      '<button type="button" class="btn btn-primary" style="width:100%;" onclick="generateNoticeNow()">Generate Draft Notice</button>'
+    );
+  }
+  async function generateNoticeNow() {
+    const res = await TA.apiJson('/api/dpdp/notices/generate', {
+      method: 'POST',
+      body: JSON.stringify({
+        grievance_officer: document.getElementById('gn-off').value.trim(),
+        grievance_email: document.getElementById('gn-email').value.trim(),
+        address: document.getElementById('gn-addr').value.trim(),
+      }),
+    });
+    TA.closeModal();
+    TA.toast('Draft Privacy Notice generated');
+    await loadNotices();
+    if (res.notice && res.notice.id) selectNotice(res.notice.id);
+  }
+
+  async function saveNoticeEdits(status) {
+    const id = document.getElementById('ne-id').value;
+    if (!id) return TA.toast('Select a notice first', 'err');
+    await TA.apiJson('/api/dpdp/notices/' + encodeURIComponent(id), {
+      method: 'PUT',
+      body: JSON.stringify({
+        title: document.getElementById('ne-title').value.trim(),
+        content: document.getElementById('ne-content').value,
+        status: status,
+      }),
+    });
+    TA.toast(status === 'APPROVED_PUBLISHED' ? 'Notice approved & published to profile' : 'Draft version saved');
+    loadNotices();
+  }
+
+  async function deleteSelectedNotice() {
+    const id = document.getElementById('ne-id').value;
+    if (!id) return;
+    await TA.apiJson('/api/dpdp/notices/' + encodeURIComponent(id), { method: 'DELETE' });
+    document.getElementById('ne-id').value = '';
+    document.getElementById('ne-title').value = '';
+    document.getElementById('ne-content').value = '';
+    TA.toast('Notice deleted');
+    loadNotices();
+  }
+
+  function exportNoticeDocx() {
+    const id = document.getElementById('ne-id').value;
+    if (!id) return TA.toast('Select a notice first', 'err');
+    window.location.href = '/api/dpdp/notices/' + encodeURIComponent(id) + '/export?format=docx';
+  }
+
+  loadNotices();
+</script>
+{% endblock %}

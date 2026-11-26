@@ -1,0 +1,85 @@
+{% extends "app_base.html" %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Customer Privacy Requests</h1>
+    <p class="page-sub">Verify requester identity, assign owners, record decisions, and resolve access, correction, erasure, nomination, and grievance enquiries cleanly.</p>
+  </div>
+  <div style="display:flex;gap:8px;">
+    <a href="/app/privacy-portal" class="btn btn-outline btn-sm">Portal Settings</a>
+    <button type="button" class="btn btn-primary btn-sm" onclick="openAddReqModal()">+ Log Customer Request</button>
+  </div>
+</div>
+
+<div id="requests-table-wrap">Loading requests...</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  async function loadRequests() {
+    const d = await TA.apiJson('/api/dpdp/rights');
+    const list = d.requests || [];
+    const el = document.getElementById('requests-table-wrap');
+    if (!list.length) {
+      el.innerHTML = '<div class="empty-state"><h3>No customer privacy requests logged</h3><p class="ta-muted">Log an incoming request manually or enable your Customer Privacy Portal to capture requests automatically.</p></div>';
+      return;
+    }
+    el.innerHTML = '<div class="tbl-wrap"><table><thead><tr><th>Reference &amp; Type</th><th>Requester</th><th>Channel &amp; Received</th><th>Status</th><th>Action</th></tr></thead><tbody>' +
+      list.map(function (r) {
+        const cls = r.status === 'COMPLETED' ? 'badge-emerald' : (r.status === 'REJECTED' ? 'badge-rose' : 'badge-amber');
+        return '<tr><td><code class="ta-mono">' + TA.esc(r.id) + '</code><div style="font-weight:700;margin-top:2px;">' + TA.esc(r.type) + '</div></td>' +
+          '<td>' + TA.esc(r.requester_name) + '<div class="ta-muted" style="font-size:12px;">' + TA.esc(r.requester_email || '') + '</div></td>' +
+          '<td>' + TA.esc(r.source_channel || 'Direct Email / Form') + '<div class="ta-muted" style="font-size:12px;">' + TA.esc((r.received_at || '').slice(0, 10)) + '</div></td>' +
+          '<td><span class="badge ' + cls + '">' + TA.esc(r.status || 'RECEIVED') + '</span></td>' +
+          '<td><button type="button" class="btn btn-outline btn-sm" onclick=\'openTriageReq(' + JSON.stringify(r) + ')\'>Triage / Close</button></td></tr>';
+      }).join('') + '</tbody></table></div>';
+  }
+
+  function openAddReqModal() {
+    TA.openModal('Log Customer Privacy Request',
+      '<form onsubmit="saveReq(event)">' +
+      '<div class="field"><label>Request Type</label><select id="rq-type" class="input"><option value="ACCESS">Access Data Summary (Sec 11)</option><option value="CORRECTION">Correct / Update Data (Sec 12)</option><option value="ERASURE">Delete / Erase Data (Sec 12)</option><option value="GRIEVANCE">Privacy Grievance (Sec 13)</option><option value="NOMINATION">Nominate Representative (Sec 14)</option></select></div>' +
+      '<div class="grid-2"><div class="field"><label>Requester Name</label><input id="rq-name" class="input" required></div>' +
+      '<div class="field"><label>Requester Email</label><input id="rq-email" type="email" class="input" required></div></div>' +
+      '<div class="field"><label>Request Details</label><textarea id="rq-desc" class="input" rows="3" required></textarea></div>' +
+      '<button type="submit" class="btn btn-primary" style="width:100%;">Create Request Record</button></form>'
+    );
+  }
+  async function saveReq(ev) {
+    ev.preventDefault();
+    await TA.apiJson('/api/dpdp/rights', {
+      method: 'POST',
+      body: JSON.stringify({
+        type: document.getElementById('rq-type').value,
+        requester_name: document.getElementById('rq-name').value.trim(),
+        requester_email: document.getElementById('rq-email').value.trim(),
+        description: document.getElementById('rq-desc').value.trim(),
+      }),
+    });
+    TA.closeModal();
+    TA.toast('Request logged');
+    loadRequests();
+  }
+
+  function openTriageReq(r) {
+    TA.openModal('Triage Request ' + r.id,
+      '<p class="ta-muted" style="margin-bottom:10px;">' + TA.esc(r.description || '') + '</p>' +
+      '<div class="field"><label>Status</label><select id="tr-st" class="input"><option>RECEIVED</option><option>IDENTITY_VERIFICATION</option><option>IN_PROGRESS</option><option>COMPLETED</option><option>REJECTED</option></select></div>' +
+      '<div class="field"><label>Verification &amp; Response Summary</label><textarea id="tr-sum" class="input" rows="3" placeholder="Recorded ID verification method and action taken...">' + TA.esc(r.response_summary || '') + '</textarea></div>' +
+      '<button type="button" class="btn btn-primary" style="width:100%;" onclick="saveTriageReq(\'' + TA.esc(r.id) + '\')">Save Decision</button>'
+    );
+    document.getElementById('tr-st').value = r.status || 'RECEIVED';
+  }
+  async function saveTriageReq(id) {
+    await TA.apiJson('/api/dpdp/rights/' + encodeURIComponent(id) + '/status', {
+      method: 'POST',
+      body: JSON.stringify({ status: document.getElementById('tr-st').value, response_summary: document.getElementById('tr-sum').value.trim() }),
+    });
+    TA.closeModal();
+    TA.toast('Request status saved');
+    loadRequests();
+  }
+
+  loadRequests();
+</script>
+{% endblock %}

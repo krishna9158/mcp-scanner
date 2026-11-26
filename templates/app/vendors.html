@@ -1,0 +1,115 @@
+{% extends "app_base.html" %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Vendors &amp; Processors</h1>
+    <p class="page-sub">Track Data Processing Agreements (DPAs), hosting locations, transparent risk factors (never invented scores), and restricted vendor questionnaires.</p>
+  </div>
+  <button type="button" class="btn btn-primary btn-sm" onclick="openAddVendorModal()">+ Add Vendor / Processor</button>
+</div>
+
+<div class="card" style="margin-bottom:20px;">
+  <h2 class="ta-h3" style="margin-bottom:10px;">Vendor Relationship Map</h2>
+  <div id="vnd-rel-map" style="background:var(--forest-950);border-radius:10px;padding:14px;color:#E5EFE9;">Loading map...</div>
+</div>
+
+<div id="vendors-table-wrap"></div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  async function loadVendors() {
+    const d = await TA.apiJson('/api/dpdp/vendors');
+    const list = d.vendors || [];
+    const mapEl = document.getElementById('vnd-rel-map');
+    if (!list.length) {
+      mapEl.innerHTML = '<div style="font-size:13px;color:#9DB0A5;">Add vendors below or confirm them from Guided Onboarding Step 5 to view sharing relationships.</div>';
+      document.getElementById('vendors-table-wrap').innerHTML = '<div class="empty-state"><h3>No vendors added yet</h3><p class="ta-muted">Track cloud hosts, payment gateways, CRM tools, and external diagnostic labs.</p></div>';
+      return;
+    }
+
+    mapEl.innerHTML =
+      '<div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">' +
+      '<div style="padding:10px 14px;border-radius:9px;background:#0E7C5B;font-weight:800;">Your Business</div>' +
+      '<span style="color:var(--lime);">&rarr;</span>' +
+      list.map(function (v) {
+        const ok = (v.dpa_status || '').toUpperCase().indexOf('SIGNED') !== -1 || (v.dpa_status || '').toUpperCase().indexOf('EXECUTED') !== -1;
+        return '<div style="padding:8px 12px;border-radius:9px;background:#183228;border:1px solid ' + (ok ? '#10B981' : '#F59E0B') + ';font-size:12.5px;">' +
+          '<strong>' + TA.esc(v.name) + '</strong><br><span style="color:#9DB0A5;">' + TA.esc(v.dpa_status || 'PENDING') + '</span></div>';
+      }).join('') + '</div>';
+
+    document.getElementById('vendors-table-wrap').innerHTML =
+      '<div class="tbl-wrap"><table><thead><tr><th>Vendor &amp; Category</th><th>Data Shared &amp; Location</th><th>DPA &amp; Review Status</th><th>Risk Factor Explanation</th><th>Actions</th></tr></thead><tbody>' +
+      list.map(function (v) {
+        const ok = (v.dpa_status || '').toUpperCase().indexOf('SIGNED') !== -1 || (v.dpa_status || '').toUpperCase().indexOf('EXECUTED') !== -1;
+        return '<tr><td><strong>' + TA.esc(v.name) + '</strong><div class="ta-muted" style="font-size:12px;">' + TA.esc(v.category || v.service) + '</div></td>' +
+          '<td>' + TA.esc(v.data_shared || 'Personal details') + '<div class="ta-muted" style="font-size:12px;">Location: ' + TA.esc(v.data_location || 'Verify') + '</div></td>' +
+          '<td><span class="badge ' + (ok ? 'badge-emerald' : 'badge-amber') + '">' + TA.esc(v.status || v.dpa_status || 'Not reviewed') + '</span><div class="ta-muted" style="font-size:11.5px;">DPA: ' + TA.esc(v.dpa_status || 'PENDING') + '</div></td>' +
+          '<td class="ta-muted" style="font-size:12.5px;">' + TA.esc((v.risk_basis || []).join('; ') || (ok ? 'DPA recorded on file' : 'Missing executed DPA')) + '</td>' +
+          '<td style="white-space:nowrap;">' +
+          '<button type="button" class="btn btn-outline btn-sm" onclick="sendVendorLink(\'' + TA.esc(v.id) + '\')">Questionnaire Link</button> ' +
+          '<button type="button" class="btn btn-emerald btn-sm" onclick="markDpaSigned(\'' + TA.esc(v.id) + '\')">Approve / DPA Signed</button> ' +
+          '<button type="button" class="btn btn-ghost btn-sm" onclick="deleteVendor(\'' + TA.esc(v.id) + '\')">Remove</button></td></tr>';
+      }).join('') + '</tbody></table></div>';
+  }
+
+  function openAddVendorModal() {
+    TA.openModal('Add Vendor / Data Processor',
+      '<form onsubmit="saveNewVendor(event)">' +
+      '<div class="field"><label>Vendor Name</label><input id="vn-name" class="input" required placeholder="Razorpay / Zoho CRM / PathLab"></div>' +
+      '<div class="grid-2">' +
+      '<div class="field"><label>Category</label><select id="vn-cat" class="input"><option>Cloud hosting</option><option>Payment gateway</option><option>CRM</option><option>Messaging</option><option>Email services</option><option>Analytics</option><option>Billing software</option><option>Customer support</option></select></div>' +
+      '<div class="field"><label>Data Location</label><input id="vn-loc" class="input" value="India"></div>' +
+      '</div>' +
+      '<div class="field"><label>Data Shared</label><input id="vn-data" class="input" value="Customer Name, Phone, Email, Payment Reference"></div>' +
+      '<div class="field"><label>DPA Contract Status</label><select id="vn-dpa" class="input"><option value="PENDING_REVIEW">Pending Review</option><option value="SIGNED">Signed / Executed</option><option value="NEEDS_DPA">Needs New DPA</option></select></div>' +
+      '<button type="submit" class="btn btn-primary" style="width:100%;">Save Vendor</button></form>'
+    );
+  }
+  async function saveNewVendor(ev) {
+    ev.preventDefault();
+    try {
+      const dpa = document.getElementById('vn-dpa').value;
+      await TA.apiJson('/api/dpdp/vendors', {
+        method: 'POST',
+        body: JSON.stringify({
+          name: document.getElementById('vn-name').value.trim(),
+          category: document.getElementById('vn-cat').value,
+          data_location: document.getElementById('vn-loc').value.trim(),
+          data_shared: document.getElementById('vn-data').value.trim(),
+          dpa_status: dpa,
+          status: dpa === 'SIGNED' ? 'Approved' : 'Not reviewed',
+        }),
+      });
+      TA.closeModal();
+      TA.toast('Vendor saved');
+      loadVendors();
+    } catch (e) { TA.toast(e.message, 'err'); }
+  }
+
+  async function markDpaSigned(id) {
+    await TA.apiJson('/api/dpdp/vendors/' + encodeURIComponent(id), { method: 'PUT', body: JSON.stringify({ dpa_status: 'EXECUTED', status: 'Approved' }) });
+    TA.toast('Vendor DPA marked executed');
+    loadVendors();
+  }
+  async function deleteVendor(id) {
+    await TA.apiJson('/api/dpdp/vendors/' + encodeURIComponent(id), { method: 'DELETE' });
+    TA.toast('Vendor deleted');
+    loadVendors();
+  }
+
+  async function sendVendorLink(id) {
+    try {
+      const res = await TA.apiJson('/api/dpdp/vendors/' + encodeURIComponent(id) + '/intake-link', { method: 'POST' });
+      const url = window.location.origin + res.intake_path;
+      TA.openModal('Restricted Vendor Questionnaire Link',
+        '<p class="ta-muted" style="margin-bottom:12px;">Share this restricted URL with your vendor contact. They can submit security &amp; privacy disclosures without accessing any internal workspace records:</p>' +
+        '<input class="input ta-mono" readonly value="' + TA.esc(url) + '" onclick="this.select()">' +
+        '<div style="margin-top:12px;"><a href="' + TA.esc(res.intake_path) + '" target="_blank" class="btn btn-primary btn-sm">Open Vendor Form Preview &rarr;</a></div>'
+      );
+    } catch (e) { TA.toast(e.message, 'err'); }
+  }
+
+  loadVendors();
+</script>
+{% endblock %}

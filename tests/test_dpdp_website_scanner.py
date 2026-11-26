@@ -383,23 +383,29 @@ class TestDPDPWebsiteScannerSuite:
         assert any(s["scan_id"] == scan_b["scan_id"] for s in scans_b)
         assert not any(s["scan_id"] == scan_a["scan_id"] for s in scans_b)
 
-    # 17. Dashboard Rendering
+    # 17. Discovery Workspace Rendering
     def test_17_dashboard_rendering_has_scanner_tab(self, client):
-        """Verifies dashboard template includes DPDP Website Scanner in navigation and content."""
-        res = client.get("/dashboard")
+        """Verifies routed /app/discovery workspace renders public website discovery and extraction UI cleanly."""
+        reg = client.post("/api/auth/register", json={
+            "name": "Scanner Tester", "company_name": "Discovery Clinic", "industry": "healthcare",
+            "email": f"disc_{uuid.uuid4().hex[:6]}@clinic.in", "password": "Password123!"
+        })
+        assert reg.status_code == 201
+        res = client.get("/app/discovery")
         assert res.status_code == 200
         html_text = res.get_data(as_text=True)
-        assert "DPDP Website Scanner" in html_text
-        assert 'id="section-scanner"' in html_text
-        assert 'id="btn-start-scan"' in html_text
-        assert 'id="scanner-progress-panel"' in html_text
-        assert 'id="scanner-results-panel"' in html_text
+        assert "Discovery Centre" in html_text
+        assert "Website Privacy Discovery" in html_text
+        assert 'id="disc-url"' in html_text
+        assert 'id="disc-file"' in html_text
+        assert 'id="disc-sugs-list"' in html_text
 
     # 18. Homepage Rendering
     def test_18_homepage_has_website_scanner_link(self, client):
-        """Verifies public landing page features DPDP Website Scanner links and cards."""
+        """Verifies public landing page features live Quick Public Website Check widget and links."""
         res = client.get("/")
         assert res.status_code == 200
         html_text = res.get_data(as_text=True)
-        assert "Website Scanner" in html_text
-        assert "/dashboard#scanner" in html_text
+        assert "Instant Public Website Check" in html_text
+        assert "/api/public/quick-check" in html_text
+        assert 'id="home-scan-url"' in html_text

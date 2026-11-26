@@ -404,12 +404,11 @@ def test_demo_route_rendering(client):
     res = client.get("/demo")
     assert res.status_code == 200
     html = res.get_data(as_text=True)
-    assert "60-Second Guided Assessment" in html
-    assert "Experience DPDP Compliance Readiness in Action" in html
-    assert "Hospital / Multispecialty" in html
-    assert "DPDP Readiness Score" in html
-    assert "8-Step Guided Assessment Matrix" in html
-    assert "Start Free Assessment" in html
+    assert "DEMO MODE" in html
+    assert "Arogya Diagnostics Clinic Ltd" in html
+    assert "Create My Real Workspace" in html
+    assert "Visual Data Map" in html
+    assert "Customer Privacy Portal Preview" in html
 
 
 # ==============================================================================

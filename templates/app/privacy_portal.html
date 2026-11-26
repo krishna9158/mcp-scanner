@@ -1,0 +1,70 @@
+{% extends "app_base.html" %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Customer Privacy Request Portal</h1>
+    <p class="page-sub">Publish your organisation's branded intake page so customers can request access, correction, erasure, or file a privacy grievance with secure anti-abuse checks.</p>
+  </div>
+  <a id="pt-live-link" href="/portal/{{ org_slug }}" target="_blank" class="btn btn-primary btn-sm">Open Live Portal &rarr;</a>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <h2 class="ta-h3" style="margin-bottom:12px;">Portal Branding &amp; Security</h2>
+    <form onsubmit="savePortalCfg(event)">
+      <div class="field"><label>Branded Display Name</label><input id="pc-brand" class="input" required></div>
+      <div class="field"><label>Grievance / Privacy Desk Email</label><input id="pc-email" type="email" class="input" required></div>
+      <div class="field"><label>Custom Domain Preview (DNS CNAME Display)</label><input id="pc-dom" class="input" placeholder="privacy.yourcompany.in"></div>
+      <div class="field"><label>Welcome Instructions Shown to Customers</label><textarea id="pc-intro" class="input" rows="3"></textarea></div>
+      <div class="field"><label><input id="pc-en" type="checkbox" checked> Portal Publicly Active</label></div>
+      <button type="submit" class="btn btn-primary" style="width:100%;">Save Portal Settings</button>
+    </form>
+  </div>
+  <div class="card">
+    <h2 class="ta-h3">Shareable Hosted Link &amp; Safeguards</h2>
+    <div style="margin:12px 0;">
+      <input id="pc-url" class="input ta-mono" readonly onclick="this.select()">
+    </div>
+    <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;font-size:13.5px;color:var(--ink-soft);">
+      <li>&#10003; Server-signed verification challenge &amp; IP rate limiting</li>
+      <li>&#10003; Never discloses whether a person's email or account exists</li>
+      <li>&#10003; Requires matching Reference ID + Verification Code to view status</li>
+      <li>&#10003; Strict multi-tenant isolation &mdash; no cross-org access</li>
+    </ul>
+    <div style="margin-top:16px;"><a href="/app/privacy-requests" class="btn btn-outline btn-sm">Open Request Triage Queue &rarr;</a></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  const ORG_SLUG = {{ org_slug|tojson }};
+  async function loadPortalCfg() {
+    const d = await TA.apiJson('/api/dpdp/portal/config');
+    const c = d.config || {};
+    document.getElementById('pc-brand').value = c.brand_name || '';
+    document.getElementById('pc-email').value = c.contact_email || '';
+    document.getElementById('pc-dom').value = c.custom_domain_preview || '';
+    document.getElementById('pc-intro').value = c.intro_text || '';
+    document.getElementById('pc-en').checked = c.enabled !== false;
+    const url = window.location.origin + '/portal/' + encodeURIComponent(c.slug || ORG_SLUG);
+    document.getElementById('pc-url').value = url;
+    document.getElementById('pt-live-link').href = '/portal/' + encodeURIComponent(c.slug || ORG_SLUG);
+  }
+  async function savePortalCfg(ev) {
+    ev.preventDefault();
+    await TA.apiJson('/api/dpdp/portal/config', {
+      method: 'POST',
+      body: JSON.stringify({
+        brand_name: document.getElementById('pc-brand').value.trim(),
+        contact_email: document.getElementById('pc-email').value.trim(),
+        custom_domain_preview: document.getElementById('pc-dom').value.trim(),
+        intro_text: document.getElementById('pc-intro').value.trim(),
+        enabled: document.getElementById('pc-en').checked,
+      }),
+    });
+    TA.toast('Customer Privacy Portal saved');
+  }
+  loadPortalCfg();
+</script>
+{% endblock %}

@@ -15,6 +15,7 @@ __pycache__/
 data/evidence_vault/
 data/dpdp_evidence/
 data/audit_logs.json
+data/ai_assistant_history.json
 data/backups/
 
 scratch/

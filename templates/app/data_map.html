@@ -1,0 +1,110 @@
+{% extends "app_base.html" %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Visual Data Map</h1>
+    <p class="page-sub">Interactive diagram built exclusively from confirmed Customer Data Inventory &amp; Vendor sharing links. Click any node or connection line to inspect details.</p>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+    <button type="button" class="btn btn-outline btn-sm" onclick="zoomMap(1.15)">Zoom +</button>
+    <button type="button" class="btn btn-outline btn-sm" onclick="zoomMap(0.87)">Zoom -</button>
+    <button type="button" class="btn btn-outline btn-sm" onclick="resetZoom()">Reset</button>
+    <button type="button" class="btn btn-primary btn-sm" onclick="exportMapSvg()">Export SVG Image</button>
+  </div>
+</div>
+
+<div class="card" style="margin-bottom:18px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+  <input id="map-filter" class="input" style="max-width:280px;" placeholder="Filter nodes or vendors..." oninput="renderSvgMap()">
+  <div style="display:flex;gap:10px;font-size:12.5px;align-items:center;flex-wrap:wrap;">
+    <span class="badge badge-forest">Collection / Storage Node</span>
+    <span class="badge badge-emerald">Personal Data Category</span>
+    <span class="badge badge-amber">External Processor / Vendor</span>
+  </div>
+</div>
+
+<div id="data-map-canvas" class="card" style="background:var(--forest-950);border-color:var(--forest-800);overflow:auto;min-height:420px;padding:20px;">
+  <div class="ta-muted" style="color:#9DB0A5;">Loading visual data map...</div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  let MAP_FLOWS = [];
+  let MAP_ZOOM = 1;
+
+  function zoomMap(factor) { MAP_ZOOM = Math.max(0.6, Math.min(1.8, MAP_ZOOM * factor)); renderSvgMap(); }
+  function resetZoom() { MAP_ZOOM = 1; renderSvgMap(); }
+
+  async function loadMap() {
+    const d = await TA.apiJson('/api/dpdp/data-flow');
+    MAP_FLOWS = d.flows || [];
+    renderSvgMap();
+  }
+
+  function renderSvgMap() {
+    const wrap = document.getElementById('data-map-canvas');
+    const q = (document.getElementById('map-filter').value || '').toLowerCase();
+    const flows = MAP_FLOWS.filter(function (f) {
+      const hay = (f.source + ' ' + f.category + ' ' + f.system + ' ' + f.vendor + ' ' + f.purpose).toLowerCase();
+      return !q || hay.indexOf(q) !== -1;
+    });
+
+    if (!flows.length) {
+      wrap.innerHTML = '<div style="text-align:center;padding:70px 20px;color:#CBD5CE;">' +
+        '<h3 style="color:#fff;">Your Visual Data Map is Empty</h3>' +
+        '<p style="margin:8px 0 18px;font-size:14px;">Confirm items in Data Inventory or Discovery to plot Customer &rarr; Form &rarr; Database &rarr; Vendors dynamically.</p>' +
+        '<a href="/app/data-inventory" class="btn btn-lime btn-sm">Add Data Inventory &rarr;</a></div>';
+      return;
+    }
+
+    const rowH = 82;
+    const h = Math.max(240, flows.length * rowH + 60);
+    let svgInner = '<defs><marker id="dmArr" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,1 L7,4 L0,7 z" fill="#B7EC54"/></marker></defs>';
+
+    const trunc = function (s, n) {
+      const str = String(s || '');
+      return str.length > n ? (str.slice(0, n - 1) + '…') : str;
+    };
+
+    flows.forEach(function (f, idx) {
+      const y = 32 + idx * rowH;
+      const midY = y + 24;
+      svgInner +=
+        '<path d="M180 ' + midY + ' L250 ' + midY + ' M450 ' + midY + ' L520 ' + midY + ' M725 ' + midY + ' L795 ' + midY + '" ' +
+        'stroke="#B7EC54" stroke-width="2" class="flow-edge-anim" style="cursor:pointer;" marker-end="url(#dmArr)" onclick=\'inspectEdge(' + JSON.stringify(f) + ')\'/>' +
+        '<g class="flow-node" onclick=\'inspectNode("Source", ' + JSON.stringify(f) + ')\'><rect x="16" y="' + y + '" width="164" height="48" rx="9" fill="#183228" stroke="#2D5746"/><text x="98" y="' + (y + 28) + '" fill="#fff" font-size="11.5" font-weight="700" text-anchor="middle">' + TA.esc(trunc(f.source || 'Website Form', 20)) + '</text></g>' +
+        '<g class="flow-node" onclick=\'inspectNode("Data", ' + JSON.stringify(f) + ')\'><rect x="250" y="' + y + '" width="200" height="48" rx="9" fill="#0E7C5B" stroke="#10B981"/><text x="350" y="' + (y + 28) + '" fill="#fff" font-size="11.5" font-weight="700" text-anchor="middle">' + TA.esc(trunc(f.category || 'Personal Data', 24)) + '</text></g>' +
+        '<g class="flow-node" onclick=\'inspectNode("Storage", ' + JSON.stringify(f) + ')\'><rect x="520" y="' + y + '" width="205" height="48" rx="9" fill="#183228" stroke="#2D5746"/><text x="622" y="' + (y + 28) + '" fill="#fff" font-size="11.5" font-weight="700" text-anchor="middle">' + TA.esc(trunc(f.system || 'Database', 24)) + '</text></g>' +
+        '<g class="flow-node" onclick=\'inspectNode("Vendor", ' + JSON.stringify(f) + ')\'><rect x="795" y="' + y + '" width="188" height="48" rx="9" fill="#1F2937" stroke="#F59E0B"/><text x="889" y="' + (y + 28) + '" fill="#FEF3C7" font-size="11.5" font-weight="700" text-anchor="middle">' + TA.esc(trunc(f.vendor || 'Internal Only', 22)) + '</text></g>';
+    });
+
+    wrap.innerHTML = '<svg id="ta-datamap-svg" viewBox="0 0 1000 ' + h + '" width="' + Math.round(980 * MAP_ZOOM) + '" height="auto">' + svgInner + '</svg>';
+  }
+
+  function inspectNode(kind, f) {
+    TA.openDrawer(kind + ' Node Details',
+      '<div class="badge badge-emerald" style="margin-bottom:12px;">Confirmed Flow Record</div>' +
+      '<p><strong>Category:</strong> ' + TA.esc(f.category) + '</p>' +
+      '<p style="margin-top:8px;"><strong>Source:</strong> ' + TA.esc(f.source) + '</p>' +
+      '<p style="margin-top:8px;"><strong>Storage System:</strong> ' + TA.esc(f.system) + '</p>' +
+      '<p style="margin-top:8px;"><strong>Receiving Vendor / Processor:</strong> ' + TA.esc(f.vendor || 'Internal Only') + '</p>' +
+      '<p style="margin-top:8px;"><strong>Purpose:</strong> ' + TA.esc(f.purpose || 'Service Delivery') + '</p>' +
+      '<p style="margin-top:8px;"><strong>Retention:</strong> ' + TA.esc(f.retention || 'Review schedule') + '</p>'
+    );
+  }
+  function inspectEdge(f) { inspectNode('Data Connection', f); }
+
+  function exportMapSvg() {
+    const svg = document.getElementById('ta-datamap-svg');
+    if (!svg) return TA.toast('No diagram to export', 'err');
+    const blob = new Blob([svg.outerHTML], { type: 'image/svg+xml;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'trustaudit-data-map.svg';
+    a.click();
+    TA.toast('Exported trustaudit-data-map.svg');
+  }
+
+  loadMap();
+</script>
+{% endblock %}

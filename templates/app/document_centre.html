@@ -1,0 +1,85 @@
+{% extends "app_base.html" %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Document Centre (9 Guided Templates)</h1>
+    <p class="page-sub">Every template populates from your organisation profile and carries an explicit Draft label requiring business and legal review before external use.</p>
+  </div>
+</div>
+
+<div id="doc-templates-grid" class="grid-3" style="margin-bottom:24px;"></div>
+
+<div id="doc-editor-panel" class="card" style="display:none;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+    <div>
+      <h2 id="dc-title" class="ta-h3" style="margin:0;">Document Draft</h2>
+      <span id="dc-status" class="badge badge-amber">DRAFT — REVIEW REQUIRED</span>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button type="button" class="btn btn-outline btn-sm" onclick="saveDocDraft('DRAFT')">Save Draft</button>
+      <button type="button" class="btn btn-emerald btn-sm" onclick="saveDocDraft('APPROVED')">Mark Approved</button>
+      <button type="button" class="btn btn-outline btn-sm" onclick="exportDoc('docx')">Export .DOCX</button>
+      <button type="button" class="btn btn-outline btn-sm" onclick="exportDoc('txt')">Export Text</button>
+      <button type="button" class="btn btn-primary btn-sm" onclick="saveDocToVault()">Save to Evidence Vault</button>
+    </div>
+  </div>
+  <input id="dc-id" type="hidden">
+  <textarea id="dc-content" class="input" rows="16" style="font-family:var(--font-mono);font-size:13px;"></textarea>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  async function loadTemplates() {
+    const res = await TA.apiJson('/api/dpdp/documents/templates');
+    const tpls = res.templates || [];
+    const list = Array.isArray(tpls) ? tpls : Object.keys(tpls).map(function (k) { return Object.assign({ doc_type: k }, tpls[k]); });
+    document.getElementById('doc-templates-grid').innerHTML = list.map(function (t) {
+      const key = t.doc_type || t.key || t.id;
+      return '<div class="card card-hover"><span class="badge badge-neutral">' + TA.esc(t.statutory_ref || 'DPDP Draft') + '</span>' +
+        '<h3 style="font-size:16px;margin:8px 0 6px;">' + TA.esc(t.title) + '</h3>' +
+        '<p class="ta-muted" style="font-size:12.5px;margin-bottom:12px;">' + TA.esc(t.description || '') + '</p>' +
+        '<button type="button" class="btn btn-primary btn-sm" onclick="genDoc(\'' + TA.esc(key) + '\')">Draft Document &rarr;</button></div>';
+    }).join('');
+  }
+
+  async function genDoc(docType) {
+    const res = await TA.apiJson('/api/dpdp/documents/generate', { method: 'POST', body: JSON.stringify({ doc_type: docType }) });
+    const d = res.document || res;
+    document.getElementById('doc-editor-panel').style.display = 'block';
+    document.getElementById('dc-id').value = d.id;
+    document.getElementById('dc-title').textContent = d.title;
+    document.getElementById('dc-status').textContent = (d.status || 'DRAFT') + ' — REVIEW REQUIRED';
+    document.getElementById('dc-content').value = d.content || '';
+    document.getElementById('doc-editor-panel').scrollIntoView({ behavior: 'smooth' });
+    TA.toast('Draft document generated');
+  }
+
+  async function saveDocDraft(status) {
+    const id = document.getElementById('dc-id').value;
+    if (!id) return;
+    const res = await TA.apiJson('/api/dpdp/documents/' + encodeURIComponent(id), {
+      method: 'PUT',
+      body: JSON.stringify({ content: document.getElementById('dc-content').value, status: status }),
+    });
+    const d = res.document || {};
+    document.getElementById('dc-status').textContent = (d.status || status) + ' (' + (d.version || 'v2.0') + ')';
+    TA.toast(status === 'APPROVED' ? 'Document approved' : 'Draft saved');
+  }
+
+  function exportDoc(fmt) {
+    const id = document.getElementById('dc-id').value;
+    if (!id) return;
+    window.location.href = '/api/dpdp/documents/' + encodeURIComponent(id) + '/export?format=' + encodeURIComponent(fmt);
+  }
+
+  async function saveDocToVault() {
+    const id = document.getElementById('dc-id').value;
+    if (!id) return;
+    await TA.apiJson('/api/dpdp/documents/' + encodeURIComponent(id) + '/save-evidence', { method: 'POST', body: JSON.stringify({}) });
+    TA.toast('Saved directly into Evidence Vault');
+  }
+
+  loadTemplates();
+</script>
+{% endblock %}

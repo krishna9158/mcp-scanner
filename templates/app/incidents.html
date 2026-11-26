@@ -1,0 +1,85 @@
+{% extends "app_base.html" %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Privacy Incident Response</h1>
+    <p class="page-sub">Track incident discovery timelines, containment actions, internal approvals, and Board notification drafts (Section 8(6) &amp; Rule 7 — scheduled for 13 May 2027). <em>TrustAudit does not claim automatic external breach detection without connected telemetry.</em></p>
+  </div>
+  <button type="button" class="btn btn-primary btn-sm" onclick="openIncModal()">+ Report Suspected Incident</button>
+</div>
+
+<div class="grid-split">
+  <div class="card">
+    <h2 class="ta-h3" style="margin-bottom:12px;">Logged Incidents &amp; Preparation Status</h2>
+    <div id="incidents-list">Loading incidents...</div>
+  </div>
+  <div class="card">
+    <h2 class="ta-h3">Guided Breach Checklist (Section 8(6) &amp; Rule 7)</h2>
+    <ul style="list-style:none;display:flex;flex-direction:column;gap:9px;margin-top:12px;font-size:13.5px;color:var(--ink-soft);">
+      <li>1. Record discovery timestamp, affected systems, and data categories.</li>
+      <li>2. Execute immediate containment (revoke keys, isolate account, reset credentials).</li>
+      <li>3. Prepare Stage-1 Board notification draft &amp; plain-English customer alert.</li>
+      <li>4. Obtain human management approval before dispatching any official intimation.</li>
+      <li>5. Prepare Stage-2 72-hour follow-up details and forensic timeline.</li>
+    </ul>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  async function loadIncidents() {
+    const d = await TA.apiJson('/api/dpdp/breaches');
+    const list = d.incidents || [];
+    const el = document.getElementById('incidents-list');
+    if (!list.length) {
+      el.innerHTML = '<div class="empty-state"><p class="ta-muted">No suspected privacy incidents logged.</p></div>';
+      return;
+    }
+    el.innerHTML = list.map(function (inc) {
+      const notifSt = inc.board_notification_status || 'DRAFT_PENDING_CUSTOMER_APPROVAL';
+      return '<div style="padding:14px;border:1px solid var(--border);border-radius:10px;margin-bottom:10px;">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;"><strong>' + TA.esc(inc.title) + '</strong>' +
+        '<span class="badge badge-amber">' + TA.esc(inc.status || 'INVESTIGATING') + '</span></div>' +
+        '<div class="ta-muted" style="font-size:12.5px;margin:6px 0;">Notification Preparation: <strong>' + TA.esc(notifSt) + '</strong> &bull; Severity: ' + TA.esc(inc.severity || 'HIGH') + '</div>' +
+        '<div style="display:flex;gap:8px;margin-top:8px;">' +
+        '<button type="button" class="btn btn-outline btn-sm" onclick="authorizeInc(\'' + TA.esc(inc.id) + '\')">Approve Draft</button>' +
+        '<button type="button" class="btn btn-emerald btn-sm" onclick="closeInc(\'' + TA.esc(inc.id) + '\')">Close Incident</button></div></div>';
+    }).join('');
+  }
+
+  function openIncModal() {
+    TA.openModal('Log Suspected Privacy Incident',
+      '<form onsubmit="saveInc(event)">' +
+      '<div class="field"><label>Incident Summary</label><input id="in-title" class="input" required placeholder="Unauthorised export attempt from billing mailbox"></div>' +
+      '<div class="grid-2"><div class="field"><label>Affected Systems</label><input id="in-sys" class="input" required value="Email &amp; Customer CSV"></div>' +
+      '<div class="field"><label>Estimated Affected Individuals</label><input id="in-cnt" type="number" class="input" value="0"></div></div>' +
+      '<div class="field"><label>Immediate Containment Taken</label><textarea id="in-desc" class="input" rows="3" required></textarea></div>' +
+      '<button type="submit" class="btn btn-primary" style="width:100%;">Log Incident &amp; Create Draft Timeline</button></form>'
+    );
+  }
+  async function saveInc(ev) {
+    ev.preventDefault();
+    await TA.apiJson('/api/dpdp/breaches', {
+      method: 'POST',
+      body: JSON.stringify({
+        title: document.getElementById('in-title').value.trim(),
+        affected_systems: document.getElementById('in-sys').value.trim(),
+        affected_count: parseInt(document.getElementById('in-cnt').value || '0', 10),
+        description: document.getElementById('in-desc').value.trim(),
+      }),
+    });
+    TA.closeModal(); TA.toast('Incident logged'); loadIncidents();
+  }
+  async function authorizeInc(id) {
+    await TA.apiJson('/api/dpdp/breaches/' + encodeURIComponent(id) + '/authorize', { method: 'POST', body: JSON.stringify({}) });
+    TA.toast('Notification draft approved (tracked separately from actual submission)'); loadIncidents();
+  }
+  async function closeInc(id) {
+    await TA.apiJson('/api/dpdp/breaches/' + encodeURIComponent(id), { method: 'PUT', body: JSON.stringify({ status: 'CONTAINED_CLOSED', update_note: 'Containment and review completed' }) });
+    TA.toast('Incident closed'); loadIncidents();
+  }
+
+  loadIncidents();
+</script>
+{% endblock %}

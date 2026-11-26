@@ -1,0 +1,171 @@
+{% extends "app_base.html" %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Welcome to <span id="home-org-name">{{ org_info.name if org_info else 'Your Business' }}</span>.</h1>
+    <p class="page-sub">Here's your privacy operations overview. Real saved data only—no fake compliance percentages.</p>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+    <a href="/app/discovery" class="btn btn-outline btn-sm">Discover Website</a>
+    <a href="/app/data-inventory" class="btn btn-outline btn-sm">Add Business Activity</a>
+    <a href="/app/vendors" class="btn btn-outline btn-sm">Add Vendor</a>
+    <a href="/app/notices" class="btn btn-outline btn-sm">Create Privacy Notice</a>
+    <a href="/app/privacy-requests" class="btn btn-outline btn-sm">Open Customer Requests</a>
+    <a href="/app/privacy-assistant" class="btn btn-primary btn-sm">Ask TrustAudit AI</a>
+  </div>
+</div>
+
+<!-- C. BUSINESS PRIVACY OVERVIEW (Real DB Counters) -->
+<div class="grid-4" style="margin-bottom:22px;">
+  <div class="card"><div class="ta-muted">Data Categories</div><div id="cnt-inv" style="font-size:28px;font-weight:850;margin-top:4px;">&mdash;</div><a href="/app/data-inventory" style="font-size:12.5px;color:var(--emerald);font-weight:700;">View Inventory &rarr;</a></div>
+  <div class="card"><div class="ta-muted">Vendors</div><div id="cnt-vnd" style="font-size:28px;font-weight:850;margin-top:4px;">&mdash;</div><a href="/app/vendors" style="font-size:12.5px;color:var(--emerald);font-weight:700;">Manage Vendors &rarr;</a></div>
+  <div class="card"><div class="ta-muted">Open Privacy Tasks</div><div id="cnt-tsk" style="font-size:28px;font-weight:850;margin-top:4px;">&mdash;</div><a href="/app/action-plan" style="font-size:12.5px;color:var(--emerald);font-weight:700;">Open Action Plan &rarr;</a></div>
+  <div class="card"><div class="ta-muted">Requests &amp; Files to Review</div><div id="cnt-req" style="font-size:28px;font-weight:850;margin-top:4px;">&mdash;</div><a href="/app/evidence" style="font-size:12.5px;color:var(--emerald);font-weight:700;">Evidence &amp; Requests &rarr;</a></div>
+</div>
+
+<div class="grid-split" style="margin-bottom:22px;">
+  <!-- A. BUSINESS SETUP PROGRESS TIMELINE -->
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <h2 class="ta-h3" style="margin:0;">A. Business Setup Timeline</h2>
+      <span id="setup-badge" class="badge badge-emerald">0 of 6 completed</span>
+    </div>
+    <div id="setup-timeline" style="display:flex;flex-direction:column;gap:10px;">
+      <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+    </div>
+  </div>
+
+  <!-- D. MINIATURE DATA MAP PREVIEW + G. GUIDANCE PANEL -->
+  <div style="display:flex;flex-direction:column;gap:20px;">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <h2 class="ta-h3" style="margin:0;">Confirmed Data Map Preview</h2>
+        <a href="/app/data-map" class="btn btn-outline btn-sm">Open Full Map</a>
+      </div>
+      <div id="mini-map-box" style="background:var(--forest-950);border-radius:10px;padding:14px;color:#fff;">
+        <div class="ta-muted" style="color:#9DB0A5;">Loading data map preview...</div>
+      </div>
+    </div>
+
+    <div class="card" style="background:var(--forest-900);color:#FFFFFF;border-color:var(--forest-800);">
+      <span class="badge badge-lime">Guidance Panel</span>
+      <h2 style="font-size:19px;margin:10px 0 6px;color:#FFFFFF;">Not sure what to do next?</h2>
+      <p style="font-size:13.5px;color:#B8C9BF;margin-bottom:14px;">Ask TrustAudit AI for plain-English next steps tailored to your business sector, Privacy Notice status, and DPDP legal schedule.</p>
+      <a href="/app/privacy-assistant" class="btn btn-lime btn-sm">Ask Your Privacy Assistant</a>
+    </div>
+  </div>
+</div>
+
+<div class="grid-2">
+  <!-- B. PRIORITY ACTIONS (MAX 3) -->
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <h2 class="ta-h3" style="margin:0;">B. Top Priority Actions</h2>
+      <a href="/app/action-plan" class="btn btn-ghost btn-sm">All Tasks &rarr;</a>
+    </div>
+    <div id="priority-actions-list" style="display:flex;flex-direction:column;gap:12px;">
+      <div class="skeleton"></div>
+    </div>
+  </div>
+
+  <!-- E. RECENT ACTIVITY -->
+  <div class="card">
+    <h2 class="ta-h3" style="margin-bottom:14px;">E. Recent Workspace Activity</h2>
+    <div id="recent-activity-list" style="display:flex;flex-direction:column;gap:10px;">
+      <div class="skeleton"></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  const VIEW_ROUTE_MAP = {
+    onboarding: '/app/onboarding',
+    inventory: '/app/data-inventory',
+    scanner: '/app/discovery',
+    notices: '/app/notices',
+    vendors: '/app/vendors',
+    rights: '/app/privacy-requests',
+    retention: '/app/retention',
+    breaches: '/app/incidents',
+    evidence: '/app/evidence',
+    remediation: '/app/action-plan',
+    settings: '/app/settings',
+  };
+
+  async function loadHomeCommandCentre() {
+    try {
+      const [home, flow] = await Promise.all([
+        TA.apiJson('/api/dpdp/home-summary'),
+        TA.apiJson('/api/dpdp/data-flow').catch(function () { return {}; })
+      ]);
+      const org = home.organisation || {};
+      if (org.name) document.getElementById('home-org-name').textContent = org.name;
+      const cnt = home.counts || {};
+      document.getElementById('cnt-inv').textContent = cnt.inventory_count || 0;
+      document.getElementById('cnt-vnd').textContent = cnt.vendors_count || 0;
+      document.getElementById('cnt-tsk').textContent = (home.attention_tasks || []).length;
+      document.getElementById('cnt-req').textContent = (cnt.rights_requests_count || 0) + ' / ' + (cnt.evidence_awaiting_review_count != null ? cnt.evidence_awaiting_review_count : (cnt.evidence_count || 0));
+
+      const sp = home.setup_progress || {};
+      document.getElementById('setup-badge').textContent = (sp.completed_count || 0) + ' of ' + (sp.total_steps || 6) + ' setup steps completed';
+      const stepsEl = document.getElementById('setup-timeline');
+      stepsEl.innerHTML = (sp.steps || []).map(function (st, idx) {
+        const href = VIEW_ROUTE_MAP[st.action_view] || '/app/onboarding';
+        return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border:1px solid var(--border);border-radius:10px;">' +
+          '<div style="display:flex;align-items:center;gap:10px;">' +
+          '<span class="badge ' + (st.completed ? 'badge-emerald' : 'badge-neutral') + '">' + (st.completed ? 'Done' : ('Step ' + (idx + 1))) + '</span>' +
+          '<span style="font-weight:700;font-size:13.5px;">' + TA.esc(st.title) + '</span></div>' +
+          '<a href="' + href + '" class="btn btn-outline btn-sm">' + TA.esc(st.action_label || 'Open') + '</a></div>';
+      }).join('');
+
+      const tasksEl = document.getElementById('priority-actions-list');
+      const tasks = home.attention_tasks || [];
+      if (!tasks.length) {
+        tasksEl.innerHTML = '<div class="empty-state"><p class="ta-muted">No urgent missing items detected right now. Keep reviewing evidence periodically.</p></div>';
+      } else {
+        tasksEl.innerHTML = tasks.slice(0, 3).map(function (t) {
+          const href = VIEW_ROUTE_MAP[t.fix_target] || '/app/action-plan';
+          return '<div style="padding:12px;border:1px solid var(--border);border-radius:10px;">' +
+            '<div style="display:flex;justify-content:space-between;gap:8px;align-items:center;"><strong>' + TA.esc(t.title) + '</strong>' +
+            '<span class="badge ' + (t.severity === 'CRITICAL' ? 'badge-rose' : 'badge-amber') + '">' + TA.esc(t.severity || 'HIGH') + '</span></div>' +
+            '<p class="ta-muted" style="font-size:13px;margin:6px 0;">' + TA.esc(t.why || '') + '</p>' +
+            '<a href="' + href + '" class="btn btn-primary btn-sm">Open &rarr;</a></div>';
+        }).join('');
+      }
+
+      const actEl = document.getElementById('recent-activity-list');
+      const acts = home.recent_activity || [];
+      if (!acts.length) {
+        actEl.innerHTML = '<div class="empty-state"><p class="ta-muted">No recorded events yet. Start Guided Onboarding or Discovery to record your first real activity.</p></div>';
+      } else {
+        actEl.innerHTML = acts.slice(0, 8).map(function (a) {
+          const href = VIEW_ROUTE_MAP[a.target_view] || '/app/home';
+          return '<a href="' + href + '" style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border:1px solid var(--border);border-radius:8px;text-decoration:none;">' +
+            '<div><div style="font-size:13px;font-weight:700;">' + TA.esc(a.title) + '</div>' +
+            '<div class="ta-muted" style="font-size:11.5px;">' + TA.esc(a.category || '') + ' &bull; ' + TA.esc((a.timestamp || '').slice(0, 10)) + '</div></div>' +
+            '<span class="badge badge-neutral">View</span></a>';
+        }).join('');
+      }
+
+      const edges = (flow && flow.flows) || [];
+      const mini = document.getElementById('mini-map-box');
+      if (!edges.length) {
+        mini.innerHTML = '<div style="font-size:13px;color:#B8C9BF;">No confirmed data flows yet. Confirm items in Discovery or Data Inventory to generate your visual map.</div>';
+      } else {
+        mini.innerHTML =
+          '<svg viewBox="0 0 420 96" width="100%" height="auto">' +
+          '<path d="M98 48 L158 48 M262 48 L320 48" stroke="#B7EC54" stroke-width="2" class="flow-edge-anim"/>' +
+          '<rect x="6" y="24" width="92" height="48" rx="8" fill="#183228" stroke="#2D5746"/><text x="52" y="52" fill="#fff" font-size="11" font-weight="700" text-anchor="middle">Customer</text>' +
+          '<rect x="158" y="24" width="104" height="48" rx="8" fill="#183228" stroke="#2D5746"/><text x="210" y="52" fill="#fff" font-size="11" font-weight="700" text-anchor="middle">' + (cnt.inventory_count || 0) + ' Streams</text>' +
+          '<rect x="320" y="24" width="94" height="48" rx="8" fill="#0E7C5B" stroke="#B7EC54"/><text x="367" y="52" fill="#fff" font-size="11" font-weight="700" text-anchor="middle">' + (cnt.vendors_count || 0) + ' Vendors</text>' +
+          '</svg>';
+      }
+    } catch (e) {
+      TA.toast(e.message, 'err');
+    }
+  }
+  loadHomeCommandCentre();
+</script>
+{% endblock %}

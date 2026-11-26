@@ -1,0 +1,31 @@
+{% extends "public_base.html" %}
+{% block title %}About TrustAudit — Privacy Operations, Made Manageable{% endblock %}
+{% block content %}
+<section class="ta-section" style="padding-bottom:42px;border-bottom:1px solid var(--border);">
+  <div class="ta-container" style="max-width:840px;">
+    <span class="ta-eyebrow">About TrustAudit</span>
+    <h1 class="ta-h1">Making DPDP Privacy Operations Accessible for Every Growing Business</h1>
+    <p class="ta-lead">Most Indian startups, clinics, hospitals, e-commerce sellers, and educational organisations care deeply about customer trust—but lack a large legal operations team. TrustAudit bridges that gap without turning business owners into compliance lawyers.</p>
+  </div>
+</section>
+<section class="ta-section">
+  <div class="ta-container grid-2">
+    <div class="card">
+      <h2 class="ta-h3">Our Core Principles</h2>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;margin-top:12px;font-size:14.5px;color:var(--ink-soft);">
+        <li><strong>Plain Language First:</strong> Everyday business language up front; exact DPDP Sections &amp; Rules linked cleanly beside each control.</li>
+        <li><strong>Honesty Over Fake Automation:</strong> Suggestions from templates, websites, or uploaded files stay drafts until confirmed by your team.</li>
+        <li><strong>No Fabricated Compliance Proofs:</strong> Real DB metrics, real physical files in Evidence Vault, and real statutory disclaimers.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2 class="ta-h3">Contact &amp; Privacy Governance</h2>
+      <p class="ta-muted" style="margin-top:8px;">Security Researcher Disclosure: <a href="mailto:security@trustaudit.io">security@trustaudit.io</a> (<a href="/.well-known/security.txt">RFC 9116 policy</a>)</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;">
+        <button type="button" class="btn btn-primary btn-sm" onclick="openWalkthroughModal()">Book a Product Walkthrough</button>
+        <button type="button" class="btn btn-outline btn-sm" onclick="openGrievanceModal()">Submit Privacy Grievance</button>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

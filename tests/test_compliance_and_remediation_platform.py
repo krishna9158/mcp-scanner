@@ -415,14 +415,10 @@ class TestInteractiveTrustCentreAndPublicEndpoints:
         assert res.status_code == 200
         html = res.data.decode("utf-8")
 
-        # Verify page branding and key sections
         assert "TrustAudit" in html
-        assert "Security, Compliance &amp; Trust Center" in html or "Security, Compliance & Trust Center" in html
+        assert "How TrustAudit Protects Customer Information" in html
         assert "Verified Security Architecture" in html
-        assert "Live Telemetry &amp; Control Explorers" in html or "Live Telemetry & Control Explorers" in html
-        assert "PII &amp; Secret Sanitizer Preview" in html
-        assert "Live Security Telemetry Check" in html
-        assert "Upload &amp; SSRF Protection Specs" in html
+        assert "Live Security Telemetry &amp; PII Masking Sandbox" in html or "Live Security Telemetry & PII Masking Sandbox" in html
         assert "Download Trust Pack (.zip)" in html
 
         # Verify statutory legal accuracy (DPDP 2023 & Rules 2025 timeline)
@@ -434,7 +430,7 @@ class TestInteractiveTrustCentreAndPublicEndpoints:
 
         # Verify required professional disclaimers
         assert "Not a Government Certification Body" in html
-        assert "registered Consent Manager" in html or "registered statutory Consent Manager" in html
+        assert "registered Consent Manager" in html or "Not a Statutory Consent Manager" in html
 
         # Verify interactive JS function bindings (zero alert stubs)
         assert "alert(" not in html
@@ -442,8 +438,6 @@ class TestInteractiveTrustCentreAndPublicEndpoints:
         assert "runMaskingDemo" in html
         assert "runQuestionnaireSimulator" in html
         assert "inspectNode" in html
-        assert "tele-records" in html
-        assert "openTrustPackModal" in html
 
     def test_public_trust_status_telemetry_endpoint(self, client):
         res = client.get("/api/public/trust-status")

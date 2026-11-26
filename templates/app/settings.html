@@ -1,0 +1,128 @@
+{% extends "app_base.html" %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Workspace Settings, Team RBAC &amp; Security</h1>
+    <p class="page-sub">Manage team members &amp; permissions, plan quota, TOTP 2FA, audit trail logs, and organisation deletion.</p>
+  </div>
+</div>
+
+<div class="grid-2" style="margin-bottom:22px;">
+  <!-- Team Members -->
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <h2 class="ta-h3" style="margin:0;">Team Members &amp; Roles</h2>
+      <button type="button" class="btn btn-primary btn-sm" onclick="openInviteModal()">+ Invite Member</button>
+    </div>
+    <div id="team-list">Loading team...</div>
+  </div>
+
+  <!-- Plan & MFA -->
+  <div class="card">
+    <h2 class="ta-h3" style="margin-bottom:10px;">Plan &amp; Two-Factor Authentication</h2>
+    <div id="plan-box" style="margin-bottom:16px;">Loading plan...</div>
+    <div style="padding-top:14px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;">
+      <button type="button" class="btn btn-outline btn-sm" onclick="setupMfaModal()">Configure 2FA (TOTP)</button>
+      <button type="button" class="btn btn-danger btn-sm" onclick="confirmDeleteOrgModal()">Delete Organisation Permanently</button>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2 class="ta-h3" style="margin-bottom:12px;">Persistent Organisation Audit Logs</h2>
+  <div id="audit-logs-box">Loading audit trail...</div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  async function loadSettings() {
+    const [me, tm, logs] = await Promise.all([
+      TA.apiJson('/api/auth/me'),
+      TA.apiJson('/api/team/members'),
+      TA.apiJson('/api/audit-logs').catch(function () { return { logs: [] }; }),
+    ]);
+    const members = tm.members || [];
+    document.getElementById('team-list').innerHTML = members.map(function (m) {
+      return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);">' +
+        '<div><strong>' + TA.esc(m.name) + '</strong><div class="ta-muted" style="font-size:12px;">' + TA.esc(m.email) + '</div></div>' +
+        '<div style="display:flex;gap:6px;align-items:center;"><span class="badge badge-neutral">' + TA.esc(m.role) + '</span>' +
+        '<button type="button" class="btn btn-ghost btn-sm" onclick="delMember(\'' + TA.esc(m.id) + '\')">Remove</button></div></div>';
+    }).join('');
+
+    const org = me.organization || {};
+    const pd = org.plan_details || {};
+    document.getElementById('plan-box').innerHTML =
+      '<div><strong>Current Tier:</strong> ' + TA.esc(pd.name || org.plan || 'Starter') + ' (&#8377;' + TA.esc(pd.price_monthly_inr || 0) + '/mo)</div>' +
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">' +
+      '<button type="button" class="btn btn-outline btn-sm" onclick="switchPlan(\'starter\')">Starter</button>' +
+      '<button type="button" class="btn btn-outline btn-sm" onclick="switchPlan(\'growth\')">Growth</button>' +
+      '<button type="button" class="btn btn-outline btn-sm" onclick="switchPlan(\'business\')">Business</button></div>';
+
+    const evs = logs.logs || [];
+    document.getElementById('audit-logs-box').innerHTML = evs.length ? '<div class="tbl-wrap"><table><thead><tr><th>Timestamp</th><th>Action</th><th>Actor</th><th>Details</th></tr></thead><tbody>' +
+      evs.slice(0, 30).map(function (l) {
+        return '<tr><td class="ta-mono" style="font-size:12px;">' + TA.esc((l.timestamp || '').slice(0, 19)) + '</td><td><strong>' + TA.esc(l.action) + '</strong></td><td>' + TA.esc(l.actor_email || l.actor_id || 'System') + '</td><td class="ta-muted">' + TA.esc(JSON.stringify(l.details || {})) + '</td></tr>';
+      }).join('') + '</tbody></table></div>' : '<div class="ta-muted">No audit events yet.</div>';
+  }
+
+  function openInviteModal() {
+    TA.openModal('Invite Team Member',
+      '<form onsubmit="inviteMember(event)">' +
+      '<div class="field"><label>Name</label><input id="tm-name" class="input" required></div>' +
+      '<div class="field"><label>Work Email</label><input id="tm-email" type="email" class="input" required></div>' +
+      '<div class="field"><label>Role</label><select id="tm-role" class="input"><option value="member">Member (Edit Workspace)</option><option value="viewer">Viewer (Read-Only)</option><option value="admin">Admin</option></select></div>' +
+      '<div class="field"><label>Temporary Password (8+ chars)</label><input id="tm-pwd" type="password" class="input" minlength="8" required></div>' +
+      '<button type="submit" class="btn btn-primary" style="width:100%;">Create Team Account</button></form>'
+    );
+  }
+  async function inviteMember(ev) {
+    ev.preventDefault();
+    try {
+      await TA.apiJson('/api/team/members', {
+        method: 'POST',
+        body: JSON.stringify({ name: document.getElementById('tm-name').value.trim(), email: document.getElementById('tm-email').value.trim(), role: document.getElementById('tm-role').value, password: document.getElementById('tm-pwd').value }),
+      });
+      TA.closeModal(); TA.toast('Team member added'); loadSettings();
+    } catch (e) { TA.toast(e.message, 'err'); }
+  }
+  async function delMember(id) {
+    try { await TA.apiJson('/api/team/members/' + encodeURIComponent(id), { method: 'DELETE' }); TA.toast('Member removed'); loadSettings(); }
+    catch (e) { TA.toast(e.message, 'err'); }
+  }
+  async function switchPlan(p) {
+    try { await TA.apiJson('/api/billing/plan', { method: 'POST', body: JSON.stringify({ plan: p }) }); TA.toast('Plan updated to ' + p); loadSettings(); }
+    catch (e) { TA.toast(e.message, 'err'); }
+  }
+  async function setupMfaModal() {
+    try {
+      const r = await TA.apiJson('/api/auth/mfa/setup', { method: 'POST', body: JSON.stringify({}) });
+      TA.openModal('Enable Authenticator 2FA (TOTP)',
+        '<p class="ta-muted" style="margin-bottom:10px;">Add this secret key into Google Authenticator / 1Password:</p>' +
+        '<div class="card ta-mono" style="margin-bottom:12px;">' + TA.esc(r.secret || '') + '</div>' +
+        '<div class="field"><label>Enter 6-digit code from app to confirm</label><input id="mfa-code" class="input ta-mono" placeholder="123456"></div>' +
+        '<button type="button" class="btn btn-primary" onclick="enableMfa()">Verify &amp; Enable 2FA</button>'
+      );
+    } catch (e) { TA.toast(e.message, 'err'); }
+  }
+  async function enableMfa() {
+    try { await TA.apiJson('/api/auth/mfa/enable', { method: 'POST', body: JSON.stringify({ code: document.getElementById('mfa-code').value.trim() }) }); TA.closeModal(); TA.toast('2FA enabled'); }
+    catch (e) { TA.toast(e.message, 'err'); }
+  }
+  function confirmDeleteOrgModal() {
+    TA.openModal('Confirm Permanent Organisation Deletion',
+      '<p style="color:var(--rose);margin-bottom:14px;">This permanently deletes your organisation, team users, customer data inventory, vendor records, notices, scans, and all Evidence Vault files.</p>' +
+      '<button type="button" class="btn btn-danger" style="width:100%;" onclick="deleteOrgNow()">Yes, Delete All Organisation Data</button>'
+    );
+  }
+  async function deleteOrgNow() {
+    try {
+      await TA.apiJson('/api/account/delete', { method: 'POST', body: JSON.stringify({}) });
+      TA.setToken('');
+      window.location.href = '/';
+    } catch (e) { TA.toast(e.message, 'err'); }
+  }
+
+  loadSettings();
+</script>
+{% endblock %}

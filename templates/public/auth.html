@@ -1,0 +1,140 @@
+{% extends "public_base.html" %}
+{% block title %}{% if mode == 'register' %}Create Account{% else %}Sign In{% endif %} — TrustAudit{% endblock %}
+{% block content %}
+<section class="ta-section" style="min-height:76vh;display:flex;align-items:center;">
+  <div class="ta-container" style="max-width:480px;width:100%;">
+    <div class="card" style="padding:30px;box-shadow:var(--shadow-md);">
+      <div style="display:flex;gap:8px;margin-bottom:20px;padding:4px;background:var(--bg-muted);border-radius:10px;">
+        <a href="/login{% if next_url %}?next={{ next_url|urlencode }}{% endif %}" class="btn btn-sm {% if mode != 'register' %}btn-primary{% else %}btn-ghost{% endif %}" style="flex:1;">Sign In</a>
+        <a href="/register{% if selected_plan %}?plan={{ selected_plan|urlencode }}{% endif %}" class="btn btn-sm {% if mode == 'register' %}btn-primary{% else %}btn-ghost{% endif %}" style="flex:1;">Create Free Account</a>
+      </div>
+
+      {% if mode == 'register' %}
+      <h1 style="font-size:22px;margin-bottom:6px;">Start Your Privacy Workspace</h1>
+      <p class="ta-muted" style="margin-bottom:18px;">Create an isolated organisation account and continue straight into assisted 6-step onboarding.</p>
+      <form onsubmit="submitAuthRegister(event)">
+        <div class="field"><label>Your Full Name</label><input id="reg-name" class="input" required placeholder="Priya Nair"></div>
+        <div class="field"><label>Organisation / Clinic Name</label><input id="reg-org" class="input" required placeholder="Kaveri Care Clinic"></div>
+        <div class="field"><label>Industry</label>
+          <select id="reg-ind" class="input">
+            <option value="healthcare">Healthcare, Clinic or Hospital</option>
+            <option value="saas">SaaS &amp; Technology Startup</option>
+            <option value="ecommerce">E-Commerce &amp; Retail</option>
+            <option value="education">Education &amp; EdTech</option>
+            <option value="professional_services">Professional Services &amp; Advisory</option>
+          </select>
+        </div>
+        <div class="field"><label>Work Email</label><input id="reg-email" type="email" class="input" required placeholder="priya@company.in"></div>
+        <div class="field"><label>Password (8+ characters)</label><input id="reg-pwd" type="password" class="input" minlength="8" required placeholder="Minimum 8 characters"></div>
+        <input id="reg-plan" type="hidden" value="{{ selected_plan or 'free' }}">
+        <button id="reg-btn" type="submit" class="btn btn-primary" style="width:100%;">Create Workspace &amp; Start Setup</button>
+      </form>
+      {% else %}
+      <h1 style="font-size:22px;margin-bottom:6px;">Sign In to TrustAudit</h1>
+      <p class="ta-muted" style="margin-bottom:18px;">Access your organisation's routed DPDP privacy operations workspace.</p>
+      <form onsubmit="submitAuthLogin(event)">
+        <div class="field"><label>Work Email</label><input id="log-email" type="email" class="input" required placeholder="you@company.in"></div>
+        <div class="field"><label>Password</label><input id="log-pwd" type="password" class="input" required placeholder="Your workspace password"></div>
+        <div id="mfa-row" class="field" style="display:none;"><label>Authenticator 2FA Code</label><input id="log-totp" class="input ta-mono" placeholder="6-digit OTP"></div>
+        <button id="log-btn" type="submit" class="btn btn-primary" style="width:100%;">Sign In to Workspace</button>
+      </form>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;font-size:13px;">
+        <button type="button" class="btn btn-ghost btn-sm" onclick="openForgotModal()">Forgot password?</button>
+        <a href="/demo" style="font-weight:700;color:var(--emerald);text-decoration:none;">Explore Demo Sandbox &rarr;</a>
+      </div>
+      {% endif %}
+      <div id="auth-msg" style="margin-top:14px;font-size:13.5px;"></div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  const NEXT_URL = {{ (next_url or '/app/home')|tojson }};
+  async function submitAuthRegister(ev) {
+    ev.preventDefault();
+    const msg = document.getElementById('auth-msg');
+    const btn = document.getElementById('reg-btn');
+    btn.disabled = true;
+    msg.textContent = 'Creating isolated workspace...';
+    try {
+      const res = await TA.apiJson('/api/auth/register', {
+        method: 'POST',
+        body: JSON.stringify({
+          name: document.getElementById('reg-name').value.trim(),
+          company_name: document.getElementById('reg-org').value.trim(),
+          industry: document.getElementById('reg-ind').value,
+          email: document.getElementById('reg-email').value.trim(),
+          password: document.getElementById('reg-pwd').value,
+          plan: document.getElementById('reg-plan').value || 'free',
+        }),
+      });
+      if (res.data && res.data.token) TA.setToken(res.data.token);
+      window.location.href = '/app/onboarding';
+    } catch (e) {
+      msg.innerHTML = '<span style="color:var(--rose);">' + TA.esc(e.message) + '</span>';
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  async function submitAuthLogin(ev) {
+    ev.preventDefault();
+    const msg = document.getElementById('auth-msg');
+    const btn = document.getElementById('log-btn');
+    btn.disabled = true;
+    msg.textContent = 'Verifying credentials...';
+    try {
+      const payload = {
+        email: document.getElementById('log-email').value.trim(),
+        password: document.getElementById('log-pwd').value,
+      };
+      const totp = document.getElementById('log-totp').value.trim();
+      if (totp) payload.totp_code = totp;
+      const res = await TA.apiJson('/api/auth/login', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+      if (res.mfa_required) {
+        document.getElementById('mfa-row').style.display = 'block';
+        msg.innerHTML = '<span style="color:var(--amber);">Enter your 6-digit Authenticator 2FA code above.</span>';
+        return;
+      }
+      if (res.data && res.data.token) TA.setToken(res.data.token);
+      window.location.href = NEXT_URL.indexOf('/app/') === 0 ? NEXT_URL : '/app/home';
+    } catch (e) {
+      msg.innerHTML = '<span style="color:var(--rose);">' + TA.esc(e.message) + '</span>';
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  function openForgotModal() {
+    TA.openModal('Reset Workspace Password',
+      '<p class="ta-muted" style="margin-bottom:12px;">Enter your work email. When an email delivery integration is configured, a single-use 1-hour reset token is delivered securely out of band (never exposed in HTTP JSON).</p>' +
+      '<div class="field"><label>Work Email</label><input id="fp-email" type="email" class="input" required></div>' +
+      '<button type="button" class="btn btn-primary" onclick="sendForgotPwd()">Request Reset Token</button>' +
+      '<hr style="margin:16px 0;border:none;border-top:1px solid var(--border);">' +
+      '<div class="field"><label>Reset Token</label><input id="rp-tok" class="input ta-mono" placeholder="Paste token from email"></div>' +
+      '<div class="field"><label>New Password</label><input id="rp-pwd" type="password" class="input" minlength="8"></div>' +
+      '<button type="button" class="btn btn-outline" onclick="completeResetPwd()">Confirm New Password</button>' +
+      '<div id="fp-msg" style="margin-top:10px;font-size:13px;"></div>'
+    );
+  }
+  async function sendForgotPwd() {
+    const out = document.getElementById('fp-msg');
+    try {
+      const r = await TA.apiJson('/api/auth/forgot-password', { method: 'POST', body: JSON.stringify({ email: document.getElementById('fp-email').value }) });
+      out.innerHTML = '<span style="color:var(--emerald);">' + TA.esc(r.message || 'If account exists, reset instructions were processed.') + '</span>';
+    } catch (e) { out.innerHTML = '<span style="color:var(--rose);">' + TA.esc(e.message) + '</span>'; }
+  }
+  async function completeResetPwd() {
+    const out = document.getElementById('fp-msg');
+    try {
+      const r = await TA.apiJson('/api/auth/reset-password', { method: 'POST', body: JSON.stringify({ token: document.getElementById('rp-tok').value, new_password: document.getElementById('rp-pwd').value }) });
+      out.innerHTML = '<span style="color:var(--emerald);">' + TA.esc(r.message || 'Password updated.') + '</span>';
+    } catch (e) { out.innerHTML = '<span style="color:var(--rose);">' + TA.esc(e.message) + '</span>'; }
+  }
+</script>
+{% endblock %}

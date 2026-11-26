@@ -1,0 +1,142 @@
+{% extends "app_base.html" %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Discovery Centre</h1>
+    <p class="page-sub">Discover personal data clues from your public website, uploaded CSV/XLSX/DOCX/PDF files, and vendor tools—then confirm, edit, or reject every suggestion cleanly.</p>
+  </div>
+</div>
+
+<div style="padding:12px 16px;border-radius:10px;background:var(--amber-soft);color:var(--amber);font-size:13.5px;font-weight:700;margin-bottom:20px;">
+  Important Technical Boundary: Public website inspection cannot inspect internal databases, HR files, or private billing software. Database discovery requires an authorised connector (planned roadmap), never guessed internal scans.
+</div>
+
+<div class="grid-2" style="margin-bottom:22px;">
+  <div class="card">
+    <h2 class="ta-h3">1. Website Privacy Discovery</h2>
+    <form onsubmit="runDiscWebsite(event)" style="display:flex;gap:8px;margin-top:10px;">
+      <input id="disc-url" type="url" class="input" required placeholder="https://yourcompany.in">
+      <button type="submit" class="btn btn-primary">Inspect</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2 class="ta-h3">2. Document &amp; Register Extraction (.CSV, .XLSX, .DOCX, .PDF)</h2>
+    <form onsubmit="runDiscUpload(event)" style="display:flex;gap:8px;margin-top:10px;align-items:center;">
+      <input id="disc-file" type="file" accept=".csv,.xlsx,.docx,.pdf,.txt,.md,.json" class="input" required>
+      <button type="submit" class="btn btn-primary">Extract Drafts</button>
+    </form>
+  </div>
+</div>
+
+<div class="card" style="margin-bottom:22px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+    <h2 class="ta-h3" style="margin:0;">Extracted &amp; Discovered Suggestions</h2>
+    <div style="display:flex;gap:8px;">
+      <button type="button" class="btn btn-outline btn-sm" onclick="loadSuggestions('')">All</button>
+      <button type="button" class="btn btn-outline btn-sm" onclick="loadSuggestions('Needs review')">Needs Review</button>
+      <button type="button" class="btn btn-outline btn-sm" onclick="loadSuggestions('Confirmed by business')">Confirmed</button>
+      <button type="button" class="btn btn-outline btn-sm" onclick="loadSuggestions('Rejected')">Rejected</button>
+    </div>
+  </div>
+  <div id="disc-sugs-list">Loading discovery timeline...</div>
+</div>
+
+<div class="card">
+  <h2 class="ta-h3" style="margin-bottom:12px;">Website Discovery History</h2>
+  <div id="disc-scans-list"></div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  async function loadSuggestions(statusFilter) {
+    const q = statusFilter ? ('?status=' + encodeURIComponent(statusFilter)) : '';
+    const d = await TA.apiJson('/api/dpdp/extraction/suggestions' + q);
+    const items = d.suggestions || [];
+    const el = document.getElementById('disc-sugs-list');
+    if (!items.length) {
+      el.innerHTML = '<div class="empty-state"><p class="ta-muted">No discovery suggestions yet. Upload a CSV/XLSX register, DOCX/PDF policy, or scan your public website above.</p></div>';
+      return;
+    }
+    el.innerHTML = '<div class="tbl-wrap"><table><thead><tr><th>Discovered Item</th><th>Type / Category</th><th>Source &amp; Confidence</th><th>Status</th><th>Review Action</th></tr></thead><tbody>' +
+      items.map(function (s) {
+        const badgeCls = s.status === 'Confirmed by business' ? 'badge-emerald' : (s.status === 'Rejected' ? 'badge-rose' : 'badge-amber');
+        return '<tr><td><strong>' + TA.esc(s.value) + '</strong><div class="ta-muted" style="font-size:12px;">' + TA.esc(s.purpose || '') + '</div></td>' +
+          '<td>' + TA.esc(s.extracted_type) + '<div class="ta-muted" style="font-size:12px;">' + TA.esc(s.category) + '</div></td>' +
+          '<td>' + TA.esc(s.source_document) + '<div class="ta-muted" style="font-size:12px;">Confidence: ' + TA.esc(s.confidence) + '</div></td>' +
+          '<td><span class="badge ' + badgeCls + '">' + TA.esc(s.status) + '</span></td>' +
+          '<td style="white-space:nowrap;">' +
+          '<button type="button" class="btn btn-emerald btn-sm" onclick="reviewSug(\'' + TA.esc(s.id) + '\', \'accept\')">Confirm</button> ' +
+          '<button type="button" class="btn btn-outline btn-sm" onclick="editSug(\'' + TA.esc(s.id) + '\', \'' + TA.esc(s.value) + '\')">Edit</button> ' +
+          '<button type="button" class="btn btn-ghost btn-sm" onclick="reviewSug(\'' + TA.esc(s.id) + '\', \'reject\')">Reject</button>' +
+          '</td></tr>';
+      }).join('') + '</tbody></table></div>';
+  }
+
+  async function reviewSug(id, action, edited) {
+    try {
+      await TA.apiJson('/api/dpdp/extraction/suggestions/' + encodeURIComponent(id) + '/review', {
+        method: 'POST',
+        body: JSON.stringify({ action: action, edited_fields: edited || null }),
+      });
+      TA.toast('Suggestion marked ' + action);
+      loadSuggestions('');
+    } catch (e) { TA.toast(e.message, 'err'); }
+  }
+
+  function editSug(id, curVal) {
+    TA.openModal('Edit Discovered Draft',
+      '<div class="field"><label>Description</label><input id="ed-sug-val" class="input" value="' + TA.esc(curVal) + '"></div>' +
+      '<div class="field"><label>Purpose</label><input id="ed-sug-pur" class="input" value="Confirmed business purpose"></div>' +
+      '<button type="button" class="btn btn-primary" onclick="submitEditSug(\'' + TA.esc(id) + '\')">Save &amp; Confirm</button>'
+    );
+  }
+  function submitEditSug(id) {
+    reviewSug(id, 'edit', {
+      value: document.getElementById('ed-sug-val').value,
+      purpose: document.getElementById('ed-sug-pur').value,
+    });
+    TA.closeModal();
+  }
+
+  async function loadScans() {
+    const d = await TA.apiJson('/api/dpdp/scanner/history');
+    const scans = d.scans || [];
+    const el = document.getElementById('disc-scans-list');
+    if (!scans.length) { el.innerHTML = '<div class="ta-muted">No website scans recorded yet.</div>'; return; }
+    el.innerHTML = scans.map(function (sc) {
+      return '<div style="padding:12px;border:1px solid var(--border);border-radius:10px;margin-bottom:10px;">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;"><strong>' + TA.esc(sc.target_url) + '</strong>' +
+        '<span class="badge badge-neutral">' + (sc.findings || []).length + ' finding(s) &bull; ' + TA.esc((sc.scanned_at || '').slice(0, 10)) + '</span></div>' +
+        '<div class="ta-muted" style="font-size:13px;margin-top:6px;">What cannot be checked externally: private DBs, internal billing software, offline clinic forms.</div></div>';
+    }).join('');
+  }
+
+  async function runDiscWebsite(ev) {
+    ev.preventDefault();
+    try {
+      await TA.apiJson('/api/dpdp/scanner/start', { method: 'POST', body: JSON.stringify({ website_url: document.getElementById('disc-url').value.trim(), authorization_confirmed: true }) });
+      TA.toast('Website scan completed');
+      loadScans();
+    } catch (e) { TA.toast(e.message, 'err'); }
+  }
+
+  async function runDiscUpload(ev) {
+    ev.preventDefault();
+    const f = document.getElementById('disc-file').files[0];
+    if (!f) return;
+    const fd = new FormData(); fd.append('file', f);
+    try {
+      const res = await TA.apiJson('/api/dpdp/extraction/upload', { method: 'POST', body: fd });
+      const ex = res.extraction || {};
+      TA.toast('Extracted ' + (ex.suggestions_count || 0) + ' draft record(s)');
+      if (ex.warnings && ex.warnings.length) TA.toast(ex.warnings[0], 'err');
+      loadSuggestions('');
+    } catch (e) { TA.toast(e.message, 'err'); }
+  }
+
+  loadSuggestions('');
+  loadScans();
+</script>
+{% endblock %}

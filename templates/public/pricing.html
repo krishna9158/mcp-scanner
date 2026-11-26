@@ -1,0 +1,47 @@
+{% extends "public_base.html" %}
+{% block title %}Pricing — TrustAudit{% endblock %}
+{% block content %}
+<section class="ta-section" style="padding-bottom:42px;border-bottom:1px solid var(--border);">
+  <div class="ta-container">
+    <span class="ta-eyebrow">Configurable INR Plans</span>
+    <h1 class="ta-h1">Transparent Plans Built Around Real Capacity</h1>
+    <p class="ta-lead">Plan pricing and quotas shown here match live server enforcement in <code>saas_store</code> and can be managed by platform administrators. Future database connectors are clearly separated as roadmap integrations.</p>
+  </div>
+</section>
+<section class="ta-section">
+  <div class="ta-container">
+    <div class="grid-4">
+      {% for plan in plans %}
+      <div class="card" style="display:flex;flex-direction:column;{% if plan.key == 'growth' %}border-color:var(--emerald);box-shadow:var(--shadow-sm);{% endif %}">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <h2 style="margin:0;font-size:19px;">{{ plan.name }}</h2>
+          {% if plan.key == 'growth' %}<span class="badge badge-emerald">Most Popular</span>{% endif %}
+        </div>
+        <div style="font-size:32px;font-weight:850;margin:12px 0 4px;">&#8377;{{ "{:,}".format(plan.price_monthly_inr) }}<span style="font-size:13px;font-weight:600;color:var(--ink-muted);">/month</span></div>
+        <div class="ta-muted" style="font-size:12.5px;margin-bottom:14px;">
+          Up to {{ plan.max_domains }} site(s) &bull; {{ plan.max_data_streams }} data records &bull; {{ plan.max_team_members }} user(s)
+        </div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;font-size:13.5px;color:var(--ink-soft);margin-bottom:20px;flex:1;">
+          {% for f in plan.features %}<li>&#10003; {{ f }}</li>{% endfor %}
+        </ul>
+        <a href="/register?plan={{ plan.key }}" class="btn {% if plan.key == 'growth' %}btn-primary{% else %}btn-outline{% endif %}" style="width:100%;">Start Free Assessment</a>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="card ta-section-muted" style="margin-top:34px;">
+      <div class="grid-split" style="align-items:center;">
+        <div>
+          <h3 class="ta-h3">Available Today vs Planned Connectors</h3>
+          <p class="ta-muted"><strong>Available in production today:</strong> Assisted 6-step onboarding, public website discovery, CSV/XLSX/DOCX/PDF draft extraction, SVG Data Map, 10-topic assessment, Kanban/List/Calendar Action Plan, Vendor questionnaires, Customer Privacy Portal, Shareable Privacy Profile, PDF/DOCX/CSV/ZIP exports, and Grounded AI Assistant.</p>
+          <p class="ta-muted" style="margin-top:8px;"><strong>Planned roadmap integrations:</strong> Direct automated SQL/SaaS DB connectors and automated downstream deletion hooks (TrustAudit never claims external automated deletion unless confirmed).</p>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;">
+          <a href="/demo" class="btn btn-outline">View Demo</a>
+          <button type="button" class="btn btn-primary" onclick="openWalkthroughModal()">Book a Product Walkthrough</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
