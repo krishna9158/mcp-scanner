@@ -255,11 +255,22 @@ class TestDPDPWebsiteScannerSuite:
         assert report["summary_metrics"]["readiness_score"] > 0
         assert "statutory_disclaimer" in report
 
+    def _auth_hdrs(self, client):
+        reg = client.post("/api/auth/register", json={
+            "email": f"scan_{uuid.uuid4().hex[:6]}@clinic.in",
+            "password": "StrongPassword#2026",
+            "name": "Scan Lead",
+            "company_name": "Scan Clinic"
+        })
+        tok = reg.get_json()["data"]["token"]
+        return {"Authorization": f"Bearer {tok}"}
+
     # 12. API: Start Website Scan (Demo & Validation)
     def test_12_api_start_website_scan(self, client):
         """Tests POST /api/dpdp/scanner/start for validation and demo execution."""
+        hdrs = self._auth_hdrs(client)
         # A. Missing authorization confirmation rejected
-        res = client.post("/api/dpdp/scanner/start", json={
+        res = client.post("/api/dpdp/scanner/start", headers=hdrs, json={
             "website_url": "https://exampleclinic.in",
             "authorization_confirmed": False
         })
@@ -267,7 +278,7 @@ class TestDPDPWebsiteScannerSuite:
         assert "authorization" in res.get_json()["message"].lower()
 
         # B. Demo scan succeeds
-        res_demo = client.post("/api/dpdp/scanner/start", json={
+        res_demo = client.post("/api/dpdp/scanner/start", headers=hdrs, json={
             "website_url": "https://citycare.example.in",
             "business_name": "City Care Diagnostic Center",
             "industry": "healthcare",
@@ -283,8 +294,9 @@ class TestDPDPWebsiteScannerSuite:
     # 13. API: Scan History & Results Retrieval
     def test_13_api_scan_history_and_results(self, client):
         """Tests scan persistence and retrieval via GET /api/dpdp/scanner/history."""
+        hdrs = self._auth_hdrs(client)
         # Run demo scan
-        start_res = client.post("/api/dpdp/scanner/start", json={
+        start_res = client.post("/api/dpdp/scanner/start", headers=hdrs, json={
             "website_url": "https://apollodiag.example.in",
             "business_name": "Apollo Diag Lab",
             "industry": "healthcare",
@@ -294,20 +306,21 @@ class TestDPDPWebsiteScannerSuite:
         scan_id = start_res.get_json()["scan"]["scan_id"]
 
         # Retrieve history
-        hist_res = client.get("/api/dpdp/scanner/history")
+        hist_res = client.get("/api/dpdp/scanner/history", headers=hdrs)
         assert hist_res.status_code == 200
         scans = hist_res.get_json()["scans"]
         assert any(s["scan_id"] == scan_id for s in scans)
 
         # Retrieve specific results
-        res_item = client.get(f"/api/dpdp/scanner/results/{scan_id}")
+        res_item = client.get(f"/api/dpdp/scanner/results/{scan_id}", headers=hdrs)
         assert res_item.status_code == 200
         assert res_item.get_json()["scan"]["scan_id"] == scan_id
 
     # 14. API: Convert Finding to Remediation Task
     def test_14_api_convert_finding_to_task(self, client):
         """Converts an observable website gap directly into an actionable remediation task."""
-        start_res = client.post("/api/dpdp/scanner/start", json={
+        hdrs = self._auth_hdrs(client)
+        start_res = client.post("/api/dpdp/scanner/start", headers=hdrs, json={
             "website_url": "https://medicare.example.in",
             "business_name": "MediCare Clinic",
             "industry": "healthcare",
@@ -318,7 +331,7 @@ class TestDPDPWebsiteScannerSuite:
         scan_id = scan["scan_id"]
         finding_id = scan["findings"][0]["id"]
 
-        conv_res = client.post("/api/dpdp/scanner/convert-task", json={
+        conv_res = client.post("/api/dpdp/scanner/convert-task", headers=hdrs, json={
             "scan_id": scan_id,
             "finding_id": finding_id,
             "assignee": "Compliance DPO"
@@ -332,7 +345,8 @@ class TestDPDPWebsiteScannerSuite:
     # 15. API: Delete Website Scan (Data Minimization)
     def test_15_api_delete_website_scan(self, client):
         """Permanently deletes a scan record for tenant privacy under Section 8(7)."""
-        start_res = client.post("/api/dpdp/scanner/start", json={
+        hdrs = self._auth_hdrs(client)
+        start_res = client.post("/api/dpdp/scanner/start", headers=hdrs, json={
             "website_url": "https://tempclinic.example.in",
             "business_name": "Temp Clinic",
             "industry": "healthcare",
@@ -341,12 +355,12 @@ class TestDPDPWebsiteScannerSuite:
         })
         scan_id = start_res.get_json()["scan"]["scan_id"]
 
-        del_res = client.delete(f"/api/dpdp/scanner/{scan_id}")
+        del_res = client.delete(f"/api/dpdp/scanner/{scan_id}", headers=hdrs)
         assert del_res.status_code == 200
         assert del_res.get_json()["deleted"] is True
 
         # Verify no longer exists
-        get_res = client.get(f"/api/dpdp/scanner/results/{scan_id}")
+        get_res = client.get(f"/api/dpdp/scanner/results/{scan_id}", headers=hdrs)
         assert get_res.status_code == 404
 
     # 16. Tenant Data Isolation

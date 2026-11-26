@@ -699,8 +699,11 @@ DEMO_HTML = """<!DOCTYPE html>
                     </div>
                 </div>
 
+                <div style="font-size: 0.78rem; font-weight: 700; color: #b45309; background: #fef3c7; border: 1px solid #fde68a; border-radius: 6px; padding: 6px 10px; margin-bottom: 1rem; text-align: center;">
+                    DEMO DATA &mdash; Example information for demonstration only.
+                </div>
                 <div style="font-size: 0.8rem; color: var(--text-muted); text-align: center; margin-bottom: 1.5rem;">
-                    Evaluated against DPDP Act 2023, Draft Rules 2025, and Phased Commencement Timelines.
+                    Evaluated against DPDP Act, 2023, DPDP Rules, 2025, and Phased Commencement Timelines.
                 </div>
 
                 <div class="category-breakdown">
@@ -715,7 +718,7 @@ DEMO_HTML = """<!DOCTYPE html>
                     </div>
                     <div class="cat-item">
                         <div class="cat-header">
-                            <span class="cat-name">RoPA & Inventory (Sec 4 & Rule 5)</span>
+                            <span class="cat-name">Data List & Scope (Sec 4 & 5)</span>
                             <span class="cat-score" id="score-ropa">75%</span>
                         </div>
                         <div class="cat-bar-bg">
@@ -808,9 +811,9 @@ DEMO_HTML = """<!DOCTYPE html>
                 steps: [
                     { num: 1, title: "Entity Classification & SDO Status", status: "verified", badge: "Verified", desc: "Significant Data Fiduciary (SDO) threshold evaluated under Section 10." },
                     { num: 2, title: "Notice & Itemised Consent (Sec 5 & 6)", status: "gap", badge: "Gap Identified", desc: "Bilingual notice in English and Hindi missing itemised doctor consultation purpose." },
-                    { num: 3, title: "Processing Grounds & Inventory (Sec 4 & Rule 5)", status: "verified", badge: "Verified", desc: "4 data streams mapped: OPD registration, IPD EHR records, diagnostic labs, billing." },
-                    { num: 4, title: "Data Principal Rights SOP (Sec 11-14)", status: "partial", badge: "In Progress", desc: "Patient access and erasure workflow partially configured without DPO escalation." },
-                    { num: 5, title: "Reasonable Security Safeguards (Sec 8(5))", status: "verified", badge: "Verified", desc: "EHR database encrypted at rest (AES-256) and TLS 1.3 in transit." },
+                    { num: 3, title: "Processing Grounds & Data List (Sec 4 & 5)", status: "verified", badge: "Verified", desc: "4 data streams mapped: OPD registration, IPD EHR records, diagnostic labs, billing." },
+                    { num: 4, title: "Data Principal Rights SOP (Sec 11-14)", status: "partial", badge: "In Progress", desc: "Patient access and erasure workflow partially configured without Grievance escalation." },
+                    { num: 5, title: "Reasonable Security Safeguards (Sec 8(5))", status: "verified", badge: "Verified", desc: "EHR database protected with encryption at rest, HTTPS in transit, and role-based access." },
                     { num: 6, title: "Dual-Stage Breach Protocol (Sec 8(6))", status: "gap", badge: "Gap Identified", desc: "No documented 72-hour CERT-In / DPBI intimation dual-stage runbook." },
                     { num: 7, title: "Retention & Automated Erasure (Sec 8(7))", status: "partial", badge: "In Progress", desc: "Retention period set to 3 years per Clinical Establishments Act; auto-erasure unverified." },
                     { num: 8, title: "Vendor & Processor Agreements (Sec 8(2))", status: "verified", badge: "Verified", desc: "Pathology lab and cloud PACS vendor contracts executed with DPA terms." }
@@ -818,7 +821,7 @@ DEMO_HTML = """<!DOCTYPE html>
                 gaps: [
                     { ref: "DPDP Sec 5 / Rule 3", title: "Itemised Multilingual Privacy Notice Missing", sev: "rose", desc: "Patients are not provided an itemised choice before collecting health parameters and Aadhaar metadata.", action: "Generate bilingual English/Hindi notice via TrustAudit Document Generator." },
                     { ref: "DPDP Sec 8(6)", title: "Dual-Stage Breach Intimation Procedure Missing", sev: "rose", desc: "Absence of a documented protocol to notify DPBI and affected patients within statutory hours.", action: "Download DPBI breach notification SOP template and assign incident commander." },
-                    { ref: "DPDP Sec 12 & 13", title: "Patient Erasure and Grievance Escalation SOP", sev: "amber", desc: "Patients lack a self-service or documented portal to request deletion of non-clinical billing data.", action: "Configure Data Principal Rights portal with 72-hour turnaround time." }
+                    { ref: "DPDP Sec 12 & 13", title: "Patient Erasure and Grievance Escalation SOP", sev: "amber", desc: "Patients lack a clear documented workflow to request deletion of non-clinical billing data.", action: "Configure Customer Privacy Requests portal with clear verification and response timeline." }
                 ]
             },
             clinics: {

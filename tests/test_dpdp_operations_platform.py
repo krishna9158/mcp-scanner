@@ -118,7 +118,7 @@ class TestDPOperationsPlatform:
         # Advisory / non-statutory fallback
         padvisory = dpdp_penalties.map_statutory_penalty("internal_operational_guideline_xyz")
         assert padvisory["schedule_item"] is None
-        assert padvisory["max_penalty_text"] == "Penalty mapping requires legal review."
+        assert padvisory["max_penalty_text"] == "Specific penalty mapping requires legal review."
 
     # --------------------------------------------------------------------------
     # 3. Phased Commencement Tracker (2025, 2026, 2027)
@@ -248,11 +248,18 @@ class TestDPOperationsPlatform:
         deleted = dpdp_store.delete_vendor(org_id, v["id"])
         assert deleted is True
 
-        res_add = client.post("/api/dpdp/vendors", json={"name": "Cloud DB", "service": "Postgres Hosting"})
+        reg = client.post("/api/auth/register", json={
+            "email": f"vnd_{uuid.uuid4().hex[:6]}@clinic.in",
+            "password": "StrongPassword#2026",
+            "name": "Vendor Lead",
+            "company_name": "Vendor Clinic"
+        })
+        hdrs = {"Authorization": f"Bearer {reg.get_json()['data']['token']}"}
+        res_add = client.post("/api/dpdp/vendors", headers=hdrs, json={"name": "Cloud DB", "service": "Postgres Hosting"})
         assert res_add.status_code == 201
         vnd_id = res_add.get_json()["vendor"]["id"]
 
-        res_del = client.delete(f"/api/dpdp/vendors/{vnd_id}")
+        res_del = client.delete(f"/api/dpdp/vendors/{vnd_id}", headers=hdrs)
         assert res_del.status_code == 200
 
     # --------------------------------------------------------------------------
@@ -313,8 +320,17 @@ class TestDPOperationsPlatform:
     # --------------------------------------------------------------------------
     # 10. Platform Administration Oversight & Metrics API
     # --------------------------------------------------------------------------
-    def test_admin_metrics_api(self, client):
-        res = client.get("/api/admin/metrics")
+    def test_admin_metrics_api(self, client, monkeypatch):
+        admin_email = f"sysadmin_{uuid.uuid4().hex[:6]}@trustaudit.io"
+        monkeypatch.setenv("TRUSTAUDIT_PLATFORM_ADMIN_EMAILS", admin_email)
+        reg = client.post("/api/auth/register", json={
+            "email": admin_email,
+            "password": "StrongPassword#2026",
+            "name": "Platform Admin",
+            "company_name": "TrustAudit Ops"
+        })
+        hdrs = {"Authorization": f"Bearer {reg.get_json()['data']['token']}"}
+        res = client.get("/api/admin/metrics", headers=hdrs)
         assert res.status_code == 200
         metrics = res.get_json()["metrics"]
         assert "platform_status" in metrics
@@ -326,42 +342,34 @@ class TestDPOperationsPlatform:
         assert metrics["active_plans"]["business"]["price_inr"] == 2999
 
     # --------------------------------------------------------------------------
-    # 11. Homepage 16 Sections & Exact Hero Text
+    # 11. Homepage Hero & Plain-Language Launch Sections
     # --------------------------------------------------------------------------
     def test_homepage_hero_and_sections(self, client):
         res = client.get("/")
         assert res.status_code == 200
         body = res.data.decode("utf-8")
 
-        # Hero exact text
-        assert "Take Control of Your Data Privacy." in body
-        assert "DPDP COMPLIANCE MANAGEMENT PLATFORM" in body
+        assert "Know What Happens to Your Customer Data." in body
+        assert "Start My Free Assessment" in body
+        assert "See How It Works" in body
 
-        # Required 16 sections presence via class or id
-        required_classes = [
-            "hero-section",
-            "challenges-section",
-            "journey-section",
-            "scanner-section",
-            "modules-section",
-            "assistant-section",
-            "sectors-section",
-            "pricing-section",
-            "faq-section",
-            "final-cta-section"
+        required_anchors = [
+            "website-scanner",
+            "how-it-works",
+            "features",
+            "timeline",
+            "pricing",
         ]
-        for cls in required_classes:
-            assert cls in body, f"Missing required homepage class: {cls}"
+        for anc in required_anchors:
+            assert anc in body, f"Missing required homepage section: {anc}"
 
-        # 8 Platform Modules
-        assert "Personal Data Inventory" in body
-        assert "Vendor & Processor Register" in body or "Vendor &amp; Processor Register" in body
-        assert "Privacy Notice" in body
-        assert "Consent & Withdrawal" in body or "Consent &amp; Withdrawal" in body
-        assert "Data Principal Request Management" in body
-        assert "Retention Schedules & Erasure" in body or "Retention Schedules &amp; Erasure" in body
-        assert "Dual-Stage Breach Intimation" in body
-        assert "Evidence Vault" in body
+        # Plain-language core modules
+        assert "Customer Data List" in body
+        assert "Website Privacy Check" in body
+        assert "Privacy Notice Generator" in body
+        assert "Companies You Share Data With" in body
+        assert "Customer Privacy Requests" in body
+        assert "Evidence Vault &amp; Reports" in body or "Evidence Vault & Reports" in body
 
         # Statutory Schedule Penalties
         assert "₹250 crore" in body

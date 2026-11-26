@@ -18,8 +18,8 @@ from typing import Dict, List, Any, Optional, Tuple
 import datetime
 import re
 
-LEGAL_DATABASE_VERSION = "2026.11.3"
-LAST_LEGAL_REVIEW = "2026-11-22"
+LEGAL_DATABASE_VERSION = "2026.11.4"
+LAST_LEGAL_REVIEW = "2026-11-26"
 
 STATUTORY_TIMELINE = [
     {
@@ -31,29 +31,29 @@ STATUTORY_TIMELINE = [
     },
     {
         "date": "13 November 2025",
-        "title": "DPDP Rules Notified & Phase 1 Commencement",
-        "description": "Ministry of Electronics and Information Technology (MeitY) notified DPDP Rules, 2025 and commenced institutional provisions (Data Protection Board constitution, appellate tribunal procedures, search and inquiry rules).",
+        "title": "DPDP Rules Notified & Phase 1 Institutional Commencement",
+        "description": "Ministry of Electronics and Information Technology (MeitY) notified the DPDP Rules, 2025 and commenced preliminary and Data Protection Board institutional provisions (Sections 1, 2, 18–26, 33–35, 40).",
         "status": "COMPLETED",
         "badge": "In Force"
     },
     {
         "date": "October 2026",
-        "title": "Removal of Difficulties Order",
-        "description": "Order issued clarifying operational scope of verifiable parental consent under Section 9 for educational and healthcare platforms, and criteria for Significant Data Fiduciary designations.",
+        "title": "Removal of Difficulties Order (Sections 9 & 10)",
+        "description": "Central Government order aligning textual and statutory cross-references relating to Section 9 and Section 10 under the Act.",
         "status": "COMPLETED",
         "badge": "Gazette Order"
     },
     {
         "date": "13 November 2026",
-        "title": "Consent Manager Framework Commenced",
-        "description": "Section 6(9) and Rule 4 provisions governing the registration, technical architecture, and accountability of registered Consent Managers became operational.",
+        "title": "Consent Manager Provisions Commenced",
+        "description": "Section 6(9), Section 27(1)(d), and Rule 4 provisions governing Consent Manager registration and obligations commenced.",
         "status": "COMPLETED",
         "badge": "In Force"
     },
     {
         "date": "13 May 2027",
         "title": "Substantive Data Fiduciary Obligations Scheduled",
-        "description": "General obligations of Data Fiduciaries (Section 8 safeguards, Section 5 itemised notices, Section 6 consent records, Section 8(6) breach notifications, Section 11-14 rights management, and Section 10 SDF requirements) scheduled to take full regulatory effect.",
+        "description": "General obligations of Data Fiduciaries (Sections 3–17 and substantive Rules 3, 5–16, 22–23 covering Notice, Consent, Section 8 safeguards & breach intimations, Retention, Children's Data, SDFs, and Data Principal Rights) scheduled to take effect.",
         "status": "SCHEDULED",
         "badge": "Scheduled Commencement"
     }
@@ -76,10 +76,10 @@ DPDP_REQUIREMENTS: List[Dict[str, Any]] = [
         "explanation": "Establishes territorial and material applicability under the DPDP Act 2023. Governs all digital personal records collected online, via mobile apps, or converted from paper files into software databases.",
         "applicability_conditions": ["processes_digital_personal_data"],
         "industry_conditions": ["all", "hospitals", "clinics", "diagnostic_centres", "saas", "ecommerce", "professional_services", "education"],
-        "effective_date": "13 November 2025",
-        "commencement_status": "In force",
-        "legal_status": "IN_FORCE",
-        "obligation_type": "Current legal obligation",
+        "effective_date": "13 May 2027",
+        "commencement_status": "Scheduled to commence",
+        "legal_status": "SCHEDULED_MAY_2027",
+        "obligation_type": "Upcoming obligation",
         "category": "Lawful processing",
         "readiness_category": "Governance & Scoping",
         "severity": "CRITICAL",
@@ -302,8 +302,8 @@ DPDP_REQUIREMENTS: List[Dict[str, Any]] = [
         "id": "DPDP-SEC-08-01",
         "rule_id": "DPDP-SEC-08-01",
         "section": "Section 8(1) & 8(2)",
-        "legal_reference": "Section 8(1)-(2), Rule 5",
-        "rule_ref": "Rule 5",
+        "legal_reference": "Section 8(1)-(2), Act",
+        "rule_ref": "Section 8(1)-(2)",
         "title": "Data Fiduciary Accountability & Vendor DPA Contracts",
         "rule_title": "Data Fiduciary Responsibility & Data Processor Agreement (DPA) Execution",
         "description": "The Data Fiduciary remains accountable for all processing by Data Processors and may engage processors only under valid contracts binding them to DPDP standards.",
@@ -335,17 +335,17 @@ DPDP_REQUIREMENTS: List[Dict[str, Any]] = [
         "recommended_action": "Review all vendor contracts (HMS, LIMS, AWS, Razorpay, SMS gateways) and execute DPDP-compliant Data Processing Agreements.",
         "remediation_guidance": "Review all vendor contracts (HMS, LIMS, AWS, Razorpay, SMS gateways) and execute DPDP-compliant Data Processing Agreements.",
         "verification_procedure": "Verify presence of executed DPAs in the Evidence Vault covering all cataloged third-party processors.",
-        "last_reviewed_date": "2026-11-22",
-        "rule_version": "v2.1",
-        "official_source_reference": "DPDP Act 2023, Section 8(1)-(2); DPDP Rules 2025, Rule 5",
+        "last_reviewed_date": "2026-11-26",
+        "rule_version": "v2.2",
+        "official_source_reference": "DPDP Act 2023, Section 8(1)-(2)",
         "expert_review_required": True
     },
     {
         "id": "DPDP-SEC-08-03",
         "rule_id": "DPDP-SEC-08-03",
         "section": "Section 8(3)",
-        "legal_reference": "Section 8(3), Rule 5",
-        "rule_ref": "Rule 5",
+        "legal_reference": "Section 8(3), Act",
+        "rule_ref": "Section 8(3)",
         "title": "Data Quality, Accuracy & Consistency",
         "rule_title": "Data Quality, Completeness & Accuracy Assurance",
         "description": "Ensure personal data processed is accurate, complete, and consistent if used to make decisions affecting the Data Principal or shared with another Data Fiduciary.",
@@ -406,7 +406,7 @@ DPDP_REQUIREMENTS: List[Dict[str, Any]] = [
         "assessment_questions": [
             {
                 "qid": "q_sec8_encryption",
-                "question": "Is digital personal data encrypted in transit (TLS 1.3) and at rest (AES-256) across all systems?",
+                "question": "Is digital personal data protected in transit (HTTPS/TLS) and stored safely using appropriate technical controls (encryption, obfuscation, or access controls)?",
                 "type": "boolean",
                 "weight": "critical"
             },
@@ -419,12 +419,12 @@ DPDP_REQUIREMENTS: List[Dict[str, Any]] = [
         ],
         "evidence_required": [
             "Information Security Policy Document",
-            "Encryption Configuration Standards (TLS & AES-256)",
+            "Reasonable Security Safeguards & Encryption Standards (Rule 6)",
             "Vulnerability Assessment & Penetration Testing (VAPT) Report",
             "MFA & RBAC Access Audit Logs"
         ],
-        "recommended_action": "Enforce HTTPS/TLS 1.3, AES-256 database storage encryption, Multi-Factor Authentication on admin portals, and periodic security scans.",
-        "remediation_guidance": "Enforce HTTPS/TLS 1.3, AES-256 database storage encryption, Multi-Factor Authentication on admin portals, and periodic security scans.",
+        "recommended_action": "Implement reasonable security safeguards under Section 8(5) and Rule 6: HTTPS transport security, appropriate encryption/obfuscation, access control, backup, and logging.",
+        "remediation_guidance": "Implement reasonable security safeguards under Section 8(5) and Rule 6: HTTPS transport security, appropriate encryption/obfuscation, access control, backup, and logging.",
         "verification_procedure": "Inspect TLS certificates, security response headers, password hashing algorithms, and vulnerability assessment certifications.",
         "last_reviewed_date": "2026-11-22",
         "rule_version": "v2.1",
@@ -609,8 +609,8 @@ DPDP_REQUIREMENTS: List[Dict[str, Any]] = [
         "id": "DPDP-SEC-10",
         "rule_id": "DPDP-SEC-10",
         "section": "Section 10",
-        "legal_reference": "Section 10, Rule 11",
-        "rule_ref": "Rule 11",
+        "legal_reference": "Section 10 (read with Removal of Difficulties Order, Oct 2026)",
+        "rule_ref": "Section 10",
         "title": "Significant Data Fiduciary (SDF) Obligations",
         "rule_title": "Significant Data Fiduciary Obligations (DPO, DPIA & Periodic Audits)",
         "description": "Entities notified as Significant Data Fiduciaries must appoint a resident Data Protection Officer, engage an independent data auditor, and conduct periodic Data Protection Impact Assessments (DPIA).",
@@ -651,8 +651,8 @@ DPDP_REQUIREMENTS: List[Dict[str, Any]] = [
         "id": "DPDP-SEC-11-14",
         "rule_id": "DPDP-SEC-11-14",
         "section": "Sections 11–14",
-        "legal_reference": "Sections 11–14, Rule 12",
-        "rule_ref": "Rule 12",
+        "legal_reference": "Sections 11–14, Rule 14",
+        "rule_ref": "Rule 14",
         "title": "Data Principal Rights Management Desk",
         "rule_title": "Data Principal Rights (Access, Correction, Erasure & Nomination)",
         "description": "Establish workflows to process Data Principal requests for information access, correction of inaccurate data, purpose-cessation erasure, and nominee designation.",
@@ -681,12 +681,12 @@ DPDP_REQUIREMENTS: List[Dict[str, Any]] = [
             "Rights Ticket Management System Logs",
             "Nomination Registration Format"
         ],
-        "recommended_action": "Set up a customer privacy request intake portal and maintain an auditable SLA resolution log (within 72 hours).",
-        "remediation_guidance": "Set up a customer privacy request intake portal and maintain an auditable SLA resolution log (within 72 hours).",
+        "recommended_action": "Set up a customer privacy request intake channel and track grievances and rights requests cleanly with published timelines and verification steps.",
+        "remediation_guidance": "Set up a customer privacy request intake channel and track grievances and rights requests cleanly with published timelines and verification steps.",
         "verification_procedure": "Audit customer privacy requests ticketing desk and measure resolution SLA performance.",
-        "last_reviewed_date": "2026-11-22",
-        "rule_version": "v2.1",
-        "official_source_reference": "DPDP Act 2023, Sections 11, 12, 13, 14; DPDP Rules 2025, Rule 12",
+        "last_reviewed_date": "2026-11-26",
+        "rule_version": "v2.2",
+        "official_source_reference": "DPDP Act 2023, Sections 11, 12, 13, 14; DPDP Rules 2025, Rule 14",
         "expert_review_required": False
     },
     {
@@ -1367,8 +1367,8 @@ AI_KNOWLEDGE_BASE = [
     },
     {
         "keywords": ["consent", "section 6", "withdraw", "withdrawal", "affirmative", "bundled"],
-        "section": "Section 6 of DPDP Act, 2023 read with Rule 4 of DPDP Rules, 2025",
-        "effective_status": "Section 6(9) Consent Managers in force (13 Nov 2026); Substantive consent scheduled 13 May 2027",
+        "section": "Section 6 of DPDP Act, 2023 read with Rules 3 & 4 of DPDP Rules, 2025",
+        "effective_status": "Section 6(9) & Rule 4 Consent Managers in force (13 Nov 2026); Substantive consent (Section 6(1)-(8)) scheduled 13 May 2027",
         "answer": (
             "Section 6 mandates that consent must be free, specific, informed, unconditional, and unambiguous, "
             "conveyed through a clear affirmative action. Bundling consent with general terms of service or "
@@ -1420,15 +1420,15 @@ AI_KNOWLEDGE_BASE = [
             "and persons with disabilities. Data Fiduciaries must obtain verifiable parental consent before processing "
             "such data. They are prohibited from undertaking tracking, behavioral monitoring, or targeted advertising "
             "directed at children, or any processing likely to cause detrimental effect on a child's well-being. "
-            "The October 2026 Removal of Difficulties Order clarifies operational standards for age verification and "
-            "exemptions for essential pediatric healthcare and verified educational record management."
+            "The October 2026 Removal of Difficulties Order provides statutory textual and cross-reference alignment "
+            "relating to Section 9 and Section 10 without altering the core duty to verify parent/guardian consent."
         ),
-        "source": "DPDP Act, 2023, Section 9; Rule 10; October 2026 Gazette Order",
+        "source": "DPDP Act, 2023, Section 9; Rule 10; October 2026 Removal of Difficulties Order",
         "expert_review": "Required for platforms offering pediatric or minor services."
     },
     {
         "keywords": ["rights", "data principal", "access", "correction", "erasure", "nomination", "sections 11-14"],
-        "section": "Sections 11, 12, 13 and 14 of DPDP Act, 2023 read with Rule 12",
+        "section": "Sections 11, 12, 13 and 14 of DPDP Act, 2023 read with Rule 14",
         "effective_status": "Scheduled to commence on 13 May 2027",
         "answer": (
             "Data Principals enjoy four core statutory rights under the DPDP Act: "
@@ -1437,22 +1437,20 @@ AI_KNOWLEDGE_BASE = [
             "(3) Right of Grievance Redressal (Section 13): Readily accessible mechanism with mandatory prior exhaustion before approaching the Data Protection Board; and "
             "(4) Right to Nominate (Section 14): Right to designate a nominee to exercise rights in the event of death or incapacity."
         ),
-        "source": "DPDP Act, 2023, Sections 11-14; Rule 12",
+        "source": "DPDP Act, 2023, Sections 11-14; Rule 14",
         "expert_review": "Standard workflow verification."
     },
     {
         "keywords": ["vendor", "processor", "section 8(1)", "section 8(2)", "dpa", "contract"],
-        "section": "Section 8(1) and 8(2) of DPDP Act, 2023 read with Rule 5",
+        "section": "Section 8(1) and 8(2) of DPDP Act, 2023",
         "effective_status": "Scheduled to commence on 13 May 2027",
         "answer": (
-            "Under Section 8(1)-(2), the Data Fiduciary remains fully liable for DPDP compliance even if "
-            "processing is delegated to a third-party Data Processor (e.g., cloud host, diagnostic lab software, "
-            "payroll provider). A Data Fiduciary may only engage a Data Processor under a valid contract (Data "
-            "Processing Agreement). The contract must bind the processor to process data only upon instruction, "
-            "maintain reasonable security safeguards under Rule 6, assist in breach intimation, and erase data "
-            "upon instruction or contract termination."
+            "Under Section 8(1)-(2), the Data Fiduciary remains fully accountable for DPDP compliance even when "
+            "processing is performed by a third-party Data Processor (e.g., cloud host, diagnostic lab software, "
+            "payroll provider). A Data Fiduciary may engage a Data Processor only under a valid contract (Data "
+            "Processing Agreement) requiring reasonable security safeguards and erasure on completion of purpose."
         ),
-        "source": "DPDP Act, 2023, Section 8(1)-(2); Rule 5",
+        "source": "DPDP Act, 2023, Section 8(1)-(2)",
         "expert_review": "Contract review recommended."
     },
     {

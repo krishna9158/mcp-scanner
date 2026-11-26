@@ -126,7 +126,7 @@ TRUST_CENTRE_HTML = """<!doctype html>
             </div>
             <h1 class="hero-title">Security You Can Inspect.<br><span class="gradient-text">Privacy You Can Verify.</span></h1>
             <p class="hero-desc">
-                How TrustAudit protects your organisation's compliance evidence, guarantees tenant isolation, and operationalizes India DPDP safeguards without collecting raw patient or customer records.
+                How TrustAudit protects your organisation's compliance evidence, enforces tenant isolation, and operationalizes India DPDP readiness safeguards without collecting raw customer records.
             </p>
         </div>
     </header>
@@ -158,70 +158,70 @@ TRUST_CENTRE_HTML = """<!doctype html>
             <!-- 02: ENCRYPTED EVIDENCE VAULT -->
             <div class="bento-card">
                 <div class="bento-header">
-                    <h3 class="bento-title">Encrypted Evidence Vault</h3>
-                    <span class="badge-pill badge-emerald">AES-256 Verified</span>
+                    <h3 class="bento-title">Evidence Vault Integrity</h3>
+                    <span class="badge-pill badge-emerald">SHA-256 Verified</span>
                 </div>
                 <p class="bento-desc">
-                    Compliance evidence artifacts (privacy notice documents, executed DPAs, staff training logs, deletion certificates) are stored in isolated encrypted storage with SHA-256 checksums to prove tamper resistance.
+                    Compliance evidence artifacts (privacy notice documents, DPAs, retention policies, deletion proofs) are isolated per organisation with SHA-256 checksums, filetype/magic-byte validation, and Render-managed persistent disk encryption (plus optional Fernet app-layer encryption via <code>TRUSTAUDIT_DATA_KEY</code>).
                 </p>
                 <div class="bento-meta">
-                    Integrity: SHA-256 Hashing &bull; TLS 1.3
+                    Integrity: SHA-256 File Hashing &bull; Render HTTPS
                 </div>
             </div>
 
             <!-- 03: TENANT ISOLATION -->
             <div class="bento-card">
                 <div class="bento-header">
-                    <h3 class="bento-title">Cryptographic Tenant Isolation</h3>
-                    <span class="badge-pill badge-emerald">Negative Tests Pass</span>
+                    <h3 class="bento-title">Strict Tenant Isolation</h3>
+                    <span class="badge-pill badge-emerald">RBAC + Boundary Checks</span>
                 </div>
                 <p class="bento-desc">
-                    Data inventories, assessments, and evidence artifacts are bound strictly to validated organization IDs. Cross-tenant access is programmatically rejected at the database query layer (tested via automated test suites).
+                    Customer data inventories, assessments, notices, and evidence artifacts are strictly scoped to authenticated organisation IDs with RBAC roles (Admin, Member, Viewer). Cross-tenant requests are rejected at the server boundary.
                 </p>
                 <div class="bento-meta">
-                    Test Suite: 18/18 Negative Isolation Tests
+                    Verification: Automated Tenant &amp; RBAC Test Suite
                 </div>
             </div>
 
             <!-- 04: AUTHENTICATION HARDENING -->
             <div class="bento-card">
                 <div class="bento-header">
-                    <h3 class="bento-title">OWASP PBKDF2 &amp; TOTP MFA</h3>
+                    <h3 class="bento-title">OWASP PBKDF2 &amp; Optional TOTP MFA</h3>
                     <span class="badge-pill badge-emerald">Operational</span>
                 </div>
                 <p class="bento-desc">
-                    User password hashes are salted and hashed using PBKDF2-HMAC-SHA256 at 600,000 iterations (OWASP 2024/2026 guidelines). Multi-Factor Authentication via RFC 6238 TOTP is operational for all organization administrators.
+                    User passwords are salted and hashed using PBKDF2-HMAC-SHA256 at 600,000 iterations (with automatic legacy rehash-on-login). Persistent sessions are stored as SHA-256 hashes, and optional RFC 6238 TOTP MFA is available for user accounts.
                 </p>
                 <div class="bento-meta">
-                    600,000 Iterations &bull; Sliding Window Lockout
+                    600,000 Iterations &bull; Persistent Hashed Sessions
                 </div>
             </div>
 
             <!-- 05: RETENTION & SELF-SERVICE ERASURE -->
             <div class="bento-card">
                 <div class="bento-header">
-                    <h3 class="bento-title">Section 8(7) Self-Service Erasure</h3>
+                    <h3 class="bento-title">Account Deletion &amp; Scrubbing</h3>
                     <span class="badge-pill badge-emerald">Operational</span>
                 </div>
                 <p class="bento-desc">
-                    In compliance with DPDP Section 8(7) purpose-cessation principles, customers can permanently delete their organization account, evidence files, and user credentials with 0-day active storage scrubbing and 30-day backup snapshot expiration.
+                    Customers can permanently delete their organisation account, workspace records, uploaded evidence files, and active sessions via <code>/api/account/delete</code>, leaving an internal deletion completion audit entry.
                 </p>
                 <div class="bento-meta">
-                    SOP: 0-Day Storage Purge &bull; Audit Log Record
+                    Self-Service Tenant Purge &bull; Session Revocation
                 </div>
             </div>
 
-            <!-- 06: LOCAL DETERMINISTIC AI -->
+            <!-- 06: GROUNDED DPDP AI ASSISTANT -->
             <div class="bento-card">
                 <div class="bento-header">
-                    <h3 class="bento-title">Local Deterministic AI Assistant</h3>
-                    <span class="badge-pill badge-sky">Zero Data Leakage</span>
+                    <h3 class="bento-title">Grounded DPDP Assistant Privacy</h3>
+                    <span class="badge-pill badge-sky">PII-Minimized RAG</span>
                 </div>
                 <p class="bento-desc">
-                    The AI DPDP Assistant executes 100% locally against our grounded legal database of the DPDP Act 2023, DPDP Rules 2025, and Gazette Orders. Zero organization data or queries are transmitted to external third-party LLMs.
+                    Core guidance uses TrustAudit's local verified DPDP statutory knowledge base. When optional Google Gemini enhancement is enabled via <code>GEMINI_API_KEY</code>, raw email, phone, and ID strings are stripped from questions before sending, and uploaded Evidence Vault files are never transmitted.
                 </p>
                 <div class="bento-meta">
-                    Privacy: Local Grounded Retrieval Only
+                    Prompt-Injection Guarded &bull; Org Context Isolated
                 </div>
             </div>
         </div>
@@ -231,28 +231,28 @@ TRUST_CENTRE_HTML = """<!doctype html>
             <div class="section-header" style="margin-bottom: 24px;">
                 <div class="eyebrow">AUDIT-READY EVIDENCE ARCHITECTURE</div>
                 <h3 style="font-size: 24px; font-weight: 800; color: #ffffff;">How Compliance Evidence is Processed</h3>
-                <p class="section-subtext">From initial notice draft to statutory audit review — zero cross-contamination.</p>
+                <p class="section-subtext">From initial upload validation to verification states &mdash; isolated per customer workspace.</p>
             </div>
 
             <div class="flow-steps">
                 <div class="flow-step">
                     <div class="flow-step-num">1</div>
-                    <h4>Artifact Ingestion</h4>
-                    <p>Customer uploads policy, DPA contract, or notice draft.</p>
+                    <h4>Strict Upload Check</h4>
+                    <p>Validates extension allowlist, size limit (5 MB), and magic bytes.</p>
                 </div>
                 <div class="flow-step">
                     <div class="flow-step-num">2</div>
                     <h4>SHA-256 Hashing</h4>
-                    <p>Cryptographic hash generated immediately upon upload.</p>
+                    <p>Cryptographic SHA-256 fingerprint generated immediately upon upload.</p>
                 </div>
                 <div class="flow-step">
                     <div class="flow-step-num">3</div>
-                    <h4>Tenant Encryption</h4>
-                    <p>Encrypted at rest with strict organisation boundary tagging.</p>
+                    <h4>Tenant Scoping</h4>
+                    <p>Stored strictly under organisation directory with optional Fernet encryption.</p>
                 </div>
                 <div class="flow-step">
                     <div class="flow-step-num">4</div>
-                    <h4>Statutory Mapping</h4>
+                    <h4>5-State Review</h4>
                     <p>Linked to Section 5 notice, Section 6 consent, or Section 8 safeguards.</p>
                 </div>
             </div>
@@ -291,7 +291,7 @@ TRUST_CENTRE_HTML = """<!doctype html>
                 <div style="font-size: 13px; color: var(--text-primary); margin-bottom: 12px;">
                     <div>Security Contact: <a href="mailto:security@trustaudit.io" style="color: var(--brand-accent); font-weight: 700;">security@trustaudit.io</a></div>
                     <div>Canonical Policy: <a href="/.well-known/security.txt" class="gov-link">/.well-known/security.txt &rarr;</a></div>
-                    <div>Hosting Infrastructure: Render / AWS Asia Pacific (Mumbai) ap-south-1</div>
+                    <div>Hosting Infrastructure: Hosted on Render (container compute &amp; Render-managed storage)</div>
                 </div>
             </div>
         </div>
@@ -299,39 +299,40 @@ TRUST_CENTRE_HTML = """<!doctype html>
         <!-- STATUTORY DISCLAIMERS -->
         <div class="disclaimer-box">
             <strong style="color: #ffffff;">Statutory Disclaimers:</strong><br>
-            1. <strong>Not a Government Certification Body:</strong> TrustAudit is an independent compliance management software and audit-readiness documentation platform. Neither the Ministry of Electronics and Information Technology (MeitY) nor the Data Protection Board of India certifies SaaS products. TrustAudit does not issue formal regulatory certifications. Using TrustAudit does not constitute a statutory guarantee of legal immunity or statutory exemption.<br>
-            2. <strong>Not a Statutory Consent Manager:</strong> Under the Digital Personal Data Protection Act, 2023, preliminary provisions commenced on 13 November 2025. Foundational provisions including Section 6(9) for registered statutory Consent Manager architectures commenced on 13 November 2026. Substantive corporate data fiduciary obligations, including Section 8(5) reasonable security safeguards, are scheduled to commence on 13 May 2027. TrustAudit is not a registered statutory Consent Manager under Section 6(9).<br>
-            3. <strong>Future Roadmap Frameworks:</strong> TrustAudit is dedicated strictly to India's DPDP Act, 2023. Other frameworks (such as certified SOC 2 Type II reports, accredited ISO 27001 certificates, and European GDPR) represent internal technical roadmap objectives and are not offered as active customer compliance certifications in this version.
+            1. <strong>Not a Government Certification Body:</strong> TrustAudit is an independent compliance readiness and privacy operations software platform. Neither MeitY nor the Data Protection Board of India certifies SaaS products. Using TrustAudit does not guarantee compliance or grant legal immunity.<br>
+            2. <strong>Not a Statutory Consent Manager:</strong> Under the Digital Personal Data Protection Act, 2023, institutional Board provisions commenced on 13 November 2025, Section 6(9) and Rule 4 (Consent Managers) commenced on 13 November 2026, and substantive corporate obligations (Sections 3&ndash;17, including Section 8(5) reasonable security safeguards, and Rules 3, 5&ndash;16, 22&ndash;23) are scheduled to commence on 13 May 2027. TrustAudit is not a registered Consent Manager under Section 6(9).<br>
+            3. <strong>Certification Clarity:</strong> TrustAudit helps organise operational DPDP readiness and security evidence. It is not an accredited SOC 2 auditor, ISO 27001 certification body, or law firm.
         </div>
 
         <!-- ENTERPRISE TECHNICAL ARCHITECTURE & CONTROL EXPLORER -->
         <div style="margin-top: 3rem; padding: 2rem; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg);">
-            <div class="eyebrow">ENTERPRISE SECURITY CAPABILITIES</div>
-            <h3 style="font-size: 1.25rem; font-weight: 700; color: #ffffff; margin-bottom: 0.5rem;">Framework Explorer & Control Mappings</h3>
+            <div class="eyebrow">INTERACTIVE SECURITY VERIFICATION TOOLS</div>
+            <h3 style="font-size: 1.25rem; font-weight: 700; color: #ffffff; margin-bottom: 0.5rem;">Live Telemetry &amp; Control Explorers</h3>
             <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.25rem;">
-                Explore granular controls mapped to DPDP Act 2023 requirements, Section 6(9) Consent Manager architecture, and statutory 13 May 2027 enforcement milestones.
+                Inspect live server security status, test PII redaction logic, explore our upload &amp; SSRF safeguards, or download the Trust Pack documentation.
             </p>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
                 <div style="padding: 1rem; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm);">
-                    <div style="font-weight: 700; color: var(--text-primary); font-size: 0.85rem; margin-bottom: 0.25rem;">Test Secret Redaction Sandbox</div>
-                    <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">Verified client-side sanitization of tokens and API keys prior to storage.</div>
-                    <input type="text" id="sandbox-input-val" placeholder="Enter test token..." style="display:none;" />
-                    <button onclick="runMaskingDemo()" class="btn btn-secondary" style="font-size: 0.75rem; padding: 4px 8px;">Run Redaction Test</button>
+                    <div style="font-weight: 700; color: var(--text-primary); font-size: 0.85rem; margin-bottom: 0.25rem;">PII &amp; Secret Sanitizer Preview</div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">Test how personal email, phone, and API token strings are redacted before AI processing.</div>
+                    <input type="text" id="sandbox-input-val" value="Contact ravi@clinic.in or +91 9876543210" style="width:100%; padding:6px 8px; margin-bottom:8px; border-radius:6px; border:1px solid var(--border-subtle); background:var(--bg-card); color:var(--text-primary); font-size:0.78rem;" />
+                    <button onclick="runMaskingDemo()" class="btn btn-secondary" style="font-size: 0.75rem; padding: 4px 10px;">Run Sanitizer Check</button>
                 </div>
                 <div style="padding: 1rem; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm);">
-                    <div style="font-weight: 700; color: var(--text-primary); font-size: 0.85rem; margin-bottom: 0.25rem;">Enterprise Security Questionnaire Simulator</div>
-                    <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">Automated response generator for vendor due diligence and customer assessments.</div>
-                    <button onclick="runQuestionnaireSimulator()" class="btn btn-secondary" style="font-size: 0.75rem; padding: 4px 8px;">Simulate Questionnaire</button>
+                    <div style="font-weight: 700; color: var(--text-primary); font-size: 0.85rem; margin-bottom: 0.25rem;">Live Security Telemetry Check</div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">Queries <code>/api/public/trust-status</code> live for current hashing, session, &amp; encryption status.</div>
+                    <button onclick="runQuestionnaireSimulator()" class="btn btn-secondary" style="font-size: 0.75rem; padding: 4px 10px;">Check Live Server Status</button>
                 </div>
                 <div style="padding: 1rem; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm);">
-                    <div style="font-weight: 700; color: var(--text-primary); font-size: 0.85rem; margin-bottom: 0.25rem;">Interactive Repository Processing Pipeline</div>
-                    <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">Isolated ephemeral build environments with strict multi-tenant sandboxing.</div>
-                    <button onclick="inspectNode('build-agent')" class="btn btn-secondary" style="font-size: 0.75rem; padding: 4px 8px;">Inspect Pipeline</button>
+                    <div style="font-weight: 700; color: var(--text-primary); font-size: 0.85rem; margin-bottom: 0.25rem;">Upload &amp; SSRF Protection Specs</div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">Inspect how private IPs, metadata endpoints, and unsafe file uploads are blocked.</div>
+                    <button onclick="inspectNode('ssrf-and-uploads')" class="btn btn-secondary" style="font-size: 0.75rem; padding: 4px 10px;">Inspect Safeguards</button>
                 </div>
             </div>
+            <div id="trust-interactive-output" style="display:none; padding: 12px 14px; margin-bottom: 1.25rem; background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.25); border-radius: 8px; font-size: 0.82rem; color: var(--text-primary); white-space: pre-wrap;"></div>
             <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
-                <button onclick="openTrustPackModal()" class="btn btn-secondary" style="font-size: 0.85rem;">Download Enterprise Trust Pack</button>
-                <span id="tele-records" style="font-size: 0.8rem; color: var(--text-muted);">Includes verified SHA-256 control hashes and statutory timeline documentation.</span>
+                <button onclick="openTrustPackModal()" class="btn btn-secondary" style="font-size: 0.85rem;">Download Trust Pack (.zip)</button>
+                <span id="tele-records" style="font-size: 0.8rem; color: var(--text-muted);">Downloads architecture, DPDP mapping, retention summary, and subprocessor register.</span>
             </div>
         </div>
     </main>
@@ -339,15 +340,51 @@ TRUST_CENTRE_HTML = """<!doctype html>
     <!-- FOOTER -->
     <footer style="border-top: 1px solid var(--border-subtle); padding: 32px 0; text-align: center; font-size: 13px; color: var(--text-muted);">
         <div class="container">
-            <div>&copy; 2026 TrustAudit Technologies. All rights reserved. &bull; DPDP Compliance Management Platform</div>
+            <div>&copy; 2026 TrustAudit Technologies. All rights reserved. &bull; DPDP Compliance &amp; Data Operations Platform</div>
         </div>
     </footer>
 
     <script>
-        function runMaskingDemo() { alert('Redaction active.'); }
-        function runQuestionnaireSimulator() { alert('Simulator active.'); }
-        function inspectNode(id) { alert('Inspecting node: ' + id); }
-        function openTrustPackModal() { alert('Downloading Trust Pack...'); }
+        function showTrustOutput(txt) {
+            const box = document.getElementById('trust-interactive-output');
+            box.style.display = 'block';
+            box.textContent = txt;
+        }
+        function runMaskingDemo() {
+            const raw = document.getElementById('sandbox-input-val').value || 'ravi@clinic.in +91 9876543210';
+            const masked = raw
+                .replace(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}/g, '[EMAIL_REDACTED]')
+                .replace(/(?:\\+91[- ]?)?[6-9]\\d{9}/g, '[PHONE_REDACTED]')
+                .replace(/\\b[A-Z]{5}[0-9]{4}[A-Z]\\b/g, '[TAX_ID_REDACTED]');
+            showTrustOutput('Sanitized Output Sent to AI Prompt Layer:\\n' + masked);
+        }
+        async function runQuestionnaireSimulator() {
+            try {
+                const res = await fetch('/api/public/trust-status');
+                const data = await res.json();
+                const sc = data.security_controls || {};
+                showTrustOutput(
+                    'Live Server Verification Status (' + (data.timestamp || '') + '):\\n' +
+                    '- Password Hashing: ' + (sc.password_hashing || '') + '\\n' +
+                    '- Sessions: ' + (sc.session_security || '') + '\\n' +
+                    '- Storage Encryption: ' + (sc.encryption_at_rest || '') + '\\n' +
+                    '- SSRF Defense: ' + (sc.ssrf_protection || '') + '\\n' +
+                    '- AI Privacy Mode: ' + (sc.ai_assistant_privacy || '')
+                );
+            } catch (e) {
+                showTrustOutput('Unable to query /api/public/trust-status right now.');
+            }
+        }
+        function inspectNode(id) {
+            showTrustOutput(
+                'Safeguard Architecture (' + id + '):\\n' +
+                '1. SSRF Defense: Blocks loopback, RFC1918, CGNAT (100.64.0.0/10), IPv4-mapped IPv6, link-local metadata IPs, and validates every HTTP redirect hop.\\n' +
+                '2. Upload Defense: Allowlists .pdf/.png/.jpg/.jpeg/.txt/.csv/.md/.docx/.xlsx/.json up to 5 MB with magic-byte header verification and X-Content-Type-Options: nosniff.'
+            );
+        }
+        function openTrustPackModal() {
+            window.location.href = '/api/public/trust-pack/download?format=zip';
+        }
     </script>
 </body>
 </html>

@@ -1,106 +1,164 @@
 """
-TrustAudit SaaS Multi-Tenancy & Project Management Data Layer.
+TrustAudit SaaS Multi-Tenancy, Persistent Auth, Plan Enforcement & Project Layer.
 
 Provides clean organization-isolated data models for:
-- Organizations (Configurable Plans: free, starter ₹999/mo, pro ₹1,999/mo, enterprise)
-- Users (Roles: admin, member, viewer)
-- Projects (Connected code repositories, websites, and MCP systems)
-- Scans (Historical scan records and results)
-- Findings (Finding lifecycle state: open, acknowledged, fixed, verified, false_positive)
-- Continuous Monitoring Schedulers & Timeline Event Store
-- Security Subscriptions & Configurable Plan Limits
+- Organizations (Configurable Plans: free ₹0, starter ₹999/mo, growth ₹1,999/mo, business ₹2,999/mo)
+- Users (Roles: admin, member, viewer; plus platform-admin flag for /api/admin/*)
+- Persistent SHA-256 hashed sessions and single-use password reset tokens
+- Projects, Scan Records, and Organization Profiles
+- Atomic JSON storage via security_utils
 """
 
 import json
 import os
+import re
 import time
 import uuid
 from typing import Any, Dict, List, Optional, Tuple
 
-DATA_FILE = os.path.join(os.path.dirname(__file__), "saas_data.json")
+from security_utils import (
+    append_audit_log,
+    atomic_write_json,
+    get_data_dir,
+    safe_read_json,
+    sanitize_plain_text,
+)
 
-# Configurable Startup Pricing Plans
+def _default_data_file() -> str:
+    env_dir = os.environ.get("TRUSTAUDIT_DATA_DIR", "").strip()
+    if env_dir:
+        return os.path.join(os.path.abspath(env_dir), "saas_data.json")
+    return os.path.join(os.path.dirname(__file__), "saas_data.json")
+
+DATA_FILE = _default_data_file()
+
+# Configurable Business Pricing Plans (India INR)
+_STARTER_PRICE = int(os.environ.get("TRUSTAUDIT_PRICE_STARTER_INR", 999))
+_GROWTH_PRICE = int(os.environ.get("TRUSTAUDIT_PRICE_GROWTH_INR", 1999))
+_BUSINESS_PRICE = int(os.environ.get("TRUSTAUDIT_PRICE_BUSINESS_INR", 2999))
+
+_GROWTH_PLAN = {
+    "key": "growth",
+    "name": "Growth",
+    "price_monthly_inr": _GROWTH_PRICE,
+    "price_monthly_usd": 24,
+    "max_domains": int(os.environ.get("TRUSTAUDIT_GROWTH_MAX_DOMAINS", 15)),
+    "max_repositories": int(os.environ.get("TRUSTAUDIT_GROWTH_MAX_REPOS", 15)),
+    "max_projects": int(os.environ.get("TRUSTAUDIT_GROWTH_MAX_PROJECTS", 30)),
+    "max_team_members": int(os.environ.get("TRUSTAUDIT_GROWTH_MAX_MEMBERS", 10)),
+    "max_data_streams": int(os.environ.get("TRUSTAUDIT_GROWTH_MAX_STREAMS", 100)),
+    "max_vendors": int(os.environ.get("TRUSTAUDIT_GROWTH_MAX_VENDORS", 100)),
+    "max_evidence_items": int(os.environ.get("TRUSTAUDIT_GROWTH_MAX_EVIDENCE", 500)),
+    "max_scans_per_month": int(os.environ.get("TRUSTAUDIT_GROWTH_MAX_SCANS", 300)),
+    "scan_frequency": "on_demand_and_reminder",
+    "email_alerts": True,
+    "webhook_alerts": True,
+    "pdf_and_zip_export": True,
+    "ai_queries_per_month": 500,
+    "features": [
+        "Up to 15 Websites Scanned & Monitored",
+        "Up to 100 Customer Data Records & Vendors",
+        "Up to 10 Team Members with Role Permissions",
+        "Up to 500 Evidence Files with Verification States",
+        "Real PDF Reports, CSV Exports & ZIP Evidence Bundles",
+        "Webhook Alerts & AI DPDP Assistant (500 queries/mo)",
+    ],
+}
+
+_BUSINESS_PLAN = {
+    "key": "business",
+    "name": "Business",
+    "price_monthly_inr": _BUSINESS_PRICE,
+    "price_monthly_usd": 36,
+    "max_domains": int(os.environ.get("TRUSTAUDIT_BUSINESS_MAX_DOMAINS", 50)),
+    "max_repositories": int(os.environ.get("TRUSTAUDIT_BUSINESS_MAX_REPOS", 50)),
+    "max_projects": int(os.environ.get("TRUSTAUDIT_BUSINESS_MAX_PROJECTS", 100)),
+    "max_team_members": int(os.environ.get("TRUSTAUDIT_BUSINESS_MAX_MEMBERS", 25)),
+    "max_data_streams": int(os.environ.get("TRUSTAUDIT_BUSINESS_MAX_STREAMS", 500)),
+    "max_vendors": int(os.environ.get("TRUSTAUDIT_BUSINESS_MAX_VENDORS", 500)),
+    "max_evidence_items": int(os.environ.get("TRUSTAUDIT_BUSINESS_MAX_EVIDENCE", 2500)),
+    "max_scans_per_month": int(os.environ.get("TRUSTAUDIT_BUSINESS_MAX_SCANS", 1500)),
+    "scan_frequency": "on_demand_and_reminder",
+    "email_alerts": True,
+    "webhook_alerts": True,
+    "pdf_and_zip_export": True,
+    "ai_queries_per_month": 2000,
+    "features": [
+        "Up to 50 Websites & Branch Locations",
+        "Up to 500 Customer Data Records & Vendors",
+        "Up to 25 Team Members with Admin/Member/Viewer Roles",
+        "Up to 2,500 Evidence Files & Full Audit Log Exports",
+        "Complete Evidence Verification & Renewal Tracking",
+        "AI DPDP Assistant (2,000 queries/mo) & Priority Support",
+    ],
+}
+
 PLANS = {
     "free": {
+        "key": "free",
         "name": "Free Community",
         "price_monthly_inr": 0,
         "price_monthly_usd": 0,
         "max_domains": int(os.environ.get("TRUSTAUDIT_FREE_MAX_DOMAINS", 1)),
         "max_repositories": int(os.environ.get("TRUSTAUDIT_FREE_MAX_REPOS", 1)),
         "max_projects": int(os.environ.get("TRUSTAUDIT_FREE_MAX_PROJECTS", 2)),
-        "max_scans_per_month": int(os.environ.get("TRUSTAUDIT_FREE_MAX_SCANS", 50)),
+        "max_team_members": int(os.environ.get("TRUSTAUDIT_FREE_MAX_MEMBERS", 1)),
+        "max_data_streams": int(os.environ.get("TRUSTAUDIT_FREE_MAX_STREAMS", 5)),
+        "max_vendors": int(os.environ.get("TRUSTAUDIT_FREE_MAX_VENDORS", 5)),
+        "max_evidence_items": int(os.environ.get("TRUSTAUDIT_FREE_MAX_EVIDENCE", 10)),
+        "max_scans_per_month": int(os.environ.get("TRUSTAUDIT_FREE_MAX_SCANS", 10)),
         "scan_frequency": "manual",
         "email_alerts": False,
         "webhook_alerts": False,
+        "pdf_and_zip_export": True,
+        "ai_queries_per_month": 25,
         "features": [
-            "1 Website / Web Application Audit",
-            "1 GitHub Repository Scanner",
-            "Manual Security Audits",
-            "Executive PDF / HTML Report",
-            "Community Support"
-        ]
+            "1 Website Privacy Check",
+            "Up to 5 Customer Data Records & 5 Vendors",
+            "1 Team Member (Owner)",
+            "Up to 10 Evidence Files",
+            "DPDP Self-Assessment & Plain-English Action Plan",
+            "PDF & CSV Readiness Export",
+        ],
     },
     "starter": {
+        "key": "starter",
         "name": "Starter",
-        "price_monthly_inr": 999,
+        "price_monthly_inr": _STARTER_PRICE,
         "price_monthly_usd": 12,
         "max_domains": int(os.environ.get("TRUSTAUDIT_STARTER_MAX_DOMAINS", 5)),
         "max_repositories": int(os.environ.get("TRUSTAUDIT_STARTER_MAX_REPOS", 5)),
         "max_projects": int(os.environ.get("TRUSTAUDIT_STARTER_MAX_PROJECTS", 10)),
-        "max_scans_per_month": int(os.environ.get("TRUSTAUDIT_STARTER_MAX_SCANS", 500)),
-        "scan_frequency": "daily",
-        "email_alerts": True,
+        "max_team_members": int(os.environ.get("TRUSTAUDIT_STARTER_MAX_MEMBERS", 3)),
+        "max_data_streams": int(os.environ.get("TRUSTAUDIT_STARTER_MAX_STREAMS", 25)),
+        "max_vendors": int(os.environ.get("TRUSTAUDIT_STARTER_MAX_VENDORS", 25)),
+        "max_evidence_items": int(os.environ.get("TRUSTAUDIT_STARTER_MAX_EVIDENCE", 100)),
+        "max_scans_per_month": int(os.environ.get("TRUSTAUDIT_STARTER_MAX_SCANS", 60)),
+        "scan_frequency": "on_demand",
+        "email_alerts": False,
         "webhook_alerts": False,
+        "pdf_and_zip_export": True,
+        "ai_queries_per_month": 100,
         "features": [
-            "Up to 5 Websites & 5 Repositories",
-            "Daily Continuous Security Monitoring",
-            "Automated 'What Changed?' Delta Engine",
-            "'Fix These First' Prioritization Cards",
-            "Email Security Alerts for Critical Risks",
-            "Interactive AI Security Advisor"
-        ]
+            "Up to 5 Websites Scanned on Demand",
+            "Up to 25 Customer Data Records & 25 Vendors",
+            "Up to 3 Team Members",
+            "Up to 100 Evidence Vault Files",
+            "Privacy Notice Generator, Consent & Request Trackers",
+            "PDF Report, CSV & ZIP Evidence Bundle",
+        ],
     },
-    "pro": {
-        "name": "Pro",
-        "price_monthly_inr": 1999,
-        "price_monthly_usd": 24,
-        "max_domains": int(os.environ.get("TRUSTAUDIT_PRO_MAX_DOMAINS", 20)),
-        "max_repositories": int(os.environ.get("TRUSTAUDIT_PRO_MAX_REPOS", 20)),
-        "max_projects": int(os.environ.get("TRUSTAUDIT_PRO_MAX_PROJECTS", 40)),
-        "max_scans_per_month": int(os.environ.get("TRUSTAUDIT_PRO_MAX_SCANS", 2500)),
-        "scan_frequency": "hourly",
-        "email_alerts": True,
-        "webhook_alerts": True,
-        "features": [
-            "Up to 20 Websites & 20 Repositories",
-            "Hourly & Daily Continuous Monitoring",
-            "Deep AI-Code & MCP Poisoning Audits",
-            "Find → Fix → Verify Automated Rescan",
-            "Slack & Webhook Alert Integrations",
-            "CI/CD Quality Gates & Baseline Drift",
-            "Priority Support & Multi-Team Members"
-        ]
-    },
-    "enterprise": {
-        "name": "Enterprise",
-        "price_monthly_inr": 9999,
-        "price_monthly_usd": 120,
-        "max_domains": 500,
-        "max_repositories": 500,
-        "max_projects": 500,
-        "max_scans_per_month": 100000,
-        "scan_frequency": "continuous",
-        "email_alerts": True,
-        "webhook_alerts": True,
-        "features": [
-            "Unlimited Domains & Repositories",
-            "Continuous Custom Scheduled Scans",
-            "Dedicated VPC / Self-Hosted Runners",
-            "Custom Compliance Frameworks",
-            "99.9% SLA & Dedicated Security Lead"
-        ]
-    }
+    "growth": _GROWTH_PLAN,
+    "business": _BUSINESS_PLAN,
+    # Backward-compatible aliases so existing stored orgs or API callers never fail
+    "pro": dict(_GROWTH_PLAN, alias_for="growth"),
+    "enterprise": dict(_BUSINESS_PLAN, alias_for="business"),
 }
+
+
+def get_public_plans() -> List[Dict[str, Any]]:
+    """Returns canonical launch pricing tiers without legacy aliases."""
+    return [PLANS["free"], PLANS["starter"], PLANS["growth"], PLANS["business"]]
 
 
 def _load_data() -> Dict[str, Any]:
@@ -109,85 +167,53 @@ def _load_data() -> Dict[str, Any]:
             "organizations": {
                 "org-default": {
                     "id": "org-default",
-                    "name": "Acme AI Labs",
-                    "slug": "acme-ai",
+                    "name": "Sample Indian Clinic (Demo Sandbox)",
+                    "slug": "demo-sandbox",
                     "plan": "starter",
+                    "is_demo": True,
                     "created_at": time.time(),
                     "max_projects": 10,
-                    "scans_count": 0
+                    "scans_count": 0,
                 }
             },
             "users": {
                 "usr-default": {
                     "id": "usr-default",
                     "org_id": "org-default",
-                    "email": "security@acme.ai",
-                    "name": "Tech Lead",
+                    "email": "demo@trustaudit.example",
+                    "name": "Demo Owner",
                     "role": "admin",
-                    "created_at": time.time()
+                    "created_at": time.time(),
                 }
             },
-            "projects": {
-                "proj-demo-1": {
-                    "id": "proj-demo-1",
-                    "org_id": "org-default",
-                    "name": "Customer AI Assistant",
-                    "target_type": "repository",
-                    "repo_url": "https://github.com/example/support-agent-mcp",
-                    "website_url": "https://agent.example.com",
-                    "mcp_servers_count": 2,
-                    "last_score": 84,
-                    "last_grade": "B",
-                    "critical_findings": 1,
-                    "open_findings": 4,
-                    "regression_status": "PASS",
-                    "monitoring_status": "ACTIVE",
-                    "scan_frequency": "daily",
-                    "next_scan_at": time.time() + 86400,
-                    "last_scan": time.time() - 3600,
-                    "timeline": [],
-                    "created_at": time.time() - 86400 * 7
-                },
-                "proj-demo-2": {
-                    "id": "proj-demo-2",
-                    "org_id": "org-default",
-                    "name": "SaaS Marketing Website",
-                    "target_type": "website",
-                    "repo_url": "",
-                    "website_url": "https://testphp.vulnweb.com/",
-                    "mcp_servers_count": 0,
-                    "last_score": 78,
-                    "last_grade": "C",
-                    "critical_findings": 1,
-                    "open_findings": 6,
-                    "regression_status": "PASS",
-                    "monitoring_status": "ACTIVE",
-                    "scan_frequency": "daily",
-                    "next_scan_at": time.time() + 86400,
-                    "last_scan": time.time() - 7200,
-                    "timeline": [],
-                    "created_at": time.time() - 86400 * 3
-                }
-            },
+            "projects": {},
             "scans": {},
-            "finding_overrides": {}
+            "finding_overrides": {},
+            "sessions": {},
+            "password_resets": {},
         }
         _save_data(initial)
         return initial
 
-    try:
-        with open(DATA_FILE, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except Exception:
-        return {"organizations": {}, "users": {}, "projects": {}, "scans": {}, "finding_overrides": {}}
+    data = safe_read_json(
+        DATA_FILE,
+        lambda: {
+            "organizations": {},
+            "users": {},
+            "projects": {},
+            "scans": {},
+            "finding_overrides": {},
+            "sessions": {},
+            "password_resets": {},
+        },
+    )
+    data.setdefault("sessions", {})
+    data.setdefault("password_resets", {})
+    return data
 
 
 def _save_data(data: Dict[str, Any]):
-    try:
-        with open(DATA_FILE, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=2)
-    except Exception as e:
-        print(f"[SAAS_STORE] Error saving data: {e}", flush=True)
+    atomic_write_json(DATA_FILE, data)
 
 
 # ---------------------------------------------------------------------------
@@ -208,12 +234,13 @@ def get_organization(org_id: str = "org-default") -> Optional[Dict[str, Any]]:
     if not org and org_id == "org-default":
         org = {
             "id": "org-default",
-            "name": "Acme AI Labs",
-            "slug": "acme-ai",
+            "name": "Sample Indian Clinic (Demo Sandbox)",
+            "slug": "demo-sandbox",
             "plan": "starter",
+            "is_demo": True,
             "created_at": time.time(),
             "max_projects": 10,
-            "scans_count": 0
+            "scans_count": 0,
         }
         data.setdefault("organizations", {})["org-default"] = org
         _save_data(data)
@@ -224,6 +251,21 @@ def get_organization(org_id: str = "org-default") -> Optional[Dict[str, Any]]:
         org_copy["plan_details"] = plan_info
         return org_copy
     return None
+
+
+def upgrade_org_plan(org_id: str, new_plan: str) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
+    """Updates an organization's subscription plan cleanly."""
+    clean = (new_plan or "").strip().lower()
+    if clean not in PLANS:
+        return False, f"Unknown plan '{new_plan}'. Choose from free, starter, growth, business.", None
+    data = _load_data()
+    org = data.get("organizations", {}).get(org_id)
+    if not org:
+        return False, "Organization not found.", None
+    org["plan"] = clean
+    org["max_projects"] = PLANS[clean]["max_projects"]
+    _save_data(data)
+    return True, f"Plan updated to {PLANS[clean]['name']}.", get_organization(org_id)
 
 
 def get_plan_limits(plan_name: str) -> Dict[str, Any]:
@@ -247,19 +289,41 @@ def check_plan_limits(org_id: str, resource_type: str, current_count: Optional[i
         count = current_count if current_count is not None else len(projects)
         max_allowed = plan.get("max_projects", 10)
         if count >= max_allowed:
-            return False, f"Plan limit reached ({count}/{max_allowed} projects). Upgrade to Pro for increased capacity."
+            return False, f"Plan limit reached ({count}/{max_allowed} projects). Upgrade your plan for additional capacity."
 
     elif resource_type == "website":
         web_count = current_count if current_count is not None else sum(1 for p in projects if p.get("target_type") == "website" or p.get("website_url"))
         max_allowed = plan.get("max_domains", 5)
         if web_count >= max_allowed:
-            return False, f"Domain limit reached ({web_count}/{max_allowed} domains). Upgrade plan to monitor more domains."
+            return False, f"Website limit reached ({web_count}/{max_allowed} websites on your {plan['name']} plan). Upgrade to add more websites."
 
     elif resource_type == "repository":
         repo_count = current_count if current_count is not None else sum(1 for p in projects if p.get("target_type") == "repository" or p.get("repo_url"))
         max_allowed = plan.get("max_repositories", 5)
         if repo_count >= max_allowed:
-            return False, f"Repository limit reached ({repo_count}/{max_allowed} repos). Upgrade plan to monitor more repos."
+            return False, f"Repository limit reached ({repo_count}/{max_allowed} repos). Upgrade to monitor more repos."
+
+    elif resource_type == "team_member":
+        members = [u for u in data.get("users", {}).values() if u.get("org_id") == org_id]
+        count = current_count if current_count is not None else len(members)
+        max_allowed = plan.get("max_team_members", 3)
+        if count >= max_allowed:
+            return False, f"Team seat limit reached ({count}/{max_allowed} members on your {plan['name']} plan). Upgrade to invite more team members."
+
+    elif resource_type == "data_stream":
+        max_allowed = plan.get("max_data_streams", 25)
+        if current_count is not None and current_count >= max_allowed:
+            return False, f"Customer data record limit reached ({current_count}/{max_allowed} records on your {plan['name']} plan)."
+
+    elif resource_type == "vendor":
+        max_allowed = plan.get("max_vendors", 25)
+        if current_count is not None and current_count >= max_allowed:
+            return False, f"Vendor limit reached ({current_count}/{max_allowed} vendors on your {plan['name']} plan)."
+
+    elif resource_type == "evidence":
+        max_allowed = plan.get("max_evidence_items", 100)
+        if current_count is not None and current_count >= max_allowed:
+            return False, f"Evidence Vault limit reached ({current_count}/{max_allowed} files on your {plan['name']} plan)."
 
     return True, None
 
@@ -573,18 +637,25 @@ def get_organization_assets(org_id: str = "org-default") -> List[Dict[str, Any]]
 # ---------------------------------------------------------------------------
 
 def list_team_members(org_id: str = "org-default") -> List[Dict[str, Any]]:
-    """Lists all users belonging to the organization."""
+    """Lists all users belonging to the organization (sanitized without secrets)."""
     data = _load_data()
-    users = [u for u in data.get("users", {}).values() if u.get("org_id") == org_id]
-    if not users:
-        # Default admin
+    users = []
+    for u in data.get("users", {}).values():
+        if u.get("org_id") == org_id:
+            uc = dict(u)
+            uc.pop("pwd_hash", None)
+            uc.pop("salt", None)
+            uc.pop("mfa_secret", None)
+            uc.pop("mfa_pending_secret", None)
+            users.append(uc)
+    if not users and org_id == "org-default":
         default_user = {
             "id": "usr-default",
             "org_id": org_id,
-            "email": "security@acme.ai",
-            "name": "Tech Lead (Admin)",
+            "email": "demo@trustaudit.example",
+            "name": "Demo Owner",
             "role": "admin",
-            "created_at": time.time()
+            "created_at": time.time(),
         }
         data.setdefault("users", {})["usr-default"] = default_user
         _save_data(data)
@@ -596,33 +667,85 @@ def add_team_member(
     name: str,
     email: str,
     role: str = "member",
-    org_id: str = "org-default"
+    org_id: str = "org-default",
 ) -> Dict[str, Any]:
-    """Adds a new team member with role: admin, member, or viewer."""
+    """Adds a new team member with role: admin, member, or viewer, enforcing plan seat limit."""
+    allowed, err = check_plan_limits(org_id, "team_member")
+    if not allowed:
+        raise ValueError(err or "Team member limit reached.")
+
+    clean_email = sanitize_plain_text(email, 160).lower()
+    if not clean_email or "@" not in clean_email:
+        raise ValueError("A valid team member email address is required.")
+
     data = _load_data()
+    for existing in data.get("users", {}).values():
+        if existing.get("email", "").lower() == clean_email:
+            raise ValueError("A user with this email address already exists.")
+
     uid = f"usr-{uuid.uuid4().hex[:8]}"
     user = {
         "id": uid,
         "org_id": org_id,
-        "name": name,
-        "email": email,
+        "name": sanitize_plain_text(name, 120) or clean_email.split("@")[0],
+        "email": clean_email,
         "role": role if role in ("admin", "member", "viewer") else "member",
-        "created_at": time.time()
+        "invite_pending": True,
+        "mfa_enabled": False,
+        "created_at": time.time(),
     }
     data.setdefault("users", {})[uid] = user
     _save_data(data)
     return user
 
 
-def delete_team_member(user_id: str, org_id: str = "org-default") -> bool:
-    """Removes a team member."""
+def update_team_member_role(user_id: str, new_role: str, org_id: str) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
+    """Updates a member's RBAC role safely while protecting against zero-admin lockouts."""
+    if new_role not in ("admin", "member", "viewer"):
+        return False, "Role must be admin, member, or viewer.", None
     data = _load_data()
     user = data.get("users", {}).get(user_id)
-    if user and user.get("org_id") == org_id:
-        del data["users"][user_id]
-        _save_data(data)
-        return True
-    return False
+    if not user or user.get("org_id") != org_id:
+        return False, "Team member not found in your organisation.", None
+
+    if user.get("role") == "admin" and new_role != "admin":
+        other_admins = [
+            u for u in data.get("users", {}).values()
+            if u.get("org_id") == org_id and u.get("id") != user_id and u.get("role") == "admin"
+        ]
+        if not other_admins:
+            return False, "At least one admin user must remain in the organisation.", None
+
+    user["role"] = new_role
+    data["users"][user_id] = user
+    _save_data(data)
+    uc = dict(user)
+    uc.pop("pwd_hash", None)
+    uc.pop("salt", None)
+    uc.pop("mfa_secret", None)
+    return True, f"Updated role to {new_role}.", uc
+
+
+def delete_team_member(user_id: str, org_id: str = "org-default") -> bool:
+    """Removes a team member while preserving at least one admin."""
+    data = _load_data()
+    user = data.get("users", {}).get(user_id)
+    if not user or user.get("org_id") != org_id:
+        return False
+    if user.get("role") == "admin":
+        other_admins = [
+            u for u in data.get("users", {}).values()
+            if u.get("org_id") == org_id and u.get("id") != user_id and u.get("role") == "admin"
+        ]
+        if not other_admins:
+            raise ValueError("Cannot delete the last admin of the organisation.")
+    del data["users"][user_id]
+    # Revoke persisted sessions belonging to removed member
+    sessions = data.get("sessions", {})
+    for h in [k for k, v in sessions.items() if v.get("user_id") == user_id]:
+        del sessions[h]
+    _save_data(data)
+    return True
 
 
 # ---------------------------------------------------------------------------
@@ -633,8 +756,8 @@ def get_integration_settings(org_id: str = "org-default") -> Dict[str, Any]:
     """Retrieves webhook & alert integration configurations."""
     data = _load_data()
     default_settings = {
-        "email_alerts": True,
-        "alert_email": "security@acme.ai",
+        "email_alerts": False,
+        "alert_email": "",
         "slack_webhook_url": os.environ.get("TRUSTAUDIT_SLACK_WEBHOOK", ""),
         "teams_webhook_url": os.environ.get("TRUSTAUDIT_TEAMS_WEBHOOK", ""),
         "min_alert_severity": "HIGH",
@@ -645,8 +768,22 @@ def get_integration_settings(org_id: str = "org-default") -> Dict[str, Any]:
     return data.get("integrations", {}).get(org_id, default_settings)
 
 
+def save_integration_settings(org_id: str, settings: Dict[str, Any]) -> Dict[str, Any]:
+    data = _load_data()
+    curr = get_integration_settings(org_id)
+    for k in (
+        "email_alerts", "alert_email", "slack_webhook_url", "teams_webhook_url",
+        "min_alert_severity", "notify_on_new_finding", "notify_on_fix_verified", "notify_on_score_drop",
+    ):
+        if k in settings:
+            curr[k] = settings[k]
+    data.setdefault("integrations", {})[org_id] = curr
+    _save_data(data)
+    return curr
+
+
 def get_all_projects() -> List[Dict[str, Any]]:
-    """Returns all projects across all organizations (for administrative or global index views)."""
+    """Returns all projects across all organizations (for platform administration only)."""
     data = _load_data()
     return list(data.get("projects", {}).values())
 
@@ -656,23 +793,46 @@ def get_all_projects() -> List[Dict[str, Any]]:
 # ---------------------------------------------------------------------------
 
 def get_org_profile(org_id: str = "org-default") -> Dict[str, Any]:
-    """Retrieves organization profile information for compliance applicability."""
+    """Retrieves organization profile information without fabricated company defaults."""
     data = _load_data()
-    default_profile = {
-        "company_name": "Acme AI Labs",
+    saved = data.get("org_profiles", {}).get(org_id)
+    if saved:
+        return saved
+
+    org = data.get("organizations", {}).get(org_id, {})
+    if org_id == "org-default":
+        return {
+            "company_name": org.get("name", "Sample Indian Clinic (Demo Sandbox)"),
+            "country": "India",
+            "industry": "Healthcare / Clinic",
+            "website": "https://trustaudit.example",
+            "company_size": "11-50",
+            "employee_count": "11-50",
+            "business_activities": "Example healthcare clinic workspace for product demonstration.",
+            "customer_types": ["Indian Citizens (Patients)"],
+            "personal_data_categories": [],
+            "infrastructure": [],
+            "vendors": [],
+            "selected_frameworks": ["DPDP"],
+            "is_demo": True,
+        }
+
+    return {
+        "company_name": org.get("name", ""),
         "country": "India",
-        "industry": "SaaS / B2B Software",
-        "website": "https://mcp-scanner.onrender.com",
-        "company_size": "11-50 (Seed/Series A)",
-        "employee_count": "11-50 (Seed/Series A)",
-        "business_activities": "Continuous security and automated compliance management platform for AI-powered applications and MCP systems.",
-        "customer_types": ["Indian Businesses (B2B)", "US / Global Businesses"],
-        "personal_data_categories": ["Basic Contact Data (Name, Email, Phone)", "Behavioral & Usage Telemetry"],
-        "infrastructure": ["Render / Vercel / PaaS", "AWS (US / Global)"],
-        "vendors": ["OpenAI / Anthropic (LLM APIs)", "SendGrid / Resend (Transactional Email)", "Datadog / Sentry (Monitoring & Logs)"],
-        "selected_frameworks": ["DPDP", "SOC2", "ISO27001", "GDPR"]
+        "industry": "",
+        "website": "",
+        "company_size": "",
+        "employee_count": "",
+        "business_activities": "",
+        "customer_types": [],
+        "personal_data_categories": [],
+        "infrastructure": [],
+        "vendors": [],
+        "selected_frameworks": ["DPDP"],
+        "privacy_contact_name": "",
+        "privacy_contact_email": "",
     }
-    return data.get("org_profiles", {}).get(org_id, default_profile)
 
 
 def save_org_profile(org_id: str, profile: Dict[str, Any]) -> Dict[str, Any]:
@@ -681,6 +841,8 @@ def save_org_profile(org_id: str, profile: Dict[str, Any]) -> Dict[str, Any]:
     curr = get_org_profile(org_id)
     curr.update(profile)
     data.setdefault("org_profiles", {})[org_id] = curr
+    if profile.get("company_name") and org_id in data.get("organizations", {}):
+        data["organizations"][org_id]["name"] = sanitize_plain_text(profile["company_name"], 160)
     _save_data(data)
     return curr
 
@@ -812,73 +974,116 @@ def _verify_password(
         return (False, False) if return_needs_rehash else False
 
 
+def _hash_token(raw_token: str) -> str:
+    return hashlib.sha256(str(raw_token).encode("utf-8")).hexdigest()
+
+
+def _is_platform_admin_email(email: str) -> bool:
+    configured = [
+        e.strip().lower()
+        for e in os.environ.get("TRUSTAUDIT_PLATFORM_ADMIN_EMAILS", "").split(",")
+        if e.strip()
+    ]
+    return email.strip().lower() in configured
+
+
 def register_user(
     email: str,
     password: str,
     name: str,
     org_name: str,
-    country: str = "India"
+    country: str = "India",
+    plan: str = "starter",
+    industry: str = "",
+    website: str = "",
 ) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
     """Registers a new user and provisions an isolated organization with OWASP-hardened hashing."""
-    data = _load_data()
-    email_clean = email.strip().lower()
+    email_clean = sanitize_plain_text(email, 160).lower()
+    if not email_clean or not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email_clean):
+        return False, "Please enter a valid work email address.", None
+    if not password or len(password) < 8:
+        return False, "Password must be at least 8 characters long.", None
 
-    # Check if user already exists
+    data = _load_data()
+
     for u in data.get("users", {}).values():
         if u.get("email", "").lower() == email_clean:
             return False, "An account with this email address already exists.", None
 
+    clean_plan = (plan or "starter").strip().lower()
+    if clean_plan not in PLANS:
+        clean_plan = "starter"
+
     org_id = f"org-{uuid.uuid4().hex[:8]}"
     uid = f"usr-{uuid.uuid4().hex[:8]}"
     pwd_hash, salt = _hash_password(password, iterations=DEFAULT_PBKDF2_ITERATIONS)
+    clean_org_name = sanitize_plain_text(org_name, 160) or "My Business"
 
     new_org = {
         "id": org_id,
-        "name": org_name.strip() or "My Organisation",
-        "slug": org_name.strip().lower().replace(" ", "-"),
-        "plan": "starter",
+        "name": clean_org_name,
+        "slug": re.sub(r"[^a-z0-9]+", "-", clean_org_name.lower()).strip("-") or org_id,
+        "plan": clean_plan,
+        "is_demo": False,
         "created_at": time.time(),
-        "max_projects": 10,
-        "scans_count": 0
+        "max_projects": PLANS[clean_plan]["max_projects"],
+        "scans_count": 0,
     }
 
     new_user = {
         "id": uid,
         "org_id": org_id,
         "email": email_clean,
-        "name": name.strip(),
+        "name": sanitize_plain_text(name, 120) or email_clean.split("@")[0],
         "role": "admin",
+        "is_platform_admin": _is_platform_admin_email(email_clean),
         "pwd_hash": pwd_hash,
         "pwd_algo": "pbkdf2_sha256",
         "pwd_iterations": DEFAULT_PBKDF2_ITERATIONS,
         "salt": salt,
         "mfa_enabled": False,
         "mfa_secret": None,
-        "created_at": time.time()
+        "created_at": time.time(),
     }
 
     data.setdefault("organizations", {})[org_id] = new_org
     data.setdefault("users", {})[uid] = new_user
 
-    # Initialize organization profile
+    # Honest starter profile without invented customer categories, vendors, or infra
     data.setdefault("org_profiles", {})[org_id] = {
-        "company_name": org_name,
-        "country": country,
-        "industry": "SaaS / B2B Software",
-        "website": "",
-        "company_size": "1-10 (Early Stage)",
-        "employee_count": "1-10 (Early Stage)",
-        "business_activities": "Software Development & Technology Services",
-        "customer_types": ["Indian Businesses (B2B)", "US / Global Businesses"],
-        "personal_data_categories": ["Basic Contact Data (Name, Email, Phone)"],
-        "infrastructure": ["AWS (US / Global)", "Render / Vercel / PaaS"],
+        "company_name": clean_org_name,
+        "country": sanitize_plain_text(country, 80) or "India",
+        "industry": sanitize_plain_text(industry, 120),
+        "website": sanitize_plain_text(website, 300),
+        "company_size": "",
+        "employee_count": "",
+        "business_activities": "",
+        "customer_types": [],
+        "personal_data_categories": [],
+        "infrastructure": [],
         "vendors": [],
-        "selected_frameworks": ["DPDP", "SOC2", "ISO27001"]
+        "selected_frameworks": ["DPDP"],
+        "privacy_contact_name": sanitize_plain_text(name, 120),
+        "privacy_contact_email": email_clean,
     }
 
     _save_data(data)
     token = create_user_session(uid, org_id)
-    return True, "Registration successful.", {"user": new_user, "organization": new_org, "token": token}
+    append_audit_log(
+        org_id=org_id,
+        action="auth.register",
+        resource_type="user",
+        resource_id=uid,
+        actor_user_id=uid,
+        actor_email=email_clean,
+        actor_role="admin",
+        details={"plan": clean_plan},
+    )
+    user_safe = dict(new_user)
+    user_safe.pop("pwd_hash", None)
+    user_safe.pop("salt", None)
+    user_safe.pop("mfa_secret", None)
+    return True, "Registration successful.", {"user": user_safe, "organization": get_organization(org_id), "token": token}
 
 
 def authenticate_user(
@@ -891,14 +1096,12 @@ def authenticate_user(
     and optional TOTP MFA verification.
     """
     data = _load_data()
-    email_clean = email.strip().lower()
+    email_clean = sanitize_plain_text(email, 160).lower()
 
-    # 1. Rate limiting check
     allowed, retry_sec = check_login_rate_limit(email_clean)
     if not allowed:
         return False, f"Too many failed login attempts. Please try again in {retry_sec} seconds.", None
 
-    # 2. Locate user
     matched_user = None
     for u in data.get("users", {}).values():
         if u.get("email", "").lower() == email_clean:
@@ -917,13 +1120,20 @@ def authenticate_user(
         record_failed_login(email_clean)
         return False, "Invalid account security state. Please reset your password.", None
 
-    # 3. Verify password
     is_valid, needs_rehash = _verify_password(password, pwd_hash, salt, stored_iters, return_needs_rehash=True)
     if not is_valid:
         record_failed_login(email_clean)
+        append_audit_log(
+            org_id=matched_user.get("org_id", ""),
+            action="auth.login_failed",
+            resource_type="user",
+            resource_id=matched_user.get("id", ""),
+            actor_user_id=matched_user.get("id", ""),
+            actor_email=email_clean,
+            status="denied",
+        )
         return False, "Invalid email address or password.", None
 
-    # 4. MFA Check (if enabled on user account)
     if matched_user.get("mfa_enabled"):
         if not totp_code:
             return False, "MFA_REQUIRED", {"mfa_required": True, "user_id": matched_user["id"]}
@@ -931,17 +1141,16 @@ def authenticate_user(
             record_failed_login(email_clean)
             return False, "Invalid Multi-Factor Authentication code.", None
 
-    # 5. Clear failed login count upon success
     clear_failed_logins(email_clean)
 
-    # 6. Rehash-on-login: Transparently upgrade legacy iterations to 600,000
+    matched_user["last_login_at"] = time.time()
     if needs_rehash:
         new_hash, new_salt = _hash_password(password, iterations=DEFAULT_PBKDF2_ITERATIONS)
         matched_user["pwd_hash"] = new_hash
         matched_user["salt"] = new_salt
         matched_user["pwd_algo"] = "pbkdf2_sha256"
         matched_user["pwd_iterations"] = DEFAULT_PBKDF2_ITERATIONS
-        _save_data(data)
+    _save_data(data)
 
     token = create_user_session(matched_user["id"], matched_user["org_id"])
     org = get_organization(matched_user["org_id"])
@@ -949,18 +1158,37 @@ def authenticate_user(
     user_copy.pop("pwd_hash", None)
     user_copy.pop("salt", None)
     user_copy.pop("mfa_secret", None)
+    user_copy.pop("mfa_pending_secret", None)
+    append_audit_log(
+        org_id=matched_user["org_id"],
+        action="auth.login",
+        resource_type="session",
+        actor_user_id=matched_user["id"],
+        actor_email=email_clean,
+        actor_role=matched_user.get("role", "member"),
+    )
     return True, "Login successful.", {"user": user_copy, "organization": org, "token": token}
 
 
 def create_user_session(user_id: str, org_id: str) -> str:
-    """Creates a cryptographic session token valid for 30 days."""
+    """Creates a cryptographic session token persisted as a SHA-256 hash valid for 30 days."""
     token = secrets.token_urlsafe(32)
-    _ACTIVE_SESSIONS[token] = {
+    tok_hash = _hash_token(token)
+    session_meta = {
         "user_id": user_id,
         "org_id": org_id,
         "created_at": time.time(),
-        "expires_at": time.time() + (30 * 86400)
+        "expires_at": time.time() + (30 * 86400),
     }
+    data = _load_data()
+    sessions = data.setdefault("sessions", {})
+    # Prune expired sessions opportunistically
+    now = time.time()
+    for k in [hk for hk, sm in sessions.items() if now > sm.get("expires_at", 0)]:
+        del sessions[k]
+    sessions[tok_hash] = session_meta
+    _save_data(data)
+    _ACTIVE_SESSIONS[token] = session_meta
     return token
 
 
@@ -975,18 +1203,21 @@ def validate_session(
     """
     if not token:
         if allow_demo_fallback:
-            return True, {"id": "usr-default", "name": "Security Lead (Demo)", "role": "admin", "email": "security@acme.ai"}, "org-default"
+            return True, {"id": "usr-default", "name": "Demo Owner", "role": "admin", "email": "demo@trustaudit.example"}, "org-default"
         return False, None, None
 
-    session = _ACTIVE_SESSIONS.get(token)
+    data = _load_data()
+    tok_hash = _hash_token(token)
+    session = data.get("sessions", {}).get(tok_hash) or _ACTIVE_SESSIONS.get(token)
     if not session:
         return False, None, None
 
     if time.time() > session.get("expires_at", 0):
-        del _ACTIVE_SESSIONS[token]
+        data.get("sessions", {}).pop(tok_hash, None)
+        _ACTIVE_SESSIONS.pop(token, None)
+        _save_data(data)
         return False, None, None
 
-    data = _load_data()
     user = data.get("users", {}).get(session["user_id"])
     if not user:
         return False, None, None
@@ -995,25 +1226,34 @@ def validate_session(
     user_copy.pop("pwd_hash", None)
     user_copy.pop("salt", None)
     user_copy.pop("mfa_secret", None)
+    user_copy.pop("mfa_pending_secret", None)
     return True, user_copy, session.get("org_id")
 
 
 def revoke_session(token: str) -> bool:
-    """Logs out by invalidating active session token."""
+    """Logs out by invalidating persisted and cached session token."""
+    removed = False
     if token in _ACTIVE_SESSIONS:
         del _ACTIVE_SESSIONS[token]
-        return True
-    return False
+        removed = True
+    if token:
+        data = _load_data()
+        tok_hash = _hash_token(token)
+        if tok_hash in data.get("sessions", {}):
+            del data["sessions"][tok_hash]
+            _save_data(data)
+            removed = True
+    return removed
 
 
 # ---------------------------------------------------------------------------
-# PASSWORD RESET WORKFLOW
+# PASSWORD RESET WORKFLOW (Hashed & Persistent)
 # ---------------------------------------------------------------------------
 
 def create_password_reset_token(email: str) -> Tuple[bool, str, Optional[str]]:
-    """Generates a secure, 1-hour single-use password reset token."""
+    """Generates a secure, 1-hour single-use password reset token persisted as SHA-256 hash."""
     data = _load_data()
-    email_clean = email.strip().lower()
+    email_clean = sanitize_plain_text(email, 160).lower()
 
     matched_user = None
     for u in data.get("users", {}).values():
@@ -1021,55 +1261,86 @@ def create_password_reset_token(email: str) -> Tuple[bool, str, Optional[str]]:
             matched_user = u
             break
 
+    generic_msg = "If an account exists with this email, password reset instructions have been processed."
     if not matched_user:
-        # Prevent user enumeration: generic success response
-        return True, "If an account exists with this email, password reset instructions have been generated.", None
+        return True, generic_msg, None
 
     token = secrets.token_urlsafe(32)
-    _PASSWORD_RESET_TOKENS[token] = {
+    tok_hash = _hash_token(token)
+    meta = {
         "user_id": matched_user["id"],
         "email": email_clean,
         "created_at": time.time(),
-        "expires_at": time.time() + PASSWORD_RESET_TOKEN_EXPIRY_SECONDS
+        "expires_at": time.time() + PASSWORD_RESET_TOKEN_EXPIRY_SECONDS,
     }
-    return True, "Password reset token generated.", token
+    resets = data.setdefault("password_resets", {})
+    resets[tok_hash] = meta
+    _save_data(data)
+    _PASSWORD_RESET_TOKENS[token] = meta
+    append_audit_log(
+        org_id=matched_user.get("org_id", ""),
+        action="auth.password_reset_requested",
+        resource_type="user",
+        resource_id=matched_user["id"],
+        actor_user_id=matched_user["id"],
+        actor_email=email_clean,
+    )
+    return True, generic_msg, token
 
 
 def reset_password_with_token(token: str, new_password: str) -> Tuple[bool, str]:
     """Validates reset token and applies newly hashed password with 600,000 iterations."""
-    if not token or token not in _PASSWORD_RESET_TOKENS:
+    if not token:
         return False, "Invalid or expired password reset token."
 
-    meta = _PASSWORD_RESET_TOKENS[token]
+    data = _load_data()
+    tok_hash = _hash_token(token)
+    meta = data.get("password_resets", {}).get(tok_hash) or _PASSWORD_RESET_TOKENS.get(token)
+    if not meta:
+        return False, "Invalid or expired password reset token."
+
     if time.time() > meta["expires_at"]:
-        del _PASSWORD_RESET_TOKENS[token]
+        data.get("password_resets", {}).pop(tok_hash, None)
+        _PASSWORD_RESET_TOKENS.pop(token, None)
+        _save_data(data)
         return False, "Password reset token has expired. Please request a new one."
 
-    if len(new_password) < 8:
+    if not new_password or len(new_password) < 8:
         return False, "Password must be at least 8 characters long."
 
-    data = _load_data()
     user = data.get("users", {}).get(meta["user_id"])
     if not user:
-        del _PASSWORD_RESET_TOKENS[token]
+        data.get("password_resets", {}).pop(tok_hash, None)
+        _PASSWORD_RESET_TOKENS.pop(token, None)
+        _save_data(data)
         return False, "User account no longer exists."
 
-    # Hash with OWASP work factor
     new_hash, new_salt = _hash_password(new_password, iterations=DEFAULT_PBKDF2_ITERATIONS)
     user["pwd_hash"] = new_hash
     user["salt"] = new_salt
     user["pwd_algo"] = "pbkdf2_sha256"
     user["pwd_iterations"] = DEFAULT_PBKDF2_ITERATIONS
-    _save_data(data)
 
-    # Invalidate token (single-use)
-    del _PASSWORD_RESET_TOKENS[token]
+    # Single-use invalidation
+    data.get("password_resets", {}).pop(tok_hash, None)
+    _PASSWORD_RESET_TOKENS.pop(token, None)
 
-    # Invalidate all active sessions for this user (session rotation)
-    tokens_to_revoke = [t for t, s in _ACTIVE_SESSIONS.items() if s.get("user_id") == user["id"]]
-    for t in tokens_to_revoke:
+    # Rotate all sessions for user
+    sessions = data.get("sessions", {})
+    for h in [k for k, s in sessions.items() if s.get("user_id") == user["id"]]:
+        del sessions[h]
+    for t in [t for t, s in _ACTIVE_SESSIONS.items() if s.get("user_id") == user["id"]]:
         del _ACTIVE_SESSIONS[t]
 
+    _save_data(data)
+    append_audit_log(
+        org_id=user.get("org_id", ""),
+        action="auth.password_reset_completed",
+        resource_type="user",
+        resource_id=user["id"],
+        actor_user_id=user["id"],
+        actor_email=user.get("email", ""),
+    )
     return True, "Password has been successfully updated. Please log in with your new password."
 
 
@@ -1210,18 +1481,25 @@ def delete_organization_account(org_id: str) -> Tuple[bool, str, Dict[str, Any]]
         "backup_expiration_period": "30 days (Automated snapshot rotation)"
     }
 
-    # 1. Delete Evidence Vault items
+    # 1. Delete Evidence Vault items & DPDP Operational Data
     try:
         import evidence_vault
         evidence_vault.delete_all_org_evidence(org_id)
     except Exception:
         pass
+    try:
+        import dpdp_store
+        dpdp_store.delete_all_org_dpdp_data(org_id)
+    except Exception:
+        pass
 
-    # 2. Delete Users
+    # 2. Delete Users & their persisted/cached sessions
     users_to_delete = [uid for uid, u in data.get("users", {}).items() if u.get("org_id") == org_id]
     for uid in users_to_delete:
         del data["users"][uid]
-        # Invalidate active sessions
+        sessions = data.get("sessions", {})
+        for h in [k for k, s in sessions.items() if s.get("user_id") == uid]:
+            del sessions[h]
         for t in [tok for tok, s in _ACTIVE_SESSIONS.items() if s.get("user_id") == uid]:
             del _ACTIVE_SESSIONS[t]
 
@@ -1245,23 +1523,18 @@ def delete_organization_account(org_id: str) -> Tuple[bool, str, Dict[str, Any]]
 
 
 # ---------------------------------------------------------------------------
-# GRIEVANCE REDRESSAL SYSTEM (DPDP SECTION 13 & RULE 14)
+# GRIEVANCE REDRESSAL SYSTEM (DPDP SECTION 13)
 # ---------------------------------------------------------------------------
 
-GRIEVANCES_FILE = os.path.join(os.path.dirname(__file__), "data", "grievances.json")
+GRIEVANCES_FILE = os.path.join(get_data_dir(), "grievances.json")
+
 
 def _load_grievances() -> List[Dict[str, Any]]:
-    if os.path.exists(GRIEVANCES_FILE):
-        try:
-            with open(GRIEVANCES_FILE, "r", encoding="utf-8") as f:
-                return json.load(f)
-        except Exception:
-            return []
-    return []
+    return safe_read_json(GRIEVANCES_FILE, list)
+
 
 def _save_grievances(records: List[Dict[str, Any]]) -> None:
-    with open(GRIEVANCES_FILE, "w", encoding="utf-8") as f:
-        json.dump(records, f, indent=2)
+    atomic_write_json(GRIEVANCES_FILE, records)
 
 def submit_grievance(
     name: str,

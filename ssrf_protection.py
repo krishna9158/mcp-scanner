@@ -33,7 +33,12 @@ ALLOWED_SCHEMES = {"http", "https"}
 ALLOWED_PORTS = {80, 443, 8080, 8443}
 BLOCKED_HOSTNAMES = {
     "localhost",
+    "localhost.localdomain",
+    "ip6-localhost",
+    "ip6-loopback",
     "metadata.google.internal",
+    "metadata.goog",
+    "metadata",
     "instance-data",
     "metadata.azure.com",
 }
@@ -44,6 +49,7 @@ CLOUD_METADATA_IPS = {
     "169.254.169.251",
     "100.100.100.200",  # Alibaba cloud metadata
 }
+CGNAT_NETWORK = ipaddress.ip_network("100.64.0.0/10")
 DEFAULT_MAX_REDIRECTS = 3
 DEFAULT_MAX_BODY_BYTES = 512 * 1024  # 512 KB
 DEFAULT_TIMEOUT_CONNECT = 3.0
@@ -101,7 +107,7 @@ def validate_target_url_ssrf_safe(url: str) -> Dict[str, Any]:
     if not hostname_clean:
         raise SSRFSecurityError("Empty hostname is prohibited.")
 
-    if hostname_clean in BLOCKED_HOSTNAMES:
+    if hostname_clean in BLOCKED_HOSTNAMES or hostname_clean.endswith(".local") or hostname_clean.endswith(".internal"):
         raise SSRFSecurityError(f"Hostname '{hostname_clean}' is prohibited.")
 
     # Determine port
@@ -126,6 +132,53 @@ def validate_target_url_ssrf_safe(url: str) -> Dict[str, Any]:
     }
 
 
+def _assert_public_ip(ip_str: str) -> None:
+    clean_ip = str(ip_str).split("%", 1)[0].strip("[]")
+    if clean_ip in CLOUD_METADATA_IPS:
+        raise SSRFSecurityError(
+            f"Access to cloud metadata IP '{clean_ip}' is strictly prohibited."
+        )
+
+    try:
+        ip_obj = ipaddress.ip_address(clean_ip)
+    except ValueError:
+        raise SSRFSecurityError(f"Invalid resolved IP address: '{clean_ip}'.")
+
+    # Unwrap IPv4-mapped IPv6 addresses (e.g., ::ffff:127.0.0.1, ::ffff:169.254.169.254)
+    if isinstance(ip_obj, ipaddress.IPv6Address) and ip_obj.ipv4_mapped is not None:
+        _assert_public_ip(str(ip_obj.ipv4_mapped))
+
+    if ip_obj.is_loopback:
+        raise SSRFSecurityError(
+            f"Loopback address '{clean_ip}' is prohibited (internal host access blocked)."
+        )
+
+    if ip_obj.is_private:
+        raise SSRFSecurityError(
+            f"Private IP address '{clean_ip}' (RFC 1918 / RFC 4193) is prohibited."
+        )
+
+    if ip_obj.is_link_local:
+        raise SSRFSecurityError(
+            f"Link-local address '{clean_ip}' (RFC 3927) is prohibited."
+        )
+
+    if ip_obj.is_multicast:
+        raise SSRFSecurityError(
+            f"Multicast address '{clean_ip}' is prohibited."
+        )
+
+    if ip_obj.is_reserved or ip_obj.is_unspecified:
+        raise SSRFSecurityError(
+            f"Reserved or unspecified address '{clean_ip}' is prohibited."
+        )
+
+    if isinstance(ip_obj, ipaddress.IPv4Address) and ip_obj in CGNAT_NETWORK:
+        raise SSRFSecurityError(
+            f"Carrier-grade NAT / internal IP '{clean_ip}' (RFC 6598) is prohibited."
+        )
+
+
 def _resolve_and_verify_ips(hostname: str) -> List[str]:
     """
     Resolves all A and AAAA records for hostname and verifies each IP address.
@@ -148,42 +201,8 @@ def _resolve_and_verify_ips(hostname: str) -> List[str]:
         if ip_str not in resolved_ips:
             resolved_ips.append(ip_str)
 
-    # Check each resolved IP
     for ip_str in resolved_ips:
-        if ip_str in CLOUD_METADATA_IPS:
-            raise SSRFSecurityError(
-                f"Access to cloud metadata IP '{ip_str}' is strictly prohibited."
-            )
-
-        try:
-            ip_obj = ipaddress.ip_address(ip_str)
-        except ValueError:
-            raise SSRFSecurityError(f"Invalid resolved IP address: '{ip_str}'.")
-
-        if ip_obj.is_loopback:
-            raise SSRFSecurityError(
-                f"Loopback address '{ip_str}' is prohibited (internal host access blocked)."
-            )
-
-        if ip_obj.is_private:
-            raise SSRFSecurityError(
-                f"Private IP address '{ip_str}' (RFC 1918 / RFC 4193) is prohibited."
-            )
-
-        if ip_obj.is_link_local:
-            raise SSRFSecurityError(
-                f"Link-local address '{ip_str}' (RFC 3927) is prohibited."
-            )
-
-        if ip_obj.is_multicast:
-            raise SSRFSecurityError(
-                f"Multicast address '{ip_str}' is prohibited."
-            )
-
-        if ip_obj.is_reserved or ip_obj.is_unspecified:
-            raise SSRFSecurityError(
-                f"Reserved or unspecified address '{ip_str}' is prohibited."
-            )
+        _assert_public_ip(ip_str)
 
     return resolved_ips
 
@@ -240,6 +259,20 @@ def safe_http_fetch(
                 stream=True,
                 verify=True,
             )
+            # Re-verify connected socket peer IP against DNS rebinding
+            try:
+                sock = getattr(getattr(res.raw, "_connection", None), "sock", None)
+                if sock is not None:
+                    peer = sock.getpeername()
+                    if peer and peer[0]:
+                        _assert_public_ip(peer[0])
+            except SSRFSecurityError:
+                res.close()
+                raise
+            except Exception:
+                pass
+        except SSRFSecurityError:
+            raise
         except requests.exceptions.SSLError as e:
             # Retry with verify=False only if we still enforce strict SSRF IP check
             # For public scans, we capture SSL error as a security finding

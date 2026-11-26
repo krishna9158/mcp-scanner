@@ -102,8 +102,8 @@ Our core architectural commitments:
 ---
 ## 2. Platform Architecture Summary
 - **Compute Layer:** Sandboxed AST parsing, Semgrep semantic analysis, and deterministic heuristic vulnerability scanners.
-- **Data Stores:** Tenant-partitioned JSON and relational stores; documents in the Evidence Vault are cryptographically hashed with SHA-256 upon ingestion.
-- **Authentication:** PBKDF2-HMAC-SHA256 password hashing with 100,000 iterations and 16-byte cryptographically random per-user salts.
+- **Data Stores:** Tenant-partitioned JSON stores with atomic writes; Evidence Vault uploads are validated by extension, size (5 MB), and magic bytes, fingerprinted with SHA-256 upon ingestion, and optionally encrypted using Fernet (`TRUSTAUDIT_DATA_KEY`) on top of Render-managed persistent disk storage.
+- **Authentication & Sessions:** PBKDF2-HMAC-SHA256 password hashing with 600,000 iterations (OWASP work factor with automatic legacy rehash-on-login), 16-byte per-user salts, SHA-256 hashed persistent session tokens in HttpOnly SameSite cookies, and optional RFC 6238 TOTP MFA.
 """
 
     elif doc_id == "dpdp":
@@ -229,7 +229,7 @@ TrustAudit engages a minimal set of vetted, SOC 2 and ISO 27001-certified infras
 | **NIST NVD** | National Institute of Standards and Technology | National Vulnerability Database API 2.0 (Feed only; no customer data sent) | United States (Public API) | U.S. Department of Commerce Open Data |
 | **Google Open Source (OSV)** | Google LLC | OSV.dev package vulnerability intelligence (Feed only; no customer data sent) | United States (Public API) | Public Open-Source Vulnerability Database |
 
-> **AI Processing Guarantee:** Core scanning is performed locally on server CPU using deterministic AST and regex analyzers. TrustAudit does *not* transmit customer source code or repository findings to OpenAI, Anthropic, or any third-party public AI model training pool.
+> **AI Processing Transparency:** Core website scanning and grounded guidance run on server CPU using verified DPDP rules. When optional Google Gemini API enhancement is enabled (`GEMINI_API_KEY`), questions are stripped of personal email, phone, and tax/ID strings prior to calling Gemini, while uploaded Evidence Vault files and Customer Data Lists remain stored locally on TrustAudit.
 """
 
     elif doc_id == "disclosure":

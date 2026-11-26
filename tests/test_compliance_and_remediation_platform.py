@@ -269,17 +269,33 @@ class TestFlaskEndpointsE2E:
         assert "SOC2" in data["controls"]
 
     def test_compliance_assessment_endpoint(self, client):
-        res = client.get("/api/compliance/assessment")
+        import uuid
+        reg = client.post("/api/auth/register", json={
+            "email": f"comp_ep_{uuid.uuid4().hex[:6]}@clinic.in",
+            "password": "StrongPassword#2026",
+            "name": "Compliance Lead",
+            "company_name": "Endpoint Clinic"
+        })
+        hdrs = {"Authorization": f"Bearer {reg.get_json()['data']['token']}"}
+        res = client.get("/api/compliance/assessment", headers=hdrs)
         assert res.status_code == 200
         data = res.get_json()
         assert "frameworks" in data
         assert "applicability" in data
 
     def test_evidence_and_remediation_endpoints(self, client):
-        ev_res = client.get("/api/evidence")
+        import uuid
+        reg = client.post("/api/auth/register", json={
+            "email": f"ev_ep_{uuid.uuid4().hex[:6]}@clinic.in",
+            "password": "StrongPassword#2026",
+            "name": "Evidence Lead",
+            "company_name": "Endpoint Evidence Clinic"
+        })
+        hdrs = {"Authorization": f"Bearer {reg.get_json()['data']['token']}"}
+        ev_res = client.get("/api/evidence", headers=hdrs)
         assert ev_res.status_code == 200
 
-        rem_res = client.get("/api/remediation")
+        rem_res = client.get("/api/remediation", headers=hdrs)
         assert rem_res.status_code == 200
         rem_data = rem_res.get_json()
         assert "tasks" in rem_data
@@ -403,11 +419,11 @@ class TestInteractiveTrustCentreAndPublicEndpoints:
         assert "TrustAudit" in html
         assert "Security, Compliance &amp; Trust Center" in html or "Security, Compliance & Trust Center" in html
         assert "Verified Security Architecture" in html
-        assert "Framework Explorer & Control Mappings" in html
-        assert "Test Secret Redaction Sandbox" in html
-        assert "Enterprise Security Questionnaire Simulator" in html
-        assert "Interactive Repository Processing Pipeline" in html
-        assert "Download Enterprise Trust Pack" in html
+        assert "Live Telemetry &amp; Control Explorers" in html or "Live Telemetry & Control Explorers" in html
+        assert "PII &amp; Secret Sanitizer Preview" in html
+        assert "Live Security Telemetry Check" in html
+        assert "Upload &amp; SSRF Protection Specs" in html
+        assert "Download Trust Pack (.zip)" in html
 
         # Verify statutory legal accuracy (DPDP 2023 & Rules 2025 timeline)
         assert "Digital Personal Data Protection Act, 2023" in html
@@ -417,12 +433,11 @@ class TestInteractiveTrustCentreAndPublicEndpoints:
         assert "Section 8(5)" in html
 
         # Verify required professional disclaimers
-        assert "does not issue formal regulatory certifications" in html
-        assert "certified SOC 2 Type II reports" in html
-        assert "accredited ISO 27001 certificates" in html
-        assert "registered statutory Consent Manager" in html
+        assert "Not a Government Certification Body" in html
+        assert "registered Consent Manager" in html or "registered statutory Consent Manager" in html
 
-        # Verify interactive JS function bindings
+        # Verify interactive JS function bindings (zero alert stubs)
+        assert "alert(" not in html
         assert "sandbox-input-val" in html
         assert "runMaskingDemo" in html
         assert "runQuestionnaireSimulator" in html
@@ -439,23 +454,16 @@ class TestInteractiveTrustCentreAndPublicEndpoints:
         assert data["status"] == "healthy"
         assert "timestamp" in data
 
-        # CISA KEV telemetry
-        assert "kev_sync" in data
-        assert data["kev_sync"]["status"] == "Healthy"
-        assert data["kev_sync"]["catalog_entries"] >= 1000
-        assert "CISA" in data["kev_sync"]["source"]
-
-        # Tenant isolation verified test suite
+        # Tenant isolation verified metadata
         assert "tenant_isolation" in data
-        assert data["tenant_isolation"]["tests_executed"] >= 18
-        assert data["tenant_isolation"]["tests_passed"] >= 18
-        assert data["tenant_isolation"]["last_test_status"] == "passed"
-        assert "v2.4-negative-isolation" in data["tenant_isolation"]["test_suite_version"]
+        assert data["tenant_isolation"]["status"] == "enforced"
 
         # Security controls
         assert "security_controls" in data
         assert "PBKDF2" in data["security_controls"]["password_hashing"]
+        assert "600,000 iterations" in data["security_controls"]["password_hashing"]
         assert "TLS" in data["security_controls"]["encryption_in_transit"]
+        assert "ai_assistant_privacy" in data["security_controls"]
 
         # Negative security assert: Zero customer PII, tenant records, or auth secrets exposed
         raw_json_str = json.dumps(data)

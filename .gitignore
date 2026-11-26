@@ -13,6 +13,9 @@ __pycache__/
 # Local environment / secrets
 .env
 data/evidence_vault/
+data/dpdp_evidence/
+data/audit_logs.json
+data/backups/
 
 scratch/
 .pytest_cache/

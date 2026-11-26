@@ -117,7 +117,8 @@ class TestDPDPCompleteSuite:
         reqs = dpdp_engine.DPDP_REQUIREMENTS
         assert len(reqs) >= 12
         sec3 = next(r for r in reqs if r["id"] == "DPDP-SEC-03")
-        assert sec3["legal_status"] == "IN_FORCE"
+        assert sec3["legal_status"] == "SCHEDULED_MAY_2027"
+        assert sec3["effective_date"] == "13 May 2027"
         assert "Applicability" in sec3["title"]
 
     # F. Personal data inventory (Add, List, Update, Delete, CSV Export)
@@ -221,18 +222,24 @@ class TestDPDPCompleteSuite:
 
     # N & O. Evidence upload, download, and versioning
     def test_n_o_evidence_vault(self, client):
-        org_id = f"org-{uuid.uuid4().hex[:6]}"
-        # Evidence creation
-        data = io.BytesIO(b"ITEMISED PRIVACY NOTICE V1.0 OFFICIAL CLINIC DOCUMENT")
+        reg = client.post("/api/auth/register", json={
+            "email": f"ev_{uuid.uuid4().hex[:6]}@clinic.in",
+            "password": "StrongPassword#2026",
+            "name": "Clinic Owner",
+            "company_name": "Evidence Clinic"
+        })
+        tok = reg.get_json()["data"]["token"]
+        # Valid PDF magic bytes required by hardened uploader
+        data = io.BytesIO(b"%PDF-1.4\nITEMISED PRIVACY NOTICE V1.0 OFFICIAL CLINIC DOCUMENT")
         data.name = "clinic_notice_v1.pdf"
-        
+
         post_data = {
             "title": "Clinic Itemised Privacy Notice v1.0",
             "category": "notices",
             "control_id": "DPDP-SEC-05",
             "file": (data, "clinic_notice_v1.pdf")
         }
-        res = client.post("/api/evidence", data=post_data, content_type="multipart/form-data")
+        res = client.post("/api/evidence", headers={"Authorization": f"Bearer {tok}"}, data=post_data, content_type="multipart/form-data")
         assert res.status_code in (200, 201)
         evi_data = res.get_json()
         assert evi_data.get("status") == "success"
@@ -283,10 +290,16 @@ class TestDPDPCompleteSuite:
 
     # T. Reports & Audit summaries
     def test_t_reports_and_audit(self, client):
-        res = client.get("/dashboard")
-        assert res.status_code == 200
-        assert b"DPDP READINESS REPORT" in res.data
-        assert b"Digital Personal Data Protection Act, 2023" in res.data
+        reg = client.post("/api/auth/register", json={
+            "email": f"rpt_{uuid.uuid4().hex[:6]}@clinic.in",
+            "password": "StrongPassword#2026",
+            "name": "Report Lead",
+            "company_name": "Report Clinic"
+        })
+        tok = reg.get_json()["data"]["token"]
+        pdf_res = client.get("/api/dpdp/reports/pdf", headers={"Authorization": f"Bearer {tok}"})
+        assert pdf_res.status_code == 200
+        assert pdf_res.data.startswith(b"%PDF-1.4")
 
     # U. Organisation isolation & Multi-tenant security
     def test_u_organisation_isolation(self):
@@ -307,28 +320,27 @@ class TestDPDPCompleteSuite:
     def test_w_dashboard_rendering(self, client):
         res = client.get("/dashboard")
         assert res.status_code == 200
-        assert b"DPDP Assessment" in res.data
-        assert b"Data Inventory" in res.data
-        assert b"Privacy Notices (Sec 5)" in res.data
-        assert b"Consent &amp; Withdrawals" in res.data
-        assert b"Data Principal Rights" in res.data
-        assert b"Vendor Management" in res.data
-        assert b"Retention &amp; Erasure" in res.data
-        assert b"Breach Management (Sec 8(6))" in res.data
+        assert b"Customer Data List" in res.data
+        assert b"Privacy Notice" in res.data
+        assert b"Consent Records" in res.data
+        assert b"Customer Privacy Requests" in res.data
+        assert b"Companies I Share Data With" in res.data
+        assert b"Data Retention &amp; Deletion" in res.data
+        assert b"Privacy Incident Response" in res.data
         assert b"Evidence Vault" in res.data
-        assert b"Remediation Centre" in res.data
+        assert b"My Action Plan" in res.data
 
-    # X. Homepage links & Certinal-inspired sections
+    # X. Homepage links & Part 8 public launch sections
     def test_x_homepage_links(self, client):
         res = client.get("/")
         assert res.status_code == 200
-        assert b"DPDP COMPLIANCE MANAGEMENT PLATFORM" in res.data
-        assert b"Your DPDP Compliance Journey" in res.data
-        assert b"Clinics, Diagnostic Centres &amp; Hospitals" in res.data
+        assert b"Know What Happens to Your Customer Data." in res.data
+        assert b"Start My Free Assessment" in res.data
+        assert b"See How It Works" in res.data
+        assert b"Clinics &amp; Hospitals" in res.data
         assert b"DISCOVER" in res.data
         assert b"ASSESS" in res.data
         assert b"MANAGE" in res.data
-        assert b"Start Free Assessment" in res.data
 
     # Y. Pricing and subscription limits
     def test_y_pricing_and_plans(self, client):
@@ -337,9 +349,9 @@ class TestDPDPCompleteSuite:
         assert b"999" in res.data
         assert b"1,999" in res.data
         assert b"2,999" in res.data
-        assert b"Starter Plan" in res.data
-        assert b"Growth Plan" in res.data
-        assert b"Business Plan" in res.data
+        assert b"Starter" in res.data
+        assert b"Growth" in res.data
+        assert b"Business" in res.data
 
     # Z. Trust Centre disclosures & Disclaimers
     def test_z_trust_centre_disclosures(self, client):

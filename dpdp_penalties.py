@@ -18,15 +18,57 @@ of India (DPBI) on a case-by-case basis under Section 33. They are NOT automatic
 
 from typing import Dict, Any, Optional
 
-PENALTY_ENGINE_VERSION = "v3.0.0"
-LAST_REVIEWED_DATE = "2026-11-22"
+PENALTY_ENGINE_VERSION = "v3.1.0"
+LAST_REVIEWED_DATE = "2026-11-26"
 OFFICIAL_SOURCE = "The Digital Personal Data Protection Act, 2023 (Act No. 22 of 2023), Schedule read with Section 33"
 
 STATUTORY_PENALTY_DISCLAIMER = (
-    "Statutory penalty ceilings are maximum amounts specified in the DPDP Act. "
-    "They are not automatic fines, predicted penalties or actual penalties. "
-    "The Data Protection Board determines penalties under the applicable statutory process."
+    "Statutory penalty ceilings are maximum amounts specified in the DPDP Act, 2023. "
+    "They are not automatic fines, predicted penalties, or actual penalties. "
+    "The Data Protection Board of India determines penalties case by case under Section 33."
 )
+
+SECTION_33_FACTORS = [
+    {
+        "clause": "Section 33(2)(a)",
+        "title": "Nature, gravity and duration of the breach",
+        "plain_english": "How serious the breach was, what went wrong, and how long it lasted.",
+    },
+    {
+        "clause": "Section 33(2)(b)",
+        "title": "Type and nature of personal data affected",
+        "plain_english": "Whether sensitive, financial, health, children's, or everyday contact details were exposed.",
+    },
+    {
+        "clause": "Section 33(2)(c)",
+        "title": "Repetitive nature of the breach",
+        "plain_english": "Whether the organisation has repeated similar violations before.",
+    },
+    {
+        "clause": "Section 33(2)(d)",
+        "title": "Gain realised or loss avoided",
+        "plain_english": "Whether the business profited from the breach or avoided spending on required safeguards.",
+    },
+    {
+        "clause": "Section 33(2)(e)",
+        "title": "Mitigation actions and timeliness",
+        "plain_english": "What steps were taken quickly to fix the issue and reduce harm to individuals.",
+    },
+    {
+        "clause": "Section 33(2)(f)",
+        "title": "Proportionate and effective deterrence",
+        "plain_english": "Whether the penalty amount is fair, proportionate, and enough to ensure compliance.",
+    },
+    {
+        "clause": "Section 33(2)(g)",
+        "title": "Likely impact on the person",
+        "plain_english": "How severely the monetary penalty would affect the organisation's financial viability.",
+    },
+]
+
+
+def get_section_33_factors():
+    return list(SECTION_33_FACTORS)
 
 DPDP_STATUTORY_PENALTIES: Dict[str, Dict[str, Any]] = {
     "SEC_08_05": {
@@ -40,8 +82,9 @@ DPDP_STATUTORY_PENALTIES: Dict[str, Dict[str, Any]] = {
         "effective_date": "13 May 2027",
         "applicability": "All Data Fiduciaries and Data Processors holding digital personal data",
         "explanation": (
-            "Highest penalty tier under the Act. Enforces technical safeguards (TLS 1.3, AES-256, access control, "
-            "vulnerability patching) to prevent unauthorized access, disclosure, or destruction of personal data."
+            "Highest statutory ceiling tier under the Schedule to the DPDP Act, 2023. Covers reasonable technical and "
+            "organisational safeguards (such as transport encryption, appropriate encryption/obfuscation, access control, "
+            "logging, data backup, and regular security review under Section 8(5) and Rule 6) to prevent personal data breaches."
         ),
         "legal_source": OFFICIAL_SOURCE,
         "last_reviewed_date": LAST_REVIEWED_DATE,
@@ -78,8 +121,9 @@ DPDP_STATUTORY_PENALTIES: Dict[str, Dict[str, Any]] = {
         "effective_date": "13 May 2027",
         "applicability": "Entities processing personal data of individuals under 18 years of age or persons with disabilities",
         "explanation": (
-            "Penalizes failure to obtain verifiable parental consent, conducting behavioral tracking/targeted "
-            "advertising directed at children, or processing data causing any detrimental effect on children."
+            "Applies to failures in parental/guardian consent verification, tracking or behavioural monitoring, or targeted "
+            "advertising directed at children under 18 or persons with disabilities with lawful guardians. Note: Subject to "
+            "drafting/cross-reference clarifications issued under the October 2026 Removal of Difficulties Order."
         ),
         "legal_source": OFFICIAL_SOURCE,
         "last_reviewed_date": LAST_REVIEWED_DATE,
@@ -123,6 +167,25 @@ DPDP_STATUTORY_PENALTIES: Dict[str, Dict[str, Any]] = {
         "last_reviewed_date": LAST_REVIEWED_DATE,
         "rule_engine_version": PENALTY_ENGINE_VERSION,
         "statutory_disclaimer": STATUTORY_PENALTY_DISCLAIMER
+    },
+    "SEC_32": {
+        "schedule_item": None,
+        "section": "Section 32 (Voluntary Undertaking)",
+        "violation_category": "Breach of Accepted Voluntary Undertaking",
+        "contravention": "Failure to adhere to a voluntary undertaking accepted by the Data Protection Board under Section 32",
+        "max_penalty_inr": None,
+        "max_penalty_text": "Extent up to the maximum penalty specified for the underlying breach in the Schedule",
+        "commencement_status": "Scheduled to commence / Linked to substantive proceedings",
+        "effective_date": "Linked to substantive DPBI adjudication (13 May 2027)",
+        "applicability": "Any person or Data Fiduciary whose voluntary undertaking was accepted by the Board",
+        "explanation": (
+            "Under Section 32(3), failure to adhere to any term of a voluntary undertaking accepted by the Board constitutes "
+            "a breach under the Act and exposes the entity to penalties up to the extent applicable to the underlying breach."
+        ),
+        "legal_source": OFFICIAL_SOURCE,
+        "last_reviewed_date": LAST_REVIEWED_DATE,
+        "rule_engine_version": PENALTY_ENGINE_VERSION,
+        "statutory_disclaimer": STATUTORY_PENALTY_DISCLAIMER,
     },
     "GENERAL_CONTRAVENTION": {
         "schedule_item": 6,
@@ -179,6 +242,9 @@ def map_statutory_penalty(section_or_control: str) -> Dict[str, Any]:
     if any(k in key for k in ("SEC_15", "SEC-15", "SECTION 15", "PRINCIPAL_DUTIES", "FRIVOLOUS")):
         return dict(DPDP_STATUTORY_PENALTIES["SEC_15"])
 
+    if any(k in key for k in ("SEC_32", "SEC-32", "SECTION 32", "VOLUNTARY_UNDERTAKING")):
+        return dict(DPDP_STATUTORY_PENALTIES["SEC_32"])
+
     # Pattern matching for General Contraventions under Item 6 of Schedule
     # Sections 4, 5, 6, 7, 8(1)-(4), 8(7)-(11), 11, 12, 13, 14, 16, 17
     general_sections = [
@@ -199,7 +265,7 @@ def map_statutory_penalty(section_or_control: str) -> Dict[str, Any]:
         "violation_category": "Internal Governance / Advisory",
         "contravention": "Advisory control or internal procedure not specifically enumerated in Schedule",
         "max_penalty_inr": None,
-        "max_penalty_text": "Penalty mapping requires legal review.",
+        "max_penalty_text": "Specific penalty mapping requires legal review.",
         "commencement_status": "Requires legal review",
         "effective_date": "N/A",
         "applicability": "Requires organizational legal review",

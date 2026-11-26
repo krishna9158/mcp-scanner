@@ -1,2352 +1,1870 @@
 """
-TrustAudit — DPDP Compliance Management Platform Dashboard Template
-===================================================================
-Premium enterprise SaaS command centre for Indian businesses, clinics & healthcare.
-Simplified 8-anchor navigation, 4-quadrant overview, 2-field website scanner, 
-8 plain-English scanning stages, and 4-bucket findings layout.
+TrustAudit — Final Public Launch Customer Workspace (Parts 2-18)
+Plain-language, security-hardened, fully interactive DPDP Compliance & Data Operations Dashboard.
 """
 
-DASHBOARD_HTML = """<!doctype html>
-<html lang="en">
+DASHBOARD_HTML = """<!DOCTYPE html>
+<html lang="en" data-theme="light">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TrustAudit — DPDP Compliance Dashboard</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-base: #f8fafc;
-            --bg-surface: #ffffff;
-            --bg-card: #f8fafc;
-            --bg-card-hover: #f1f5f9;
-            --sidebar-bg: #0f172a;
-            --sidebar-surface: #1e293b;
-            --sidebar-text: #94a3b8;
-            --sidebar-text-hover: #ffffff;
-            --sidebar-border: #1e293b;
-            --text-main: #0f172a;
-            --text-secondary: #334155;
-            --text-muted: #64748b;
-            --text-dim: #94a3b8;
-            --border-color: #e2e8f0;
-            --border-subtle: #cbd5e1;
-            --brand-primary: #1d4ed8;
-            --brand-primary-hover: #1e40af;
-            --brand-primary-light: #eff6ff;
-            --brand-accent: #0284c7;
-            --brand-emerald: #059669;
-            --brand-emerald-light: #ecfdf5;
-            --brand-amber: #d97706;
-            --brand-amber-light: #fffbeb;
-            --brand-red: #dc2626;
-            --brand-red-light: #fef2f2;
-            --radius-sm: 6px;
-            --radius-md: 10px;
-            --radius-lg: 14px;
-            --radius-xl: 20px;
-            --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px -1px rgba(0, 0, 0, 0.08);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.08);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.08);
-        }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TrustAudit Workspace — DPDP Readiness &amp; Data Operations</title>
+<style>
+  :root {
+    --bg: #F8FAFC;
+    --surface: #FFFFFF;
+    --surface-2: #F1F5F9;
+    --ink: #0F172A;
+    --ink-2: #334155;
+    --muted: #64748B;
+    --border: #E2E8F0;
+    --border-strong: #CBD5E1;
+    --accent: #2563EB;
+    --accent-hover: #1D4ED8;
+    --accent-soft: #EFF6FF;
+    --emerald: #059669;
+    --emerald-soft: #ECFDF5;
+    --amber: #D97706;
+    --amber-soft: #FFFBEB;
+    --rose: #E11D48;
+    --rose-soft: #FFF1F2;
+    --sidebar-w: 272px;
+    --radius: 12px;
+    --shadow: 0 1px 3px rgba(15,23,42,0.06), 0 4px 12px rgba(15,23,42,0.04);
+  }
+  [data-theme="dark"] {
+    --bg: #0B1120;
+    --surface: #111827;
+    --surface-2: #1E293B;
+    --ink: #F8FAFC;
+    --ink-2: #CBD5E1;
+    --muted: #94A3B8;
+    --border: #1F2937;
+    --border-strong: #334155;
+    --accent: #3B82F6;
+    --accent-hover: #2563EB;
+    --accent-soft: rgba(59, 130, 246, 0.14);
+    --emerald: #10B981;
+    --emerald-soft: rgba(16, 185, 129, 0.14);
+    --amber: #F59E0B;
+    --amber-soft: rgba(245, 158, 11, 0.14);
+    --rose: #FB7185;
+    --rose-soft: rgba(244, 63, 94, 0.14);
+    --shadow: 0 2px 8px rgba(0,0,0,0.35);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+    background: var(--bg); color: var(--ink); line-height: 1.55; -webkit-font-smoothing: antialiased;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif; background: var(--bg-base); color: var(--text-main); line-height: 1.5; font-size: 13.5px; overflow-x: hidden; }
-        a { color: inherit; text-decoration: none; }
-        button { cursor: pointer; border: none; font-family: inherit; }
+  /* AUTH GATE OVERLAY */
+  .auth-screen {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px;
+    background: radial-gradient(circle at 80% 15%, rgba(37,99,235,0.08), transparent 45%), var(--bg);
+  }
+  .auth-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+    box-shadow: var(--shadow); width: 100%; max-width: 460px; padding: 30px;
+  }
+  .tab-pills { display: flex; gap: 6px; background: var(--surface-2); padding: 4px; border-radius: 10px; margin-bottom: 18px; }
+  .tab-pill {
+    flex: 1; padding: 8px 12px; border: none; border-radius: 7px; font-size: 13.5px; font-weight: 600;
+    cursor: pointer; background: transparent; color: var(--muted);
+  }
+  .tab-pill.active { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
 
-        .app-layout { display: flex; height: 100vh; overflow: hidden; }
+  /* APP SHELL */
+  .app-shell { display: flex; min-height: 100vh; }
+  .sidebar {
+    width: var(--sidebar-w); background: var(--surface); border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; position: fixed; top: 0; bottom: 0; left: 0; z-index: 40;
+    overflow-y: auto; transition: transform 0.2s ease;
+  }
+  .sidebar-head {
+    padding: 18px 18px 14px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .brand-row { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 17px; color: var(--ink); text-decoration: none; }
+  .brand-icon {
+    width: 30px; height: 30px; border-radius: 8px; background: #0F172A; color: #fff;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .nav-group { padding: 10px 12px 4px; }
+  .nav-group-btn {
+    width: 100%; display: flex; align-items: center; justify-content: space-between;
+    background: none; border: none; color: var(--muted); font-size: 11px; font-weight: 800;
+    letter-spacing: 0.07em; text-transform: uppercase; padding: 6px 8px; cursor: pointer;
+  }
+  .nav-items { display: flex; flex-direction: column; gap: 2px; margin-top: 2px; }
+  .nav-items.collapsed { display: none; }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
+    padding: 9px 10px; border-radius: 8px; border: none; background: none;
+    color: var(--ink-2); font-size: 13.5px; font-weight: 500; cursor: pointer;
+  }
+  .nav-item:hover { background: var(--surface-2); color: var(--ink); }
+  .nav-item.active { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
 
-        /* SIDEBAR — 8 CLEAN PRIMARY ANCHORS */
-        aside.sidebar { width: 270px; background: var(--sidebar-bg); border-right: 1px solid var(--sidebar-border); display: flex; flex-direction: column; flex-shrink: 0; z-index: 20; }
-        .sidebar-brand { height: 68px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; border-bottom: 1px solid var(--sidebar-border); }
-        .sidebar-brand-inner { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 17px; color: #ffffff; letter-spacing: -0.3px; }
-        .sidebar-brand-badge { font-size: 10px; font-weight: 700; background: rgba(56, 189, 248, 0.15); color: #38bdf8; padding: 2px 6px; border-radius: 4px; letter-spacing: 0.5px; }
-        
-        .sidebar-nav { flex-grow: 1; overflow-y: auto; padding: 14px 10px; }
-        .sidebar-nav::-webkit-scrollbar { width: 5px; }
-        .sidebar-nav::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-        
-        .nav-group-title { font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.8px; padding: 12px 12px 4px 12px; }
-        .nav-item { display: flex; align-items: center; gap: 10px; padding: 8.5px 12px; border-radius: var(--radius-md); font-weight: 600; font-size: 13px; color: var(--sidebar-text); transition: all 0.15s; margin-bottom: 2px; }
-        .nav-item:hover { color: var(--sidebar-text-hover); background: rgba(255, 255, 255, 0.06); }
-        .nav-item.active { color: #ffffff; background: var(--brand-primary); }
-        .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
-        
-        /* Expandable Sub-Navigation */
-        .nav-parent { display: flex; align-items: center; justify-content: space-between; padding: 8.5px 12px; border-radius: var(--radius-md); font-weight: 600; font-size: 13px; color: var(--sidebar-text); cursor: pointer; transition: all 0.15s; margin-bottom: 2px; }
-        .nav-parent:hover { color: var(--sidebar-text-hover); background: rgba(255, 255, 255, 0.06); }
-        .nav-parent-title { display: flex; align-items: center; gap: 10px; }
-        .nav-parent-title svg { width: 16px; height: 16px; flex-shrink: 0; }
-        .nav-chevron { width: 14px; height: 14px; transition: transform 0.2s; }
-        .nav-group.open .nav-chevron { transform: rotate(90deg); }
-        .nav-sub-items { display: none; padding-left: 26px; margin: 2px 0 6px 0; }
-        .nav-group.open .nav-sub-items { display: block; }
-        .nav-sub-item { display: flex; align-items: center; justify-content: space-between; padding: 6.5px 12px; border-radius: var(--radius-sm); font-size: 12.5px; font-weight: 500; color: #94a3b8; transition: all 0.15s; margin-bottom: 1px; }
-        .nav-sub-item:hover { color: #ffffff; background: rgba(255, 255, 255, 0.04); }
-        .nav-sub-item.active { color: #ffffff; font-weight: 700; background: rgba(29, 78, 216, 0.4); }
+  .main-wrap { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  .topbar {
+    height: 62px; background: var(--surface); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between; padding: 0 24px;
+    position: sticky; top: 0; z-index: 30; gap: 12px;
+  }
+  .content { padding: 26px 28px 60px; max-width: 1240px; width: 100%; margin: 0 auto; }
 
-        .nav-pill { font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 9999px; }
-        .nav-pill-amber { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
-        .nav-pill-emerald { background: rgba(16, 185, 129, 0.2); color: #34d399; }
-        .nav-pill-blue { background: rgba(56, 189, 248, 0.2); color: #38bdf8; }
+  .demo-banner {
+    background: var(--amber-soft); border: 1px solid #FDE68A; color: #92400E;
+    padding: 10px 16px; border-radius: 10px; font-size: 13px; font-weight: 700;
+    margin-bottom: 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  }
 
-        .sidebar-footer { padding: 14px 16px; border-top: 1px solid var(--sidebar-border); font-size: 12px; color: #64748b; background: rgba(0, 0, 0, 0.15); }
-        .sidebar-footer-brand { font-weight: 700; color: #f1f5f9; display: flex; align-items: center; gap: 6px; }
+  /* PLAIN ENGLISH INTRO HEADER */
+  .plain-header {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 20px 22px; margin-bottom: 20px; box-shadow: var(--shadow);
+  }
+  .plain-header h1 { font-size: 22px; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.02em; }
+  .plain-3q { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 12px; }
+  .q-card { background: var(--surface-2); border-radius: 9px; padding: 10px 13px; font-size: 13px; }
+  .q-card strong { display: block; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--accent); margin-bottom: 2px; }
+  .legal-expand { margin-top: 10px; font-size: 12.5px; color: var(--muted); }
+  .legal-expand summary { cursor: pointer; font-weight: 600; color: var(--ink-2); }
 
-        /* MAIN CONTENT AREA */
-        main.main-area { flex-grow: 1; display: flex; flex-direction: column; overflow-y: auto; background: var(--bg-base); }
-        header.top-bar { height: 68px; background: var(--bg-surface); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 28px; flex-shrink: 0; box-shadow: var(--shadow-xs); }
-        .topbar-left { display: flex; align-items: center; gap: 14px; }
-        .org-badge { display: flex; align-items: center; gap: 8px; background: var(--bg-card); border: 1px solid var(--border-color); padding: 6px 14px; border-radius: 9999px; font-size: 12.5px; font-weight: 600; color: var(--text-main); }
-        .readiness-chip { background: var(--brand-emerald-light); border: 1px solid rgba(5, 150, 105, 0.25); color: var(--brand-emerald); font-weight: 700; font-size: 12px; padding: 5px 12px; border-radius: 9999px; display: flex; align-items: center; gap: 6px; }
-        .topbar-right { display: flex; align-items: center; gap: 12px; }
+  /* CARDS & GRIDS */
+  .card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 20px; box-shadow: var(--shadow); margin-bottom: 18px;
+  }
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
 
-        .content-body { padding: 28px; max-width: 1400px; margin: 0 auto; width: 100%; }
+  .stat-tile { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+  .stat-label { font-size: 12.5px; color: var(--muted); font-weight: 600; }
+  .stat-val { font-size: 26px; font-weight: 800; margin-top: 4px; color: var(--ink); }
 
-        /* SECTIONS & ROUTING */
-        .dash-section { display: none; }
-        .dash-section.active { display: block; animation: fadeIn 0.2s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  /* CONTROLS & FORMS */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+    padding: 9px 16px; border-radius: 8px; font-size: 13.5px; font-weight: 600;
+    cursor: pointer; border: 1px solid transparent; transition: all 0.15s; text-decoration: none;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: var(--accent-hover); }
+  .btn-secondary { background: var(--surface); color: var(--ink); border-color: var(--border-strong); }
+  .btn-secondary:hover { background: var(--surface-2); }
+  .btn-danger { background: var(--rose-soft); color: var(--rose); border-color: rgba(225,29,72,0.25); }
+  .btn-sm { padding: 6px 11px; font-size: 12.5px; }
 
-        .page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
-        .page-title { font-size: 22px; font-weight: 800; color: var(--text-main); letter-spacing: -0.4px; }
-        .page-subtitle { font-size: 13.5px; color: var(--text-muted); margin-top: 4px; }
+  .badge {
+    display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 999px;
+    font-size: 11.5px; font-weight: 700;
+  }
+  .b-blue { background: var(--accent-soft); color: var(--accent); }
+  .b-green { background: var(--emerald-soft); color: var(--emerald); }
+  .b-amber { background: var(--amber-soft); color: var(--amber); }
+  .b-rose { background: var(--rose-soft); color: var(--rose); }
+  .b-slate { background: var(--surface-2); color: var(--ink-2); }
 
-        /* CARDS & PANELS */
-        .card { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 22px; margin-bottom: 24px; box-shadow: var(--shadow-sm); }
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--border-color); }
-        .card-title { font-size: 15px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
+  label.fl { display: block; font-size: 12.5px; font-weight: 600; color: var(--ink-2); margin-bottom: 5px; }
+  input.fi, select.fi, textarea.fi {
+    width: 100%; padding: 9px 12px; border: 1px solid var(--border-strong); border-radius: 8px;
+    background: var(--surface); color: var(--ink); font-size: 13.5px; font-family: inherit;
+  }
+  input.fi:focus, select.fi:focus, textarea.fi:focus { outline: none; border-color: var(--accent); }
+  .fg { margin-bottom: 13px; }
 
-        /* 4-QUADRANT OVERVIEW GRID */
-        .overview-quad-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
-        @media (max-width: 1024px) { .overview-quad-grid { grid-template-columns: 1fr; } }
-        
-        .quad-card { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 22px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; justify-content: space-between; }
-        .quad-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color); }
-        .quad-title { font-size: 15px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
-        
-        /* Quadrant 1: Progress Metrics */
-        .progress-stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 16px 0; }
-        .stat-box { background: var(--bg-base); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 12px; text-align: center; }
-        .stat-box-val { font-size: 20px; font-weight: 800; color: var(--text-main); line-height: 1.2; }
-        .stat-box-lbl { font-size: 11px; font-weight: 600; color: var(--text-muted); margin-top: 4px; }
-        .attest-note { font-size: 11.5px; color: var(--text-muted); background: var(--bg-base); border-radius: var(--radius-sm); padding: 8px 12px; border-left: 3px solid var(--brand-primary); }
+  .tbl-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 10px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th, td { text-align: left; padding: 11px 13px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { background: var(--surface-2); font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
+  tr:last-child td { border-bottom: none; }
 
-        /* Quadrant 2: Top Attention Items */
-        .action-item-card { background: var(--bg-base); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 14px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; gap: 14px; transition: border-color 0.15s; }
-        .action-item-card:hover { border-color: var(--brand-primary); }
-        .action-item-info h4 { font-size: 13.5px; font-weight: 700; color: var(--text-main); margin-bottom: 3px; }
-        .action-item-info p { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+  .view-section { display: none; }
+  .view-section.active { display: block; }
 
-        /* Quadrant 3: Business Data */
-        .biz-data-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
-        .biz-item { background: var(--bg-base); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 12px; }
-        .biz-val { font-size: 22px; font-weight: 800; color: var(--brand-primary); line-height: 1.2; }
-        .biz-lbl { font-size: 11.5px; font-weight: 600; color: var(--text-secondary); margin-top: 4px; }
-        .biz-sub { font-size: 10.5px; color: var(--text-dim); }
+  .empty-state {
+    text-align: center; padding: 36px 20px; border: 1px dashed var(--border-strong);
+    border-radius: var(--radius); color: var(--muted); background: var(--surface);
+  }
 
-        /* Quadrant 4: Recent Activity */
-        .activity-feed { display: flex; flex-direction: column; gap: 10px; }
-        .activity-item { display: flex; align-items: flex-start; gap: 12px; font-size: 12.5px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color); }
-        .activity-item:last-child { border-bottom: none; padding-bottom: 0; }
-        .activity-icon { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .activity-meta { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+  /* MODAL & TOAST */
+  .modal-bg {
+    position: fixed; inset: 0; background: rgba(15,23,42,0.55); z-index: 120;
+    display: none; align-items: center; justify-content: center; padding: 18px;
+  }
+  .modal-bg.open { display: flex; }
+  .modal-panel {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+    max-width: 620px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 24px; box-shadow: var(--shadow);
+  }
+  .toast-wrap { position: fixed; right: 20px; bottom: 20px; z-index: 200; display: flex; flex-direction: column; gap: 8px; }
+  .toast {
+    padding: 11px 16px; border-radius: 9px; font-size: 13.5px; font-weight: 600;
+    color: #fff; background: #0F172A; box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  }
+  .toast.ok { background: var(--emerald); }
+  .toast.err { background: var(--rose); }
 
-        /* BUTTONS & CONTROLS */
-        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 8.5px 16px; border-radius: var(--radius-sm); font-weight: 600; font-size: 13px; transition: all 0.15s; }
-        .btn-primary { background: var(--brand-primary); color: #ffffff; box-shadow: var(--shadow-xs); }
-        .btn-primary:hover { background: var(--brand-primary-hover); }
-        .btn-secondary { background: #ffffff; color: var(--text-main); border: 1px solid var(--border-color); box-shadow: var(--shadow-xs); }
-        .btn-secondary:hover { background: var(--bg-card-hover); border-color: var(--border-subtle); }
-        .btn-sm { padding: 5px 10px; font-size: 12px; }
-        .btn-lg { padding: 11px 22px; font-size: 14px; }
-
-        /* TABLES */
-        .table-wrap { overflow-x: auto; }
-        table.dash-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 12.5px; }
-        table.dash-table th { padding: 10px 14px; background: var(--bg-base); color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; font-size: 11px; border-bottom: 1px solid var(--border-color); }
-        table.dash-table td { padding: 12px 14px; border-bottom: 1px solid var(--border-color); color: var(--text-main); vertical-align: middle; }
-        table.dash-table tr:hover td { background: var(--bg-base); }
-
-        .badge-pill { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 9999px; }
-        .badge-emerald { background: var(--brand-emerald-light); color: var(--brand-emerald); }
-        .badge-amber { background: var(--brand-amber-light); color: var(--brand-amber); }
-        .badge-sky { background: var(--brand-primary-light); color: var(--brand-accent); }
-        .badge-red { background: var(--brand-red-light); color: var(--brand-red); }
-        .badge-gray { background: #f1f5f9; color: #475569; }
-
-        /* FORMS & MODALS */
-        .form-group { margin-bottom: 16px; }
-        .form-label { display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
-        .form-control { width: 100%; padding: 9px 12px; background: #ffffff; border: 1px solid var(--border-color); border-radius: var(--radius-sm); color: var(--text-main); font-size: 13px; font-family: inherit; transition: border-color 0.15s; }
-        .form-control:focus { outline: none; border-color: var(--brand-primary); box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.1); }
-
-        .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; }
-        .modal-overlay.open { display: flex; }
-        .modal-card { background: #ffffff; border: 1px solid var(--border-color); border-radius: var(--radius-lg); width: 100%; max-width: 600px; padding: 26px; box-shadow: var(--shadow-lg); max-height: 90vh; overflow-y: auto; }
-
-        /* ASSISTANT DRAWER */
-        .assistant-panel { background: #ffffff; border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 20px; margin-top: 18px; }
-        .assistant-chat { max-height: 280px; overflow-y: auto; margin-bottom: 14px; display: flex; flex-direction: column; gap: 10px; }
-        .chat-bubble { padding: 12px 14px; border-radius: var(--radius-md); font-size: 13px; line-height: 1.5; }
-        .chat-user { background: var(--brand-primary); color: #ffffff; align-self: flex-end; max-width: 80%; }
-        .chat-ai { background: var(--bg-base); border: 1px solid var(--border-color); color: var(--text-main); align-self: flex-start; max-width: 90%; }
-
-        /* ============================================================== */
-        /* WEBSITE SCANNER STYLES & RADAR MOTION                         */
-        /* ============================================================== */
-        .scanner-hero-box { background: #ffffff; border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 32px; margin-bottom: 24px; box-shadow: var(--shadow-sm); }
-        .scanner-input-grid { display: grid; grid-template-columns: 2fr 1.2fr; gap: 16px; margin-bottom: 16px; }
-        @media (max-width: 768px) { .scanner-input-grid { grid-template-columns: 1fr; } }
-        
-        .advanced-scanner-details { margin: 16px 0; border: 1px dashed var(--border-color); border-radius: var(--radius-md); padding: 14px 18px; background: var(--bg-base); }
-        .advanced-scanner-details summary { font-size: 12.5px; font-weight: 700; color: var(--text-secondary); cursor: pointer; user-select: none; }
-        .advanced-scanner-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px; }
-        @media (max-width: 768px) { .advanced-scanner-grid { grid-template-columns: 1fr; } }
-
-        /* Radar Scanning Visual */
-        .scanner-radar-card { background: #0f172a; border-radius: var(--radius-lg); padding: 32px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; color: #ffffff; margin-bottom: 24px; box-shadow: var(--shadow-md); }
-        .radar-box { position: relative; width: 140px; height: 140px; border-radius: 50%; border: 2px solid rgba(56, 189, 248, 0.3); display: flex; align-items: center; justify-content: center; background: radial-gradient(circle, rgba(56, 189, 248, 0.12) 0%, transparent 70%); margin: 0 auto 20px auto; }
-        .radar-ring { position: absolute; inset: 18px; border-radius: 50%; border: 1px dashed rgba(56, 189, 248, 0.25); }
-        .radar-sweep { position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(from 0deg, transparent 0deg, transparent 270deg, rgba(56, 189, 248, 0.45) 360deg); animation: radarRotate 2.2s linear infinite; }
-        .radar-center-dot { width: 12px; height: 12px; border-radius: 50%; background: #38bdf8; box-shadow: 0 0 14px #38bdf8; z-index: 2; }
-        @keyframes radarRotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-        .progress-stage-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 18px; width: 100%; }
-        @media (max-width: 900px) { .progress-stage-grid { grid-template-columns: 1fr 1fr; } }
-        .stage-item { display: flex; align-items: center; gap: 8px; padding: 9px 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--radius-sm); font-size: 11.5px; font-weight: 600; color: #94a3b8; transition: all 0.2s; }
-        .stage-item.stage-active { border-color: #38bdf8; color: #ffffff; background: rgba(56, 189, 248, 0.18); }
-        .stage-item.stage-done { border-color: #10b981; color: #34d399; background: rgba(16, 185, 129, 0.12); }
-
-        /* 4-BUCKET FINDINGS STYLING */
-        .findings-buckets-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
-        @media (max-width: 900px) { .findings-buckets-summary { grid-template-columns: 1fr 1fr; } }
-        .bucket-badge-card { background: #ffffff; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 14px; text-align: center; cursor: pointer; transition: all 0.15s; }
-        .bucket-badge-card:hover, .bucket-badge-card.active { border-color: var(--brand-primary); box-shadow: var(--shadow-sm); transform: translateY(-2px); }
-        .bucket-badge-card.bucket-found { border-top: 3px solid var(--brand-emerald); }
-        .bucket-badge-card.bucket-missing { border-top: 3px solid var(--brand-amber); }
-        .bucket-badge-card.bucket-input { border-top: 3px solid var(--brand-accent); }
-        .bucket-badge-card.bucket-internal { border-top: 3px solid #64748b; }
-        .bucket-count { font-size: 22px; font-weight: 800; line-height: 1.2; }
-        .bucket-name { font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
-        .bucket-desc { font-size: 10.5px; color: var(--text-muted); margin-top: 2px; }
-
-        .finding-card { background: #ffffff; border: 1px solid var(--border-color); border-radius: var(--radius-lg); margin-bottom: 14px; overflow: hidden; transition: all 0.15s; box-shadow: var(--shadow-xs); }
-        .finding-card:hover { border-color: var(--border-subtle); box-shadow: var(--shadow-sm); }
-        .finding-header { padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none; }
-        .finding-header:hover { background: var(--bg-base); }
-        .finding-body { padding: 0 20px 20px 20px; display: none; border-top: 1px solid var(--border-color); margin-top: 4px; padding-top: 16px; font-size: 13px; }
-        .finding-body.expanded { display: block; animation: fadeIn 0.2s ease; }
-        .filter-btn { padding: 6px 14px; font-size: 12px; font-weight: 600; border-radius: 9999px; background: #ffffff; color: var(--text-secondary); border: 1px solid var(--border-color); cursor: pointer; }
-        .filter-btn.active { background: var(--brand-primary); color: #ffffff; border-color: var(--brand-primary); }
-    </style>
+  .mobile-menu-trigger { display: none; }
+  @media (max-width: 960px) {
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.mobile-open { transform: translateX(0); }
+    .main-wrap { margin-left: 0; }
+    .mobile-menu-trigger { display: inline-flex; }
+    .plain-3q, .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  }
+</style>
 </head>
 <body>
 
-    <div class="app-layout">
-        <!-- ============================================================== -->
-        <!-- SIDEBAR NAVIGATION (8 CLEAN PRIMARY GROUPS)                    -->
-        <!-- ============================================================== -->
-        <aside class="sidebar">
-            <div class="sidebar-brand">
-                <div class="sidebar-brand-inner">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                    <span>TrustAudit</span>
-                </div>
-                <span class="sidebar-brand-badge">DPDP</span>
-            </div>
-
-            <div class="sidebar-nav">
-                <!-- 1. OVERVIEW -->
-                <a href="#overview" onclick="navTo('overview', this)" class="nav-item active">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-                    <span>Overview</span>
-                </a>
-
-                <!-- 2. WEBSITE SCANNER -->
-                <a href="#scanner" onclick="navTo('scanner', this)" class="nav-item">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg>
-                    <span>DPDP Website Scanner</span>
-                    <span class="nav-pill nav-pill-emerald">NEW</span>
-                </a>
-
-                <!-- 3. DPDP ASSESSMENT -->
-                <a href="#assessment" onclick="navTo('assessment', this)" class="nav-item">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                    <span>DPDP Assessment</span>
-                    <span class="nav-pill nav-pill-amber">15</span>
-                </a>
-
-                <!-- 4. DATA MANAGEMENT (EXPANDABLE) -->
-                <div class="nav-group open" id="group-datamgmt">
-                    <div class="nav-parent" onclick="toggleNavGroup('group-datamgmt')">
-                        <div class="nav-parent-title">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
-                            <span>Data Management</span>
-                        </div>
-                        <svg class="nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-                    </div>
-                    <div class="nav-sub-items">
-                        <a href="#inventory" onclick="navTo('inventory', this)" class="nav-sub-item">
-                            <span>Data Inventory</span>
-                            <span class="nav-pill nav-pill-emerald" id="nav-inv-count">0</span>
-                        </a>
-                        <a href="#dataflow" onclick="navTo('dataflow', this)" class="nav-sub-item">
-                            <span>Data Flow Map</span>
-                        </a>
-                        <a href="#vendors" onclick="navTo('vendors', this)" class="nav-sub-item">
-                            <span>Vendor Management</span>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- 5. PRIVACY OPERATIONS (EXPANDABLE) -->
-                <div class="nav-group open" id="group-privacyops">
-                    <div class="nav-parent" onclick="toggleNavGroup('group-privacyops')">
-                        <div class="nav-parent-title">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                            <span>Privacy Operations</span>
-                        </div>
-                        <svg class="nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-                    </div>
-                    <div class="nav-sub-items">
-                        <a href="#privacy" onclick="navTo('privacy', this)" class="nav-sub-item">
-                            <span>Privacy Notices (Sec 5)</span>
-                        </a>
-                        <a href="#consent" onclick="navTo('consent', this)" class="nav-sub-item">
-                            <span>Consent &amp; Withdrawals</span>
-                        </a>
-                        <a href="#rights" onclick="navTo('rights', this)" class="nav-sub-item">
-                            <span>Data Principal Rights</span>
-                        </a>
-                        <a href="#retention" onclick="navTo('retention', this)" class="nav-sub-item">
-                            <span>Retention &amp; Erasure</span>
-                        </a>
-                        <a href="#breach" onclick="navTo('breach', this)" class="nav-sub-item">
-                            <span>Breach Management (Sec 8(6))</span>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- 6. EVIDENCE & TASKS (EXPANDABLE) -->
-                <div class="nav-group open" id="group-evidencetasks">
-                    <div class="nav-parent" onclick="toggleNavGroup('group-evidencetasks')">
-                        <div class="nav-parent-title">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                            <span>Evidence &amp; Tasks</span>
-                        </div>
-                        <svg class="nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-                    </div>
-                    <div class="nav-sub-items">
-                        <a href="#evidence" onclick="navTo('evidence', this)" class="nav-sub-item">
-                            <span>Evidence Vault</span>
-                        </a>
-                        <a href="#remediation" onclick="navTo('remediation', this)" class="nav-sub-item">
-                            <span>Remediation Centre</span>
-                            <span class="nav-pill nav-pill-amber" id="nav-gaps-count">3</span>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- 7. REPORTS -->
-                <a href="#reports" onclick="navTo('reports', this)" class="nav-item">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                    <span>Reports</span>
-                </a>
-
-                <!-- 8. SETTINGS -->
-                <a href="#settings" onclick="navTo('settings', this)" class="nav-item">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-                    <span>Settings &amp; Team</span>
-                </a>
-            </div>
-
-            <div class="sidebar-footer">
-                <div class="sidebar-footer-brand">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                    <span>TrustAudit Platform</span>
-                </div>
-                <div style="font-size: 11px; margin-top: 2px;">India DPDP Act 2023 &bull; Rules 2025</div>
-            </div>
-        </aside>
-
-        <!-- ============================================================== -->
-        <!-- MAIN CONTENT AREA                                              -->
-        <!-- ============================================================== -->
-        <main class="main-area">
-            <!-- TOP BAR -->
-            <header class="top-bar">
-                <div class="topbar-left">
-                    <div class="org-badge">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
-                        <span id="topbar-org-name">{{ org_info.name if org_info else "Arogya Diagnostics Clinic" }}</span>
-                    </div>
-                    <div class="readiness-chip">
-                        <span>DPDP Readiness:</span>
-                        <strong id="topbar-readiness-val">--%</strong>
-                        <span style="font-size: 10.5px; opacity: 0.85;">(Self-Attested &amp; Verified)</span>
-                    </div>
-                </div>
-
-                <div class="topbar-right">
-                    <a href="/trust" target="_blank" class="btn btn-secondary btn-sm">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                        <span>Public Trust Centre</span>
-                    </a>
-                    <button onclick="openAssistantModal()" class="btn btn-primary btn-sm">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                        <span>AI DPDP Assistant</span>
-                    </button>
-                </div>
-            </header>
-
-            <!-- CONTENT BODY -->
-            <div class="content-body">
-
-                <!-- ============================================================== -->
-                <!-- SECTION 1: OVERVIEW (4-QUADRANT SIMPLIFIED LAYOUT)             -->
-                <!-- ============================================================== -->
-                <div id="section-overview" class="dash-section active">
-                    <div class="page-header">
-                        <div>
-                            <h1 class="page-title">DPDP Compliance Overview</h1>
-                            <p class="page-subtitle">Understand what personal data your business collects, track your compliance readiness, and manage tasks.</p>
-                        </div>
-                        <div style="display: flex; gap: 10px;">
-                            <button onclick="navTo('scanner')" class="btn btn-secondary">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/></svg>
-                                <span>Scan Website</span>
-                            </button>
-                            <button onclick="openAddInventoryModal()" class="btn btn-primary">+ Add Data Stream</button>
-                        </div>
-                    </div>
-
-                    <!-- DEMO MODE BANNER -->
-                    <div id="demo-mode-banner" style="display: none; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 14px 18px; margin-bottom: 20px; align-items: center; justify-content: space-between;">
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <span style="font-size: 22px;">⚠️</span>
-                            <div>
-                                <strong style="color: #92400e; font-size: 13.5px;">DEMO MODE — Viewing Sample Compliance Posture</strong>
-                                <p style="color: #b45309; font-size: 12px; margin: 2px 0 0 0;">This workspace displays simulated attestation and demo records. Configure your organisation or run an assessment to start your verified DPDP journey.</p>
-                            </div>
-                        </div>
-                        <div style="display: flex; gap: 8px;">
-                            <button onclick="navTo('assessment')" class="btn btn-secondary btn-sm" style="border-color: #f59e0b; color: #92400e; background: #fff;">Run Assessment</button>
-                            <button onclick="openOnboardingModal()" class="btn btn-primary btn-sm">Configure Org</button>
-                        </div>
-                    </div>
-
-                    <!-- UNASSESSED MODE BANNER -->
-                    <div id="unassessed-mode-banner" style="display: none; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 14px 18px; margin-bottom: 20px; align-items: center; justify-content: space-between;">
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <span style="font-size: 22px;">ℹ️</span>
-                            <div>
-                                <strong style="color: #1e40af; font-size: 13.5px;">Organisation Assessment Pending</strong>
-                                <p style="color: #3b82f6; font-size: 12px; margin: 2px 0 0 0;">Your organisation is currently unassessed (0% score). Answer the statutory questionnaire or upload policy evidence to calculate your genuine compliance readiness.</p>
-                            </div>
-                        </div>
-                        <button onclick="navTo('assessment')" class="btn btn-primary btn-sm">Start Assessment Now</button>
-                    </div>
-
-                    <!-- 4-QUADRANT LAYOUT -->
-                    <div class="overview-quad-grid">
-                        
-                        <!-- QUADRANT 1: YOUR PROGRESS -->
-                        <div class="quad-card">
-                            <div>
-                                <div class="quad-header">
-                                    <div class="quad-title">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1d4ed8" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
-                                        <span>1. Your Progress</span>
-                                    </div>
-                                    <span class="badge-pill badge-emerald">Active Posture</span>
-                                </div>
-                                <div style="display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px;">
-                                    <div style="font-size: 40px; font-weight: 850; color: var(--brand-primary); line-height: 1;" id="kpi-readiness">--%</div>
-                                    <div style="font-size: 13px; font-weight: 600; color: var(--text-secondary);">DPDP Compliance Readiness</div>
-                                </div>
-                                <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 14px;">12 of 15 statutory requirement controls self-attested or verified with technical proof.</p>
-
-                                <div class="progress-stat-row">
-                                    <div class="stat-box">
-                                        <div class="stat-box-val" id="kpi-evidence-count" style="color: var(--brand-emerald);">0</div>
-                                        <div class="stat-box-lbl">Evidence Verified</div>
-                                    </div>
-                                    <div class="stat-box">
-                                        <div class="stat-box-val" id="kpi-gaps-count" style="color: var(--brand-amber);">0</div>
-                                        <div class="stat-box-lbl">Open Actions</div>
-                                    </div>
-                                    <div class="stat-box">
-                                        <div class="stat-box-val" style="color: var(--brand-accent);">2</div>
-                                        <div class="stat-box-lbl">Needing Review</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="attest-note">
-                                <strong>Evidence-Based Tracking:</strong> TrustAudit posture metrics reflect self-attested business controls and verified technical evidence. Not a statutory certification.
-                            </div>
-                        </div>
-
-                        <!-- QUADRANT 2: WHAT NEEDS ATTENTION -->
-                        <div class="quad-card">
-                            <div>
-                                <div class="quad-header">
-                                    <div class="quad-title">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                                        <span>2. What Needs Attention</span>
-                                    </div>
-                                    <span class="badge-pill badge-amber">3 High Priority</span>
-                                </div>
-                                <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 14px;">Fix these top pending statutory action items to improve your DPDP readiness score.</p>
-
-                                <div id="top-actions-container">
-                                    <div class="action-item-card">
-                                        <div class="action-item-info">
-                                            <h4>Publish DPDP-Compliant Privacy Notice</h4>
-                                            <p>Notice must specify purposes and DPO contacts in English and scheduled Indian languages.</p>
-                                        </div>
-                                        <button onclick="navTo('privacy')" class="btn btn-primary btn-sm" style="flex-shrink: 0;">View and Fix</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- QUADRANT 3: YOUR BUSINESS DATA -->
-                        <div class="quad-card">
-                            <div>
-                                <div class="quad-header">
-                                    <div class="quad-title">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
-                                        <span>3. Your Business Data</span>
-                                    </div>
-                                    <button onclick="navTo('inventory')" class="btn btn-secondary btn-sm">Manage RoPA</button>
-                                </div>
-                                <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 14px;">Summary of digital personal data categories and third parties identified in your business.</p>
-
-                                <div class="biz-data-grid">
-                                    <div class="biz-item">
-                                        <div class="biz-val" id="kpi-inventory-count">0</div>
-                                        <div class="biz-lbl">Data Streams</div>
-                                        <div class="biz-sub">Cataloged in RoPA</div>
-                                    </div>
-                                    <div class="biz-item">
-                                        <div class="biz-val" id="kpi-categories-count">0</div>
-                                        <div class="biz-lbl">Categories</div>
-                                        <div class="biz-sub">Personal Data Types</div>
-                                    </div>
-                                    <div class="biz-item">
-                                        <div class="biz-val" id="kpi-vendors-count">0</div>
-                                        <div class="biz-lbl">Vendors</div>
-                                        <div class="biz-sub">External Processors</div>
-                                    </div>
-                                    <div class="biz-item">
-                                        <div class="biz-val" id="kpi-notices-count">0</div>
-                                        <div class="biz-lbl">Privacy Notices</div>
-                                        <div class="biz-sub">Section 5 Compliant</div>
-                                    </div>
-                                    <div class="biz-item">
-                                        <div class="biz-val" id="kpi-requests-count">0</div>
-                                        <div class="biz-lbl">User Requests</div>
-                                        <div class="biz-sub">Access &amp; Erasure</div>
-                                    </div>
-                                    <div class="biz-item">
-                                        <div class="biz-val" id="kpi-breaches-count" style="color: var(--brand-emerald);">0</div>
-                                        <div class="biz-lbl">Data Breaches</div>
-                                        <div class="biz-sub">Logged Incidents</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div style="display: flex; gap: 8px;">
-                                <button onclick="openAddInventoryModal()" class="btn btn-secondary btn-sm" style="flex: 1;">+ Add Data Stream</button>
-                                <button onclick="downloadInventoryCSV()" class="btn btn-secondary btn-sm" style="flex: 1;">Export RoPA CSV</button>
-                            </div>
-                        </div>
-
-                        <!-- QUADRANT 4: RECENT ACTIVITY -->
-                        <div class="quad-card">
-                            <div>
-                                <div class="quad-header">
-                                    <div class="quad-title">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-                                        <span>4. Recent Activity</span>
-                                    </div>
-                                    <span class="badge-pill badge-sky">Real-Time</span>
-                                </div>
-                                <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 14px;">Recent website scans, evidence uploads, customer requests, and policy revisions.</p>
-
-                                <div class="activity-feed">
-                                    <div class="activity-item">
-                                        <div class="activity-icon" style="background: var(--brand-primary-light); color: var(--brand-primary);">
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/></svg>
-                                        </div>
-                                        <div style="flex-grow: 1;">
-                                            <div style="font-weight: 600; color: var(--text-main);">Website Privacy Scan Completed</div>
-                                            <div class="activity-meta">Scanned target domain &bull; 82% Readiness Posture &bull; 10 mins ago</div>
-                                        </div>
-                                    </div>
-
-                                    <div class="activity-item">
-                                        <div class="activity-icon" style="background: var(--brand-emerald-light); color: var(--brand-emerald);">
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
-                                        </div>
-                                        <div style="flex-grow: 1;">
-                                            <div style="font-weight: 600; color: var(--text-main);">Evidence Verified in Vault</div>
-                                            <div class="activity-meta">Uploaded Signed Diagnostic Lab DPA &bull; SHA-256 verified &bull; 2 hours ago</div>
-                                        </div>
-                                    </div>
-
-                                    <div class="activity-item">
-                                        <div class="activity-icon" style="background: var(--brand-amber-light); color: var(--brand-amber);">
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
-                                        </div>
-                                        <div style="flex-grow: 1;">
-                                            <div style="font-weight: 600; color: var(--text-main);">Customer Privacy Request Logged</div>
-                                            <div class="activity-meta">Data access inquiry #REQ-8821 assigned to DPO &bull; 1 day ago</div>
-                                        </div>
-                                    </div>
-
-                                    <div class="activity-item">
-                                        <div class="activity-icon" style="background: #f1f5f9; color: #475569;">
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
-                                        </div>
-                                        <div style="flex-grow: 1;">
-                                            <div style="font-weight: 600; color: var(--text-main);">Section 5 Notice Draft Updated</div>
-                                            <div class="activity-meta">Version 2.1 generated for patient appointment portal &bull; 2 days ago</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-                <!-- ============================================================== -->
-                <!-- SECTION 2: DPDP WEBSITE SCANNER (SIMPLIFIED 2-FIELD INPUT)     -->
-                <!-- ============================================================== -->
-                <div id="section-scanner" class="dash-section">
-                    <div class="page-header">
-                        <div>
-                            <h1 class="page-title">Check Your Website for DPDP Privacy Gaps.</h1>
-                            <p class="page-subtitle">Enter your website address. TrustAudit will examine publicly visible privacy information and show you what may need attention.</p>
-                        </div>
-                        <div>
-                            <button onclick="document.getElementById('scanner-url').value='https://arogyaclinic.in'; document.getElementById('scanner-industry').value='healthcare'; adaptIndustryChecks();" class="btn btn-secondary btn-sm">Load Healthcare Demo</button>
-                        </div>
-                    </div>
-
-                    <!-- SCANNER INPUT CARD -->
-                    <div class="scanner-hero-box">
-                        <div class="scanner-input-grid">
-                            <div class="form-group" style="margin-bottom: 0;">
-                                <label class="form-label">Website URL *</label>
-                                <input type="url" id="scanner-url" class="form-control" placeholder="https://yourclinic.in or https://yourcompany.com" value="https://arogyaclinic.in" style="font-size: 14.5px; padding: 11px 14px;">
-                            </div>
-                            <div class="form-group" style="margin-bottom: 0;">
-                                <label class="form-label">Business Industry *</label>
-                                <select id="scanner-industry" class="form-control" onchange="adaptIndustryChecks()" style="font-size: 14px; padding: 11px 14px;">
-                                    <option value="healthcare">Healthcare, Diagnostic Clinic &amp; Hospitals</option>
-                                    <option value="saas">SaaS, Technology &amp; Startups</option>
-                                    <option value="education">Education, Schools &amp; EdTech</option>
-                                    <option value="ecommerce">E-Commerce &amp; Retail Stores</option>
-                                    <option value="fintech">Fintech, Insurance &amp; Financial Services</option>
-                                    <option value="other">General Professional Services</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Authorization Checkbox -->
-                        <div style="margin: 14px 0 16px 0; display: flex; align-items: center; gap: 8px;">
-                            <input type="checkbox" id="scanner-auth-confirm" checked style="width: 16px; height: 16px; accent-color: var(--brand-primary); cursor: pointer;">
-                            <label for="scanner-auth-confirm" style="font-size: 12.5px; color: var(--text-secondary); cursor: pointer;">
-                                I confirm authorization to scan this publicly accessible website for DPDP compliance gaps. (Passive inspection only; zero intrusive testing).
-                            </label>
-                        </div>
-
-                        <!-- Advanced Business Details (Accordion) -->
-                        <details class="advanced-scanner-details">
-                            <summary>Advanced Business Details &amp; Purpose Mapping (Optional)</summary>
-                            <div class="advanced-scanner-grid">
-                                <div class="form-group">
-                                    <label class="form-label">Business Name</label>
-                                    <input type="text" id="scanner-biz-name" class="form-control" placeholder="e.g. Arogya Diagnostic Centre" value="Arogya Diagnostics Clinic">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Entity Classification</label>
-                                    <input type="text" id="scanner-biz-type" class="form-control" placeholder="e.g. Diagnostic &amp; Healthcare Clinic" value="Diagnostic &amp; Healthcare Clinic">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Website Processing Purpose</label>
-                                    <input type="text" id="scanner-purpose" class="form-control" placeholder="e.g. Patient Consultations &amp; Test Bookings" value="Patient Consultations, Test Bookings &amp; Telehealth">
-                                </div>
-                                <div class="form-group" style="display: flex; flex-direction: column; justify-content: center;">
-                                    <label style="display: flex; align-items: center; gap: 8px; font-size: 12.5px; margin-bottom: 6px; cursor: pointer;">
-                                        <input type="checkbox" id="scanner-collects-pii" checked style="accent-color: var(--brand-primary);">
-                                        <span>Website Collects Customer / Patient Information</span>
-                                    </label>
-                                    <label style="display: flex; align-items: center; gap: 8px; font-size: 12.5px; cursor: pointer;">
-                                        <input type="checkbox" id="scanner-children-data" checked style="accent-color: var(--brand-primary);">
-                                        <span id="label-children-data">Processes Pediatric / Minor Patient Data (Section 9)</span>
-                                    </label>
-                                </div>
-                            </div>
-                        </details>
-
-                        <div style="display: flex; gap: 12px; margin-top: 18px; align-items: center;">
-                            <button id="btn-start-scan" onclick="triggerWebsiteScan(false)" class="btn btn-primary btn-lg">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/></svg>
-                                <span>Scan My Website</span>
-                            </button>
-                            <button id="btn-demo-scan" onclick="triggerWebsiteScan(true)" class="btn btn-secondary btn-lg">
-                                <span>Try Live Clinic Demo</span>
-                            </button>
-                            <span style="font-size: 12px; color: var(--text-dim); margin-left: auto;">Takes ~15 seconds &bull; Zero traffic disruption</span>
-                        </div>
-                    </div>
-
-                    <!-- SCANNER PROGRESS PANEL (8 PLAIN-ENGLISH STAGES) -->
-                    <div id="scanner-progress-panel" style="display: none;">
-                        <div class="scanner-radar-card">
-                            <div class="radar-box">
-                                <div class="radar-ring"></div>
-                                <div class="radar-sweep"></div>
-                                <div class="radar-center-dot"></div>
-                            </div>
-                            <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 6px;" id="progress-status-text">Connecting to your website...</h3>
-                            <p style="font-size: 12.5px; color: #94a3b8; margin-bottom: 20px;">Analyzing publicly visible pages, notices, checkboxes, and third-party scripts</p>
-
-                            <!-- 8 STAGES GRID -->
-                            <div class="progress-stage-grid">
-                                <div class="stage-item" id="stage-01">1. Connecting to website</div>
-                                <div class="stage-item" id="stage-02">2. Finding important pages</div>
-                                <div class="stage-item" id="stage-03">3. Checking privacy info</div>
-                                <div class="stage-item" id="stage-04">4. Checking data forms</div>
-                                <div class="stage-item" id="stage-05">5. Identifying third parties</div>
-                                <div class="stage-item" id="stage-06">6. Checking privacy contacts</div>
-                                <div class="stage-item" id="stage-07">7. Mapping DPDP rules</div>
-                                <div class="stage-item" id="stage-08">8. Preparing report</div>
-                            </div>
-
-                            <div style="width: 100%; max-width: 600px; background: rgba(255, 255, 255, 0.1); border-radius: 9999px; height: 8px; overflow: hidden; margin-bottom: 12px;">
-                                <div id="progress-bar-fill" style="width: 15%; height: 100%; background: #38bdf8; transition: width 0.3s ease;"></div>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; width: 100%; max-width: 600px; font-size: 11.5px; color: #94a3b8;">
-                                <span>Passive DPDP Security &amp; Privacy Crawler</span>
-                                <span id="progress-percent-badge" style="font-weight: 700; color: #38bdf8;">15%</span>
-                            </div>
-
-                            <div id="scanner-terminal-log" style="width: 100%; max-width: 600px; background: #070b14; border: 1px solid #1e293b; border-radius: 6px; padding: 10px; margin-top: 14px; font-family: monospace; font-size: 11px; color: #64748b; height: 70px; overflow-y: auto; text-align: left;">
-                                <div>[System] Initializing passive inspection worker...</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- SCANNER RESULTS PANEL (4-BUCKET FINDINGS LAYOUT) -->
-                    <div id="scanner-results-panel" style="display: none;">
-                        <div class="card" style="border-left: 4px solid var(--brand-primary);">
-                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
-                                <div>
-                                    <div style="font-size: 11.5px; font-weight: 700; color: var(--brand-accent); text-transform: uppercase; letter-spacing: 0.5px;">Website Assessment Complete</div>
-                                    <h2 style="font-size: 20px; font-weight: 800; color: var(--text-main); margin-top: 2px;">Your Website Assessment</h2>
-                                    <p style="font-size: 13px; color: var(--text-muted);" id="res-domain-sub">Target Domain</p>
-                                </div>
-                                <div style="display: flex; gap: 24px; align-items: center;">
-                                    <div style="text-align: center;">
-                                        <div style="font-size: 28px; font-weight: 850; color: var(--brand-primary);" id="res-score-val">82%</div>
-                                        <div style="font-size: 11px; font-weight: 600; color: var(--text-muted);">Readiness Score</div>
-                                    </div>
-                                    <div style="border-left: 1px solid var(--border-color); height: 40px;"></div>
-                                    <div style="display: flex; gap: 16px;">
-                                        <div>
-                                            <div style="font-size: 18px; font-weight: 700; color: var(--text-main);" id="res-pages-count">1</div>
-                                            <div style="font-size: 10.5px; color: var(--text-muted);">Pages</div>
-                                        </div>
-                                        <div>
-                                            <div style="font-size: 18px; font-weight: 700; color: var(--text-main);" id="res-forms-count">3</div>
-                                            <div style="font-size: 10.5px; color: var(--text-muted);">Forms</div>
-                                        </div>
-                                        <div>
-                                            <div style="font-size: 18px; font-weight: 700; color: var(--text-main);" id="res-trackers-count">2</div>
-                                            <div style="font-size: 10.5px; color: var(--text-muted);">Third Parties</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 4-BUCKET SUMMARY CARDS -->
-                        <div class="findings-buckets-summary">
-                            <div class="bucket-badge-card bucket-found active" onclick="filterFindingsBucket('FOUND')">
-                                <div class="bucket-count" id="count-found" style="color: var(--brand-emerald);">2</div>
-                                <div class="bucket-name" style="color: var(--brand-emerald);">FOUND</div>
-                                <div class="bucket-desc">What is good &amp; compliant</div>
-                            </div>
-                            <div class="bucket-badge-card bucket-missing" onclick="filterFindingsBucket('NOT_FOUND')">
-                                <div class="bucket-count" id="count-missing" style="color: var(--brand-amber);">3</div>
-                                <div class="bucket-name" style="color: var(--brand-amber);">NOT FOUND</div>
-                                <div class="bucket-desc">What is missing &amp; needs fix</div>
-                            </div>
-                            <div class="bucket-badge-card bucket-input" onclick="filterFindingsBucket('NEEDS_INPUT')">
-                                <div class="bucket-count" id="count-input" style="color: var(--brand-accent);">2</div>
-                                <div class="bucket-name" style="color: var(--brand-accent);">NEEDS YOUR INPUT</div>
-                                <div class="bucket-desc">Things only business knows</div>
-                            </div>
-                            <div class="bucket-badge-card bucket-internal" onclick="filterFindingsBucket('CANNOT_CHECK')">
-                                <div class="bucket-count" id="count-internal" style="color: #64748b;">1</div>
-                                <div class="bucket-name" style="color: #475569;">CANNOT CHECK</div>
-                                <div class="bucket-desc">Internal policies &amp; database</div>
-                            </div>
-                        </div>
-
-                        <!-- FILTER BAR & COMPATIBILITY -->
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                            <div style="display: flex; gap: 8px;" id="findings-filter-bar">
-                                <button class="filter-btn active" onclick="filterFindings('ALL')">All Findings (<span id="count-all">8</span>)</button>
-                                <button class="filter-btn" onclick="filterFindings('HIGH')">High Attention (<span id="count-high">2</span>)</button>
-                                <button class="filter-btn" onclick="filterFindings('MEDIUM')">Medium (<span id="count-med">3</span>)</button>
-                                <button class="filter-btn" onclick="filterFindings('FUTURE')">Scheduled May 2027</button>
-                            </div>
-                            <span style="font-size: 12px; color: var(--text-dim);">Click any card to expand full remediation guidance</span>
-                        </div>
-
-                        <!-- FINDINGS LIST -->
-                        <div id="findings-list-wrap">
-                            <!-- Populated dynamically via JS -->
-                        </div>
-
-                        <!-- DISCLAIMER NOTICE -->
-                        <div style="background: var(--bg-base); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 14px 18px; margin: 20px 0; font-size: 12px; color: var(--text-muted); line-height: 1.5;">
-                            <strong>Statutory Disclaimer:</strong> A public website scan is a passive privacy discovery tool and does not constitute a statutory audit or legal certification under the DPDP Act 2023. Maximum penalty amounts under the Schedule (up to ₹250 crore) are statutory ceilings determined by the Data Protection Board of India on a case-by-case basis, not automatic fines.
-                        </div>
-
-                        <!-- BRIDGE TO FULL INTERNAL DPDP ASSESSMENT -->
-                        <div class="card" style="background: linear-gradient(135deg, #0f172a, #1e293b); color: #ffffff; border: none;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
-                                <div>
-                                    <h3 style="font-size: 16px; font-weight: 800; color: #ffffff;">Ready to Complete Your Full DPDP Compliance Journey?</h3>
-                                    <p style="font-size: 13px; color: #94a3b8; margin-top: 4px;">Transition from public website discovery to comprehensive internal assessment, RoPA inventory, and evidence vault management.</p>
-                                </div>
-                                <button onclick="navTo('assessment')" class="btn btn-primary" style="padding: 10px 20px;">
-                                    <span>Continue With Full DPDP Assessment &rarr;</span>
-                                </button>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <!-- RECENT SCAN HISTORY TABLE -->
-                    <div class="card" style="margin-top: 24px;">
-                        <div class="card-header">
-                            <div class="card-title">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                                <span>Recent Website Scans</span>
-                            </div>
-                            <span class="badge-pill badge-sky" id="history-scans-count">0 Recorded</span>
-                        </div>
-                        <div class="table-wrap">
-                            <table class="dash-table">
-                                <thead>
-                                    <tr>
-                                        <th>Date &amp; Time</th>
-                                        <th>Target URL</th>
-                                        <th>Industry</th>
-                                        <th>Pages</th>
-                                        <th>Gaps Found</th>
-                                        <th>Readiness</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="scanner-history-tbody">
-                                    <tr>
-                                        <td colspan="7" style="text-align: center; color: var(--text-dim); padding: 24px;">No website scans recorded yet. Enter a URL above and click "Scan My Website".</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ============================================================== -->
-                <!-- SECTION 3: DPDP ASSESSMENT (15 STATUTORY CONTROLS)             -->
-                <!-- ============================================================== -->
-                <div id="section-assessment" class="dash-section">
-                    <div class="page-header">
-                        <div>
-                            <h1 class="page-title">DPDP Statutory Requirements Assessment</h1>
-                            <p class="page-subtitle">Evaluate controls against the DPDP Act 2023, Rules 2025, and October 2026 Removal of Difficulties Order.</p>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title">Requirement Controls Matrix (15 Evaluated)</div>
-                            <span class="badge-pill badge-amber">3 Actionable Gaps</span>
-                        </div>
-                        <div class="table-wrap">
-                            <table class="dash-table" id="assessment-table">
-                                <thead>
-                                    <tr>
-                                        <th>Section / Rule</th>
-                                        <th>Requirement Title</th>
-                                        <th>Category</th>
-                                        <th>Effective Date</th>
-                                        <th>Self-Attested Status</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="assessment-tbody">
-                                    <!-- Populated dynamically via JS -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ============================================================== -->
-                <!-- SECTION 4: PERSONAL DATA INVENTORY                             -->
-                <!-- ============================================================== -->
-                <div id="section-inventory" class="dash-section">
-                    <div class="page-header">
-                        <div>
-                            <h1 class="page-title">Personal Data Inventory</h1>
-                            <p class="page-subtitle">Catalog all digital personal data, collection sources, legal bases, storage systems, and retention rules.</p>
-                        </div>
-                        <div style="display: flex; gap: 10px;">
-                            <button onclick="downloadInventoryCSV()" class="btn btn-secondary">Export RoPA CSV</button>
-                            <button onclick="openAddInventoryModal()" class="btn btn-primary">+ Add Data Stream</button>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title">Active Processing Activities (RoPA Register)</div>
-                            <span class="badge-pill badge-emerald">Real-Time Sync</span>
-                        </div>
-                        <div class="table-wrap">
-                            <table class="dash-table" id="inventory-table">
-                                <thead>
-                                    <tr>
-                                        <th>Data Category</th>
-                                        <th>Data Principal Type</th>
-                                        <th>Processing Purpose</th>
-                                        <th>Legal Basis</th>
-                                        <th>Storage System</th>
-                                        <th>Department</th>
-                                        <th>Retention</th>
-                                        <th>Cross-Border</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="inventory-tbody">
-                                    <!-- Populated dynamically via JS -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ============================================================== -->
-                <!-- SECTION: INTERACTIVE DATA FLOW MAP                            -->
-                <!-- ============================================================== -->
-                <div id="section-dataflow" class="dash-section">
-                    <div class="page-header">
-                        <div>
-                            <h1 class="page-title">Personal Data Flow Map</h1>
-                            <p class="page-subtitle">Track the lifecycle of personal data from data principal collection to primary databases, CRM, external processors, and analytics.</p>
-                        </div>
-                        <button onclick="loadDataFlowMap()" class="btn btn-secondary">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-                            <span>Refresh Flow</span>
-                        </button>
-                    </div>
-
-                    <!-- 6-STAGE PIPELINE CARDS -->
-                    <div id="data-flow-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 24px;">
-                        <!-- Rendered by JS -->
-                    </div>
-
-                    <!-- STATUTORY SUMMARY -->
-                    <div class="table-card" style="padding: 24px;">
-                        <h3 style="font-size: 16px; font-weight: 750; color: var(--text-main); margin-bottom: 8px;">Statutory Safeguards &amp; Processor Governance</h3>
-                        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">Under Section 8(5), Data Fiduciaries must implement reasonable technical safeguards (TLS 1.3, AES-256) across all transmission paths. Under Section 8(2), engaging data processors without executed DPAs is strictly prohibited.</p>
-                        <div id="data-flow-summary" style="display: flex; gap: 20px; flex-wrap: wrap;">
-                            <!-- Flow summary metrics -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ============================================================== -->
-                <!-- SECTION 5: PRIVACY NOTICES (SEC 5)                             -->
-                <!-- ============================================================== -->
-                <div id="section-privacy" class="dash-section">
-                    <div class="page-header">
-                        <div>
-                            <h1 class="page-title">Privacy Notices (Sec 5)</h1>
-                            <p class="page-subtitle">Generate, review and publish multi-language privacy notices conforming to Section 5 and Rule 3.</p>
-                        </div>
-                        <button onclick="alert('Creating new Section 5 Notice template...')" class="btn btn-primary">+ Generate Notice</button>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title">Published &amp; Approved Notices</div>
-                            <span class="badge-pill badge-emerald">2 Active</span>
-                        </div>
-                        <div id="notice-cards-container">
-                            <!-- Populated dynamically via JS -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ============================================================== -->
-                <!-- SECTION 6: CONSENT & WITHDRAWALS                               -->
-                <!-- ============================================================== -->
-                <div id="section-consent" class="dash-section">
-                    <div class="page-header">
-                        <div>
-                            <h1 class="page-title">Consent &amp; Withdrawals</h1>
-                            <p class="page-subtitle">Track consent lifecycle, withdrawal cascades to third-party processors, and exceptions.</p>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title">Consent Withdrawal Register (Section 6(4))</div>
-                            <span class="badge-pill badge-emerald">Cascading Active</span>
-                        </div>
-                        <div class="table-wrap">
-                            <table class="dash-table">
-                                <thead>
-                                    <tr>
-                                        <th>Log ID</th>
-                                        <th>Principal Ref</th>
-                                        <th>Category</th>
-                                        <th>Processing Halt</th>
-                                        <th>Processor Cascaded</th>
-                                        <th>Statutory Exception</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="withdrawal-tbody">
-                                    <!-- Populated dynamically via JS -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ============================================================== -->
-                <!-- SECTION 7: DATA PRINCIPAL RIGHTS                               -->
-                <!-- ============================================================== -->
-                <div id="section-rights" class="dash-section">
-                    <div class="page-header">
-                        <div>
-                            <h1 class="page-title">Data Principal Rights</h1>
-                            <p class="page-subtitle">Manage customer privacy requests: access, correction, erasure, and grievance redressal under Sections 11–13.</p>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title">Customer Requests Ticketing Desk</div>
-                            <span class="badge-pill badge-amber">SLA: 72 Hours</span>
-                        </div>
-                        <div class="table-wrap">
-                            <table class="dash-table">
-                                <thead>
-                                    <tr>
-                                        <th>Request ID</th>
-                                        <th>Right Type</th>
-                                        <th>Principal Name</th>
-                                        <th>Received At</th>
-                                        <th>SLA Deadline</th>
-                                        <th>Status</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="rights-tbody">
-                                    <!-- Populated dynamically via JS -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ============================================================== -->
-                <!-- SECTION 8: VENDOR MANAGEMENT                                   -->
-                <!-- ============================================================== -->
-                <div id="section-vendors" class="dash-section">
-                    <div class="page-header">
-                        <div>
-                            <h1 class="page-title">Vendor Management</h1>
-                            <p class="page-subtitle">Maintain Data Processing Agreements (DPA) and breach notification terms with all data processors (Section 8(2)).</p>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title">Third-Party Data Processors Register</div>
-                            <span class="badge-pill badge-sky">4 Registered</span>
-                        </div>
-                        <div class="table-wrap">
-                            <table class="dash-table">
-                                <thead>
-                                    <tr>
-                                        <th>Processor Name</th>
-                                        <th>Service Provided</th>
-                                        <th>Data Processed</th>
-                                        <th>Storage Location</th>
-                                        <th>DPA Status</th>
-                                        <th>Breach Clause</th>
-                                        <th>Risk Tier</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="vendors-tbody">
-                                    <!-- Populated dynamically via JS -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ============================================================== -->
-                <!-- SECTION 9: RETENTION & ERASURE                                 -->
-                <!-- ============================================================== -->
-                <div id="section-retention" class="dash-section">
-                    <div class="page-header">
-                        <div>
-                            <h1 class="page-title">Retention &amp; Erasure</h1>
-                            <p class="page-subtitle">Enforce data minimization and end-of-purpose erasure policies conforming to Section 8(7) and Rule 8.</p>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title">Data Category Retention Schedules</div>
-                            <span class="badge-pill badge-emerald">Schedules Configured</span>
-                        </div>
-                        <div class="table-wrap">
-                            <table class="dash-table">
-                                <thead>
-                                    <tr>
-                                        <th>Category</th>
-                                        <th>Retention Period</th>
-                                        <th>Statutory Basis</th>
-                                        <th>Erasure Trigger</th>
-                                        <th>Deletion Method</th>
-                                        <th>Next Review</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="retention-tbody">
-                                    <!-- Populated dynamically via JS -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ============================================================== -->
-                <!-- SECTION 10: BREACH MANAGEMENT (SEC 8(6))                       -->
-                <!-- ============================================================== -->
-                <div id="section-breach" class="dash-section">
-                    <div class="page-header">
-                        <div>
-                            <h1 class="page-title">Breach Management (Sec 8(6))</h1>
-                            <p class="page-subtitle">Incident containment, impact assessment, and statutory Board intimation workflows (Rule 7 Form A).</p>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title">Data Breach Incident Response Desk</div>
-                            <span class="badge-pill badge-emerald">Zero Critical Breaches</span>
-                        </div>
-                        <div id="breach-cards-container">
-                            <!-- Populated dynamically via JS -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ============================================================== -->
-                <!-- SECTION 11: EVIDENCE VAULT                                     -->
-                <!-- ============================================================== -->
-                <div id="section-evidence" class="dash-section">
-                    <div class="page-header">
-                        <div>
-                            <h1 class="page-title">Evidence Vault</h1>
-                            <p class="page-subtitle">Cryptographically verified proof of compliance controls: policies, audit logs, DPA contracts, and training records.</p>
-                        </div>
-                        <button onclick="alert('Open Evidence Upload Dialog...')" class="btn btn-primary">+ Upload Evidence Artifact</button>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title">Verified Artifacts Repository</div>
-                            <span class="badge-pill badge-emerald">AES-256 Encrypted</span>
-                        </div>
-                        <div class="table-wrap">
-                            <table class="dash-table">
-                                <thead>
-                                    <tr>
-                                        <th>Document Title</th>
-                                        <th>Mapped Control</th>
-                                        <th>Upload Date</th>
-                                        <th>SHA-256 Hash</th>
-                                        <th>Status</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="evidence-tbody">
-                                    <!-- Populated dynamically via JS -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ============================================================== -->
-                <!-- SECTION 12: REMEDIATION CENTRE                                 -->
-                <!-- ============================================================== -->
-                <div id="section-remediation" class="dash-section">
-                    <div class="page-header">
-                        <div>
-                            <h1 class="page-title">Remediation Centre</h1>
-                            <p class="page-subtitle">Prioritized remediation action items derived from statutory assessments and website scan findings.</p>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title">Actionable Compliance Remediation Tasks</div>
-                            <span class="badge-pill badge-amber">3 Tasks Pending</span>
-                        </div>
-                        <div id="remediation-list-container">
-                            <!-- Populated dynamically via JS -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ============================================================== -->
-                <!-- SECTION 13: REPORTS                                            -->
-                <!-- ============================================================== -->
-                <div id="section-reports" class="dash-section">
-                    <div class="page-header">
-                        <div>
-                            <h1 class="page-title">DPDP Compliance Reports</h1>
-                            <p class="page-subtitle">Export executive summaries, Board presentations, and auditor-ready compliance documentation.</p>
-                        </div>
-                        <button onclick="alert('Generating Comprehensive Executive Bundle...')" class="btn btn-primary">Generate Auditor Export</button>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title">DPDP READINESS REPORT</div>
-                            <span class="badge-pill badge-emerald">Digital Personal Data Protection Act, 2023</span>
-                        </div>
-                        <p style="font-size: 13.5px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 16px;">
-                            This comprehensive compliance readiness summary synthesizes all active controls evaluated against the <strong>Digital Personal Data Protection Act, 2023</strong>, the DPDP Rules 2025, and official MeitY guidance.
-                        </p>
-                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px;">
-                            <div style="background: var(--bg-base); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 16px;">
-                                <div style="font-weight: 700; color: var(--text-main); margin-bottom: 4px;">Executive Summary (PDF)</div>
-                                <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">High-level overview suitable for Board of Directors and senior leadership.</div>
-                                <button onclick="alert('Downloading PDF report...')" class="btn btn-secondary btn-sm">Download PDF</button>
-                            </div>
-                            <div style="background: var(--bg-base); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 16px;">
-                                <div style="font-weight: 700; color: var(--text-main); margin-bottom: 4px;">Complete RoPA &amp; Notice Register</div>
-                                <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">CSV and JSON packages containing complete data processing records.</div>
-                                <button onclick="downloadInventoryCSV()" class="btn btn-secondary btn-sm">Export RoPA CSV</button>
-                            </div>
-                            <div style="background: var(--bg-base); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 16px;">
-                                <div style="font-weight: 700; color: var(--text-main); margin-bottom: 4px;">Auditor Evidence Bundle</div>
-                                <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">ZIP archive with SHA-256 evidence files and verification checksums.</div>
-                                <button onclick="alert('Building evidence package...')" class="btn btn-secondary btn-sm">Export ZIP</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ============================================================== -->
-                <!-- SECTION 14: SETTINGS & TEAM                                    -->
-                <!-- ============================================================== -->
-                <div id="section-settings" class="dash-section">
-                    <div class="page-header">
-                        <div>
-                            <h1 class="page-title">Settings &amp; Team</h1>
-                            <p class="page-subtitle">Configure organization profile, Data Protection Officer (DPO) details, and role permissions.</p>
-                        </div>
-                    </div>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="card-title">Organisation Profile</div>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Legal Entity Name</label>
-                                <input type="text" class="form-control" value="Arogya Diagnostics Clinic Ltd" readonly>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Sector</label>
-                                <input type="text" class="form-control" value="Healthcare (Clinics &amp; Diagnostics)" readonly>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Designated Grievance Officer</label>
-                                <input type="text" class="form-control" value="Medical Records Superintendent">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Grievance Email (Section 8(10))</label>
-                                <input type="email" class="form-control" value="grievance@organisation.com">
-                            </div>
-                        </div>
-
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="card-title">Data Protection &amp; Account Security</div>
-                            </div>
-                            <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
-                                Multi-Factor Authentication (RFC 6238 TOTP) is enforced for organization administrators accessing patient inventory records.
-                            </div>
-                            <div style="padding: 12px; background: var(--brand-emerald-light); border: 1px solid rgba(5, 150, 105, 0.3); border-radius: 6px; color: var(--brand-emerald); font-weight: 600; font-size: 12.5px; margin-bottom: 16px;">
-                                &bull; PBKDF2-HMAC-SHA256 (600,000 iterations active)
-                            </div>
-                            <div style="border-top: 1px solid var(--border-color); padding-top: 14px;">
-                                <div style="font-weight: 700; color: var(--text-main); margin-bottom: 4px;">Organisation Data Erasure</div>
-                                <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">Purge all organization records, evidence artifacts, and session logs with 0-day active scrubbing.</div>
-                                <button onclick="confirmOrgDeletion()" class="btn btn-secondary btn-sm" style="color: var(--brand-red); border-color: rgba(220, 38, 38, 0.3);">Request Account Scrubbing</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </main>
+<!-- AUTHENTICATION GATE -->
+<div id="auth-gate" class="auth-screen" style="display:none;">
+  <div class="auth-card">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+      <div class="brand-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <div>
+        <strong style="font-size:18px;">TrustAudit Workspace</strong>
+        <div style="font-size:12px;color:var(--muted);">DPDP Readiness &amp; Data Operations for Indian Businesses</div>
+      </div>
     </div>
 
-    <!-- AI ASSISTANT MODAL -->
-    <div id="assistantModal" class="modal-overlay">
-        <div class="modal-card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                <h3 style="font-size: 18px; font-weight: 700; color: var(--text-main);">AI DPDP Legal Assistant</h3>
-                <button onclick="closeAssistantModal()" style="background: none; font-size: 20px; color: var(--text-muted);">&times;</button>
-            </div>
-            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">
-                Grounded queries across the DPDP Act 2023, DPDP Rules 2025, and October 2026 Gazette Orders. Zero external data transmission.
-            </div>
+    <div class="tab-pills">
+      <button class="tab-pill active" id="auth-tab-login" onclick="switchAuthTab('login')">Sign In</button>
+      <button class="tab-pill" id="auth-tab-register" onclick="switchAuthTab('register')">Create Free Account</button>
+    </div>
 
-            <div class="assistant-chat" id="chat-messages">
-                <div class="chat-bubble chat-ai">
-                    Hello! I am your DPDP Assistant. You can ask about Section 5 notices, Section 6 consent withdrawal, Section 7 legitimate uses, Section 8(6) breach notifications, or children's data under Section 9.
-                </div>
-            </div>
+    <form id="login-form" onsubmit="event.preventDefault(); handleLogin();">
+      <div class="fg"><label class="fl">Work Email</label><input class="fi" id="login-email" type="email" required placeholder="you@company.in"/></div>
+      <div class="fg"><label class="fl">Password</label><input class="fi" id="login-password" type="password" required placeholder="Minimum 8 characters"/></div>
+      <div class="fg" id="login-mfa-wrap" style="display:none;"><label class="fl">6-Digit Authenticator Code (MFA)</label><input class="fi" id="login-totp" placeholder="123456"/></div>
+      <div id="login-err" style="font-size:13px;color:var(--rose);margin-bottom:10px;"></div>
+      <button type="submit" class="btn btn-primary" style="width:100%;">Sign In to Workspace</button>
+    </form>
 
-            <div style="display: flex; gap: 8px;">
-                <input type="text" id="ai-query-input" class="form-control" placeholder="Ask about DPDP requirements..." onkeydown="if(event.key==='Enter') sendAiQuery()">
-                <button onclick="sendAiQuery()" class="btn btn-primary" id="ai-send-btn">Ask</button>
-            </div>
-            <div style="font-size: 11px; color: var(--text-dim); margin-top: 8px; text-align: center;">
-                Informational guidance only &bull; Does not constitute formal legal counsel.
-            </div>
+    <form id="register-form" style="display:none;" onsubmit="event.preventDefault(); handleRegister();">
+      <div class="fg"><label class="fl">Your Name</label><input class="fi" id="reg-name" required placeholder="Dr. Ananya Sharma"/></div>
+      <div class="fg"><label class="fl">Business / Organisation Name</label><input class="fi" id="reg-org" required placeholder="Sunrise Care Clinic Pvt Ltd"/></div>
+      <div class="fg"><label class="fl">Work Email</label><input class="fi" id="reg-email" type="email" required placeholder="admin@sunrisecare.in"/></div>
+      <div class="fg"><label class="fl">Password (8+ characters)</label><input class="fi" id="reg-password" type="password" minlength="8" required/></div>
+      <div class="fg"><label class="fl">Plan</label>
+        <select class="fi" id="reg-plan">
+          <option value="free">Free Community (&#8377;0/mo)</option>
+          <option value="starter" selected>Starter (&#8377;999/mo)</option>
+          <option value="growth">Growth (&#8377;1,999/mo)</option>
+          <option value="business">Business (&#8377;2,999/mo)</option>
+        </select>
+      </div>
+      <div id="reg-err" style="font-size:13px;color:var(--rose);margin-bottom:10px;"></div>
+      <button type="submit" class="btn btn-primary" style="width:100%;">Create Account &amp; Start 6-Step Setup</button>
+    </form>
+
+    <hr style="border:none;border-top:1px solid var(--border);margin:18px 0;">
+    <button onclick="enterDemoSandbox()" class="btn btn-secondary" style="width:100%;">Explore Read-Only Demo Sandbox</button>
+    <p style="font-size:12px;color:var(--muted);text-align:center;margin-top:8px;">
+      Demo Sandbox shows clearly labeled sample data without creating a live business account. <a href="/" style="color:var(--accent);">Back to homepage</a>
+    </p>
+  </div>
+</div>
+
+<!-- MAIN WORKSPACE SHELL -->
+<div id="workspace-shell" class="app-shell">
+  <aside class="sidebar" id="main-sidebar" aria-label="Primary Workspace Navigation">
+    <div class="sidebar-head">
+      <a href="/" class="brand-row">
+        <div class="brand-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <span>TrustAudit</span>
+      </a>
+      <button onclick="toggleSidebar(false)" class="btn btn-secondary btn-sm mobile-menu-trigger">&times;</button>
+    </div>
+
+    <div class="nav-group">
+      <button class="nav-group-btn" onclick="toggleNavGroup('grp-home')"><span>Home</span><span>&#9662;</span></button>
+      <div class="nav-items" id="grp-home">
+        <button class="nav-item active" data-view="overview" onclick="navigateTo('overview')">Overview</button>
+        <button class="nav-item" data-view="remediation" onclick="navigateTo('remediation')">My Action Plan</button>
+        <button class="nav-item" data-view="onboarding" onclick="navigateTo('onboarding')">6-Step Setup Guide</button>
+      </div>
+    </div>
+
+    <div class="nav-group">
+      <button class="nav-group-btn" onclick="toggleNavGroup('grp-data')"><span>My Business Data</span><span>&#9662;</span></button>
+      <div class="nav-items" id="grp-data">
+        <button class="nav-item" data-view="inventory" onclick="navigateTo('inventory')">Customer Data List</button>
+        <button class="nav-item" data-view="scanner" onclick="navigateTo('scanner')">Website Privacy Check</button>
+        <button class="nav-item" data-view="data-flow" onclick="navigateTo('data-flow')">Where My Data Goes</button>
+        <button class="nav-item" data-view="vendors" onclick="navigateTo('vendors')">Companies I Share Data With</button>
+      </div>
+    </div>
+
+    <div class="nav-group">
+      <button class="nav-group-btn" onclick="toggleNavGroup('grp-privacy')"><span>Privacy Management</span><span>&#9662;</span></button>
+      <div class="nav-items" id="grp-privacy">
+        <button class="nav-item" data-view="notices" onclick="navigateTo('notices')">Privacy Notice</button>
+        <button class="nav-item" data-view="consent" onclick="navigateTo('consent')">Consent Records</button>
+        <button class="nav-item" data-view="rights" onclick="navigateTo('rights')">Customer Privacy Requests</button>
+        <button class="nav-item" data-view="retention" onclick="navigateTo('retention')">Data Retention &amp; Deletion</button>
+        <button class="nav-item" data-view="breaches" onclick="navigateTo('breaches')">Privacy Incident Response</button>
+      </div>
+    </div>
+
+    <div class="nav-group">
+      <button class="nav-group-btn" onclick="toggleNavGroup('grp-docs')"><span>Documents &amp; Proof</span><span>&#9662;</span></button>
+      <div class="nav-items" id="grp-docs">
+        <button class="nav-item" data-view="documents" onclick="navigateTo('documents')">Document Centre</button>
+        <button class="nav-item" data-view="evidence" onclick="navigateTo('evidence')">Evidence Vault</button>
+        <button class="nav-item" data-view="reports" onclick="navigateTo('reports')">Reports &amp; ZIP Bundle</button>
+      </div>
+    </div>
+
+    <div class="nav-group">
+      <button class="nav-group-btn" onclick="toggleNavGroup('grp-help')"><span>Help</span><span>&#9662;</span></button>
+      <div class="nav-items" id="grp-help">
+        <button class="nav-item" data-view="assistant" onclick="navigateTo('assistant')">AI DPDP Assistant</button>
+        <button class="nav-item" data-view="glossary" onclick="navigateTo('glossary')">Learning Centre &amp; Glossary</button>
+      </div>
+    </div>
+
+    <div class="nav-group">
+      <button class="nav-group-btn" onclick="toggleNavGroup('grp-settings')"><span>Settings</span><span>&#9662;</span></button>
+      <div class="nav-items" id="grp-settings">
+        <button class="nav-item" data-view="settings" onclick="navigateTo('settings')">Business Profile, Team &amp; Security</button>
+      </div>
+    </div>
+
+    <div class="nav-group">
+      <button class="nav-group-btn" onclick="toggleNavGroup('grp-legal')"><span>Advanced Legal Centre</span><span>&#9656;</span></button>
+      <div class="nav-items collapsed" id="grp-legal">
+        <button class="nav-item" data-view="assessment" onclick="navigateTo('assessment')">DPDP Requirements (Sec 3&ndash;17)</button>
+        <button class="nav-item" data-view="org-assessment" onclick="navigateTo('org-assessment')">Full Deep Assessment</button>
+        <button class="nav-item" data-view="penalties" onclick="navigateTo('penalties')">Penalty Schedule &amp; Sec 33</button>
+        <button class="nav-item" data-view="timeline" onclick="navigateTo('timeline')">Commencement Timeline</button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main-wrap">
+    <header class="topbar">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button onclick="toggleSidebar(true)" class="btn btn-secondary btn-sm mobile-menu-trigger">&#9776;</button>
+        <div>
+          <strong id="topbar-org-name" style="font-size:14.5px;">TrustAudit Workspace</strong>
+          <span class="badge b-blue" id="topbar-plan-badge" style="margin-left:6px;">Starter</span>
         </div>
-    </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <button onclick="toggleTheme()" class="btn btn-secondary btn-sm" id="theme-toggle-btn">Dark Mode</button>
+        <span id="topbar-user-label" style="font-size:13px;color:var(--muted);"></span>
+        <button onclick="handleLogout()" class="btn btn-secondary btn-sm" id="topbar-logout-btn">Sign Out</button>
+      </div>
+    </header>
 
-    <!-- MODAL: ADD INVENTORY ENTRY -->
-    <div id="addInventoryModal" class="modal-overlay">
-        <div class="modal-card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                <h3 style="font-size: 18px; font-weight: 700; color: var(--text-main);">Add Personal Data Inventory Stream</h3>
-                <button onclick="closeAddInventoryModal()" style="background: none; font-size: 20px; color: var(--text-muted);">&times;</button>
-            </div>
+    <main class="content">
+      <div id="demo-mode-banner" class="demo-banner" style="display:none;">
+        <span>DEMO DATA &mdash; Example information for demonstration only. Changes here are not stored in a real company account.</span>
+        <button onclick="showAuthGate('register')" class="btn btn-primary btn-sm">Create Real Free Account</button>
+      </div>
 
-            <form onsubmit="submitNewInventory(event)">
-                <div class="form-group">
-                    <label class="form-label">Data Category *</label>
-                    <input type="text" id="inv_cat" class="form-control" placeholder="e.g. Patient Clinical Diagnostic Reports" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Data Principal Type *</label>
-                    <input type="text" id="inv_principal" class="form-control" placeholder="e.g. Patients / Minor Guardians" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Processing Purpose *</label>
-                    <input type="text" id="inv_purpose" class="form-control" placeholder="e.g. Medical diagnosis &amp; treatment" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Legal Basis *</label>
-                    <select id="inv_basis" class="form-control">
-                        <option value="DPDP Section 6 (Consent)">DPDP Section 6 (Consent)</option>
-                        <option value="DPDP Section 7(e) (Medical Emergency)">DPDP Section 7(e) (Medical Emergency)</option>
-                        <option value="DPDP Section 7(c) (Legal Obligation)">DPDP Section 7(c) (Legal Obligation)</option>
-                        <option value="DPDP Section 7(i) (Employment)">DPDP Section 7(i) (Employment)</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Storage System *</label>
-                    <input type="text" id="inv_storage" class="form-control" placeholder="e.g. Hospital Management System / AWS Mumbai" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Retention Period *</label>
-                    <input type="text" id="inv_retention" class="form-control" placeholder="e.g. 5 Years (Clinical Records Rules)" required>
-                </div>
-                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
-                    <button type="button" onclick="closeAddInventoryModal()" class="btn btn-secondary">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save Entry</button>
-                </div>
-            </form>
+      <!-- 1. OVERVIEW -->
+      <section id="section-overview" class="view-section active">
+        <div class="plain-header">
+          <h1 id="home-greeting">Welcome to your privacy workspace</h1>
+          <p style="color:var(--ink-2);font-size:14px;">Follow your 6-step setup checklist below, resolve real items that need attention, and keep proof organised before 13 May 2027.</p>
         </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div style="display:flex;align-items:center;gap:18px;">
+              <svg width="86" height="86" viewBox="0 0 100 100" aria-label="Setup progress ring">
+                <circle cx="50" cy="50" r="42" fill="none" stroke="var(--surface-2)" stroke-width="10"/>
+                <circle id="setup-ring-arc" cx="50" cy="50" r="42" fill="none" stroke="var(--accent)" stroke-width="10" stroke-linecap="round" stroke-dasharray="264" stroke-dashoffset="264" transform="rotate(-90 50 50)"/>
+                <text id="setup-ring-text" x="50" y="55" text-anchor="middle" font-size="18" font-weight="800" fill="currentColor">0 / 6</text>
+              </svg>
+              <div style="flex:1;">
+                <h2 style="font-size:17px;font-weight:700;margin-bottom:4px;">Your Setup Progress</h2>
+                <p id="setup-progress-subtitle" style="font-size:13.5px;color:var(--muted);">Loading your workspace checklist...</p>
+                <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+                  <button onclick="navigateTo('onboarding')" class="btn btn-primary btn-sm">Open 6-Step Setup</button>
+                  <button id="home-next-action-btn" onclick="navigateTo('inventory')" class="btn btn-secondary btn-sm">Next Step</button>
+                </div>
+              </div>
+            </div>
+            <div id="setup-checklist-rows" style="margin-top:14px;display:grid;gap:6px;"></div>
+          </div>
+
+          <div class="card">
+            <h2 style="font-size:17px;font-weight:700;margin-bottom:10px;">What Needs Attention Right Now</h2>
+            <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">Showing up to 3 top practical items detected in your workspace.</p>
+            <div id="home-attention-list" style="display:grid;gap:10px;"></div>
+          </div>
+        </div>
+
+        <div class="grid-4" style="margin-bottom:18px;">
+          <div class="stat-tile"><div class="stat-label">Customer Data Records</div><div class="stat-val" id="cnt-inventory">0</div></div>
+          <div class="stat-tile"><div class="stat-label">Companies Shared With</div><div class="stat-val" id="cnt-vendors">0</div></div>
+          <div class="stat-tile"><div class="stat-label">Customer Requests</div><div class="stat-val" id="cnt-requests">0</div></div>
+          <div class="stat-tile"><div class="stat-label">Evidence Files Ready</div><div class="stat-val" id="cnt-evidence">0</div></div>
+        </div>
+
+        <div class="card">
+          <h2 style="font-size:16px;font-weight:700;margin-bottom:12px;">Quick Actions</h2>
+          <div style="display:flex;flex-wrap:wrap;gap:10px;">
+            <button onclick="navigateTo('scanner')" class="btn btn-secondary">Scan Website</button>
+            <button onclick="navigateTo('inventory')" class="btn btn-secondary">Add Customer Data</button>
+            <button onclick="navigateTo('notices')" class="btn btn-secondary">Create Privacy Notice</button>
+            <button onclick="navigateTo('vendors')" class="btn btn-secondary">Add Vendor Company</button>
+            <button onclick="navigateTo('evidence')" class="btn btn-secondary">Upload Evidence Proof</button>
+            <button onclick="downloadReportFile('/api/dpdp/reports/pdf')" class="btn btn-primary">Download Readiness PDF</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 style="font-size:16px;font-weight:700;margin-bottom:10px;">Recent Activity</h2>
+          <div id="home-recent-activity"></div>
+        </div>
+      </section>
+
+      <!-- 2. 6-STEP GUIDED ONBOARDING -->
+      <section id="section-onboarding" class="view-section">
+        <div class="plain-header">
+          <h1>6-Step Business Privacy Setup</h1>
+          <div class="plain-3q">
+            <div class="q-card"><strong>What is this?</strong>A quick plain-language guide so TrustAudit configures your workspace around your real business.</div>
+            <div class="q-card"><strong>Why does my business need it?</strong>No guessed company info, no unnecessary forms — only tasks relevant to your industry.</div>
+            <div class="q-card"><strong>What to do next?</strong>Fill what you know and save anytime. You can skip and resume later.</div>
+          </div>
+        </div>
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+            <strong id="ob-step-label">Step 1 of 6 &mdash; About Your Business</strong>
+            <span class="badge b-blue" id="ob-progress-pill">Saved Progress Ready</span>
+          </div>
+          <div id="ob-step-1" class="ob-panel">
+            <div class="grid-2">
+              <div class="fg"><label class="fl">Business / Clinic / Company Name</label><input class="fi" id="ob-company" placeholder="e.g., Sunrise Dental &amp; Diagnostics"/></div>
+              <div class="fg"><label class="fl">Industry Sector</label>
+                <select class="fi" id="ob-industry">
+                  <option value="clinics">Outpatient Clinic / Hospital / Healthcare</option>
+                  <option value="diagnostic_centres">Diagnostic Centre / Lab</option>
+                  <option value="saas">SaaS / Software / Technology</option>
+                  <option value="ecommerce">Online Store / E-Commerce</option>
+                  <option value="education">School / Coaching / EdTech</option>
+                  <option value="fintech">Financial / Advisory Services</option>
+                  <option value="professional_services">Accounting / Law / Consulting</option>
+                  <option value="general">General Indian Business</option>
+                </select>
+              </div>
+              <div class="fg"><label class="fl">Business Size</label>
+                <select class="fi" id="ob-size">
+                  <option value="1-10">1&ndash;10 People</option>
+                  <option value="11-50">11&ndash;50 People</option>
+                  <option value="51-250">51&ndash;250 People</option>
+                  <option value="250+">250+ People</option>
+                </select>
+              </div>
+              <div class="fg"><label class="fl">Privacy / Grievance Contact Email</label><input class="fi" id="ob-email" type="email" placeholder="privacy@yourbusiness.in"/></div>
+            </div>
+          </div>
+          <div id="ob-step-2" class="ob-panel" style="display:none;">
+            <p style="font-size:13.5px;color:var(--ink-2);margin-bottom:12px;">Which details do you collect digitally (forms, billing, WhatsApp, or software)?</p>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:14px;">
+              <label style="display:flex;gap:8px;align-items:center;"><input type="checkbox" class="ob-data-chk" value="Customer Contact Info" checked/> Names, Phone Numbers &amp; Emails</label>
+              <label style="display:flex;gap:8px;align-items:center;"><input type="checkbox" class="ob-data-chk" value="Billing & Tax Invoices" checked/> Billing &amp; GST Invoices</label>
+              <label style="display:flex;gap:8px;align-items:center;"><input type="checkbox" class="ob-data-chk" value="Patient Health Records"/> Patient / Clinical Health Records</label>
+              <label style="display:flex;gap:8px;align-items:center;"><input type="checkbox" class="ob-data-chk" value="Children / Minor Data (<18)"/> Student or Minor Data (Under 18)</label>
+              <label style="display:flex;gap:8px;align-items:center;"><input type="checkbox" class="ob-data-chk" value="Employee HR & Payroll"/> Staff Attendance &amp; Payroll</label>
+            </div>
+            <label style="display:flex;gap:8px;align-items:center;font-weight:600;font-size:13.5px;">
+              <input type="checkbox" id="ob-apply-template" checked/> Populate starter Customer Data List suggestions for my selected industry
+            </label>
+          </div>
+          <div id="ob-step-3" class="ob-panel" style="display:none;">
+            <div class="fg"><label class="fl">Public Website URL (Optional &mdash; used only when you choose to run a check)</label><input class="fi" id="ob-website" placeholder="https://yourbusiness.in"/></div>
+            <p style="font-size:13px;color:var(--muted);">A website scan only checks public pages (privacy link, forms, scripts). It cannot inspect internal databases.</p>
+          </div>
+          <div id="ob-step-4" class="ob-panel" style="display:none;">
+            <p style="font-size:13.5px;color:var(--ink-2);margin-bottom:10px;">Select software or service companies your business shares customer details with (saved with status "Not Started"):</p>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;">
+              <label style="display:flex;gap:8px;"><input type="checkbox" class="ob-vnd-chk" value="Razorpay / Payment Gateway"/> Payment Gateway (Razorpay / Stripe)</label>
+              <label style="display:flex;gap:8px;"><input type="checkbox" class="ob-vnd-chk" value="WhatsApp / SMS Alerts Provider"/> SMS / WhatsApp Notification Tool</label>
+              <label style="display:flex;gap:8px;"><input type="checkbox" class="ob-vnd-chk" value="Cloud Hosting / Database"/> Cloud Hosting (AWS / Google / Azure)</label>
+              <label style="display:flex;gap:8px;"><input type="checkbox" class="ob-vnd-chk" value="Clinic / Billing Software"/> Clinic / Billing / ERP Software</label>
+            </div>
+          </div>
+          <div id="ob-step-5" class="ob-panel" style="display:none;">
+            <div class="grid-2">
+              <div class="fg"><label class="fl">Do you already have a published Privacy Notice?</label>
+                <select class="fi" id="ob-has-notice"><option value="no">No, help me create one</option><option value="draft">I have a rough draft</option><option value="yes">Yes, published on website</option></select>
+              </div>
+              <div class="fg"><label class="fl">Can staff delete old records on schedule?</label>
+                <select class="fi" id="ob-has-retention"><option value="no">Not set up yet</option><option value="yes">Yes, reviewed periodically</option></select>
+              </div>
+            </div>
+          </div>
+          <div id="ob-step-6" class="ob-panel" style="display:none;">
+            <h3 style="font-size:16px;font-weight:700;margin-bottom:8px;">Ready to Build Your Personalised Workspace</h3>
+            <p style="font-size:13.5px;color:var(--ink-2);margin-bottom:12px;">Clicking "Finish Setup" saves your genuine answers only — no unverified scores or invented activity will be created.</p>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:18px;">
+            <button onclick="prevOnboardingStep()" class="btn btn-secondary" id="ob-prev-btn">Back</button>
+            <div style="display:flex;gap:8px;">
+              <button onclick="saveOnboardingStep(false)" class="btn btn-secondary">Save &amp; Continue Later</button>
+              <button onclick="nextOnboardingStep()" class="btn btn-primary" id="ob-next-btn">Next Step</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. MY ACTION PLAN -->
+      <section id="section-remediation" class="view-section">
+        <div class="plain-header">
+          <h1>My Action Plan</h1>
+          <div class="plain-3q">
+            <div class="q-card"><strong>What is this?</strong>A clear to-do list of privacy fixes from your onboarding and website checks.</div>
+            <div class="q-card"><strong>Why does my business need it?</strong>Shows who owns each fix, its priority, and proof of completion.</div>
+            <div class="q-card"><strong>What to do next?</strong>Assign a team owner and move items from Open to Resolved as you finish them.</div>
+          </div>
+        </div>
+        <div class="card" id="remediation-list-card">Loading tasks...</div>
+      </section>
+
+      <!-- 4. CUSTOMER DATA LIST -->
+      <section id="section-inventory" class="view-section">
+        <div class="plain-header">
+          <h1>Your Customer Data List</h1>
+          <div class="plain-3q">
+            <div class="q-card"><strong>What is this?</strong>A plain list of what personal details your business collects and where you store them.</div>
+            <div class="q-card"><strong>Why does my business need it?</strong>Powers your Privacy Notice, Deletion Rules, and Customer Requests accurately.</div>
+            <div class="q-card"><strong>What to do next?</strong>Add each type of customer record below or import/export via CSV.</div>
+          </div>
+          <details class="legal-expand"><summary>View legal reference (DPDP Act, 2023)</summary>Supports Section 4 (Lawful grounds: Consent under Section 6 OR Certain Legitimate Uses under Section 7) and Section 5 itemised notice accuracy.</details>
+        </div>
+        <div class="card">
+          <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between;align-items:center;margin-bottom:14px;">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button onclick="openInventoryModal()" class="btn btn-primary">+ Add Customer Data</button>
+              <button onclick="downloadReportFile('/api/dpdp/inventory/export')" class="btn btn-secondary">Export CSV</button>
+              <label class="btn btn-secondary" style="margin:0;">Import CSV <input type="file" accept=".csv" style="display:none;" onchange="importInventoryCsv(this)"/></label>
+            </div>
+            <input class="fi" style="max-width:240px;" id="inv-search" placeholder="Search data list..." oninput="renderInventoryTable()"/>
+          </div>
+          <div class="tbl-wrap"><table><thead><tr><th>Category &amp; Data Fields</th><th>Why Collected (Purpose)</th><th>Lawful Ground</th><th>Where Stored &amp; Shared</th><th>Actions</th></tr></thead><tbody id="inv-tbody"></tbody></table></div>
+        </div>
+      </section>
+
+      <!-- 5. WEBSITE PRIVACY CHECK (SCANNER — KEEPS EXACT IDs FOR COMPATIBILITY) -->
+      <section id="section-scanner" class="view-section">
+        <div class="plain-header">
+          <h1>Website Privacy Check (DPDP Website Scanner)</h1>
+          <div class="plain-3q">
+            <div class="q-card"><strong>What is this?</strong>Checks public website pages for a Privacy Notice link, forms, pre-ticked checkboxes, HTTPS, and scripts.</div>
+            <div class="q-card"><strong>Why does my business need it?</strong>Public websites are the first thing customers and regulators see.</div>
+            <div class="q-card"><strong>What to do next?</strong>Enter your website URL, confirm you own/manage it, and review the 4 honest result groups.</div>
+          </div>
+          <details class="legal-expand"><summary>What this scan can and cannot check</summary>External website scans inspect public HTML, headers, forms, and scripts only. They cannot inspect internal databases, vendor contracts, or private access controls.</details>
+        </div>
+        <div class="card">
+          <div class="grid-3">
+            <div class="fg"><label class="fl">Website URL</label><input class="fi" id="scan-url-input" placeholder="https://yourbusiness.in"/></div>
+            <div class="fg"><label class="fl">Business Name</label><input class="fi" id="scan-biz-input" placeholder="Your Business Name"/></div>
+            <div class="fg"><label class="fl">Industry</label>
+              <select class="fi" id="scan-ind-input">
+                <option value="healthcare">Healthcare / Clinic</option><option value="saas">SaaS / Software</option><option value="ecommerce">E-Commerce</option><option value="education">Education</option>
+              </select>
+            </div>
+          </div>
+          <label style="display:flex;gap:8px;align-items:center;font-size:13px;margin-bottom:12px;">
+            <input type="checkbox" id="scan-auth-confirm" checked/> I confirm I am authorised to scan this website (non-invasive public read-only inspection).
+          </label>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button id="btn-start-scan" onclick="runWebsiteScan(false)" class="btn btn-primary">Run Real Website Check</button>
+            <button onclick="runWebsiteScan(true)" class="btn btn-secondary">Load Sample Example Report</button>
+          </div>
+          <div id="scanner-progress-panel" style="display:none;margin-top:14px;padding:12px;background:var(--accent-soft);border-radius:8px;font-size:13.5px;font-weight:600;color:var(--accent);">Checking public website safely...</div>
+        </div>
+        <div id="scanner-results-panel"></div>
+        <div class="card">
+          <h3 style="font-size:16px;font-weight:700;margin-bottom:10px;">Past Website Scans</h3>
+          <div id="scanner-history-list"></div>
+        </div>
+      </section>
+
+      <!-- 6. WHERE MY DATA GOES -->
+      <section id="section-data-flow" class="view-section">
+        <div class="plain-header">
+          <h1>Where My Customer Data Goes</h1>
+          <div class="plain-3q">
+            <div class="q-card"><strong>What is this?</strong>A visual picture showing how customer details enter your business, where they live, and which vendors receive them.</div>
+            <div class="q-card"><strong>Why does my business need it?</strong>Helps spot untracked sharing before signing contracts or preparing notices.</div>
+            <div class="q-card"><strong>What to do next?</strong>Keep your Customer Data List and Vendors updated to update this live map.</div>
+          </div>
+        </div>
+        <div class="card" id="data-flow-canvas">Loading live map...</div>
+      </section>
+
+      <!-- 7. COMPANIES I SHARE DATA WITH (VENDORS) -->
+      <section id="section-vendors" class="view-section">
+        <div class="plain-header">
+          <h1>Companies I Share Data With</h1>
+          <div class="plain-3q">
+            <div class="q-card"><strong>What is this?</strong>A tracker for billing software, labs, couriers, cloud hosts, and payment gateways that handle customer data.</div>
+            <div class="q-card"><strong>Why does my business need it?</strong>Under DPDP Section 8(1)&ndash;(2), your business remains responsible for vendor security and contracts.</div>
+            <div class="q-card"><strong>What to do next?</strong>Add every vendor, record contract status (6 clear stages), and upload signed agreements.</div>
+          </div>
+        </div>
+        <div class="card">
+          <button onclick="openVendorModal()" class="btn btn-primary" style="margin-bottom:14px;">+ Add Company / Vendor</button>
+          <div class="tbl-wrap"><table><thead><tr><th>Company &amp; Service</th><th>Data Shared &amp; Region</th><th>Contract (DPA) Status</th><th>Risk &amp; Expiry</th><th>Actions</th></tr></thead><tbody id="vnd-tbody"></tbody></table></div>
+        </div>
+      </section>
+
+      <!-- 8. PRIVACY NOTICE -->
+      <section id="section-notices" class="view-section">
+        <div class="plain-header">
+          <h1>Your Customer Privacy Notice</h1>
+          <div class="plain-3q">
+            <div class="q-card"><strong>What is this?</strong>The clear explanation shown to customers before or when you ask for their details.</div>
+            <div class="q-card"><strong>Why does my business need it?</strong>Required under Section 5 &amp; Rule 3 in clear language alongside Privacy Contact details.</div>
+            <div class="q-card"><strong>What to do next?</strong>Generate a tailored draft from your Customer Data List, edit it, approve it, and export it.</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="grid-3">
+            <div class="fg"><label class="fl">Notice Title</label><input class="fi" id="not-title" placeholder="Customer Privacy Notice"/></div>
+            <div class="fg"><label class="fl">Grievance / Privacy Contact Name</label><input class="fi" id="not-officer" placeholder="Priya Nair"/></div>
+            <div class="fg"><label class="fl">Grievance Email</label><input class="fi" id="not-email" placeholder="grievance@yourbusiness.in"/></div>
+          </div>
+          <button onclick="generateNotice()" class="btn btn-primary">Generate Notice From Data List</button>
+        </div>
+        <div id="notices-list"></div>
+      </section>
+
+      <!-- 9. CONSENT RECORDS -->
+      <section id="section-consent" class="view-section">
+        <div class="plain-header">
+          <h1>Consent &amp; Permission Records</h1>
+          <div class="plain-3q">
+            <div class="q-card"><strong>What is this?</strong>A log of when a customer agreed to share data, what purpose they saw, and if they withdrew permission.</div>
+            <div class="q-card"><strong>Why does my business need it?</strong>Note: Consent is ONLY needed when you rely on permission (Section 6) &mdash; not for Section 7 legitimate uses like medical emergencies or employment records.</div>
+            <div class="q-card"><strong>What to do next?</strong>Record customer consent sources or log any opt-out / withdrawal cleanly.</div>
+          </div>
+        </div>
+        <div class="card">
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;justify-content:space-between;">
+            <div style="display:flex;gap:8px;">
+              <button onclick="openConsentModal()" class="btn btn-primary">+ Log Consent Record</button>
+              <button onclick="openWithdrawalModal()" class="btn btn-secondary">Log Consent Withdrawal</button>
+            </div>
+            <input class="fi" style="max-width:230px;" id="cst-search" placeholder="Search consent logs..." oninput="loadConsent()"/>
+          </div>
+          <div class="tbl-wrap"><table><thead><tr><th>Customer Ref</th><th>Data Category</th><th>Purpose &amp; Notice Version</th><th>Channel</th><th>Status</th></tr></thead><tbody id="cst-tbody"></tbody></table></div>
+        </div>
+      </section>
+
+      <!-- 10. CUSTOMER PRIVACY REQUESTS -->
+      <section id="section-rights" class="view-section">
+        <div class="plain-header">
+          <h1>Customer Privacy Requests</h1>
+          <div class="plain-3q">
+            <div class="q-card"><strong>What is this?</strong>A helpdesk tracker when customers ask to view, fix, or delete their data, raise a complaint, or name a nominee.</div>
+            <div class="q-card"><strong>Why does my business need it?</strong>Sections 11&ndash;14 &amp; Rule 14 give customers rights to access, correction, erasure, grievance redressal, and nomination.</div>
+            <div class="q-card"><strong>What to do next?</strong>Log incoming requests, verify requester identity before sharing records, and resolve cleanly.</div>
+          </div>
+        </div>
+        <div class="card">
+          <button onclick="openRightsModal()" class="btn btn-primary" style="margin-bottom:14px;">+ Log Customer Request</button>
+          <div class="tbl-wrap"><table><thead><tr><th>Requester &amp; Type</th><th>Details</th><th>Identity Verified?</th><th>Status &amp; Owner</th><th>Actions</th></tr></thead><tbody id="req-tbody"></tbody></table></div>
+        </div>
+      </section>
+
+      <!-- 11. DATA RETENTION & DELETION -->
+      <section id="section-retention" class="view-section">
+        <div class="plain-header">
+          <h1>Data Retention &amp; Deletion</h1>
+          <div class="plain-3q">
+            <div class="q-card"><strong>What is this?</strong>Rules defining how long you keep each type of customer record before safely deleting it.</div>
+            <div class="q-card"><strong>Why does my business need it?</strong>Section 8(7) requires erasing personal data once its purpose ends, unless another Indian law (tax, clinical) mandates keeping it.</div>
+            <div class="q-card"><strong>What to do next?</strong>Add schedules for your records and log deletion confirmation tasks with proof.</div>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><h3 style="font-size:16px;">Retention Schedules</h3><button onclick="openRetentionModal()" class="btn btn-primary btn-sm">+ Add Rule</button></div>
+            <div id="ret-list"></div>
+          </div>
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><h3 style="font-size:16px;">Deletion Execution Tasks</h3><button onclick="openErasureModal()" class="btn btn-secondary btn-sm">+ Log Deletion Task</button></div>
+            <div id="era-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 12. PRIVACY INCIDENT RESPONSE -->
+      <section id="section-breaches" class="view-section">
+        <div class="plain-header">
+          <h1>Privacy Incident Response</h1>
+          <div class="plain-3q">
+            <div class="q-card"><strong>What is this?</strong>An incident workbook to record leaks or unauthorised access, contain harm, and draft notifications.</div>
+            <div class="q-card"><strong>Why does my business need it?</strong>Under Section 8(6) &amp; Rule 7, confirmed breaches require notifying the Data Protection Board and affected individuals cleanly.</div>
+            <div class="q-card"><strong>What to do next?</strong>Log any suspected incident, track affected systems &amp; timeline steps, and authorise drafts before sending.</div>
+          </div>
+        </div>
+        <div class="card">
+          <button onclick="openIncidentModal()" class="btn btn-primary" style="margin-bottom:14px;">+ Log Privacy Incident</button>
+          <div id="brc-list"></div>
+        </div>
+      </section>
+
+      <!-- 13. DOCUMENT CENTRE -->
+      <section id="section-documents" class="view-section">
+        <div class="plain-header">
+          <h1>Document Centre</h1>
+          <div class="plain-3q">
+            <div class="q-card"><strong>What is this?</strong>Ready-to-customise policy &amp; procedure drafts generated with your business details.</div>
+            <div class="q-card"><strong>Why does my business need it?</strong>Saves weeks writing privacy notices, vendor registers, incident SOPs, and staff guides from blank pages.</div>
+            <div class="q-card"><strong>What to do next?</strong>Generate a draft, review with your team/counsel, and download or save it to Evidence Vault.</div>
+          </div>
+        </div>
+        <div id="doc-templates-grid" class="grid-3"></div>
+        <div id="doc-preview-card" class="card" style="display:none;"></div>
+      </section>
+
+      <!-- 14. EVIDENCE VAULT -->
+      <section id="section-evidence" class="view-section">
+        <div class="plain-header">
+          <h1>Evidence Vault</h1>
+          <div class="plain-3q">
+            <div class="q-card"><strong>What is this?</strong>Secure folder for storing signed contracts, notices, backup proof, and security checks.</div>
+            <div class="q-card"><strong>Why does my business need it?</strong>Every upload is checked for safety (extension, 5 MB cap, magic bytes) and fingerprinted with SHA-256.</div>
+            <div class="q-card"><strong>What to do next?</strong>Upload files, preview/download them anytime, update versions, and review status across 5 review states.</div>
+          </div>
+        </div>
+        <div class="card">
+          <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between;margin-bottom:14px;">
+            <button onclick="openEvidenceUploadModal()" class="btn btn-primary">+ Upload Evidence File</button>
+            <select class="fi" style="max-width:200px;" id="evi-status-filter" onchange="loadEvidence()">
+              <option value="">All Review Statuses</option>
+              <option value="Uploaded">Uploaded</option>
+              <option value="Pending review">Pending review</option>
+              <option value="Verified">Verified</option>
+              <option value="Rejected">Rejected</option>
+              <option value="Expired">Expired</option>
+            </select>
+          </div>
+          <div class="tbl-wrap"><table><thead><tr><th>Title &amp; File</th><th>Control</th><th>Review Status</th><th>Expiry &amp; SHA-256</th><th>Actions</th></tr></thead><tbody id="evi-tbody"></tbody></table></div>
+        </div>
+      </section>
+
+      <!-- 15. REPORTS & BUNDLES -->
+      <section id="section-reports" class="view-section">
+        <div class="plain-header">
+          <h1>Reports &amp; Evidence Bundles</h1>
+          <div class="plain-3q">
+            <div class="q-card"><strong>What is this?</strong>Real downloadable reports built straight from your organisation's live data.</div>
+            <div class="q-card"><strong>Why does my business need it?</strong>Share clear readiness progress with leadership, hospital partners, enterprise buyers, or auditors.</div>
+            <div class="q-card"><strong>What to do next?</strong>Download your PDF summary, CSV spreadsheets, or complete ZIP Evidence Bundle.</div>
+          </div>
+        </div>
+        <div class="grid-3">
+          <div class="card">
+            <h3>Executive Readiness PDF</h3>
+            <p style="font-size:13.5px;color:var(--ink-2);margin:8px 0 14px;">Real multi-page binary PDF report covering Setup Progress, Customer Data List, Vendors, Scans, and Next Steps.</p>
+            <button onclick="downloadReportFile('/api/dpdp/reports/pdf')" class="btn btn-primary" style="width:100%;">Download PDF Report</button>
+          </div>
+          <div class="card">
+            <h3>Complete ZIP Evidence Bundle</h3>
+            <p style="font-size:13.5px;color:var(--ink-2);margin:8px 0 14px;">ZIP package containing your PDF summary, 4 CSV registers, Privacy Notices, SHA-256 manifest, and uploaded Evidence files.</p>
+            <button onclick="downloadReportFile('/api/dpdp/reports/bundle')" class="btn btn-primary" style="width:100%;">Download Evidence ZIP</button>
+          </div>
+          <div class="card">
+            <h3>Unified Workspace CSV Export</h3>
+            <p style="font-size:13.5px;color:var(--ink-2);margin:8px 0 14px;">Download your complete data list, vendor contracts, retention rules, requests, and evidence index for Excel.</p>
+            <button onclick="downloadReportFile('/api/dpdp/reports/csv?scope=full')" class="btn btn-secondary" style="width:100%;">Download Full CSV</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 16. AI DPDP ASSISTANT -->
+      <section id="section-assistant" class="view-section">
+        <div class="plain-header">
+          <h1>AI DPDP Assistant</h1>
+          <div class="plain-3q">
+            <div class="q-card"><strong>What is this?</strong>Plain-language DPDP Q&amp;A grounded in India's DPDP Act, 2023 &amp; DPDP Rules, 2025.</div>
+            <div class="q-card"><strong>Privacy Note</strong>Your Customer Data List &amp; Evidence Vault files are never sent externally. Any optional Gemini calls strip emails/phones/IDs automatically.</div>
+            <div class="q-card"><strong>What to do next?</strong>Click a starter question or ask in everyday words.</div>
+          </div>
+        </div>
+        <div class="card">
+          <div style="margin-bottom:12px;">
+            <strong style="font-size:13px;">Popular Starter Questions (Click to Ask):</strong>
+            <div id="ai-starter-chips" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;"></div>
+          </div>
+          <div id="ai-chat-history" style="max-height:420px;overflow-y:auto;display:grid;gap:12px;margin-bottom:14px;"></div>
+          <form onsubmit="event.preventDefault(); askAssistant();" style="display:flex;gap:10px;">
+            <input class="fi" id="ai-query-input" placeholder="Ask in plain language (e.g., How long can clinics retain invoices and records?)"/>
+            <button type="submit" class="btn btn-primary" id="ai-ask-btn">Ask Assistant</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- 17. LEARNING CENTRE & GLOSSARY -->
+      <section id="section-glossary" class="view-section">
+        <div class="plain-header"><h1>Learning Centre &amp; Plain-English Glossary</h1></div>
+        <div class="grid-2" id="glossary-grid"></div>
+      </section>
+
+      <!-- 18. SETTINGS, TEAM, SECURITY, AUDIT LOGS -->
+      <section id="section-settings" class="view-section">
+        <div class="plain-header"><h1>Business Profile, Team Members, Plan &amp; Security</h1></div>
+        <div class="grid-2">
+          <div class="card">
+            <h3 style="margin-bottom:12px;">Business Details</h3>
+            <div class="fg"><label class="fl">Company / Clinic Name</label><input class="fi" id="set-company"/></div>
+            <div class="fg"><label class="fl">Website URL</label><input class="fi" id="set-website"/></div>
+            <div class="fg"><label class="fl">Privacy / Grievance Contact Email</label><input class="fi" id="set-email"/></div>
+            <div class="fg"><label class="fl">Industry</label><input class="fi" id="set-industry"/></div>
+            <button onclick="saveBusinessSettings()" class="btn btn-primary">Save Business Details</button>
+          </div>
+          <div class="card">
+            <h3 style="margin-bottom:12px;">Account Security (2FA / MFA &amp; Account Deletion)</h3>
+            <div id="mfa-box" style="margin-bottom:14px;"></div>
+            <hr style="border:none;border-top:1px solid var(--border);margin:14px 0;">
+            <h4 style="font-size:14px;margin-bottom:6px;color:var(--rose);">Delete Organisation &amp; All Data</h4>
+            <p style="font-size:12.5px;color:var(--muted);margin-bottom:10px;">Permanently removes your account, customer data list, vendors, scans, and evidence files.</p>
+            <button onclick="openDeleteAccountModal()" class="btn btn-danger btn-sm">Delete Organisation Account</button>
+          </div>
+        </div>
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <h3>Team Members &amp; Role Access (Admin / Member / Viewer)</h3>
+            <button onclick="openTeamModal()" class="btn btn-primary btn-sm">+ Invite Team Member</button>
+          </div>
+          <div class="tbl-wrap"><table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Actions</th></tr></thead><tbody id="team-tbody"></tbody></table></div>
+        </div>
+        <div class="card">
+          <h3 style="margin-bottom:10px;">Recent Account Audit Log</h3>
+          <div class="tbl-wrap"><table><thead><tr><th>Time</th><th>Actor</th><th>Action</th><th>Resource</th></tr></thead><tbody id="audit-tbody"></tbody></table></div>
+        </div>
+      </section>
+
+      <!-- 19. ADVANCED LEGAL CENTRE SECTIONS -->
+      <section id="section-assessment" class="view-section">
+        <div class="plain-header"><h1>DPDP Act Requirements Register</h1></div>
+        <div class="card" id="legal-reqs-list">Loading statutory register...</div>
+      </section>
+      <section id="section-org-assessment" class="view-section">
+        <div class="plain-header"><h1>Deep Organisational Assessment</h1></div>
+        <div class="card" id="org-ass-box">Loading...</div>
+      </section>
+      <section id="section-penalties" class="view-section">
+        <div class="plain-header"><h1>Statutory Penalty Schedule &amp; 7 Section 33 Factors</h1></div>
+        <div class="card" id="penalties-matrix-box">Loading penalty schedule...</div>
+      </section>
+      <section id="section-timeline" class="view-section">
+        <div class="plain-header"><h1>DPDP Commencement Timeline</h1></div>
+        <div class="card" id="timeline-box">Loading timeline...</div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<!-- REUSABLE MODAL CONTAINER -->
+<div id="generic-modal" class="modal-bg" role="dialog" aria-modal="true">
+  <div class="modal-panel">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <h3 id="modal-title" style="font-size:18px;font-weight:700;">Modal</h3>
+      <button onclick="closeModal()" style="border:none;background:none;font-size:22px;cursor:pointer;color:var(--muted);">&times;</button>
     </div>
-
-    <!-- JAVASCRIPT LOGIC -->
-    <script>
-        let currentSection = 'overview';
-
-        function toggleNavGroup(groupId) {
-            const group = document.getElementById(groupId);
-            if (group) group.classList.toggle('open');
-        }
-
-        function navTo(sectionId, el) {
-            document.querySelectorAll('.dash-section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-item, .nav-sub-item').forEach(n => n.classList.remove('active'));
-            const target = document.getElementById('section-' + sectionId);
-            if (target) {
-                target.classList.add('active');
-                currentSection = sectionId;
-                window.location.hash = sectionId;
-            }
-            if (el) el.classList.add('active');
-            else {
-                document.querySelectorAll('.nav-item, .nav-sub-item').forEach(n => {
-                    if (n.getAttribute('href') === '#' + sectionId) n.classList.add('active');
-                });
-            }
-        }
-
-        // On Load, fetch DPDP data from backend APIs
-        window.addEventListener('DOMContentLoaded', async () => {
-            const hash = window.location.hash.replace('#', '') || 'overview';
-            navTo(hash);
-            await loadAllDpdpData();
-        });
-
-        async function loadAllDpdpData() {
-            try {
-                // 1. Load Inventory
-                const invRes = await fetch('/api/dpdp/inventory');
-                if (invRes.ok) {
-                    const inv = await invRes.json();
-                    renderInventory(inv.items || []);
-                }
-
-                // 2. Load Assessment
-                const assRes = await fetch('/api/dpdp/assessment');
-                if (assRes.ok) {
-                    const ass = await assRes.json();
-                    renderAssessment(ass);
-                }
-
-                // 3. Load Privacy Notices
-                const notRes = await fetch('/api/dpdp/notices');
-                if (notRes.ok) {
-                    const nots = await notRes.json();
-                    renderNotices(nots.items || []);
-                }
-
-                // 4. Load Withdrawals
-                const wthRes = await fetch('/api/dpdp/withdrawals');
-                if (wthRes.ok) {
-                    const wths = await wthRes.json();
-                    renderWithdrawals(wths.items || []);
-                }
-
-                // 5. Load Rights Requests
-                const rgtRes = await fetch('/api/dpdp/rights');
-                if (rgtRes.ok) {
-                    const rgts = await rgtRes.json();
-                    renderRights(rgts.items || []);
-                }
-
-                // 6. Load Vendors
-                const vndRes = await fetch('/api/dpdp/vendors');
-                if (vndRes.ok) {
-                    const vnds = await vndRes.json();
-                    renderVendors(vnds.items || []);
-                }
-
-                // 7. Load Retention
-                const retRes = await fetch('/api/dpdp/retention');
-                if (retRes.ok) {
-                    const rets = await retRes.json();
-                    renderRetention(rets.items || []);
-                }
-
-                // 8. Load Breaches
-                const brcRes = await fetch('/api/dpdp/breaches');
-                if (brcRes.ok) {
-                    const brcs = await brcRes.json();
-                    renderBreaches(brcs.items || []);
-                }
-
-                // 9. Load Evidence
-                const eviRes = await fetch('/api/evidence');
-                if (eviRes.ok) {
-                    const evis = await eviRes.json();
-                    renderEvidence(evis.evidence || []);
-                }
-
-                // 10. Load Website Scan History
-                await loadWebsiteScanHistory();
-
-                // 11. Load Data Flow Map
-                await loadDataFlowMap();
-            } catch (err) {
-                console.warn('Backend DPDP data fetch fallback:', err);
-            }
-        }
-
-        function renderInventory(items) {
-            const tbody = document.getElementById('inventory-tbody');
-            if (!tbody) return;
-            const navInv = document.getElementById('nav-inv-count');
-            const kpiInv = document.getElementById('kpi-inventory-count');
-            if (navInv) navInv.innerText = items.length;
-            if (kpiInv) kpiInv.innerText = items.length;
-            
-            if (!items.length) {
-                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-dim);">No data inventory items logged. Click "+ Add Data Stream" to start.</td></tr>';
-                return;
-            }
-
-            tbody.innerHTML = items.map(item => `
-                <tr>
-                    <td><strong>${escapeHtml(item.category || '')}</strong></td>
-                    <td>${escapeHtml(item.principal_type || '')}</td>
-                    <td>${escapeHtml(item.purpose || '')}</td>
-                    <td><span class="badge-pill badge-sky">${escapeHtml(item.legal_basis || '')}</span></td>
-                    <td>${escapeHtml(item.storage_system || '')}</td>
-                    <td>${escapeHtml(item.department || '')}</td>
-                    <td>${escapeHtml(item.retention_period || '')}</td>
-                    <td>${escapeHtml(item.international_transfer || 'None')}</td>
-                </tr>
-            `).join('');
-        }
-
-        function renderAssessment(assessment) {
-            const tbody = document.getElementById('assessment-tbody');
-            if (!tbody) return;
-            const controls = assessment.controls || [];
-            const kpiRead = document.getElementById('kpi-readiness');
-            const topRead = document.getElementById('topbar-readiness-val');
-            const kpiGaps = document.getElementById('kpi-gaps-count');
-            const navGaps = document.getElementById('nav-gaps-count');
-            
-            const scoreVal = (assessment.readiness_score !== undefined && assessment.readiness_score !== null)
-                ? assessment.readiness_score
-                : 0;
-            if (kpiRead) kpiRead.innerText = scoreVal + '%';
-            if (topRead) topRead.innerText = scoreVal + '%';
-            if (kpiGaps) kpiGaps.innerText = assessment.gaps_count || 0;
-            if (navGaps) navGaps.innerText = assessment.gaps_count || 0;
-
-            // Handle Demo / Unassessed Banners
-            const isDemo = assessment.is_demo === true;
-            const demoBanner = document.getElementById('demo-mode-banner');
-            const unassessedBanner = document.getElementById('unassessed-mode-banner');
-            if (demoBanner && unassessedBanner) {
-                if (isDemo) {
-                    demoBanner.style.display = 'flex';
-                    unassessedBanner.style.display = 'none';
-                } else if (scoreVal === 0) {
-                    demoBanner.style.display = 'none';
-                    unassessedBanner.style.display = 'flex';
-                } else {
-                    demoBanner.style.display = 'none';
-                    unassessedBanner.style.display = 'none';
-                }
-            }
-
-            // Update Top Actions in Quadrant 2
-            const actionsContainer = document.getElementById('top-actions-container');
-            if (actionsContainer) {
-                const gaps = assessment.gaps || [];
-                if (!gaps.length) {
-                    actionsContainer.innerHTML = '<div style="color: var(--text-dim); text-align: center; padding: 24px;">No open compliance gaps. Excellent posture!</div>';
-                } else {
-                    const top3 = gaps.slice(0, 3);
-                    actionsContainer.innerHTML = top3.map(g => `
-                        <div class="action-item-card">
-                            <div class="action-item-info">
-                                <h4>${escapeHtml(g.title || '')}</h4>
-                                <p>${escapeHtml(g.why_it_matters || '')}</p>
-                                <div style="font-size: 11px; color: #b45309; margin-top: 4px; font-weight: 600;">
-                                    Statutory Ceiling: ${escapeHtml(g.statutory_penalty || 'Up to ₹50 crore')} &bull; Target: ${escapeHtml(g.commencement_date || '13 May 2027')}
-                                </div>
-                            </div>
-                            <button onclick="navTo('remediation')" class="btn btn-primary btn-sm" style="flex-shrink: 0;">Remediate</button>
-                        </div>
-                    `).join('');
-                }
-            }
-
-            tbody.innerHTML = controls.map(ctrl => {
-                const isGap = ctrl.status === 'GAP_IDENTIFIED';
-                const pillClass = isGap ? 'badge-amber' : 'badge-emerald';
-                const statusLabel = isGap ? 'Gap Identified' : 'Self-Attested Implemented';
-                return `
-                    <tr>
-                        <td><strong style="color: var(--brand-primary);">${escapeHtml(ctrl.section || '')}</strong></td>
-                        <td>${escapeHtml(ctrl.title || '')}</td>
-                        <td>${escapeHtml(ctrl.category || '')}</td>
-                        <td>${escapeHtml(ctrl.effective_date || '')}</td>
-                        <td><span class="badge-pill ${pillClass}">${statusLabel}</span></td>
-                        <td><button onclick="alert('Viewing control: ${ctrl.requirement_id}')" class="btn btn-secondary btn-sm">Inspect</button></td>
-                    </tr>
-                `;
-            }).join('');
-
-            // Render Remediation list
-            const remContainer = document.getElementById('remediation-list-container');
-            if (remContainer) {
-                const tasks = assessment.remediation_tasks || [];
-                remContainer.innerHTML = tasks.map(t => `
-                    <div style="background: #ffffff; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-xs);">
-                        <div>
-                            <div style="font-weight: 700; color: var(--text-main);">${escapeHtml(t.title || '')}</div>
-                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Owner: ${escapeHtml(t.owner || '')} &bull; Deadline: ${escapeHtml(t.deadline || '')} &bull; Category: ${escapeHtml(t.category || '')}</div>
-                            <div style="font-size: 11.5px; color: var(--text-dim); margin-top: 4px;">${escapeHtml(t.guidance || '')}</div>
-                        </div>
-                        <span class="badge-pill badge-amber">Open Action Item</span>
-                    </div>
-                `).join('') || '<div style="color: var(--text-dim); text-align: center;">No open remediation tasks.</div>';
-            }
-        }
-
-        function renderNotices(items) {
-            const container = document.getElementById('notice-cards-container');
-            if (!container) return;
-            if (!items.length) {
-                container.innerHTML = '<div style="color: var(--text-dim); text-align: center; padding: 20px;">No custom privacy notices generated yet.</div>';
-                return;
-            }
-            container.innerHTML = items.map(n => `
-                <div style="background: var(--bg-base); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 18px; margin-bottom: 14px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <h4 style="font-size: 15px; font-weight: 700; color: var(--text-main);">${escapeHtml(n.title || '')} (${escapeHtml(n.version || 'v1.0')})</h4>
-                        <span class="badge-pill badge-emerald">Approved</span>
-                    </div>
-                    <pre style="background: #ffffff; border: 1px solid var(--border-color); padding: 12px; border-radius: 6px; font-size: 11.5px; color: var(--text-secondary); overflow-x: auto; white-space: pre-wrap; max-height: 180px;">${escapeHtml(n.content || '')}</pre>
-                </div>
-            `).join('');
-        }
-
-        function renderWithdrawals(items) {
-            const tbody = document.getElementById('withdrawal-tbody');
-            if (!tbody) return;
-            if (!items.length) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-dim);">No consent withdrawals logged.</td></tr>';
-                return;
-            }
-            tbody.innerHTML = items.map(w => `
-                <tr>
-                    <td><code>${escapeHtml(w.id || '')}</code></td>
-                    <td><strong>${escapeHtml(w.data_principal_ref || '')}</strong></td>
-                    <td>${escapeHtml(w.category || '')}</td>
-                    <td><span class="badge-pill badge-emerald">${escapeHtml(w.processing_halt_status || 'CEASED')}</span></td>
-                    <td>${w.processor_notified ? '<span class="badge-pill badge-emerald">Cascaded</span>' : 'Pending'}</td>
-                    <td>${w.statutory_exception_applies ? '<span style="color: var(--brand-amber);">' + escapeHtml(w.exception_reason || '') + '</span>' : 'None (Full Erasure)'}</td>
-                    <td><span class="badge-pill badge-emerald">${escapeHtml(w.status || 'COMPLETED')}</span></td>
-                </tr>
-            `).join('');
-        }
-
-        function renderRights(items) {
-            const tbody = document.getElementById('rights-tbody');
-            if (!tbody) return;
-            if (!items.length) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-dim);">No rights requests logged.</td></tr>';
-                return;
-            }
-            tbody.innerHTML = items.map(r => `
-                <tr>
-                    <td><code>${escapeHtml(r.id || '')}</code></td>
-                    <td><span class="badge-pill badge-sky">${escapeHtml(r.type || '')}</span></td>
-                    <td>${escapeHtml(r.principal_name || '')}</td>
-                    <td>${escapeHtml(r.received_at ? r.received_at.slice(0, 10) : '')}</td>
-                    <td>${escapeHtml(r.sla_deadline || '')}</td>
-                    <td><span class="badge-pill ${r.status==='COMPLETED'?'badge-emerald':'badge-amber'}">${escapeHtml(r.status || '')}</span></td>
-                    <td><button onclick="resolveRightsRequest('${r.id}')" class="btn btn-secondary btn-sm">Resolve</button></td>
-                </tr>
-            `).join('');
-        }
-
-        function renderVendors(items) {
-            const tbody = document.getElementById('vendors-tbody');
-            if (!tbody) return;
-            if (!items.length) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-dim);">No vendors registered.</td></tr>';
-                return;
-            }
-            tbody.innerHTML = items.map(v => `
-                <tr>
-                    <td><strong>${escapeHtml(v.name || '')}</strong></td>
-                    <td>${escapeHtml(v.service || '')}</td>
-                    <td>${escapeHtml(v.personal_data_processed || '')}</td>
-                    <td>${escapeHtml(v.storage_location || '')}</td>
-                    <td><span class="badge-pill ${v.dpa_status==='EXECUTED'?'badge-emerald':'badge-amber'}">${escapeHtml(v.dpa_status || '')}</span></td>
-                    <td>${escapeHtml(v.breach_notification_clause || '')}</td>
-                    <td><span class="badge-pill ${v.risk_rating==='LOW'?'badge-emerald':'badge-amber'}">${escapeHtml(v.risk_rating || '')}</span></td>
-                </tr>
-            `).join('');
-        }
-
-        function renderRetention(items) {
-            const tbody = document.getElementById('retention-tbody');
-            if (!tbody) return;
-            if (!items.length) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-dim);">No retention rules configured.</td></tr>';
-                return;
-            }
-            tbody.innerHTML = items.map(r => `
-                <tr>
-                    <td><strong>${escapeHtml(r.category || '')}</strong></td>
-                    <td>${escapeHtml(r.period_years ? r.period_years + ' Years' : '')}</td>
-                    <td>${escapeHtml(r.statutory_basis || '')}</td>
-                    <td>${escapeHtml(r.end_of_purpose_trigger || '')}</td>
-                    <td>${escapeHtml(r.deletion_method || '')}</td>
-                    <td>${escapeHtml(r.next_review_date || '')}</td>
-                </tr>
-            `).join('');
-        }
-
-        function renderBreaches(items) {
-            const container = document.getElementById('breach-cards-container');
-            if (!container) return;
-            if (!items.length) {
-                container.innerHTML = '<div style="color: var(--text-dim); text-align: center; padding: 20px;">No security incidents reported. Platform operational.</div>';
-                return;
-            }
-            container.innerHTML = items.map(b => `
-                <div style="background: var(--bg-base); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 18px; margin-bottom: 14px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <h4 style="font-size: 15px; font-weight: 700; color: var(--text-main);">${escapeHtml(b.title || '')}</h4>
-                        <span class="badge-pill badge-red">${escapeHtml(b.severity || 'MEDIUM')} SEVERITY</span>
-                    </div>
-                    <div style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 10px;">
-                        Detected: ${escapeHtml(b.detected_at || '')} &bull; Affected Categories: ${escapeHtml((b.affected_data_categories||[]).join(', '))}
-                    </div>
-                    <div style="background: #ffffff; border: 1px solid var(--border-color); padding: 12px; border-radius: 6px; font-size: 11.5px; color: var(--text-secondary); margin-bottom: 10px; white-space: pre-wrap;">${escapeHtml(b.board_initial_intimation_draft || '')}</div>
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-size: 11.5px; color: var(--brand-amber);">Status: ${escapeHtml(b.board_notification_status || 'DRAFT')}</span>
-                        ${!b.customer_authorized_to_send ? `<button onclick="authorizeBreach('${b.id}')" class="btn btn-primary btn-sm">Authorize Intimation</button>` : '<span class="badge-pill badge-emerald">Authorized &bull; Submitted</span>'}
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function renderEvidence(items) {
-            const tbody = document.getElementById('evidence-tbody');
-            if (!tbody) return;
-            const kpiEvi = document.getElementById('kpi-evidence-count');
-            if (kpiEvi) kpiEvi.innerText = items.length;
-            if (!items.length) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-dim);">No evidence artifacts uploaded yet.</td></tr>';
-                return;
-            }
-            tbody.innerHTML = items.map(e => `
-                <tr>
-                    <td><strong>${escapeHtml(e.title || e.filename || '')}</strong></td>
-                    <td><span class="badge-pill badge-sky">${escapeHtml(e.control_id || e.category || 'General')}</span></td>
-                    <td>${escapeHtml(e.uploaded_at ? e.uploaded_at.slice(0, 10) : '')}</td>
-                    <td><code style="font-size: 11px; color: var(--brand-primary);">${escapeHtml((e.file_hash || 'SHA-256 Verified').slice(0, 20))}...</code></td>
-                    <td><span class="badge-pill badge-emerald">${escapeHtml(e.status || 'VERIFIED')}</span></td>
-                    <td><button onclick="alert('Evidence artifact integrity verified via SHA-256.')" class="btn btn-secondary btn-sm">Inspect</button></td>
-                </tr>
-            `).join('');
-        }
-
-        function escapeHtml(str) {
-            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-        }
-
-        // CSV Export
-        function downloadInventoryCSV() {
-            window.location.href = '/api/dpdp/inventory/export';
-        }
-
-        // Modals
-        function openAddInventoryModal() { document.getElementById('addInventoryModal').classList.add('open'); }
-        function closeAddInventoryModal() { document.getElementById('addInventoryModal').classList.remove('open'); }
-        function openAssistantModal() { document.getElementById('assistantModal').classList.add('open'); }
-        function closeAssistantModal() { document.getElementById('assistantModal').classList.remove('open'); }
-
-        async function submitNewInventory(e) {
-            e.preventDefault();
-            const data = {
-                category: document.getElementById('inv_cat').value.trim(),
-                principal_type: document.getElementById('inv_principal').value.trim(),
-                purpose: document.getElementById('inv_purpose').value.trim(),
-                legal_basis: document.getElementById('inv_basis').value,
-                storage_system: document.getElementById('inv_storage').value.trim(),
-                retention_period: document.getElementById('inv_retention').value.trim()
-            };
-            const res = await fetch('/api/dpdp/inventory', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-            if (res.ok) {
-                closeAddInventoryModal();
-                await loadAllDpdpData();
-            } else {
-                alert('Could not add inventory entry');
-            }
-        }
-
-        async function sendAiQuery() {
-            const input = document.getElementById('ai-query-input');
-            const q = input.value.trim();
-            if (!q) return;
-            const chat = document.getElementById('chat-messages');
-            chat.innerHTML += `<div class="chat-bubble chat-user">${escapeHtml(q)}</div>`;
-            input.value = '';
-
-            try {
-                const res = await fetch('/api/dpdp/assistant', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ query: q })
-                });
-                const data = await res.json();
-                chat.innerHTML += `
-                    <div class="chat-bubble chat-ai">
-                        <div style="font-size: 11px; color: var(--brand-primary); font-weight: 700; margin-bottom: 4px;">${escapeHtml(data.matched_section || '')}</div>
-                        <div>${escapeHtml(data.response || '')}</div>
-                        <div style="font-size: 10.5px; color: var(--text-dim); margin-top: 6px;">Status: ${escapeHtml(data.effective_status || '')} &bull; Source: ${escapeHtml(data.source_document || '')}</div>
-                    </div>
-                `;
-                chat.scrollTop = chat.scrollHeight;
-            } catch (err) {
-                chat.innerHTML += `<div class="chat-bubble chat-ai" style="color: var(--brand-red);">Assistant error. Please try again.</div>`;
-            }
-        }
-
-        async function resolveRightsRequest(id) {
-            const summary = prompt('Enter resolution summary for Data Principal:');
-            if (summary) {
-                await fetch('/api/dpdp/rights/' + id + '/status', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ status: 'COMPLETED', response_summary: summary })
-                });
-                await loadAllDpdpData();
-            }
-        }
-
-        async function authorizeBreach(id) {
-            if (confirm('Authorize notification to the Data Protection Board under Section 8(6) & Rule 7?')) {
-                await fetch('/api/dpdp/breaches/' + id + '/authorize', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' }
-                });
-                await loadAllDpdpData();
-            }
-        }
-
-        // ==============================================================================
-        // DPDP WEBSITE SCANNER FUNCTIONS
-        // ==============================================================================
-        let activeScanReport = null;
-        let activeFilter = 'ALL';
-
-        function adaptIndustryChecks() {
-            const ind = (document.getElementById('scanner-industry').value || '').toLowerCase();
-            const childToggle = document.getElementById('scanner-children-data');
-            const childLabel = document.getElementById('label-children-data');
-            const purposeInput = document.getElementById('scanner-purpose');
-            const typeInput = document.getElementById('scanner-biz-type');
-
-            if (ind.includes('health') || ind.includes('clinic') || ind.includes('diag') || ind.includes('hosp')) {
-                if (childToggle) childToggle.checked = true;
-                if (childLabel) childLabel.textContent = "Processes Pediatric / Minor Patient Data (Section 9 Parental Consent)";
-                if (purposeInput) purposeInput.value = "Patient Consultations, Test Bookings & Telehealth";
-                if (typeInput) typeInput.value = "Diagnostic & Healthcare Clinic";
-            } else if (ind.includes('educat')) {
-                if (childToggle) childToggle.checked = true;
-                if (childLabel) childLabel.textContent = "Processes Student / Minor Records under 18 (Section 9 Verifiable Consent)";
-                if (purposeInput) purposeInput.value = "Student Admissions, Online Learning & Academic Enquiries";
-                if (typeInput) typeInput.value = "Educational Institution / EdTech";
-            } else if (ind.includes('saas')) {
-                if (childToggle) childToggle.checked = false;
-                if (childLabel) childLabel.textContent = "Children / Minor Data Processed (Toggle if intended for minors)";
-                if (purposeInput) purposeInput.value = "B2B SaaS Platform User Onboarding & Subscription Management";
-                if (typeInput) typeInput.value = "SaaS / Technology Company";
-            } else if (ind.includes('ecom')) {
-                if (childToggle) childToggle.checked = false;
-                if (purposeInput) purposeInput.value = "E-Commerce Shopping, Customer Orders & Deliveries";
-                if (typeInput) typeInput.value = "Online Retail Store";
-            }
-        }
-
-        async function triggerWebsiteScan(isDemo) {
-            const urlInput = document.getElementById('scanner-url');
-            const url = urlInput.value.trim();
-            const authConfirmed = document.getElementById('scanner-auth-confirm').checked;
-
-            if (!authConfirmed) {
-                alert('Please confirm website authorization before proceeding.');
-                return;
-            }
-
-            if (!url) {
-                alert('Please enter a target website URL.');
-                urlInput.focus();
-                return;
-            }
-
-            const btnStart = document.getElementById('btn-start-scan');
-            const btnDemo = document.getElementById('btn-demo-scan');
-            const progressPanel = document.getElementById('scanner-progress-panel');
-            const resultsPanel = document.getElementById('scanner-results-panel');
-            const progressBar = document.getElementById('progress-bar-fill');
-            const statusText = document.getElementById('progress-status-text');
-            const percentBadge = document.getElementById('progress-percent-badge');
-            const terminalLog = document.getElementById('scanner-terminal-log');
-
-            btnStart.disabled = true;
-            btnDemo.disabled = true;
-            resultsPanel.style.display = 'none';
-            progressPanel.style.display = 'block';
-            progressPanel.scrollIntoView({ behavior: 'smooth' });
-
-            terminalLog.innerHTML = `<div>[${new Date().toLocaleTimeString()}] Initializing DPDP passive crawler worker...</div>`;
-
-            // 8 Plain-English Stages
-            const stages = [
-                { id: 'stage-01', text: '1. Connecting to your website', pct: 15 },
-                { id: 'stage-02', text: '2. Finding important pages', pct: 28 },
-                { id: 'stage-03', text: '3. Checking privacy information', pct: 40 },
-                { id: 'stage-04', text: '4. Looking at information collection forms', pct: 54 },
-                { id: 'stage-05', text: '5. Identifying third-party services', pct: 68 },
-                { id: 'stage-06', text: '6. Checking privacy and grievance contacts', pct: 80 },
-                { id: 'stage-07', text: '7. Mapping applicable DPDP requirements', pct: 92 },
-                { id: 'stage-08', text: '8. Preparing your report', pct: 100 }
-            ];
-
-            let stageIdx = 0;
-            const stageTimer = setInterval(() => {
-                if (stageIdx < stages.length) {
-                    const st = stages[stageIdx];
-                    progressBar.style.width = st.pct + '%';
-                    percentBadge.textContent = st.pct + '%';
-                    statusText.textContent = st.text;
-                    document.querySelectorAll('.stage-item').forEach(el => el.classList.remove('stage-active'));
-                    const curEl = document.getElementById(st.id);
-                    if (curEl) {
-                        curEl.classList.add('stage-active');
-                        if (stageIdx > 0) {
-                            const prevEl = document.getElementById(stages[stageIdx - 1].id);
-                            if (prevEl) prevEl.classList.add('stage-done');
-                        }
-                    }
-                    terminalLog.innerHTML += `<div>[${new Date().toLocaleTimeString()}] ${st.text}... OK</div>`;
-                    terminalLog.scrollTop = terminalLog.scrollHeight;
-                    stageIdx++;
-                }
-            }, 650);
-
-            try {
-                const payload = {
-                    website_url: url,
-                    business_name: document.getElementById('scanner-biz-name').value.trim(),
-                    industry: document.getElementById('scanner-industry').value,
-                    business_type: document.getElementById('scanner-biz-type').value.trim(),
-                    website_purpose: document.getElementById('scanner-purpose').value.trim(),
-                    collects_personal_info: document.getElementById('scanner-collects-pii').checked,
-                    children_data_processed: document.getElementById('scanner-children-data').checked,
-                    authorization_confirmed: true,
-                    is_demo: isDemo
-                };
-
-                const res = await fetch('/api/dpdp/scanner/start', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                clearInterval(stageTimer);
-                const data = await res.json();
-
-                if (res.ok && data.status === 'success') {
-                    document.querySelectorAll('.stage-item').forEach(el => {
-                        el.classList.remove('stage-active');
-                        el.classList.add('stage-done');
-                    });
-                    progressBar.style.width = '100%';
-                    percentBadge.textContent = '100%';
-                    statusText.textContent = 'Scan Complete!';
-                    terminalLog.innerHTML += `<div>[${new Date().toLocaleTimeString()}] Report prepared successfully. Ready to review.</div>`;
-
-                    setTimeout(() => {
-                        progressPanel.style.display = 'none';
-                        renderWebsiteScanResults(data.scan);
-                        resultsPanel.style.display = 'block';
-                        resultsPanel.scrollIntoView({ behavior: 'smooth' });
-                        loadWebsiteScanHistory();
-                    }, 500);
-                } else {
-                    progressPanel.style.display = 'none';
-                    alert(data.message || 'Website scan failed. Check URL or SSRF boundary.');
-                }
-            } catch (err) {
-                clearInterval(stageTimer);
-                progressPanel.style.display = 'none';
-                alert('Website scan request error: ' + err.message);
-            } finally {
-                btnStart.disabled = false;
-                btnDemo.disabled = false;
-            }
-        }
-
-        function renderWebsiteScanResults(scan) {
-            activeScanReport = scan;
-            const metrics = scan.summary_metrics || {};
-
-            document.getElementById('res-pages-count').textContent = metrics.pages_scanned_count || 1;
-            document.getElementById('res-forms-count').textContent = metrics.forms_discovered_count || 0;
-            document.getElementById('res-trackers-count').textContent = metrics.third_party_services_count || 0;
-            document.getElementById('res-score-val').textContent = (metrics.readiness_score || 0) + '%';
-            document.getElementById('res-domain-sub').textContent = scan.target_url || 'Target Domain';
-
-            const findings = scan.findings || [];
-            
-            // Map into 4 buckets
-            const foundCount = findings.filter(f => f.severity === 'LOW' || f.category === 'FOUND' || f.title.toLowerCase().includes('present') || f.title.toLowerCase().includes('compliant')).length || 2;
-            const missingCount = findings.filter(f => f.severity === 'HIGH' || f.severity === 'CRITICAL').length || 3;
-            const inputCount = findings.filter(f => f.severity === 'MEDIUM' || f.title.toLowerCase().includes('input') || f.title.toLowerCase().includes('basis')).length || 2;
-            const internalCount = findings.filter(f => f.title.toLowerCase().includes('internal') || f.title.toLowerCase().includes('safeguard')).length || 1;
-
-            const cFound = document.getElementById('count-found');
-            const cMissing = document.getElementById('count-missing');
-            const cInput = document.getElementById('count-input');
-            const cInternal = document.getElementById('count-internal');
-            if (cFound) cFound.textContent = foundCount;
-            if (cMissing) cMissing.textContent = missingCount;
-            if (cInput) cInput.textContent = inputCount;
-            if (cInternal) cInternal.textContent = internalCount;
-
-            // Existing filter counts
-            const cAll = document.getElementById('count-all');
-            const cHigh = document.getElementById('count-high');
-            const cMed = document.getElementById('count-med');
-            if (cAll) cAll.textContent = findings.length;
-            if (cHigh) cHigh.textContent = findings.filter(f => f.severity === 'CRITICAL' || f.severity === 'HIGH').length;
-            if (cMed) cMed.textContent = findings.filter(f => f.severity === 'MEDIUM').length;
-
-            renderFindingsList(findings);
-        }
-
-        function filterFindingsBucket(bucket) {
-            document.querySelectorAll('.bucket-badge-card').forEach(b => b.classList.remove('active'));
-            if (event && event.currentTarget) event.currentTarget.classList.add('active');
-
-            if (!activeScanReport) return;
-            const all = activeScanReport.findings || [];
-            let filtered = all;
-
-            if (bucket === 'FOUND') {
-                filtered = all.filter(f => f.severity === 'LOW' || f.category === 'FOUND' || f.title.toLowerCase().includes('present'));
-            } else if (bucket === 'NOT_FOUND') {
-                filtered = all.filter(f => f.severity === 'HIGH' || f.severity === 'CRITICAL');
-            } else if (bucket === 'NEEDS_INPUT') {
-                filtered = all.filter(f => f.severity === 'MEDIUM' || f.title.toLowerCase().includes('basis'));
-            } else if (bucket === 'CANNOT_CHECK') {
-                filtered = all.filter(f => f.title.toLowerCase().includes('internal') || f.title.toLowerCase().includes('safeguard'));
-            }
-            renderFindingsList(filtered.length ? filtered : all);
-        }
-
-        function renderFindingsList(findings) {
-            const wrap = document.getElementById('findings-list-wrap');
-            if (!findings || findings.length === 0) {
-                wrap.innerHTML = `<div style="text-align: center; padding: 30px; color: var(--text-dim);">No compliance gaps detected matching current filter.</div>`;
-                return;
-            }
-
-            wrap.innerHTML = findings.map((f, i) => {
-                const sevBadge = f.severity === 'CRITICAL' ? 'badge-red' :
-                                 (f.severity === 'HIGH' ? 'badge-amber' :
-                                 (f.severity === 'MEDIUM' ? 'badge-sky' : 'badge-emerald'));
-
-                const effBadge = f.effective_status === 'SCHEDULED_MAY_2027' ?
-                    '<span class="badge-pill badge-sky" style="font-size: 10px;">Future Readiness: Scheduled 13 May 2027</span>' :
-                    '<span class="badge-pill badge-emerald" style="font-size: 10px;">In Force</span>';
-
-                // Determine plain-English bucket
-                const isFound = f.severity === 'LOW' || f.title.toLowerCase().includes('present');
-                const bucketTag = isFound ? '<span class="badge-pill badge-emerald" style="font-size: 10.5px;">FOUND (Good)</span>' :
-                                  (f.severity === 'HIGH' || f.severity === 'CRITICAL' ? '<span class="badge-pill badge-amber" style="font-size: 10.5px;">NOT FOUND (Missing)</span>' :
-                                  '<span class="badge-pill badge-sky" style="font-size: 10.5px;">NEEDS YOUR INPUT</span>');
-
-                return `
-                    <div class="finding-card" id="finding-card-${f.id}">
-                        <div class="finding-header" onclick="toggleFindingCard('${f.id}')">
-                            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-                                ${bucketTag}
-                                <span class="badge-pill ${sevBadge}">${escapeHtml(f.severity)}</span>
-                                <strong style="font-size: 14px; color: var(--text-main);">${escapeHtml(f.title)}</strong>
-                                <span style="font-size: 11px; color: var(--brand-primary); font-weight: 600;">${escapeHtml(f.legal_reference)}</span>
-                                ${effBadge}
-                            </div>
-                            <svg id="arrow-${f.id}" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-                        </div>
-
-                        <div class="finding-body" id="body-${f.id}">
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
-                                <div>
-                                    <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">What We Found</div>
-                                    <div style="color: var(--text-main); margin-top: 4px;">${escapeHtml(f.observation || '')}</div>
-                                </div>
-                                <div>
-                                    <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Affected Component &amp; Page</div>
-                                    <div style="color: var(--brand-primary); margin-top: 4px; font-family: monospace; font-size: 12px;">${escapeHtml(f.affected_component || '')} &bull; ${escapeHtml(f.affected_page || '')}</div>
-                                </div>
-                            </div>
-
-                            <div style="margin-bottom: 14px;">
-                                <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Technical Evidence Snippet</div>
-                                <div style="background: var(--bg-base); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 10px; font-family: monospace; font-size: 11.5px; color: var(--text-secondary); overflow-x: auto;">
-                                    ${escapeHtml(f.evidence_snippet || 'Observed via passive inspection')}
-                                </div>
-                            </div>
-
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
-                                <div>
-                                    <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Why This Matters</div>
-                                    <div style="color: var(--text-secondary); margin-top: 4px; line-height: 1.5;">${escapeHtml(f.why_it_matters || '')}</div>
-                                </div>
-                                <div>
-                                    <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">What You Should Do</div>
-                                    <div style="color: var(--brand-emerald); font-weight: 600; margin-top: 4px; line-height: 1.5;">${escapeHtml(f.recommended_action || '')}</div>
-                                </div>
-                            </div>
-
-                            <!-- STATUTORY PENALTY EXPOSURE -->
-                            <div style="background: var(--brand-red-light); border: 1px solid rgba(220, 38, 38, 0.2); border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 16px; font-size: 12px;">
-                                <div style="font-weight: 700; color: var(--brand-red); display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
-                                    <span>Potential Statutory Penalty Ceiling (Schedule to DPDP Act):</span>
-                                    <span>${escapeHtml(f.penalty_ceiling_text || 'Up to ₹50 crore')}</span>
-                                </div>
-                                <div style="color: var(--text-muted); font-size: 11px;">
-                                    ${escapeHtml(f.statutory_disclaimer || 'Maximum statutory penalty represents the ceiling determined by the Board on a case-by-case basis. Not an automatic fine.')}
-                                </div>
-                            </div>
-
-                            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 14px;">
-                                <div style="font-size: 11px; color: var(--text-muted);">
-                                    Confidence: <strong style="color: var(--text-main);">${escapeHtml(f.confidence || 'HIGH')}</strong> &bull; Proof Required: <em>${escapeHtml(f.required_evidence || 'Documented procedure')}</em>
-                                </div>
-                                <button id="btn-fix-${f.id}" onclick="convertFindingToTask('${activeScanReport.scan_id}', '${f.id}')" class="btn btn-primary btn-sm">
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                                    <span>Fix This Issue &rarr; Create Remediation Task</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function toggleFindingCard(id) {
-            const body = document.getElementById('body-' + id);
-            const arrow = document.getElementById('arrow-' + id);
-            if (!body) return;
-            if (body.classList.contains('expanded')) {
-                body.classList.remove('expanded');
-                if (arrow) arrow.style.transform = 'rotate(0deg)';
-            } else {
-                body.classList.add('expanded');
-                if (arrow) arrow.style.transform = 'rotate(180deg)';
-            }
-        }
-
-        function filterFindings(type) {
-            activeFilter = type;
-            document.querySelectorAll('#findings-filter-bar .filter-btn').forEach(b => b.classList.remove('active'));
-            if (event && event.target) event.target.classList.add('active');
-
-            if (!activeScanReport) return;
-            const all = activeScanReport.findings || [];
-            let filtered = all;
-
-            if (type === 'HIGH') {
-                filtered = all.filter(f => f.severity === 'CRITICAL' || f.severity === 'HIGH');
-            } else if (type === 'MEDIUM') {
-                filtered = all.filter(f => f.severity === 'MEDIUM');
-            } else if (type === 'FUTURE') {
-                filtered = all.filter(f => f.effective_status === 'SCHEDULED_MAY_2027');
-            }
-            renderFindingsList(filtered);
-        }
-
-        async function convertFindingToTask(scanId, findingId) {
-            const btn = document.getElementById('btn-fix-' + findingId);
-            if (btn) btn.disabled = true;
-
-            try {
-                const res = await fetch('/api/dpdp/scanner/convert-task', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ scan_id: scanId, finding_id: findingId, assignee: 'Privacy Lead' })
-                });
-                const data = await res.json();
-                if (res.ok && data.status === 'success') {
-                    if (btn) {
-                        btn.classList.remove('btn-primary');
-                        btn.classList.add('btn-secondary');
-                        btn.innerHTML = '<span>Task Added to Remediation Centre &#10003;</span>';
-                    }
-                    const gapEl = document.getElementById('kpi-gaps-count');
-                    if (gapEl) gapEl.textContent = (parseInt(gapEl.textContent) || 0) + 1;
-                } else {
-                    alert('Could not convert finding: ' + (data.message || 'Error'));
-                    if (btn) btn.disabled = false;
-                }
-            } catch (err) {
-                alert('Request failed: ' + err.message);
-                if (btn) btn.disabled = false;
-            }
-        }
-
-        async function loadWebsiteScanHistory() {
-            try {
-                const res = await fetch('/api/dpdp/scanner/history');
-                if (!res.ok) return;
-                const data = await res.json();
-                const scans = data.scans || [];
-                const tbody = document.getElementById('scanner-history-tbody');
-                const badge = document.getElementById('history-scans-count');
-
-                if (badge) badge.textContent = `${scans.length} Recorded`;
-                if (!tbody) return;
-
-                if (scans.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-dim); padding: 24px;">No website scans recorded yet. Enter a URL above and click "Scan My Website".</td></tr>`;
-                    return;
-                }
-
-                tbody.innerHTML = scans.map(s => {
-                    const dt = s.scanned_at ? new Date(s.scanned_at).toLocaleString() : 'Recent';
-                    const score = s.summary_metrics?.readiness_score || 0;
-                    const gaps = s.findings?.length || 0;
-                    const pages = s.summary_metrics?.pages_scanned_count || 1;
-
-                    return `
-                        <tr>
-                            <td>${escapeHtml(dt)}</td>
-                            <td><strong style="color: var(--text-main);">${escapeHtml(s.target_url || '')}</strong><br><span style="font-size: 11px; color: var(--text-dim);">${escapeHtml(s.business_name || '')}</span></td>
-                            <td><span class="badge-pill badge-sky">${escapeHtml(s.industry || 'healthcare')}</span></td>
-                            <td>${pages} Pages</td>
-                            <td><span class="badge-pill ${gaps > 0 ? 'badge-amber' : 'badge-emerald'}">${gaps} Observable Gaps</span></td>
-                            <td><strong style="color: var(--brand-primary);">${score}%</strong></td>
-                            <td>
-                                <button onclick="viewPastScan('${s.scan_id}')" class="btn btn-secondary btn-sm" style="margin-right: 6px;">View Report</button>
-                                <button onclick="deletePastScan('${s.scan_id}')" style="background: none; color: var(--brand-red); font-size: 11px;">Delete</button>
-                            </td>
-                        </tr>
-                    `;
-                }).join('');
-            } catch (err) {
-                console.error('Error loading scan history:', err);
-            }
-        }
-
-        async function viewPastScan(scanId) {
-            try {
-                const res = await fetch('/api/dpdp/scanner/results/' + scanId);
-                if (res.ok) {
-                    const data = await res.json();
-                    renderWebsiteScanResults(data.scan);
-                    const panel = document.getElementById('scanner-results-panel');
-                    panel.style.display = 'block';
-                    panel.scrollIntoView({ behavior: 'smooth' });
-                }
-            } catch (err) {
-                alert('Could not load past scan: ' + err.message);
-            }
-        }
-
-        async function deletePastScan(scanId) {
-            if (confirm('Permanently delete this scan report and associated technical observations?')) {
-                try {
-                    const res = await fetch('/api/dpdp/scanner/' + scanId, { method: 'DELETE' });
-                    if (res.ok) {
-                        await loadWebsiteScanHistory();
-                    }
-                } catch (err) {
-                    alert('Delete failed: ' + err.message);
-                }
-            }
-        }
-
-        function confirmOrgDeletion() {
-            if (confirm('Are you sure you want to request permanent erasure of all organization records? This deletes user accounts, evidence artifacts, and compliance logs per DPDP Section 8(7).')) {
-                fetch('/api/account/delete', { method: 'POST', headers: { 'Content-Type': 'application/json' } })
-                    .then(() => { alert('Account deletion submitted.'); window.location.href = '/'; });
-            }
-        }
-        async function loadDataFlowMap() {
-            const container = document.getElementById('data-flow-container');
-            const summary = document.getElementById('data-flow-summary');
-            if (!container) return;
-            try {
-                const res = await fetch('/api/dpdp/data-flow');
-                if (!res.ok) return;
-                const data = await res.json();
-                const flow = data.data_flow || {};
-                const stages = flow.stages || [];
-                
-                container.innerHTML = stages.map(s => `
-                    <div style="background: #ffffff; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 18px; box-shadow: var(--shadow-xs);">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <span style="font-size: 11px; font-weight: 700; color: var(--brand-primary); text-transform: uppercase;">Stage ${s.stage_number}</span>
-                            <span class="badge-pill ${s.status === 'VERIFIED' ? 'badge-emerald' : 'badge-amber'}">${escapeHtml(s.status || 'ACTIVE')}</span>
-                        </div>
-                        <h4 style="font-size: 15px; font-weight: 750; color: var(--text-main); margin-bottom: 6px;">${escapeHtml(s.stage_name || '')}</h4>
-                        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">${escapeHtml(s.description || '')}</p>
-                        <div style="font-size: 11.5px; background: var(--bg-base); border: 1px solid var(--border-color); border-radius: 6px; padding: 10px; margin-bottom: 10px;">
-                            <div><strong>Components:</strong> ${escapeHtml((s.components || []).join(', '))}</div>
-                            <div style="margin-top: 4px;"><strong>Data Types:</strong> ${escapeHtml((s.data_types || []).join(', '))}</div>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-dim);">
-                            <span>${escapeHtml(s.encryption_status || 'TLS 1.3 / AES-256')}</span>
-                            <span style="color: var(--brand-emerald); font-weight: 600;">${escapeHtml(s.statutory_basis || '')}</span>
-                        </div>
-                    </div>
-                `).join('');
-
-                if (summary) {
-                    summary.innerHTML = `
-                        <div style="background: var(--bg-base); border-radius: 8px; padding: 12px 18px; flex: 1; min-width: 200px;">
-                            <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Data Streams in Pipeline</div>
-                            <div style="font-size: 22px; font-weight: 800; color: var(--brand-primary);">${flow.total_streams_mapped || 0}</div>
-                        </div>
-                        <div style="background: var(--bg-base); border-radius: 8px; padding: 12px 18px; flex: 1; min-width: 200px;">
-                            <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Third-Party Processors</div>
-                            <div style="font-size: 22px; font-weight: 800; color: #0284c7;">${flow.third_party_processors_count || 0}</div>
-                        </div>
-                        <div style="background: var(--bg-base); border-radius: 8px; padding: 12px 18px; flex: 1; min-width: 200px;">
-                            <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Cross-Border Transfers</div>
-                            <div style="font-size: 22px; font-weight: 800; color: #059669;">${flow.cross_border_transfers ? 'Permitted Territory' : 'Domestic Only'}</div>
-                        </div>
-                    `;
-                }
-            } catch (e) {
-                console.warn('Error loading data flow map:', e);
-            }
-        }
-    </script>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<script>
+let STATE = {
+  demoMode: false,
+  user: null,
+  org: null,
+  onboardingStep: 1,
+  inventory: [],
+  vendors: [],
+  notices: [],
+  rights: [],
+  retention: [],
+  erasures: [],
+  incidents: [],
+  evidence: [],
+  scans: []
+};
+
+function esc(v) {
+  return String(v == null ? '' : v)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function toast(msg, type = 'ok') {
+  const el = document.createElement('div');
+  el.className = 'toast ' + (type === 'err' ? 'err' : 'ok');
+  el.textContent = msg;
+  document.getElementById('toast-wrap').appendChild(el);
+  setTimeout(() => el.remove(), 3800);
+}
+
+function toggleTheme() {
+  const curr = document.documentElement.getAttribute('data-theme') || 'light';
+  const next = curr === 'light' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('trustaudit_theme', next);
+  document.getElementById('theme-toggle-btn').textContent = next === 'dark' ? 'Light Mode' : 'Dark Mode';
+}
+
+function toggleSidebar(open) {
+  document.getElementById('main-sidebar').classList.toggle('mobile-open', !!open);
+}
+
+function toggleNavGroup(id) {
+  document.getElementById(id).classList.toggle('collapsed');
+}
+
+function openModal(title, html) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-body').innerHTML = html;
+  document.getElementById('generic-modal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('generic-modal').classList.remove('open');
+}
+
+function downloadReportFile(url) {
+  if (STATE.demoMode) {
+    toast('Create a free account to generate downloadable reports for your own business.', 'err');
+    return;
+  }
+  window.location.href = url;
+}
+
+function switchAuthTab(tab) {
+  document.getElementById('auth-tab-login').classList.toggle('active', tab === 'login');
+  document.getElementById('auth-tab-register').classList.toggle('active', tab === 'register');
+  document.getElementById('login-form').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('register-form').style.display = tab === 'register' ? 'block' : 'none';
+}
+
+function showAuthGate(tab = 'login') {
+  document.getElementById('workspace-shell').style.display = 'none';
+  document.getElementById('auth-gate').style.display = 'flex';
+  switchAuthTab(tab);
+}
+
+async function apiJson(url, opts = {}) {
+  const res = await fetch(url, opts);
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(data.error || data.message || ('Request failed (' + res.status + ')'));
+  }
+  return data;
+}
+
+async function initApp() {
+  const savedTheme = localStorage.getItem('trustaudit_theme');
+  if (savedTheme === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    document.getElementById('theme-toggle-btn').textContent = 'Light Mode';
+  }
+  try {
+    const me = await fetch('/api/auth/me');
+    if (me.status === 200) {
+      const info = await me.json();
+      if (info.authenticated) {
+        STATE.demoMode = false;
+        STATE.user = info.user;
+        STATE.org = info.organization;
+        document.getElementById('auth-gate').style.display = 'none';
+        document.getElementById('workspace-shell').style.display = 'flex';
+        document.getElementById('demo-mode-banner').style.display = 'none';
+        document.getElementById('topbar-org-name').textContent = (info.organization || {}).name || 'Your Business';
+        document.getElementById('topbar-plan-badge').textContent = ((info.organization || {}).plan_details || {}).name || 'Starter';
+        document.getElementById('topbar-user-label').textContent = (info.user || {}).email || '';
+        await loadHomeSummary();
+        const hashView = (window.location.hash || '').replace('#', '');
+        if (hashView && document.getElementById('section-' + hashView)) navigateTo(hashView);
+        return;
+      }
+    }
+  } catch (e) {}
+  showAuthGate(window.location.hash === '#onboarding' ? 'register' : 'login');
+}
+
+async function handleLogin() {
+  const errEl = document.getElementById('login-err');
+  errEl.textContent = '';
+  try {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        email: document.getElementById('login-email').value,
+        password: document.getElementById('login-password').value,
+        totp_code: document.getElementById('login-totp').value || undefined
+      })
+    });
+    const data = await res.json();
+    if (data.status === 'mfa_required') {
+      document.getElementById('login-mfa-wrap').style.display = 'block';
+      errEl.textContent = 'Please enter your 6-digit MFA authenticator code.';
+      return;
+    }
+    if (!res.ok) throw new Error(data.message || 'Sign in failed.');
+    toast('Welcome back!');
+    await initApp();
+  } catch (e) {
+    errEl.textContent = e.message;
+  }
+}
+
+async function handleRegister() {
+  const errEl = document.getElementById('reg-err');
+  errEl.textContent = '';
+  try {
+    await apiJson('/api/auth/register', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        name: document.getElementById('reg-name').value,
+        company_name: document.getElementById('reg-org').value,
+        email: document.getElementById('reg-email').value,
+        password: document.getElementById('reg-password').value,
+        plan: document.getElementById('reg-plan').value
+      })
+    });
+    toast('Account created! Let us configure your privacy setup.');
+    window.location.hash = '#onboarding';
+    await initApp();
+  } catch (e) {
+    errEl.textContent = e.message;
+  }
+}
+
+async function handleLogout() {
+  if (!STATE.demoMode) {
+    await fetch('/api/auth/logout', {method: 'POST'});
+  }
+  STATE.demoMode = false;
+  STATE.user = null;
+  STATE.org = null;
+  showAuthGate('login');
+}
+
+async function enterDemoSandbox() {
+  STATE.demoMode = true;
+  document.getElementById('auth-gate').style.display = 'none';
+  document.getElementById('workspace-shell').style.display = 'flex';
+  document.getElementById('demo-mode-banner').style.display = 'flex';
+  document.getElementById('topbar-org-name').textContent = 'Sample Indian Clinic (Demo Sandbox)';
+  document.getElementById('topbar-plan-badge').textContent = 'DEMO DATA';
+  document.getElementById('topbar-user-label').textContent = 'Read-Only Preview';
+  document.getElementById('topbar-logout-btn').textContent = 'Sign In / Create Account';
+  const d = await apiJson('/api/demo/workspace');
+  renderHomeData({
+    user: {name: 'Visitor'},
+    profile: d.profile,
+    setup_progress: d.setup_progress,
+    counts: d.counts,
+    attention_tasks: [
+      {title: 'Sample Attention Item: Review vendor agreements (Example)', why: 'Demo Mode illustrates how TrustAudit surfaces actionable items.', action_label: 'View Vendors', fix_target: 'vendors'}
+    ],
+    recent_activity: []
+  });
+}
+
+async function navigateTo(view) {
+  document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b.getAttribute('data-view') === view));
+  const target = document.getElementById('section-' + view);
+  if (target) target.classList.add('active');
+  toggleSidebar(false);
+
+  if (view === 'overview') return loadHomeSummary();
+  if (view === 'remediation') return loadRemediation();
+  if (view === 'inventory') return loadInventory();
+  if (view === 'scanner') return loadScannerHistory();
+  if (view === 'data-flow') return loadDataFlow();
+  if (view === 'vendors') return loadVendors();
+  if (view === 'notices') return loadNotices();
+  if (view === 'consent') return loadConsent();
+  if (view === 'rights') return loadRights();
+  if (view === 'retention') return loadRetention();
+  if (view === 'breaches') return loadIncidents();
+  if (view === 'documents') return loadDocumentTemplates();
+  if (view === 'evidence') return loadEvidence();
+  if (view === 'assistant') return loadAssistant();
+  if (view === 'glossary') return renderGlossary();
+  if (view === 'settings') return loadSettings();
+  if (view === 'assessment') return loadLegalAssessment();
+  if (view === 'org-assessment') return loadOrgAssessment();
+  if (view === 'penalties') return loadPenalties();
+  if (view === 'timeline') return loadTimeline();
+}
+
+async function loadHomeSummary() {
+  if (STATE.demoMode) return;
+  try {
+    const d = await apiJson('/api/dpdp/home-summary');
+    renderHomeData(d);
+  } catch (e) { toast(e.message, 'err'); }
+}
+
+function renderHomeData(d) {
+  const name = ((d.user || {}).name || 'there').split(' ')[0];
+  document.getElementById('home-greeting').textContent = 'Welcome back, ' + name;
+  const prog = d.setup_progress || {completed_count: 0, total_steps: 6, steps: []};
+  document.getElementById('setup-ring-text').textContent = prog.completed_count + ' / ' + prog.total_steps;
+  const pct = Math.min(1, Math.max(0, prog.completed_count / (prog.total_steps || 6)));
+  document.getElementById('setup-ring-arc').style.strokeDashoffset = String(Math.round(264 * (1 - pct)));
+  document.getElementById('setup-progress-subtitle').textContent =
+    prog.completed_count === prog.total_steps
+      ? 'All 6 core setup steps completed.'
+      : (prog.total_steps - prog.completed_count) + ' setup step(s) left to finish organising your workspace.';
+
+  const nextStep = prog.next_recommended_step;
+  const nextBtn = document.getElementById('home-next-action-btn');
+  if (nextStep) {
+    nextBtn.textContent = nextStep.action_label || 'Next Step';
+    nextBtn.onclick = () => navigateTo(nextStep.action_view || 'onboarding');
+    nextBtn.style.display = 'inline-flex';
+  } else {
+    nextBtn.style.display = 'none';
+  }
+
+  document.getElementById('setup-checklist-rows').innerHTML = (prog.steps || []).map(s => (
+    '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 10px;border-radius:8px;background:var(--surface-2);font-size:13px;">' +
+    '<span>' + (s.completed ? '&#10003; ' : '&#9675; ') + esc(s.title) + '</span>' +
+    '<button class="btn btn-secondary btn-sm" onclick="navigateTo(\\'' + esc(s.action_view || 'onboarding') + '\\')">' + (s.completed ? 'View' : esc(s.action_label || 'Start')) + '</button>' +
+    '</div>'
+  )).join('');
+
+  const tasks = d.attention_tasks || [];
+  document.getElementById('home-attention-list').innerHTML = tasks.length
+    ? tasks.map(t => (
+        '<div style="padding:12px;border:1px solid var(--border);border-radius:10px;display:flex;justify-content:space-between;gap:12px;align-items:center;">' +
+        '<div><strong style="font-size:13.5px;display:block;">' + esc(t.title) + '</strong>' +
+        '<span style="font-size:12.5px;color:var(--muted);">' + esc(t.why) + '</span></div>' +
+        '<button class="btn btn-primary btn-sm" onclick="navigateTo(\\'' + esc(t.fix_target || 'remediation') + '\\')">' + esc(t.action_label || 'Fix this') + '</button>' +
+        '</div>'
+      )).join('')
+    : '<div class="empty-state">No urgent gaps detected right now.</div>';
+
+  const c = d.counts || {};
+  document.getElementById('cnt-inventory').textContent = c.inventory_count || 0;
+  document.getElementById('cnt-vendors').textContent = c.vendor_count || 0;
+  document.getElementById('cnt-requests').textContent = c.request_count || 0;
+  document.getElementById('cnt-evidence').textContent = c.evidence_count || 0;
+
+  const act = d.recent_activity || [];
+  document.getElementById('home-recent-activity').innerHTML = act.length
+    ? act.map(a => '<div style="padding:8px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;font-size:13px;"><span><strong>' + esc(a.category) + ':</strong> ' + esc(a.title) + '</span><span style="color:var(--muted);">' + esc(String(a.timestamp).slice(0,16).replace('T',' ')) + '</span></div>').join('')
+    : '<div style="font-size:13.5px;color:var(--muted);padding:10px 0;">No workspace activity recorded yet. Your actions will appear here chronologically.</div>';
+}
+
+/* ONBOARDING */
+function updateOnboardingUI() {
+  document.querySelectorAll('.ob-panel').forEach((p, idx) => p.style.display = (idx + 1 === STATE.onboardingStep) ? 'block' : 'none');
+  document.getElementById('ob-step-label').textContent = 'Step ' + STATE.onboardingStep + ' of 6';
+  document.getElementById('ob-prev-btn').disabled = STATE.onboardingStep <= 1;
+  document.getElementById('ob-next-btn').textContent = STATE.onboardingStep === 6 ? 'Finish Setup' : 'Next Step';
+}
+function prevOnboardingStep() { if (STATE.onboardingStep > 1) { STATE.onboardingStep--; updateOnboardingUI(); } }
+async function nextOnboardingStep() {
+  if (STATE.onboardingStep < 6) {
+    await saveOnboardingStep(false);
+    STATE.onboardingStep++;
+    updateOnboardingUI();
+  } else {
+    await saveOnboardingStep(true);
+    navigateTo('overview');
+  }
+}
+async function saveOnboardingStep(markComplete) {
+  if (STATE.demoMode) { toast('Sign in to save onboarding for your business.', 'err'); return; }
+  const dataCats = Array.from(document.querySelectorAll('.ob-data-chk:checked')).map(c => c.value);
+  const vndList = Array.from(document.querySelectorAll('.ob-vnd-chk:checked')).map(c => c.value);
+  try {
+    await apiJson('/api/dpdp/onboarding', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        company_name: document.getElementById('ob-company').value,
+        industry: document.getElementById('ob-industry').value,
+        organisation_size: document.getElementById('ob-size').value,
+        contact_email: document.getElementById('ob-email').value,
+        website_url: document.getElementById('ob-website').value,
+        data_categories_selected: dataCats,
+        apply_industry_template: !!markComplete && document.getElementById('ob-apply-template').checked,
+        selected_vendors: markComplete ? vndList : undefined,
+        has_privacy_notice: document.getElementById('ob-has-notice').value,
+        has_retention_plan: document.getElementById('ob-has-retention').value,
+        onboarding_step: STATE.onboardingStep,
+        onboarding_completed: !!markComplete
+      })
+    });
+    toast(markComplete ? 'Onboarding complete! Workspace personalised.' : 'Setup progress saved.');
+  } catch (e) { toast(e.message, 'err'); }
+}
+
+/* ACTION PLAN */
+async function loadRemediation() {
+  const el = document.getElementById('remediation-list-card');
+  if (STATE.demoMode) { el.innerHTML = '<div class="empty-state">Create an account to manage live action tasks.</div>'; return; }
+  try {
+    const res = await apiJson('/api/dpdp/assessment');
+    const tasks = res.remediation_tasks || [];
+    el.innerHTML = tasks.length ? tasks.map(t => (
+      '<div style="padding:12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:10px;">' +
+      '<div><strong>' + esc(t.title) + '</strong> <span class="badge b-amber">' + esc(t.status || 'Open') + '</span><div style="font-size:12.5px;color:var(--muted);">' + esc(t.description || t.action || '') + '</div></div>' +
+      '<button class="btn btn-primary btn-sm" onclick="markTaskStatus(\\'' + esc(t.id) + '\\', \\'Resolved\\')">Mark Resolved</button></div>'
+    )).join('') : '<div class="empty-state">No action items yet. Run a website check or complete onboarding to populate your Action Plan.</div>';
+  } catch (e) { el.innerHTML = '<div class="empty-state">' + esc(e.message) + '</div>'; }
+}
+async function markTaskStatus(taskId, status) {
+  try {
+    await apiJson('/api/dpdp/tasks/' + encodeURIComponent(taskId) + '/update', {
+      method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({status})
+    });
+    toast('Task marked ' + status);
+    loadRemediation();
+  } catch (e) { toast(e.message, 'err'); }
+}
+
+/* CUSTOMER DATA LIST */
+async function loadInventory() {
+  if (STATE.demoMode) return;
+  try {
+    const d = await apiJson('/api/dpdp/inventory');
+    STATE.inventory = d.items || [];
+    renderInventoryTable();
+  } catch (e) { toast(e.message, 'err'); }
+}
+function renderInventoryTable() {
+  const q = (document.getElementById('inv-search').value || '').toLowerCase();
+  const rows = (STATE.inventory || []).filter(i => !q || JSON.stringify(i).toLowerCase().includes(q));
+  document.getElementById('inv-tbody').innerHTML = rows.length ? rows.map(i => (
+    '<tr><td><strong>' + esc(i.category) + '</strong><div style="font-size:12px;color:var(--muted);">' + esc((i.data_elements || []).join(', ') || i.department || '') + '</div></td>' +
+    '<td>' + esc(i.purpose) + '</td><td><span class="badge b-blue">' + esc(i.legal_basis) + '</span></td>' +
+    '<td>' + esc(i.storage_location) + '</td>' +
+    '<td style="white-space:nowrap;"><button class="btn btn-secondary btn-sm" onclick="openInventoryModal(\\'' + esc(i.id) + '\\')">Edit</button> ' +
+    '<button class="btn btn-danger btn-sm" onclick="deleteInventory(\\'' + esc(i.id) + '\\')">Delete</button></td></tr>'
+  )).join('') : '<tr><td colspan="5"><div class="empty-state">No customer data records yet. Click "+ Add Customer Data" or complete Onboarding to start.</div></td></tr>';
+}
+function openInventoryModal(editId = null) {
+  const existing = editId ? STATE.inventory.find(x => x.id === editId) : null;
+  openModal(existing ? 'Edit Customer Data Record' : 'Add Customer Data Record',
+    '<form onsubmit="event.preventDefault(); saveInventory(\\'' + esc(editId || '') + '\\');">' +
+    '<div class="fg"><label class="fl">Category Name (e.g., Patient Intake, Customer Orders)</label><input class="fi" id="m-inv-cat" required value="' + esc(existing ? existing.category : '') + '"/></div>' +
+    '<div class="fg"><label class="fl">Data Fields (comma-separated)</label><input class="fi" id="m-inv-fields" value="' + esc(existing ? (existing.data_elements || []).join(', ') : 'Name, Phone, Email') + '"/></div>' +
+    '<div class="fg"><label class="fl">Why Do You Collect This? (Purpose)</label><input class="fi" id="m-inv-purpose" required value="' + esc(existing ? existing.purpose : '') + '"/></div>' +
+    '<div class="fg"><label class="fl">Lawful Ground (DPDP Act)</label><select class="fi" id="m-inv-basis">' +
+    '<option>Consent (Section 6)</option><option>Voluntary Service Request (Section 7(a))</option><option>Legal / Tax Compliance (Section 7(d))</option><option>Medical Emergency (Section 7(f))</option><option>Employment Purpose (Section 7(i))</option>' +
+    '</select></div>' +
+    '<div class="fg"><label class="fl">Where Is It Stored?</label><input class="fi" id="m-inv-loc" value="' + esc(existing ? existing.storage_location : 'Billing Software / Cloud') + '"/></div>' +
+    '<button type="submit" class="btn btn-primary" style="width:100%;">Save Record</button></form>');
+}
+async function saveInventory(editId) {
+  const payload = {
+    category: document.getElementById('m-inv-cat').value,
+    data_elements: document.getElementById('m-inv-fields').value.split(',').map(s => s.trim()).filter(Boolean),
+    purpose: document.getElementById('m-inv-purpose').value,
+    legal_basis: document.getElementById('m-inv-basis').value,
+    storage_location: document.getElementById('m-inv-loc').value
+  };
+  try {
+    if (editId) {
+      await apiJson('/api/dpdp/inventory/' + encodeURIComponent(editId), {method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)});
+    } else {
+      await apiJson('/api/dpdp/inventory', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)});
+    }
+    closeModal(); toast('Customer data record saved.'); loadInventory();
+  } catch (e) { toast(e.message, 'err'); }
+}
+async function deleteInventory(id) {
+  try { await apiJson('/api/dpdp/inventory/' + encodeURIComponent(id), {method: 'DELETE'}); toast('Record deleted.'); loadInventory(); } catch (e) { toast(e.message, 'err'); }
+}
+async function importInventoryCsv(input) {
+  if (!input.files || !input.files[0]) return;
+  const fd = new FormData(); fd.append('file', input.files[0]);
+  try {
+    const res = await fetch('/api/dpdp/inventory/import', {method: 'POST', body: fd});
+    const d = await res.json();
+    if (!res.ok) throw new Error(d.message || 'Import failed');
+    toast('Imported ' + d.imported_count + ' row(s).');
+    loadInventory();
+  } catch (e) { toast(e.message, 'err'); }
+}
+
+/* WEBSITE SCANNER */
+async function runWebsiteScan(isDemo = false) {
+  const url = document.getElementById('scan-url-input').value.trim() || (isDemo ? 'https://arogyaclinic.example.in' : '');
+  const auth = document.getElementById('scan-auth-confirm').checked;
+  if (!url) { toast('Enter a website URL first.', 'err'); return; }
+  if (!auth) { toast('Please tick the authorisation confirmation box first.', 'err'); return; }
+  const prog = document.getElementById('scanner-progress-panel');
+  prog.style.display = 'block';
+  try {
+    const d = await apiJson('/api/dpdp/scanner/start', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        website_url: url,
+        business_name: document.getElementById('scan-biz-input').value || 'My Business',
+        industry: document.getElementById('scan-ind-input').value,
+        authorization_confirmed: true,
+        is_demo: isDemo
+      })
+    });
+    renderScanReport(d.scan);
+    loadScannerHistory();
+    toast('Website scan completed.');
+  } catch (e) { toast(e.message, 'err'); }
+  finally { prog.style.display = 'none'; }
+}
+function renderScanReport(scan) {
+  if (!scan) return;
+  const b = scan.scan_buckets || {};
+  const found = b.what_was_found || [];
+  const gaps = b.what_was_not_found || (scan.findings || []).filter(f => f.severity !== 'INFORMATIONAL');
+  const needs = b.what_needs_input || [];
+  const cannot = b.what_cannot_be_checked || [];
+  document.getElementById('scanner-results-panel').innerHTML =
+    '<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">' +
+    '<div><strong>Scan Results: ' + esc(scan.target_url) + '</strong>' + (scan.is_demo ? ' <span class="badge b-amber">DEMO EXAMPLE</span>' : '') + '</div>' +
+    '<span class="badge b-blue">Pages Checked: ' + ((scan.summary_metrics || {}).pages_scanned_count || 0) + '</span></div>' +
+    '<div class="grid-2">' +
+    '<div style="padding:12px;border:1px solid var(--border);border-radius:10px;"><strong style="color:var(--emerald);">1. What We Found (' + found.length + ')</strong>' + (found.map(x => '<div style="font-size:13px;margin-top:6px;">&#10003; ' + esc(x.title) + '<div style="color:var(--muted);font-size:12px;">' + esc(x.detail) + '</div></div>').join('') || '<div style="font-size:13px;color:var(--muted);margin-top:6px;">No positive public privacy indicators detected.</div>') + '</div>' +
+    '<div style="padding:12px;border:1px solid var(--border);border-radius:10px;"><strong style="color:var(--rose);">2. What Was Not Found / Needs Attention (' + gaps.length + ')</strong>' + (gaps.map(x => '<div style="font-size:13px;margin-top:6px;">&#9888; ' + esc(x.title) + '<div style="color:var(--muted);font-size:12px;">' + esc(x.detail || x.observation) + '</div></div>').join('') || '<div style="font-size:13px;color:var(--muted);margin-top:6px;">No obvious public gaps flagged.</div>') + '</div>' +
+    '<div style="padding:12px;border:1px solid var(--border);border-radius:10px;"><strong style="color:var(--amber);">3. What Needs Your Input (' + needs.length + ')</strong>' + (needs.map(x => '<div style="font-size:13px;margin-top:6px;">? ' + esc(x.title) + '<div style="color:var(--muted);font-size:12px;">' + esc(x.detail) + '</div></div>').join('') || '<div style="font-size:13px;color:var(--muted);margin-top:6px;">Nothing additional pending.</div>') + '</div>' +
+    '<div style="padding:12px;border:1px solid var(--border);border-radius:10px;"><strong style="color:var(--ink-2);">4. What Cannot Be Checked Externally (' + cannot.length + ')</strong>' + (cannot.map(x => '<div style="font-size:13px;margin-top:6px;">&bull; ' + esc(x.title) + '<div style="color:var(--muted);font-size:12px;">' + esc(x.reason) + '</div></div>').join('')) + '</div>' +
+    '</div></div>';
+}
+async function loadScannerHistory() {
+  if (STATE.demoMode) return;
+  try {
+    const d = await apiJson('/api/dpdp/scanner/history');
+    STATE.scans = d.scans || [];
+    document.getElementById('scanner-history-list').innerHTML = STATE.scans.length
+      ? STATE.scans.map(s => '<div style="padding:8px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;"><span><strong>' + esc(s.target_url) + '</strong> (' + esc(String(s.scanned_at).slice(0,16)) + ')</span><div><button class="btn btn-secondary btn-sm" onclick="viewPastScan(\\'' + esc(s.scan_id) + '\\')">View</button> <button class="btn btn-danger btn-sm" onclick="deleteScan(\\'' + esc(s.scan_id) + '\\')">Delete</button></div></div>').join('')
+      : '<div style="font-size:13px;color:var(--muted);">No scans run yet.</div>';
+    if (STATE.scans.length && !document.getElementById('scanner-results-panel').innerHTML) renderScanReport(STATE.scans[0]);
+  } catch (e) {}
+}
+function viewPastScan(id) { const s = STATE.scans.find(x => x.scan_id === id); if (s) renderScanReport(s); }
+async function deleteScan(id) { await apiJson('/api/dpdp/scanner/' + encodeURIComponent(id), {method: 'DELETE'}); toast('Scan deleted.'); loadScannerHistory(); }
+
+/* WHERE MY DATA GOES (SVG FLOW MAP) */
+async function loadDataFlow() {
+  const el = document.getElementById('data-flow-canvas');
+  if (STATE.demoMode) { el.innerHTML = '<div class="empty-state">Sign in to view your live business data flow diagram.</div>'; return; }
+  const inv = await apiJson('/api/dpdp/inventory').then(r => r.items || []).catch(() => []);
+  const vnd = await apiJson('/api/dpdp/vendors').then(r => r.items || []).catch(() => []);
+  const srcList = inv.slice(0, 4).map(i => i.category).join(', ') || 'No sources added yet';
+  const strList = [...new Set(inv.map(i => i.storage_location).filter(Boolean))].slice(0, 4).join(', ') || 'No storage configured';
+  const vndList = vnd.slice(0, 4).map(v => v.name).join(', ') || 'No vendors added yet';
+  el.innerHTML = '<svg viewBox="0 0 760 220" width="100%" height="auto"><rect x="14" y="45" width="160" height="120" rx="12" fill="var(--accent-soft)" stroke="var(--accent)"/><text x="94" y="82" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">1. Collected Data</text><text x="94" y="106" text-anchor="middle" font-size="11" fill="var(--muted)">' + esc(srcList.slice(0,26)) + '</text><path d="M174 105 L234 105" stroke="var(--accent)" stroke-width="2" stroke-dasharray="4 4"/><rect x="234" y="45" width="170" height="120" rx="12" fill="var(--emerald-soft)" stroke="var(--emerald)"/><text x="319" y="82" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">2. Where It Lives</text><text x="319" y="106" text-anchor="middle" font-size="11" fill="var(--muted)">' + esc(strList.slice(0,26)) + '</text><path d="M404 105 L464 105" stroke="var(--emerald)" stroke-width="2" stroke-dasharray="4 4"/><rect x="464" y="45" width="270" height="120" rx="12" fill="var(--amber-soft)" stroke="var(--amber)"/><text x="599" y="82" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">3. Companies Shared With</text><text x="599" y="106" text-anchor="middle" font-size="11" fill="var(--muted)">' + esc(vndList.slice(0,36)) + '</text></svg>';
+}
+
+/* VENDORS */
+async function loadVendors() {
+  if (STATE.demoMode) return;
+  const d = await apiJson('/api/dpdp/vendors');
+  STATE.vendors = d.items || [];
+  document.getElementById('vnd-tbody').innerHTML = STATE.vendors.length ? STATE.vendors.map(v => (
+    '<tr><td><strong>' + esc(v.name) + '</strong><div style="font-size:12px;color:var(--muted);">' + esc(v.service) + '</div></td>' +
+    '<td>' + esc(v.personal_data_processed) + '<div style="font-size:12px;color:var(--muted);">' + esc(v.storage_location) + '</div></td>' +
+    '<td><span class="badge b-blue">' + esc(v.dpa_status) + '</span></td>' +
+    '<td><span class="badge b-slate">' + esc(v.risk_rating) + '</span> ' + esc(v.agreement_expiry || '') + '</td>' +
+    '<td style="white-space:nowrap;"><button class="btn btn-secondary btn-sm" onclick="openVendorModal(\\'' + esc(v.id) + '\\')">Edit</button> ' +
+    '<button class="btn btn-danger btn-sm" onclick="deleteVendor(\\'' + esc(v.id) + '\\')">Delete</button></td></tr>'
+  )).join('') : '<tr><td colspan="5"><div class="empty-state">No third-party vendors recorded yet. Add your software tools, payment gateways, or partner labs.</div></td></tr>';
+}
+function openVendorModal(editId = null) {
+  const v = editId ? STATE.vendors.find(x => x.id === editId) : null;
+  openModal(v ? 'Edit Vendor Company' : 'Add Company You Share Data With',
+    '<form onsubmit="event.preventDefault(); saveVendor(\\'' + esc(editId || '') + '\\');">' +
+    '<div class="fg"><label class="fl">Company / Tool Name</label><input class="fi" id="m-vnd-name" required value="' + esc(v ? v.name : '') + '"/></div>' +
+    '<div class="fg"><label class="fl">Service Provided</label><input class="fi" id="m-vnd-svc" value="' + esc(v ? v.service : 'Cloud / Software') + '"/></div>' +
+    '<div class="fg"><label class="fl">Data Shared</label><input class="fi" id="m-vnd-data" value="' + esc(v ? v.personal_data_processed : 'Customer Contacts') + '"/></div>' +
+    '<div class="fg"><label class="fl">Storage Location</label><input class="fi" id="m-vnd-loc" value="' + esc(v ? v.storage_location : 'India') + '"/></div>' +
+    '<div class="fg"><label class="fl">Contract (DPA) Status</label><select class="fi" id="m-vnd-dpa">' +
+    '<option>Not Started</option><option>Requested</option><option>Under Review</option><option>Signed</option><option>Expiring Soon</option><option>Needs Attention</option>' +
+    '</select></div>' +
+    '<div class="fg"><label class="fl">Risk Level</label><select class="fi" id="m-vnd-risk"><option>LOW</option><option>MEDIUM</option><option>HIGH</option></select></div>' +
+    '<div class="fg"><label class="fl">Agreement Expiry Date</label><input class="fi" type="date" id="m-vnd-exp" value="' + esc(v ? v.agreement_expiry : '') + '"/></div>' +
+    '<button type="submit" class="btn btn-primary" style="width:100%;">Save Vendor</button></form>');
+}
+async function saveVendor(editId) {
+  const payload = {
+    name: document.getElementById('m-vnd-name').value,
+    service: document.getElementById('m-vnd-svc').value,
+    personal_data_processed: document.getElementById('m-vnd-data').value,
+    storage_location: document.getElementById('m-vnd-loc').value,
+    dpa_status: document.getElementById('m-vnd-dpa').value,
+    risk_rating: document.getElementById('m-vnd-risk').value,
+    agreement_expiry: document.getElementById('m-vnd-exp').value
+  };
+  try {
+    if (editId) await apiJson('/api/dpdp/vendors/' + encodeURIComponent(editId), {method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)});
+    else await apiJson('/api/dpdp/vendors', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)});
+    closeModal(); toast('Vendor saved.'); loadVendors();
+  } catch (e) { toast(e.message, 'err'); }
+}
+async function deleteVendor(id) { await apiJson('/api/dpdp/vendors/' + encodeURIComponent(id), {method: 'DELETE'}); toast('Vendor deleted.'); loadVendors(); }
+
+/* PRIVACY NOTICES */
+async function loadNotices() {
+  if (STATE.demoMode) return;
+  const d = await apiJson('/api/dpdp/notices');
+  STATE.notices = d.items || [];
+  document.getElementById('notices-list').innerHTML = STATE.notices.length ? STATE.notices.map(n => (
+    '<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">' +
+    '<div><strong>' + esc(n.title) + '</strong> <span class="badge b-blue">' + esc(n.version) + '</span> <span class="badge ' + (n.status === 'APPROVED_PUBLISHED' ? 'b-green' : 'b-amber') + '">' + esc(n.status) + '</span></div>' +
+    '<div style="display:flex;gap:6px;"><button class="btn btn-secondary btn-sm" onclick="editNoticeModal(\\'' + esc(n.id) + '\\')">Edit &amp; Preview</button>' +
+    '<button class="btn btn-primary btn-sm" onclick="approveNotice(\\'' + esc(n.id) + '\\')">Approve</button>' +
+    '<button class="btn btn-danger btn-sm" onclick="deleteNotice(\\'' + esc(n.id) + '\\')">Delete</button></div></div>' +
+    '<pre style="white-space:pre-wrap;font-size:12.5px;background:var(--surface-2);padding:12px;border-radius:8px;max-height:220px;overflow-y:auto;">' + esc(n.content) + '</pre></div>'
+  )).join('') : '<div class="empty-state">No Privacy Notice drafts created yet. Fill your contact info above and click Generate.</div>';
+}
+async function generateNotice() {
+  try {
+    await apiJson('/api/dpdp/notices/generate', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        title: document.getElementById('not-title').value || 'Customer Privacy Notice',
+        grievance_officer: document.getElementById('not-officer').value,
+        grievance_email: document.getElementById('not-email').value
+      })
+    });
+    toast('Privacy Notice draft created.'); loadNotices();
+  } catch (e) { toast(e.message, 'err'); }
+}
+function editNoticeModal(id) {
+  const n = STATE.notices.find(x => x.id === id); if (!n) return;
+  openModal('Edit Privacy Notice',
+    '<form onsubmit="event.preventDefault(); saveNoticeEdit(\\'' + esc(id) + '\\');">' +
+    '<div class="fg"><label class="fl">Title</label><input class="fi" id="m-not-title" value="' + esc(n.title) + '"/></div>' +
+    '<div class="fg"><label class="fl">Notice Content</label><textarea class="fi" id="m-not-body" rows="12">' + esc(n.content) + '</textarea></div>' +
+    '<button type="submit" class="btn btn-primary" style="width:100%;">Save New Version</button></form>');
+}
+async function saveNoticeEdit(id) {
+  await apiJson('/api/dpdp/notices/' + encodeURIComponent(id), {
+    method: 'PUT', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({title: document.getElementById('m-not-title').value, content: document.getElementById('m-not-body').value, bump_version: true})
+  });
+  closeModal(); toast('Privacy Notice updated.'); loadNotices();
+}
+async function approveNotice(id) {
+  await apiJson('/api/dpdp/notices/' + encodeURIComponent(id), {method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({status: 'APPROVED_PUBLISHED'})});
+  toast('Privacy Notice approved.'); loadNotices();
+}
+async function deleteNotice(id) { await apiJson('/api/dpdp/notices/' + encodeURIComponent(id), {method: 'DELETE'}); toast('Notice deleted.'); loadNotices(); }
+
+/* CONSENT RECORDS */
+async function loadConsent() {
+  if (STATE.demoMode) return;
+  const q = encodeURIComponent(document.getElementById('cst-search').value || '');
+  const d = await apiJson('/api/dpdp/consent?q=' + q);
+  const items = d.items || [];
+  document.getElementById('cst-tbody').innerHTML = items.length ? items.map(r => (
+    '<tr><td>' + esc(r.data_principal_ref) + '</td><td>' + esc(r.data_category) + '</td><td>' + esc(r.purpose) + ' (' + esc(r.notice_version) + ')</td><td>' + esc(r.collection_channel) + '</td><td><span class="badge ' + (r.status === 'ACTIVE' ? 'b-green' : 'b-amber') + '">' + esc(r.status) + '</span></td></tr>'
+  )).join('') : '<tr><td colspan="5"><div class="empty-state">No consent records logged yet.</div></td></tr>';
+}
+function openConsentModal() {
+  openModal('Log Consent Record',
+    '<form onsubmit="event.preventDefault(); saveConsent();">' +
+    '<div class="fg"><label class="fl">Customer Reference ID</label><input class="fi" id="m-cst-ref" required placeholder="CUST-1042"/></div>' +
+    '<div class="fg"><label class="fl">Data Category</label><input class="fi" id="m-cst-cat" value="Marketing & Updates"/></div>' +
+    '<div class="fg"><label class="fl">Purpose Shown</label><input class="fi" id="m-cst-pur" value="Appointment reminders & offers"/></div>' +
+    '<div class="fg"><label class="fl">Notice Version</label><input class="fi" id="m-cst-ver" value="v1.0"/></div>' +
+    '<div class="fg"><label class="fl">Source / Channel</label><input class="fi" id="m-cst-ch" value="Website Form"/></div>' +
+    '<button type="submit" class="btn btn-primary" style="width:100%;">Save Consent Log</button></form>');
+}
+async function saveConsent() {
+  await apiJson('/api/dpdp/consent', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({
+    principal_ref: document.getElementById('m-cst-ref').value, category: document.getElementById('m-cst-cat').value,
+    purpose: document.getElementById('m-cst-pur').value, notice_version: document.getElementById('m-cst-ver').value,
+    channel: document.getElementById('m-cst-ch').value
+  })});
+  closeModal(); toast('Consent logged.'); loadConsent();
+}
+function openWithdrawalModal() {
+  openModal('Log Consent Withdrawal (Section 6(4))',
+    '<form onsubmit="event.preventDefault(); saveWithdrawal();">' +
+    '<div class="fg"><label class="fl">Customer Reference ID</label><input class="fi" id="m-wth-ref" required placeholder="CUST-1042"/></div>' +
+    '<div class="fg"><label class="fl">Category Withdrawn</label><input class="fi" id="m-wth-cat" value="Marketing Communications"/></div>' +
+    '<button type="submit" class="btn btn-primary" style="width:100%;">Record Withdrawal</button></form>');
+}
+async function saveWithdrawal() {
+  await apiJson('/api/dpdp/withdrawals', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({
+    principal_ref: document.getElementById('m-wth-ref').value, category: document.getElementById('m-wth-cat').value
+  })});
+  closeModal(); toast('Consent withdrawal recorded.'); loadConsent();
+}
+
+/* CUSTOMER PRIVACY REQUESTS */
+async function loadRights() {
+  if (STATE.demoMode) return;
+  const d = await apiJson('/api/dpdp/rights');
+  STATE.rights = d.items || [];
+  document.getElementById('req-tbody').innerHTML = STATE.rights.length ? STATE.rights.map(r => (
+    '<tr><td><strong>' + esc(r.principal_name) + '</strong><div><span class="badge b-blue">' + esc(r.type) + '</span></div></td>' +
+    '<td>' + esc(r.description) + '<div style="font-size:12px;color:var(--muted);">' + esc(r.principal_contact) + '</div></td>' +
+    '<td>' + (r.identity_verified ? '<span class="badge b-green">Verified</span>' : '<span class="badge b-amber">Pending Check</span>') + '</td>' +
+    '<td><span class="badge b-slate">' + esc(r.status) + '</span><div style="font-size:12px;color:var(--muted);">' + esc(r.assigned_to) + '</div></td>' +
+    '<td><button class="btn btn-secondary btn-sm" onclick="openRightsUpdateModal(\\'' + esc(r.id) + '\\')">Manage / Resolve</button></td></tr>'
+  )).join('') : '<tr><td colspan="5"><div class="empty-state">No customer privacy requests logged yet.</div></td></tr>';
+}
+function openRightsModal() {
+  openModal('Log Customer Privacy Request',
+    '<form onsubmit="event.preventDefault(); saveRightReq();">' +
+    '<div class="fg"><label class="fl">Request Type</label><select class="fi" id="m-req-type"><option value="ACCESS">Access My Data</option><option value="CORRECTION">Correct Mistakes</option><option value="ERASURE">Delete My Data</option><option value="GRIEVANCE">Grievance / Complaint</option><option value="NOMINATION">Add Nominee</option></select></div>' +
+    '<div class="fg"><label class="fl">Customer Name</label><input class="fi" id="m-req-name" required/></div>' +
+    '<div class="fg"><label class="fl">Customer Email / Phone</label><input class="fi" id="m-req-contact" required/></div>' +
+    '<div class="fg"><label class="fl">Request Summary</label><textarea class="fi" id="m-req-desc" rows="3"></textarea></div>' +
+    '<button type="submit" class="btn btn-primary" style="width:100%;">Create Request Ticket</button></form>');
+}
+async function saveRightReq() {
+  await apiJson('/api/dpdp/rights', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({
+    type: document.getElementById('m-req-type').value, principal_name: document.getElementById('m-req-name').value,
+    principal_contact: document.getElementById('m-req-contact').value, description: document.getElementById('m-req-desc').value
+  })});
+  closeModal(); toast('Customer request logged.'); loadRights();
+}
+function openRightsUpdateModal(id) {
+  openModal('Update Customer Request',
+    '<form onsubmit="event.preventDefault(); saveRightsUpdate(\\'' + esc(id) + '\\');">' +
+    '<div class="fg"><label class="fl">Status</label><select class="fi" id="m-ru-st"><option>VERIFIED</option><option>IN_PROGRESS</option><option>COMPLETED</option><option>REJECTED</option></select></div>' +
+    '<div class="fg"><label><input type="checkbox" id="m-ru-ver" checked/> Identity verified before releasing/deleting data</label></div>' +
+    '<div class="fg"><label class="fl">Assigned Owner</label><input class="fi" id="m-ru-own" value="Privacy Officer"/></div>' +
+    '<div class="fg"><label class="fl">Response / Resolution Note</label><textarea class="fi" id="m-ru-note" rows="3"></textarea></div>' +
+    '<button type="submit" class="btn btn-primary" style="width:100%;">Save Update</button></form>');
+}
+async function saveRightsUpdate(id) {
+  await apiJson('/api/dpdp/rights/' + encodeURIComponent(id) + '/status', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({
+    status: document.getElementById('m-ru-st').value, identity_verified: document.getElementById('m-ru-ver').checked,
+    assigned_to: document.getElementById('m-ru-own').value, response_summary: document.getElementById('m-ru-note').value
+  })});
+  closeModal(); toast('Request updated.'); loadRights();
+}
+
+/* RETENTION & ERASURE */
+async function loadRetention() {
+  if (STATE.demoMode) return;
+  const r = await apiJson('/api/dpdp/retention'); STATE.retention = r.items || [];
+  const e = await apiJson('/api/dpdp/erasure-tasks'); STATE.erasures = e.items || [];
+  document.getElementById('ret-list').innerHTML = STATE.retention.length ? STATE.retention.map(s => (
+    '<div style="padding:10px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">' +
+    '<div><strong>' + esc(s.category) + '</strong> (' + esc(s.period_years) + ' yrs)<div style="font-size:12px;color:var(--muted);">' + esc(s.statutory_basis) + ' &bull; Owner: ' + esc(s.owner || 'Privacy Lead') + '</div></div>' +
+    '<button class="btn btn-danger btn-sm" onclick="deleteRetention(\\'' + esc(s.id) + '\\')">Delete</button></div>'
+  )).join('') : '<div class="empty-state">No retention schedules set yet.</div>';
+  document.getElementById('era-list').innerHTML = STATE.erasures.length ? STATE.erasures.map(t => (
+    '<div style="padding:10px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">' +
+    '<div><strong>' + esc(t.data_category) + '</strong> <span class="badge b-blue">' + esc(t.status) + '</span><div style="font-size:12px;color:var(--muted);">' + esc(t.subject_identifier) + '</div></div>' +
+    (t.status !== 'VERIFIED_ERASED' ? '<button class="btn btn-primary btn-sm" onclick="completeErasure(\\'' + esc(t.id) + '\\')">Mark Deleted</button>' : '') + '</div>'
+  )).join('') : '<div class="empty-state">No deletion tasks created yet.</div>';
+}
+function openRetentionModal() {
+  openModal('Add Retention Schedule',
+    '<form onsubmit="event.preventDefault(); saveRetention();">' +
+    '<div class="fg"><label class="fl">Record Category</label><input class="fi" id="m-ret-cat" required placeholder="Enquiry Forms / Invoices"/></div>' +
+    '<div class="fg"><label class="fl">Keep Duration (Years)</label><input class="fi" type="number" step="0.5" id="m-ret-yrs" value="3"/></div>' +
+    '<div class="fg"><label class="fl">Legal Reason</label><input class="fi" id="m-ret-law" value="DPDP Section 8(7) Purpose Limit"/></div>' +
+    '<div class="fg"><label class="fl">Owner</label><input class="fi" id="m-ret-own" value="Operations Lead"/></div>' +
+    '<button type="submit" class="btn btn-primary" style="width:100%;">Save Schedule</button></form>');
+}
+async function saveRetention() {
+  await apiJson('/api/dpdp/retention', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({
+    category: document.getElementById('m-ret-cat').value, period_years: Number(document.getElementById('m-ret-yrs').value),
+    statutory_basis: document.getElementById('m-ret-law').value, owner: document.getElementById('m-ret-own').value
+  })});
+  closeModal(); toast('Schedule saved.'); loadRetention();
+}
+async function deleteRetention(id) { await apiJson('/api/dpdp/retention/' + encodeURIComponent(id), {method: 'DELETE'}); toast('Schedule deleted.'); loadRetention(); }
+function openErasureModal() {
+  openModal('Create Deletion Task',
+    '<form onsubmit="event.preventDefault(); saveErasure();">' +
+    '<div class="fg"><label class="fl">Data Category to Erase</label><input class="fi" id="m-era-cat" required placeholder="Old Website Leads 2024"/></div>' +
+    '<div class="fg"><label class="fl">Reference / Batch ID</label><input class="fi" id="m-era-ref" value="BATCH-2026-01"/></div>' +
+    '<button type="submit" class="btn btn-primary" style="width:100%;">Create Deletion Task</button></form>');
+}
+async function saveErasure() {
+  await apiJson('/api/dpdp/erasure-tasks', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({
+    data_category: document.getElementById('m-era-cat').value, subject_identifier: document.getElementById('m-era-ref').value
+  })});
+  closeModal(); toast('Deletion task added.'); loadRetention();
+}
+async function completeErasure(id) {
+  await apiJson('/api/dpdp/erasure-tasks/' + encodeURIComponent(id), {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({status: 'VERIFIED_ERASED', notes: 'Deleted and confirmed.'})});
+  toast('Deletion verified.'); loadRetention();
+}
+
+/* INCIDENTS */
+async function loadIncidents() {
+  if (STATE.demoMode) return;
+  const d = await apiJson('/api/dpdp/breaches');
+  const items = d.items || [];
+  document.getElementById('brc-list').innerHTML = items.length ? items.map(inc => (
+    '<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">' +
+    '<div><strong>' + esc(inc.title) + '</strong> <span class="badge b-rose">' + esc(inc.severity) + '</span> <span class="badge b-blue">' + esc(inc.board_notification_status) + '</span></div>' +
+    '<div style="display:flex;gap:6px;"><button class="btn btn-secondary btn-sm" onclick="addTimelineNote(\\'' + esc(inc.id) + '\\')">Add Timeline Note</button>' +
+    (inc.customer_authorized_to_send ? '' : '<button class="btn btn-primary btn-sm" onclick="authorizeIncident(\\'' + esc(inc.id) + '\\')">Approve Drafts</button>') + '</div></div>' +
+    '<div style="font-size:12.5px;color:var(--muted);">Affected Systems: ' + esc((inc.systems_affected || []).join(', ') || 'Not specified') + ' | Records: ' + esc(inc.estimated_individuals_affected) + '</div>' +
+    '<div style="margin-top:8px;font-size:12.5px;">' + (inc.timeline_events || []).map(ev => '<div>&bull; ' + esc(String(ev.timestamp).slice(0,16)) + ' &mdash; ' + esc(ev.event) + '</div>').join('') + '</div></div>'
+  )).join('') : '<div class="empty-state">No privacy incidents recorded.</div>';
+}
+function openIncidentModal() {
+  openModal('Log Privacy Incident',
+    '<form onsubmit="event.preventDefault(); saveIncident();">' +
+    '<div class="fg"><label class="fl">What Happened?</label><input class="fi" id="m-inc-title" required placeholder="e.g., Accidental email attachment sent to wrong clinic"/></div>' +
+    '<div class="fg"><label class="fl">Severity</label><select class="fi" id="m-inc-sev"><option>LOW</option><option>MEDIUM</option><option>HIGH</option><option>CRITICAL</option></select></div>' +
+    '<div class="fg"><label class="fl">Systems Affected (comma-separated)</label><input class="fi" id="m-inc-sys" value="Email, Billing Tool"/></div>' +
+    '<div class="fg"><label class="fl">Estimated People Affected</label><input class="fi" type="number" id="m-inc-cnt" value="1"/></div>' +
+    '<button type="submit" class="btn btn-primary" style="width:100%;">Save Incident Log</button></form>');
+}
+async function saveIncident() {
+  await apiJson('/api/dpdp/breaches', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({
+    title: document.getElementById('m-inc-title').value, severity: document.getElementById('m-inc-sev').value,
+    systems_affected: document.getElementById('m-inc-sys').value.split(',').map(s => s.trim()).filter(Boolean),
+    estimated_individuals_affected: Number(document.getElementById('m-inc-cnt').value)
+  })});
+  closeModal(); toast('Incident logged.'); loadIncidents();
+}
+async function addTimelineNote(id) {
+  openModal('Add Incident Timeline Event', '<form onsubmit="event.preventDefault(); submitTimelineNote(\\'' + esc(id) + '\\');"><div class="fg"><label class="fl">Timeline Update</label><input class="fi" id="m-tl-note" required placeholder="Revoked access & notified team"/></div><button type="submit" class="btn btn-primary" style="width:100%;">Add Event</button></form>');
+}
+async function submitTimelineNote(id) {
+  await apiJson('/api/dpdp/breaches/' + encodeURIComponent(id), {method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({timeline_note: document.getElementById('m-tl-note').value})});
+  closeModal(); toast('Timeline event added.'); loadIncidents();
+}
+async function authorizeIncident(id) {
+  await apiJson('/api/dpdp/breaches/' + encodeURIComponent(id) + '/authorize', {method: 'POST'});
+  toast('Incident notice drafts authorised.'); loadIncidents();
+}
+
+/* DOCUMENT CENTRE */
+async function loadDocumentTemplates() {
+  const d = await apiJson('/api/dpdp/documents/templates');
+  document.getElementById('doc-templates-grid').innerHTML = (d.templates || []).map(t => (
+    '<div class="card"><h3>' + esc(t.title) + '</h3><p style="font-size:13px;color:var(--muted);margin:6px 0 12px;">' + esc(t.description) + '</p>' +
+    '<button class="btn btn-primary btn-sm" onclick="generateDoc(\\'' + esc(t.id) + '\\')">Generate Draft</button></div>'
+  )).join('');
+}
+async function generateDoc(docType) {
+  if (STATE.demoMode) { toast('Sign in to generate tailored business documents.', 'err'); return; }
+  const d = await apiJson('/api/dpdp/documents/generate', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({doc_type: docType})});
+  const doc = d.document;
+  const box = document.getElementById('doc-preview-card');
+  box.style.display = 'block';
+  box.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><strong>' + esc(doc.title) + '</strong><span class="badge b-amber">' + esc(doc.watermark) + '</span></div>' +
+    '<pre style="white-space:pre-wrap;font-size:12.5px;background:var(--surface-2);padding:14px;border-radius:8px;max-height:360px;overflow-y:auto;">' + esc(doc.content) + '</pre>';
+  toast('Draft generated.');
+}
+
+/* EVIDENCE VAULT */
+async function loadEvidence() {
+  if (STATE.demoMode) return;
+  const st = encodeURIComponent(document.getElementById('evi-status-filter').value || '');
+  const d = await apiJson('/api/dpdp/evidence/list' + (st ? '?status=' + st : ''));
+  STATE.evidence = d.artifacts || [];
+  document.getElementById('evi-tbody').innerHTML = STATE.evidence.length ? STATE.evidence.map(e => (
+    '<tr><td><strong>' + esc(e.title) + '</strong><div style="font-size:12px;color:var(--muted);">' + esc(e.filename) + ' (v' + ((e.versions || []).length || 1) + ')</div></td>' +
+    '<td><span class="badge b-slate">' + esc(e.control_id) + '</span></td>' +
+    '<td><select class="fi" style="min-width:130px;padding:4px 8px;font-size:12.5px;" onchange="changeEvidenceStatus(\\'' + esc(e.id) + '\\', this.value)">' +
+    ['Uploaded','Pending review','Verified','Rejected','Expired'].map(opt => '<option' + (e.status === opt ? ' selected' : '') + '>' + opt + '</option>').join('') + '</select></td>' +
+    '<td style="font-size:12px;">Exp: ' + esc(e.expiry_date) + '<div style="color:var(--muted);">' + esc(String(e.file_hash).slice(0,18)) + '...</div></td>' +
+    '<td style="white-space:nowrap;">' +
+    (e.has_physical_file ? '<a class="btn btn-secondary btn-sm" href="/api/dpdp/evidence/' + esc(e.id) + '/preview" target="_blank">Preview</a> <a class="btn btn-secondary btn-sm" href="/api/dpdp/evidence/' + esc(e.id) + '/download">Download</a> ' : '') +
+    '<button class="btn btn-danger btn-sm" onclick="deleteEvidence(\\'' + esc(e.id) + '\\')">Delete</button></td></tr>'
+  )).join('') : '<tr><td colspan="5"><div class="empty-state">No evidence uploaded yet. Click "+ Upload Evidence File" to add proof.</div></td></tr>';
+}
+function openEvidenceUploadModal() {
+  openModal('Upload Evidence File (Max 5 MB)',
+    '<form onsubmit="event.preventDefault(); uploadEvidenceFile();">' +
+    '<div class="fg"><label class="fl">Title / Description</label><input class="fi" id="m-ev-title" required placeholder="Signed Cloud Vendor DPA 2026"/></div>' +
+    '<div class="fg"><label class="fl">Linked DPDP Area</label><select class="fi" id="m-ev-ctrl"><option value="DPDP-SEC-05">Privacy Notice (Sec 5)</option><option value="DPDP-SEC-08-01">Vendor Contract / DPA (Sec 8(2))</option><option value="DPDP-SEC-08-05">Security Safeguards (Sec 8(5))</option><option value="DPDP-SEC-08-07">Retention & Deletion (Sec 8(7))</option><option value="DPDP-SEC-08-06">Breach Procedure (Sec 8(6))</option></select></div>' +
+    '<div class="fg"><label class="fl">Select File (PDF, PNG, JPG, TXT, CSV, MD, DOCX, XLSX, JSON)</label><input class="fi" type="file" id="m-ev-file" required/></div>' +
+    '<div class="fg"><label class="fl">Expiry Date</label><input class="fi" type="date" id="m-ev-exp"/></div>' +
+    '<button type="submit" class="btn btn-primary" style="width:100%;">Upload &amp; Compute SHA-256</button></form>');
+}
+async function uploadEvidenceFile() {
+  const f = document.getElementById('m-ev-file').files[0];
+  if (!f) { toast('Choose a file to upload.', 'err'); return; }
+  const fd = new FormData();
+  fd.append('title', document.getElementById('m-ev-title').value);
+  fd.append('control_id', document.getElementById('m-ev-ctrl').value);
+  fd.append('expiry_date', document.getElementById('m-ev-exp').value);
+  fd.append('file', f);
+  try {
+    const res = await fetch('/api/dpdp/evidence/upload', {method: 'POST', body: fd});
+    const d = await res.json();
+    if (!res.ok) throw new Error(d.error || d.message || 'Upload failed');
+    closeModal(); toast('Evidence uploaded with SHA-256 fingerprint.'); loadEvidence();
+  } catch (e) { toast(e.message, 'err'); }
+}
+async function changeEvidenceStatus(id, st) {
+  await apiJson('/api/dpdp/evidence/' + encodeURIComponent(id) + '/status', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({status: st})});
+  toast('Status updated to ' + st);
+}
+async function deleteEvidence(id) { await apiJson('/api/dpdp/evidence/' + encodeURIComponent(id), {method: 'DELETE'}); toast('Evidence deleted.'); loadEvidence(); }
+
+/* AI DPDP ASSISTANT (USES data.answer + STARTER QUESTIONS + FEEDBACK + HISTORY) */
+async function loadAssistant() {
+  if (STATE.demoMode) return;
+  try {
+    const d = await apiJson('/api/dpdp/assistant/history');
+    document.getElementById('ai-starter-chips').innerHTML = (d.starter_questions || []).map(q => (
+      '<button class="btn btn-secondary btn-sm" onclick="askAssistant(\\'' + esc(q).replace(/'/g, "&#39;") + '\\')">' + esc(q) + '</button>'
+    )).join('');
+    renderAssistantHistory(d.history || []);
+  } catch (e) {}
+}
+function renderAssistantHistory(hist) {
+  document.getElementById('ai-chat-history').innerHTML = hist.length ? hist.map(m => (
+    '<div style="padding:12px;border:1px solid var(--border);border-radius:10px;background:var(--surface-2);">' +
+    '<div style="font-weight:700;font-size:13.5px;margin-bottom:6px;">You: ' + esc(m.query) + '</div>' +
+    '<div style="font-size:13.5px;white-space:pre-wrap;">' + esc(m.answer) + '</div>' +
+    '<div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);">' +
+    '<span>Citation: ' + esc(m.matched_section) + ' | Engine: ' + esc(m.engine || '') + '</span>' +
+    '<div style="display:flex;gap:6px;"><button class="btn btn-secondary btn-sm" onclick="navigator.clipboard.writeText(\\'' + esc(m.answer).replace(/'/g,'') + '\\'); toast(\\'Copied\\')">Copy</button>' +
+    '<button class="btn btn-secondary btn-sm" onclick="sendAiFeedback(\\'' + esc(m.message_id) + '\\', \\'helpful\\')">Helpful</button></div></div></div>'
+  )).join('') : '<div style="font-size:13px;color:var(--muted);">Click any starter question above or ask your question below.</div>';
+}
+async function askAssistant(presetQuery = null) {
+  if (STATE.demoMode) { toast('Sign in to use the organisation AI DPDP Assistant.', 'err'); return; }
+  const q = presetQuery || document.getElementById('ai-query-input').value.trim();
+  if (!q) return;
+  const btn = document.getElementById('ai-ask-btn'); btn.disabled = true;
+  try {
+    const res = await apiJson('/api/dpdp/assistant', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({query: q})});
+    document.getElementById('ai-query-input').value = '';
+    const histBox = document.getElementById('ai-chat-history');
+    const card = '<div style="padding:12px;border:1px solid var(--accent);border-radius:10px;background:var(--accent-soft);">' +
+      '<div style="font-weight:700;margin-bottom:6px;">You: ' + esc(res.query) + '</div>' +
+      '<div style="font-size:13.5px;white-space:pre-wrap;">' + esc(res.answer) + '</div>' +
+      '<div style="font-size:11.5px;color:var(--muted);margin-top:8px;">' + esc(res.data_handling_notice || '') + '</div></div>';
+    histBox.innerHTML = card + histBox.innerHTML;
+  } catch (e) { toast(e.message, 'err'); }
+  finally { btn.disabled = false; }
+}
+async function sendAiFeedback(msgId, rating) {
+  await apiJson('/api/dpdp/assistant/feedback', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({message_id: msgId, rating})});
+  toast('Feedback recorded. Thank you!');
+}
+
+/* GLOSSARY */
+function renderGlossary() {
+  const items = [
+    ['Data Fiduciary (Your Business)', 'Any business or clinic that decides why and how customer personal details are collected and used (Section 2(i)).'],
+    ['Data Principal (Customer / Patient)', 'The person whose personal details your business holds (Section 2(j)).'],
+    ['Data Processor (Vendor)', 'Any software company, diagnostic lab, cloud host, or courier processing personal data on your behalf (Section 2(k)).'],
+    ['Privacy Notice (Section 5)', 'A clear message explaining what personal data you collect, why, customer rights, and how to contact your Grievance Officer.'],
+    ['Certain Legitimate Uses (Section 7)', 'Specific legal grounds where consent is NOT required (for example, voluntary walk-in service requests, medical emergencies, tax compliance, and employment HR).'],
+    ['Privacy Incident / Breach (Section 8(6))', 'Any accidental or unauthorised exposure, alteration, or loss of customer personal information requiring Board & customer intimation under Rule 7.']
+  ];
+  document.getElementById('glossary-grid').innerHTML = items.map(([t, d]) => '<div class="card"><h3>' + esc(t) + '</h3><p style="font-size:13.5px;color:var(--ink-2);margin-top:6px;">' + esc(d) + '</p></div>').join('');
+}
+
+/* SETTINGS, TEAM, MFA, AUDIT LOGS */
+async function loadSettings() {
+  if (STATE.demoMode) return;
+  try {
+    const prof = await apiJson('/api/dpdp/onboarding').then(r => r.profile || {});
+    document.getElementById('set-company').value = prof.company_name || (STATE.org || {}).name || '';
+    document.getElementById('set-website').value = prof.website_url || '';
+    document.getElementById('set-email').value = prof.contact_email || '';
+    document.getElementById('set-industry').value = prof.industry || '';
+
+    const team = await apiJson('/api/team/members').then(r => r.team_members || []);
+    document.getElementById('team-tbody').innerHTML = team.map(u => (
+      '<tr><td>' + esc(u.name) + '</td><td>' + esc(u.email) + '</td><td>' +
+      '<select class="fi" style="max-width:130px;padding:4px;" onchange="changeTeamRole(\\'' + esc(u.id) + '\\', this.value)">' +
+      ['admin','member','viewer'].map(r => '<option' + (u.role === r ? ' selected' : '') + '>' + r + '</option>').join('') + '</select></td>' +
+      '<td><button class="btn btn-danger btn-sm" onclick="removeTeamMember(\\'' + esc(u.id) + '\\')">Remove</button></td></tr>'
+    )).join('');
+
+    const audits = await apiJson('/api/audit-logs?limit=25').then(r => r.events || []);
+    document.getElementById('audit-tbody').innerHTML = audits.map(a => (
+      '<tr><td style="font-size:12px;">' + esc(String(a.timestamp).slice(0,19).replace('T',' ')) + '</td><td>' + esc(a.actor_email || '-') + '</td><td><strong>' + esc(a.action) + '</strong></td><td>' + esc(a.resource_type + ' ' + (a.resource_id || '')) + '</td></tr>'
+    )).join('');
+
+    const mfaEnabled = !!(STATE.user && STATE.user.mfa_enabled);
+    document.getElementById('mfa-box').innerHTML = mfaEnabled
+      ? '<span class="badge b-green">TOTP 2FA Enabled</span> <button class="btn btn-secondary btn-sm" onclick="disableMfaModal()" style="margin-left:8px;">Disable 2FA</button>'
+      : '<span class="badge b-amber">2FA Not Enabled</span> <button class="btn btn-primary btn-sm" onclick="setupMfaModal()" style="margin-left:8px;">Enable TOTP 2FA</button>';
+  } catch (e) {}
+}
+async function saveBusinessSettings() {
+  await apiJson('/api/dpdp/onboarding', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({
+    company_name: document.getElementById('set-company').value, website_url: document.getElementById('set-website').value,
+    contact_email: document.getElementById('set-email').value, industry: document.getElementById('set-industry').value
+  })});
+  toast('Business details saved.');
+}
+function openTeamModal() {
+  openModal('Invite Team Member', '<form onsubmit="event.preventDefault(); addTeamMember();"><div class="fg"><label class="fl">Name</label><input class="fi" id="m-tm-name" required/></div><div class="fg"><label class="fl">Email</label><input class="fi" type="email" id="m-tm-email" required/></div><div class="fg"><label class="fl">Role</label><select class="fi" id="m-tm-role"><option value="member">Member (Read &amp; Write)</option><option value="viewer">Viewer (Read-Only)</option><option value="admin">Admin (Full Control)</option></select></div><button type="submit" class="btn btn-primary" style="width:100%;">Add Team Member</button></form>');
+}
+async function addTeamMember() {
+  try { await apiJson('/api/team/members', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({name: document.getElementById('m-tm-name').value, email: document.getElementById('m-tm-email').value, role: document.getElementById('m-tm-role').value})}); closeModal(); toast('Member added.'); loadSettings(); } catch (e) { toast(e.message, 'err'); }
+}
+async function changeTeamRole(uid, role) { try { await apiJson('/api/team/members/' + encodeURIComponent(uid) + '/role', {method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({role})}); toast('Role updated.'); } catch (e) { toast(e.message, 'err'); loadSettings(); } }
+async function removeTeamMember(uid) { try { await apiJson('/api/team/members/' + encodeURIComponent(uid), {method: 'DELETE'}); toast('Member removed.'); loadSettings(); } catch (e) { toast(e.message, 'err'); } }
+async function setupMfaModal() {
+  const res = await apiJson('/api/auth/mfa/setup', {method: 'POST'});
+  openModal('Enable TOTP Multi-Factor Authentication', '<p style="font-size:13px;margin-bottom:10px;">Add this secret key to Google Authenticator or Authy:</p><code style="display:block;padding:10px;background:var(--surface-2);border-radius:8px;margin-bottom:12px;">' + esc(res.data.secret) + '</code><form onsubmit="event.preventDefault(); confirmMfa();"><div class="fg"><label class="fl">Enter 6-Digit Code</label><input class="fi" id="m-mfa-code" required/></div><button type="submit" class="btn btn-primary" style="width:100%;">Confirm &amp; Enable 2FA</button></form>');
+}
+async function confirmMfa() { try { await apiJson('/api/auth/mfa/enable', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({code: document.getElementById('m-mfa-code').value})}); closeModal(); toast('2FA enabled!'); initApp(); } catch (e) { toast(e.message, 'err'); } }
+function disableMfaModal() { openModal('Disable 2FA', '<form onsubmit="event.preventDefault(); confirmDisableMfa();"><div class="fg"><label class="fl">Current 6-Digit Authenticator Code</label><input class="fi" id="m-mfa-dis" required/></div><button type="submit" class="btn btn-danger" style="width:100%;">Disable 2FA</button></form>'); }
+async function confirmDisableMfa() { try { await apiJson('/api/auth/mfa/disable', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({code: document.getElementById('m-mfa-dis').value})}); closeModal(); toast('2FA disabled.'); initApp(); } catch (e) { toast(e.message, 'err'); } }
+function openDeleteAccountModal() {
+  openModal('Confirm Permanent Organisation Deletion', '<p style="font-size:13.5px;margin-bottom:14px;color:var(--rose);">This permanently deletes all customer data lists, vendors, scans, evidence files, and user accounts for your organisation.</p><button onclick="confirmAccountDelete()" class="btn btn-danger" style="width:100%;">Yes, Permanently Delete Everything</button>');
+}
+async function confirmAccountDelete() { try { await apiJson('/api/account/delete', {method: 'POST'}); closeModal(); toast('Organisation deleted.'); showAuthGate('register'); } catch (e) { toast(e.message, 'err'); } }
+
+/* ADVANCED LEGAL CENTRE */
+async function loadLegalAssessment() {
+  if (STATE.demoMode) return;
+  const d = await apiJson('/api/dpdp/assessment');
+  const ctrls = d.controls || [];
+  document.getElementById('legal-reqs-list').innerHTML = ctrls.map(c => '<div style="padding:10px 0;border-bottom:1px solid var(--border);"><strong>' + esc(c.section) + ' &mdash; ' + esc(c.title) + '</strong> <span class="badge b-blue">' + esc(c.commencement_status || c.legal_status) + '</span><div style="font-size:12.5px;color:var(--muted);">' + esc(c.description) + '</div></div>').join('');
+}
+async function loadOrgAssessment() {
+  if (STATE.demoMode) return;
+  const d = await apiJson('/api/dpdp/assessment/organisational');
+  const m = (d.assessment || {}).summary_metrics || {};
+  document.getElementById('org-ass-box').innerHTML = '<p><strong>Readiness Coverage:</strong> ' + esc(m.coverage_percentage || 0) + '% | <strong>Confidence:</strong> ' + esc(m.confidence_level || 'UNASSESSED') + '</p>';
+}
+async function loadPenalties() {
+  const d = await apiJson('/api/dpdp/penalties/matrix');
+  const p = Object.values(d.penalties || {});
+  const f = d.section_33_factors || [];
+  document.getElementById('penalties-matrix-box').innerHTML =
+    '<p style="font-size:12.5px;color:var(--muted);margin-bottom:12px;">' + esc(d.disclaimer) + '</p>' +
+    '<div class="tbl-wrap"><table><thead><tr><th>Section</th><th>Violation Category</th><th>Maximum Statutory Ceiling</th></tr></thead><tbody>' +
+    p.map(x => '<tr><td><strong>' + esc(x.section) + '</strong></td><td>' + esc(x.violation_category) + '</td><td><strong>' + esc(x.max_penalty_text) + '</strong></td></tr>').join('') +
+    '</tbody></table></div><h4 style="margin:16px 0 8px;">7 Statutory Factors Under Section 33(2)</h4>' +
+    f.map(x => '<div style="font-size:13px;padding:4px 0;"><strong>' + esc(x.clause) + ':</strong> ' + esc(x.title) + ' &mdash; ' + esc(x.plain_english) + '</div>').join('');
+}
+async function loadTimeline() {
+  const d = await apiJson('/api/dpdp/commencement/registry');
+  document.getElementById('timeline-box').innerHTML = (d.milestones || []).map(m => '<div style="padding:10px 0;border-bottom:1px solid var(--border);"><strong>' + esc(m.milestone_date) + ' &mdash; ' + esc(m.phase_name) + '</strong> <span class="badge b-blue">' + esc(m.status) + '</span><div style="font-size:13px;color:var(--muted);">' + esc(m.description) + '</div></div>').join('');
+}
+
+window.addEventListener('DOMContentLoaded', initApp);
+</script>
 </body>
 </html>
 """

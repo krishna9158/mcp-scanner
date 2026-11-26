@@ -13,69 +13,85 @@ Stores and manages all DPDP compliance artifacts per organization:
 - Remediation Centre Action Items
 """
 
-import os
-import json
-import uuid
+import csv
 import datetime
 import io
-import csv
-from typing import Dict, List, Any, Optional, Tuple
-from dpdp_engine import DPDP_REQUIREMENTS, INDUSTRY_TEMPLATES
-import dpdp_penalties
-import dpdp_commencement
+import json
+import os
+import re
+import uuid
+from typing import Any, Dict, List, Optional, Tuple
 
-DPDP_DATA_FILE = os.path.join(os.path.dirname(__file__), "data", "dpdp_store.json")
+import dpdp_commencement
+import dpdp_penalties
+from dpdp_engine import DPDP_REQUIREMENTS, INDUSTRY_TEMPLATES
+from security_utils import (
+    BLOCKED_DANGEROUS_EXTENSIONS,
+    ALLOWED_UPLOAD_EXTENSIONS,
+    atomic_write_bytes,
+    atomic_write_json,
+    decrypt_bytes_if_encrypted,
+    encrypt_bytes_if_configured,
+    get_audit_logs,
+    get_data_dir,
+    safe_read_json,
+    safe_resolve_under_dir,
+    sanitize_filename,
+    sanitize_plain_text,
+    validate_uploaded_file,
+)
+
+
+def _default_dpdp_data_file() -> str:
+    env_dir = os.environ.get("TRUSTAUDIT_DATA_DIR", "").strip()
+    if env_dir:
+        return os.path.join(os.path.abspath(env_dir), "dpdp_store.json")
+    return os.path.join(os.path.dirname(__file__), "data", "dpdp_store.json")
+
+
+DPDP_DATA_FILE = _default_dpdp_data_file()
+DPDP_EVIDENCE_FILES_DIR = os.path.join(get_data_dir(), "dpdp_evidence")
+
 
 def _ensure_data_dir():
     os.makedirs(os.path.dirname(DPDP_DATA_FILE), exist_ok=True)
 
+
+def _empty_store() -> Dict[str, Any]:
+    return {
+        "version": "2.0",
+        "data_inventories": {},
+        "assessments": {},
+        "privacy_notices": {},
+        "consent_records": {},
+        "withdrawal_requests": {},
+        "rights_requests": {},
+        "vendors": {},
+        "retention_schedules": {},
+        "breach_incidents": {},
+        "remediation_tasks": {},
+        "onboarding_profiles": {},
+        "erasure_tasks": {},
+        "website_scans": {},
+        "evidence_vault": {},
+        "organisational_assessments": {},
+        "generated_documents": {},
+    }
+
+
 def _load_dpdp_store() -> Dict[str, Any]:
     _ensure_data_dir()
     if not os.path.exists(DPDP_DATA_FILE):
-        initial = {
-            "version": "1.0",
-            "data_inventories": {},
-            "assessments": {},
-            "privacy_notices": {},
-            "consent_records": {},
-            "withdrawal_requests": {},
-            "rights_requests": {},
-            "vendors": {},
-            "retention_schedules": {},
-            "breach_incidents": {},
-            "remediation_tasks": {},
-            "onboarding_profiles": {},
-            "erasure_tasks": {},
-            "website_scans": {}
-        }
-        with open(DPDP_DATA_FILE, "w", encoding="utf-8") as f:
-            json.dump(initial, f, indent=2)
+        initial = _empty_store()
+        atomic_write_json(DPDP_DATA_FILE, initial)
         return initial
-    try:
-        with open(DPDP_DATA_FILE, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except Exception:
-        return {
-            "version": "1.0",
-            "data_inventories": {},
-            "assessments": {},
-            "privacy_notices": {},
-            "consent_records": {},
-            "withdrawal_requests": {},
-            "rights_requests": {},
-            "vendors": {},
-            "retention_schedules": {},
-            "breach_incidents": {},
-            "remediation_tasks": {},
-            "onboarding_profiles": {},
-            "erasure_tasks": {},
-            "website_scans": {}
-        }
+    return safe_read_json(DPDP_DATA_FILE, _empty_store)
+
 
 def _save_dpdp_store(data: Dict[str, Any]) -> None:
     _ensure_data_dir()
-    with open(DPDP_DATA_FILE, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2)
+    atomic_write_json(DPDP_DATA_FILE, data)
+
 
 # ==============================================================================
 # ONBOARDING & INDUSTRY SELECTION
@@ -85,31 +101,35 @@ def get_onboarding_profile(org_id: str) -> Optional[Dict[str, Any]]:
     store = _load_dpdp_store()
     return store.get("onboarding_profiles", {}).get(org_id)
 
+
 def save_onboarding_profile(org_id: str, profile_data: Dict[str, Any]) -> Dict[str, Any]:
     store = _load_dpdp_store()
     if "onboarding_profiles" not in store:
         store["onboarding_profiles"] = {}
-        
+
     existing = store["onboarding_profiles"].get(org_id, {})
     now = datetime.datetime.now(datetime.timezone.utc).isoformat()
-    
+
     profile = {
         **existing,
         **profile_data,
         "org_id": org_id,
-        "updated_at": now
+        "updated_at": now,
     }
     if "created_at" not in profile:
         profile["created_at"] = now
-        
+
     store["onboarding_profiles"][org_id] = profile
     _save_dpdp_store(store)
-    
-    # If industry template chosen and inventory is empty, pre-populate template
-    industry = profile.get("industry", "healthcare").lower()
-    if industry in INDUSTRY_TEMPLATES and not get_data_inventory(org_id):
+
+    # Pre-populate industry template when explicitly requested (or legacy full-profile call)
+    industry = (profile.get("industry") or "").lower()
+    should_apply = profile_data.get("apply_industry_template")
+    if should_apply is None:
+        should_apply = bool(profile_data.get("customer_types") or profile_data.get("business_name"))
+    if should_apply and industry in INDUSTRY_TEMPLATES and not get_data_inventory(org_id):
         prepopulate_industry_inventory(org_id, industry)
-        
+
     return profile
 
 # ==============================================================================
@@ -486,67 +506,118 @@ def get_privacy_notices(org_id: str) -> List[Dict[str, Any]]:
     store = _load_dpdp_store()
     return store.get("privacy_notices", {}).get(org_id, [])
 
+
 def generate_privacy_notice(org_id: str, notice_params: Dict[str, Any]) -> Dict[str, Any]:
     store = _load_dpdp_store()
-    if "privacy_notices" not in store:
-        store["privacy_notices"] = {}
-    if org_id not in store["privacy_notices"]:
-        store["privacy_notices"][org_id] = []
-        
+    store.setdefault("privacy_notices", {}).setdefault(org_id, [])
+
     now = datetime.datetime.now(datetime.timezone.utc).isoformat()
-    company_name = notice_params.get("company_name", "Your Organisation")
-    grievance_email = notice_params.get("grievance_email", "grievance@organisation.com")
-    grievance_officer = notice_params.get("grievance_officer", "Data Protection Grievance Officer")
-    address = notice_params.get("address", "Registered Office, India")
-    
+    profile = get_onboarding_profile(org_id) or {}
+    company_name = sanitize_plain_text(notice_params.get("company_name") or profile.get("company_name") or "Your Business", 160)
+    grievance_email = sanitize_plain_text(notice_params.get("grievance_email") or profile.get("contact_email") or "", 160) or "[Add Grievance Officer Email]"
+    grievance_officer = sanitize_plain_text(notice_params.get("grievance_officer") or "Privacy & Grievance Contact", 120)
+    address = sanitize_plain_text(notice_params.get("address") or profile.get("address") or "[Add Registered Business Address]", 240)
+
     inventory_items = get_data_inventory(org_id)
-    purposes_text = "\n".join([f"• {i.get('category')}: {i.get('purpose')} (Basis: {i.get('legal_basis')})" for i in inventory_items[:6]])
+    purposes_text = "\n".join(
+        [f"• {i.get('category')}: {i.get('purpose')} (Legal basis: {i.get('legal_basis')})" for i in inventory_items[:10]]
+    )
     if not purposes_text:
-        purposes_text = "• Patient/Customer Records: Service fulfillment, medical consultation, and operational communication (DPDP Section 6 Consent)."
-        
-    notice_text = f"""ITEMISED PRIVACY NOTICE
+        purposes_text = "• [Add entries in Your Customer Data List so this notice lists your exact categories and purposes automatically.]"
+
+    custom_content = notice_params.get("content")
+    notice_text = custom_content if custom_content else f"""PRIVACY NOTICE (DRAFT — REVIEW BEFORE PUBLISHING)
 Digital Personal Data Protection Act, 2023 (Section 5 read with Rule 3)
 
-1. Identity of Data Fiduciary:
-{company_name} (Address: {address})
+1. Who We Are:
+{company_name}
+Registered Address: {address}
 
-2. Personal Data Collected & Processing Purposes:
-We collect and process digital personal data solely for specified lawful purposes:
+2. What Customer Details We Collect & Why:
+We collect and use digital personal data only for clear, lawful purposes:
 {purposes_text}
 
-3. Your Statutory Rights as Data Principal (Sections 11–14):
-You possess statutory rights to:
-• Right to Access: Obtain a summary of your personal data and third parties shared with.
-• Right to Correction & Updating: Request correction of inaccurate or incomplete records.
-• Right to Erasure: Request erasure where statutory clinical or legal retention does not mandate preservation.
-• Right to Withdraw Consent: Withdraw consent at any time with the same ease as provided (Section 6(4)).
-• Right to Nominate: Nominate a representative in the event of death or incapacity (Section 14).
+3. Your Privacy Rights (Sections 11–14):
+You may ask us to:
+• View a summary of the personal data we hold and who we share it with.
+• Correct inaccurate details or update incomplete records.
+• Delete personal data when it is no longer needed and no other Indian law requires us to keep it.
+• Withdraw consent where processing depends on consent (Section 6(4)).
+• Nominate someone to exercise rights on your behalf in case of death or incapacity (Section 14).
 
-4. Grievance Redressal Mechanism (Section 8(10) & Rule 9):
-If you have any questions, rights requests, or grievances regarding your personal data:
-Grievance Officer: {grievance_officer}
+4. Privacy Questions & Complaints (Grievance Redressal):
+Privacy / Grievance Contact: {grievance_officer}
 Email: {grievance_email}
 Address: {address}
-We endeavor to investigate and redress all grievances within thirty (30) business days.
+We acknowledge customer requests promptly and handle grievances within published grievance redressal timelines.
 
-5. Multilingual Availability:
-This notice is prepared in English and is available in Hindi and other Eighth Schedule languages upon request at our reception desk or customer support portal."""
+5. Languages Available:
+Available in English and Eighth Schedule Indian languages upon request (Section 5(3) read with Rule 3)."""
 
+    existing_count = len(store["privacy_notices"][org_id])
+    version = notice_params.get("version") or f"v{existing_count + 1}.0"
+    status = notice_params.get("status", "DRAFT")
     notice = {
         "id": f"not-{uuid.uuid4().hex[:6]}",
-        "title": notice_params.get("title", f"{company_name} Customer & Patient Privacy Notice"),
-        "version": notice_params.get("version", "v1.0"),
-        "status": "APPROVED_PUBLISHED",
+        "title": sanitize_plain_text(notice_params.get("title") or f"{company_name} Privacy Notice", 200),
+        "version": sanitize_plain_text(version, 20),
+        "status": status,
         "content": notice_text,
-        "languages_supported": ["English", "Hindi"],
+        "languages_supported": notice_params.get("languages_supported", ["English", "Hindi"]),
         "grievance_officer": grievance_officer,
         "grievance_email": grievance_email,
+        "address": address,
+        "approved_by": notice_params.get("approved_by") if status == "APPROVED_PUBLISHED" else None,
+        "approved_at": now if status == "APPROVED_PUBLISHED" else None,
+        "version_history": [
+            {"version": version, "updated_at": now, "status": status, "note": "Notice created"}
+        ],
         "created_at": now,
-        "updated_at": now
+        "updated_at": now,
     }
-    store["privacy_notices"][org_id].append(notice)
+    store["privacy_notices"][org_id].insert(0, notice)
     _save_dpdp_store(store)
     return notice
+
+
+def update_privacy_notice(org_id: str, notice_id: str, updates: Dict[str, Any], actor_name: str = "Privacy Lead") -> Optional[Dict[str, Any]]:
+    store = _load_dpdp_store()
+    notices = store.get("privacy_notices", {}).get(org_id, [])
+    now = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    for n in notices:
+        if n.get("id") == notice_id:
+            for k in ("title", "content", "grievance_officer", "grievance_email", "address", "languages_supported"):
+                if k in updates:
+                    n[k] = updates[k]
+            if updates.get("bump_version"):
+                v_num = len(n.get("version_history", [])) + 1
+                n["version"] = f"v{v_num}.0"
+            if updates.get("status"):
+                n["status"] = updates["status"]
+                if updates["status"] == "APPROVED_PUBLISHED":
+                    n["approved_by"] = actor_name
+                    n["approved_at"] = now
+            n.setdefault("version_history", []).append({
+                "version": n.get("version", "v1.0"),
+                "updated_at": now,
+                "status": n.get("status", "DRAFT"),
+                "note": sanitize_plain_text(updates.get("note") or f"Updated by {actor_name}", 240),
+            })
+            n["updated_at"] = now
+            _save_dpdp_store(store)
+            return n
+    return None
+
+
+def delete_privacy_notice(org_id: str, notice_id: str) -> bool:
+    store = _load_dpdp_store()
+    notices = store.get("privacy_notices", {}).get(org_id, [])
+    before = len(notices)
+    store.setdefault("privacy_notices", {})[org_id] = [n for n in notices if n.get("id") != notice_id]
+    if len(store["privacy_notices"][org_id]) < before:
+        _save_dpdp_store(store)
+        return True
+    return False
 
 # ==============================================================================
 # CONSENT RECORDS & WITHDRAWAL (SECTION 6(4)-(6))
@@ -598,6 +669,10 @@ def submit_consent_withdrawal(org_id: str, request_data: Dict[str, Any]) -> Dict
         if retention_exception else "No statutory retention impediment."
     )
     
+    # Real vendor names logged by this org (never fake hardcoded vendors)
+    org_vendor_names = [v.get("name", "") for v in store.get("vendors", {}).get(org_id, []) if v.get("name")]
+    processors_notified = request_data.get("processors_notified_list") or org_vendor_names
+
     withdrawal = {
         "id": f"wth-{uuid.uuid4().hex[:8]}",
         "data_principal_ref": request_data.get("principal_ref", "DP-XXXX"),
@@ -605,16 +680,16 @@ def submit_consent_withdrawal(org_id: str, request_data: Dict[str, Any]) -> Dict
         "requested_at": now,
         "processing_halt_status": "CEASED" if not retention_exception else "RESTRICTED_ARCHIVE_ONLY",
         "processor_notified": True,
-        "processors_notified_list": ["Cloud HMS Software", "SMS Gateway", "Local Storage"],
+        "processors_notified_list": processors_notified,
         "statutory_exception_applies": retention_exception,
         "exception_reason": exception_reason,
         "status": "COMPLETED",
         "audit_trail": [
             f"{now}: Withdrawal request registered under DPDP Section 6(4)",
             f"{now}: Identity of Data Principal verified",
-            f"{now}: Data processors instructed to cease operational processing",
-            f"{now}: Audit record generated"
-        ]
+            f"{now}: Withdrawal instruction logged for {len(processors_notified)} recorded vendor(s)" if processors_notified else f"{now}: Processing cease logged internally",
+            f"{now}: Audit record generated",
+        ],
     }
     store["withdrawal_requests"][org_id].append(withdrawal)
     
@@ -655,7 +730,10 @@ def submit_rights_request(org_id: str, request_data: Dict[str, Any]) -> Dict[str
         "assigned_to": request_data.get("assigned_to", "Privacy Grievance Officer"),
         "status": "RECEIVED",  # RECEIVED, VERIFIED, IN_PROGRESS, COMPLETED, REJECTED
         "sla_deadline": (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=30)).strftime("%Y-%m-%d"),
-        "systems_involved": ["HMS Database", "Billing ERP", "Cloud Storage"],
+        "identity_verified": bool(request_data.get("identity_verified", False)),
+        "systems_involved": request_data.get("systems_involved") or [
+            i.get("storage_location") for i in store.get("data_inventories", {}).get(org_id, []) if i.get("storage_location")
+        ][:5],
         "response_summary": "",
         "closed_at": None,
         "audit_logs": [
@@ -716,18 +794,27 @@ def add_vendor(org_id: str, vendor_data: Dict[str, Any]) -> Dict[str, Any]:
         store["vendors"][org_id] = []
         
     now = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    dpa_raw = vendor_data.get("dpa_status", "Not Started")
+    dpa_upper = str(dpa_raw).upper()
+    is_signed = any(k in dpa_upper for k in ("SIGNED", "EXECUTED", "ACTIVE"))
     vendor = {
         "id": f"vnd-{uuid.uuid4().hex[:6]}",
-        "name": vendor_data.get("name", "Vendor Name"),
-        "service": vendor_data.get("service", "Cloud / Software Provider"),
-        "personal_data_processed": vendor_data.get("personal_data_processed", "Patient / Customer Records"),
-        "storage_location": vendor_data.get("storage_location", "India (AWS Mumbai ap-south-1)"),
-        "dpa_status": vendor_data.get("dpa_status", "EXECUTED"),  # EXECUTED, UNDER_REVIEW, MISSING
-        "agreement_expiry": vendor_data.get("agreement_expiry", "2027-12-31"),
-        "security_documentation": vendor_data.get("security_documentation", "ISO 27001 / SOC 2 Report on File"),
-        "breach_notification_clause": vendor_data.get("breach_notification_clause", "24-Hour Notice Required"),
-        "risk_rating": vendor_data.get("risk_rating", "LOW"),  # LOW, MEDIUM, HIGH
-        "created_at": now
+        "name": sanitize_plain_text(vendor_data.get("name", "Vendor Name"), 160),
+        "service": sanitize_plain_text(vendor_data.get("service", "Software / Cloud Provider"), 160),
+        "personal_data_processed": sanitize_plain_text(vendor_data.get("personal_data_processed", "Customer Records"), 200),
+        "storage_location": sanitize_plain_text(vendor_data.get("storage_location", "Not specified"), 140),
+        "dpa_status": dpa_raw,
+        "agreement_expiry": sanitize_plain_text(vendor_data.get("agreement_expiry", ""), 40),
+        "security_documentation": sanitize_plain_text(vendor_data.get("security_documentation", ""), 200),
+        "breach_notification_clause": sanitize_plain_text(vendor_data.get("breach_notification_clause", ""), 160),
+        "risk_rating": vendor_data.get("risk_rating", "MEDIUM" if not is_signed else "LOW"),
+        "dpa_artifact_id": vendor_data.get("dpa_artifact_id", ""),
+        "statutory_risk": (
+            "Agreement on file: Section 8(2) processor contract tracked."
+            if is_signed
+            else "Needs attention: Section 8(2) requires engaging Data Processors under a valid contract."
+        ),
+        "created_at": now,
     }
     store["vendors"][org_id].append(vendor)
     _save_dpdp_store(store)
@@ -786,6 +873,7 @@ def add_retention_schedule(org_id: str, schedule_data: Dict[str, Any]) -> Dict[s
         "period_years": schedule_data.get("period_years", 3),
         "end_of_purpose_trigger": schedule_data.get("end_of_purpose_trigger", "Treatment Completion / Account Inactivity"),
         "deletion_method": schedule_data.get("deletion_method", "Cryptographic Soft-Archive & Secure DB Purge"),
+        "owner": sanitize_plain_text(schedule_data.get("owner", "Privacy Lead"), 120),
         "next_review_date": schedule_data.get("next_review_date", "2027-06-30"),
         "status": "ACTIVE",
         "created_at": now
@@ -878,49 +966,83 @@ def get_breach_incidents(org_id: str) -> List[Dict[str, Any]]:
 
 def log_breach_incident(org_id: str, incident_data: Dict[str, Any]) -> Dict[str, Any]:
     store = _load_dpdp_store()
-    if "breach_incidents" not in store:
-        store["breach_incidents"] = {}
-    if org_id not in store["breach_incidents"]:
-        store["breach_incidents"][org_id] = []
-        
+    store.setdefault("breach_incidents", {}).setdefault(org_id, [])
+
     now = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    affected_cats = incident_data.get("affected_data_categories", ["Customer Contact Records"])
+    systems_affected = incident_data.get("systems_affected", [])
     incident = {
         "id": f"brc-{uuid.uuid4().hex[:6]}",
-        "title": incident_data.get("title", "Suspected Data Security Incident"),
-        "severity": incident_data.get("severity", "MEDIUM"),  # LOW, MEDIUM, HIGH, CRITICAL
+        "title": sanitize_plain_text(incident_data.get("title", "Suspected Data Security Incident"), 200),
+        "severity": incident_data.get("severity", "MEDIUM"),
         "detected_at": incident_data.get("detected_at", now),
-        "affected_data_categories": incident_data.get("affected_data_categories", ["Patient Contact Records"]),
-        "estimated_individuals_affected": incident_data.get("estimated_individuals_affected", 0),
+        "affected_data_categories": affected_cats,
+        "systems_affected": systems_affected,
+        "estimated_individuals_affected": int(incident_data.get("estimated_individuals_affected", 0) or 0),
         "containment_status": incident_data.get("containment_status", "CONTAINED"),
+        "description": sanitize_plain_text(incident_data.get("description", ""), 2000),
         "board_notification_status": "DRAFT_PENDING_CUSTOMER_APPROVAL",
         "board_initial_intimation_draft": (
-            f"INITIAL INTIMATION OF PERSONAL DATA BREACH (Rule 7, DPDP Rules 2025)\n"
+            f"INITIAL INTIMATION OF PERSONAL DATA BREACH (Section 8(6) & Rule 7, DPDP Rules 2025)\n"
             f"To: Data Protection Board of India\n"
             f"From: {org_id} (Data Fiduciary)\n"
             f"Date of Incident: {now}\n"
             f"Description: {incident_data.get('title')}\n"
-            f"Immediate Containment Steps: Access revoked, affected endpoint isolated, forensic log preserved.\n"
-            f"Status: Forensic analysis underway; detailed 72-hour report to follow."
+            f"Immediate Containment Steps: Access revoked, affected system isolated, forensic log preserved.\n"
+            f"Status: Investigation underway; detailed 72-hour follow-up report to be filed."
         ),
         "board_72h_detailed_intimation_draft": (
             f"DETAILED FOLLOW-UP INTIMATION (72-Hour Statutory Requirement)\n"
-            f"Affected Categories: {', '.join(incident_data.get('affected_data_categories', []))}\n"
+            f"Affected Categories: {', '.join(affected_cats) if isinstance(affected_cats, list) else affected_cats}\n"
+            f"Systems Affected: {', '.join(systems_affected) if isinstance(systems_affected, list) else systems_affected}\n"
             f"Estimated Count: {incident_data.get('estimated_individuals_affected', 0)}\n"
             f"Forensic Conclusion: Root cause addressed. Remedial measures deployed."
         ),
         "principal_notification_draft": (
             f"NOTICE OF DATA SECURITY INCIDENT\n"
-            f"Dear Data Principal,\n"
+            f"Dear Customer,\n"
             f"We are writing to inform you of a recent security incident involving {incident_data.get('title')}.\n"
-            f"Our security safeguards prevented unauthorized modification. "
-            f"For inquiries, please contact our Grievance Officer at grievance@company.com."
+            f"We have contained the issue and are reviewing what actions help protect your information.\n"
+            f"For questions, please contact our Privacy & Grievance Officer."
         ),
+        "timeline_events": [
+            {"timestamp": now, "event": "Incident recorded and triage initiated", "actor": "Privacy Lead"}
+        ],
         "customer_authorized_to_send": False,
-        "created_at": now
+        "created_at": now,
+        "updated_at": now,
     }
-    store["breach_incidents"][org_id].append(incident)
+    store["breach_incidents"][org_id].insert(0, incident)
     _save_dpdp_store(store)
     return incident
+
+
+def update_breach_incident(org_id: str, incident_id: str, updates: Dict[str, Any], actor: str = "Privacy Lead") -> Optional[Dict[str, Any]]:
+    store = _load_dpdp_store()
+    items = store.get("breach_incidents", {}).get(org_id, [])
+    now = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    for item in items:
+        if item.get("id") == incident_id:
+            for k in ("title", "severity", "containment_status", "description", "affected_data_categories", "systems_affected", "estimated_individuals_affected"):
+                if k in updates:
+                    item[k] = updates[k]
+            if updates.get("timeline_note"):
+                item.setdefault("timeline_events", []).append({
+                    "timestamp": now,
+                    "event": sanitize_plain_text(updates["timeline_note"], 400),
+                    "actor": actor,
+                })
+            elif updates:
+                item.setdefault("timeline_events", []).append({
+                    "timestamp": now,
+                    "event": f"Updated fields: {', '.join(k for k in updates.keys() if k != 'timeline_note')}",
+                    "actor": actor,
+                })
+            item["updated_at"] = now
+            _save_dpdp_store(store)
+            return item
+    return None
+
 
 def authorize_breach_intimation(org_id: str, incident_id: str, authorized_by: str) -> Optional[Dict[str, Any]]:
     store = _load_dpdp_store()
@@ -932,6 +1054,11 @@ def authorize_breach_intimation(org_id: str, incident_id: str, authorized_by: st
             item["board_notification_status"] = "AUTHORIZED_SUBMITTED"
             item["authorized_by"] = authorized_by
             item["submitted_at"] = now
+            item.setdefault("timeline_events", []).append({
+                "timestamp": now,
+                "event": f"Customer authorized regulatory notice preparation ({authorized_by})",
+                "actor": authorized_by,
+            })
             _save_dpdp_store(store)
             return item
     return None
@@ -1083,8 +1210,8 @@ def save_organisational_assessment(org_id: str, assessment_data: Dict[str, Any])
     step6 = assessment_data.get("step6_governance", {})
     step7 = assessment_data.get("step7_docs", {})
     
-    # Evaluated controls count
-    total_applicable = 15
+    # Evaluated controls count (7 distinct statutory controls assessed in steps 4-6)
+    total_applicable = 7
     implemented_count = 0
     gaps = []
     actions = []
@@ -1149,17 +1276,17 @@ def save_organisational_assessment(org_id: str, assessment_data: Dict[str, Any])
         })
         actions.append("Configure Data Retention & Deletion Schedule")
         
-    # Security Safeguards (Sec 8(5))
+    # Security Safeguards (Sec 8(5) & Rule 6)
     if step4.get("encryption_at_rest_and_transit"):
         implemented_count += 1
     else:
         gaps.append({
             "requirement_id": "DPDP-SEC-08-05",
-            "title": "Unverified Encryption & Safeguards on Personal Data",
+            "title": "Unverified Reasonable Security Safeguards on Personal Data",
             "severity": "CRITICAL",
-            "action": "Enforce TLS 1.3 in transit and AES-256 for stored database tables."
+            "action": "Verify encryption, masking, access controls, and security logs under Section 8(5) and Rule 6."
         })
-        actions.append("Enforce TLS 1.3 and database encryption at rest")
+        actions.append("Verify Section 8(5) and Rule 6 reasonable security safeguards")
         
     # Breach Intimation SOP (Sec 8(6))
     if step6.get("breach_sop_ready"):
@@ -1173,10 +1300,8 @@ def save_organisational_assessment(org_id: str, assessment_data: Dict[str, Any])
         })
         actions.append("Prepare 72-Hour Breach Intimation Procedure")
         
-    # Base controls automatically implemented for basic operations
-    implemented_count += 5  # Base general controls
-    
-    score = int(round((implemented_count / total_applicable) * 100))
+    # Honest score: calculated strictly from verified responses without automatic bonus inflation
+    score = int(round((implemented_count / max(1, total_applicable)) * 100))
     coverage = 100 if assessment_data.get("current_step", 1) >= 8 else int(round((assessment_data.get("current_step", 1) / 8.0) * 100))
     
     docs_uploaded_count = len(step7.get("documents", []))
@@ -1347,11 +1472,19 @@ def get_organisational_assessment(org_id: str) -> Dict[str, Any]:
 
 VALID_EVIDENCE_STATUSES = ("Uploaded", "Pending review", "Verified", "Rejected", "Expired")
 
+def _get_dpdp_org_evidence_dir(org_id: str) -> str:
+    safe_org = "".join(c for c in str(org_id or "") if c.isalnum() or c in ("-", "_")).strip() or "org-default"
+    base = os.path.join(os.path.dirname(os.path.abspath(DPDP_DATA_FILE)), "dpdp_evidence")
+    os.makedirs(base, exist_ok=True)
+    target = safe_resolve_under_dir(base, safe_org)
+    os.makedirs(target, exist_ok=True)
+    return target
+
+
 def add_evidence_artifact(org_id: str, artifact: Optional[Dict[str, Any]] = None, **kwargs) -> Dict[str, Any]:
     """
-    Adds a compliance evidence document with cryptographic SHA-256 integrity,
-    category tag, linked requirement ID, and initial verification state.
-    Supports either dictionary or keyword argument invocation.
+    Adds a compliance evidence document with validated physical file storage (when bytes provided),
+    cryptographic SHA-256 integrity, version history, and strict 5-state review status.
     """
     store = _load_dpdp_store()
     now = datetime.datetime.now(datetime.timezone.utc).isoformat()
@@ -1360,41 +1493,213 @@ def add_evidence_artifact(org_id: str, artifact: Optional[Dict[str, Any]] = None
         artifact = dict(kwargs)
     elif kwargs:
         artifact = {**artifact, **kwargs}
-    
+
     artifact_id = f"EVI-{uuid.uuid4().hex[:8].upper()}"
+    # Uploaded evidence NEVER begins as Verified automatically
     status = artifact.get("status", "Uploaded")
     if status not in VALID_EVIDENCE_STATUSES:
         status = "Uploaded"
 
+    raw_filename = artifact.get("filename") or artifact.get("file_name") or "evidence_document.pdf"
     file_bytes = artifact.get("file_bytes")
-    if file_bytes and isinstance(file_bytes, (bytes, bytearray)):
-        import hashlib
-        file_hash = f"sha256:{hashlib.sha256(file_bytes).hexdigest()}"
+    stored_filename = None
+    mime_type = "application/octet-stream"
+    file_size = 0
+    encrypted_flag = False
+    previewable = False
+
+    if file_bytes is not None:
+        if not isinstance(file_bytes, (bytes, bytearray)):
+            raise ValueError("Evidence file bytes must be binary data.")
+        ok, err_msg, meta = validate_uploaded_file(raw_filename, bytes(file_bytes))
+        if not ok:
+            raise ValueError(err_msg)
+        safe_name = meta["safe_filename"]
+        stored_filename = f"{artifact_id}_v1_{safe_name}"
+        org_dir = _get_dpdp_org_evidence_dir(org_id)
+        dest_path = safe_resolve_under_dir(org_dir, stored_filename)
+        payload, encrypted_flag = encrypt_bytes_if_configured(bytes(file_bytes))
+        atomic_write_bytes(dest_path, payload)
+        file_hash = f"sha256:{meta['sha256']}"
+        mime_type = meta["mime_type"]
+        file_size = meta["size_bytes"]
+        previewable = meta["previewable"]
     else:
-        file_hash = artifact.get("file_hash") or f"sha256:{uuid.uuid4().hex}{uuid.uuid4().hex}"
-        
+        # Metadata-only call (validate filename extension strictly against executables/XSS)
+        _, ext = os.path.splitext(os.path.basename(str(raw_filename)).lower())
+        if ext in BLOCKED_DANGEROUS_EXTENSIONS or (ext and ext not in ALLOWED_UPLOAD_EXTENSIONS):
+            raise ValueError(f"Unsupported or dangerous file extension '{ext}'.")
+        safe_name = sanitize_filename(raw_filename)
+        file_hash = artifact.get("file_hash") or f"sha256:metadata-only-{uuid.uuid4().hex}"
+
+    version_entry = {
+        "version": 1,
+        "filename": safe_name,
+        "stored_filename": stored_filename,
+        "file_hash": file_hash,
+        "mime_type": mime_type,
+        "size_bytes": file_size,
+        "encrypted": encrypted_flag,
+        "uploaded_at": now,
+        "uploaded_by": sanitize_plain_text(artifact.get("uploaded_by", "Privacy Lead"), 120),
+    }
+
     new_artifact = {
         "id": artifact_id,
-        "title": artifact.get("title") or artifact.get("filename", "Evidence Document"),
-        "category": artifact.get("category", "General Policies"),
-        "control_id": artifact.get("control_id", "DPDP-SEC-08-05"),
-        "filename": artifact.get("filename") or artifact.get("file_name", "evidence_document.pdf"),
+        "title": sanitize_plain_text(artifact.get("title") or safe_name, 200),
+        "category": sanitize_plain_text(artifact.get("category", "General Policies"), 80),
+        "control_id": sanitize_plain_text(artifact.get("control_id", "DPDP-SEC-08-05"), 80),
+        "filename": safe_name,
+        "stored_filename": stored_filename,
+        "mime_type": mime_type,
+        "size_bytes": file_size,
+        "has_physical_file": bool(stored_filename),
+        "previewable": previewable,
+        "encrypted": encrypted_flag,
         "file_hash": file_hash,
-        "uploaded_by": artifact.get("uploaded_by", "Privacy Lead"),
+        "uploaded_by": sanitize_plain_text(artifact.get("uploaded_by", "Privacy Lead"), 120),
         "uploaded_at": now,
-        "expiry_date": artifact.get("expiry_date", (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=365)).strftime("%Y-%m-%d")),
+        "expiry_date": sanitize_plain_text(
+            artifact.get("expiry_date") or (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=365)).strftime("%Y-%m-%d"),
+            30,
+        ),
         "status": status,
-        "review_notes": artifact.get("review_notes", "Awaiting independent compliance officer review."),
+        "review_notes": sanitize_plain_text(artifact.get("review_notes", "Awaiting compliance review."), 500),
         "reviewed_by": None,
         "reviewed_at": None,
+        "versions": [version_entry],
         "audit_trail": [
-            {"action": "UPLOADED", "timestamp": now, "actor": artifact.get("uploaded_by", "Privacy Lead")}
-        ]
+            {"action": "UPLOADED", "timestamp": now, "actor": sanitize_plain_text(artifact.get("uploaded_by", "Privacy Lead"), 120)}
+        ],
     }
-    
+
     store.setdefault("evidence_vault", {}).setdefault(org_id, []).insert(0, new_artifact)
     _save_dpdp_store(store)
     return new_artifact
+
+
+def get_evidence_file_bytes(org_id: str, artifact_id: str, version: Optional[int] = None) -> Tuple[Optional[bytes], Optional[Dict[str, Any]]]:
+    """Reads physical file bytes strictly isolated to org_id."""
+    store = _load_dpdp_store()
+    artifacts = store.get("evidence_vault", {}).get(org_id, [])
+    target = next((a for a in artifacts if a.get("id") == artifact_id), None)
+    if not target:
+        return None, None
+
+    meta = target
+    if version is not None:
+        for v in target.get("versions", []):
+            if v.get("version") == version:
+                meta = v
+                break
+
+    stored_name = meta.get("stored_filename")
+    if not stored_name:
+        return None, None
+
+    org_dir = _get_dpdp_org_evidence_dir(org_id)
+    path = safe_resolve_under_dir(org_dir, stored_name)
+    if not os.path.exists(path):
+        return None, None
+
+    with open(path, "rb") as f:
+        disk_bytes = f.read()
+    raw = decrypt_bytes_if_encrypted(disk_bytes, bool(meta.get("encrypted")))
+    return raw, {
+        "filename": meta.get("filename", "evidence_file"),
+        "mime_type": meta.get("mime_type", "application/octet-stream"),
+        "file_hash": meta.get("file_hash", ""),
+        "previewable": meta.get("previewable", False),
+    }
+
+
+def add_evidence_version(
+    org_id: str,
+    artifact_id: str,
+    file_bytes: bytes,
+    filename: str,
+    uploaded_by: str = "Privacy Lead",
+    notes: str = "New evidence version uploaded",
+) -> Optional[Dict[str, Any]]:
+    ok, err_msg, meta = validate_uploaded_file(filename, file_bytes)
+    if not ok:
+        raise ValueError(err_msg)
+
+    store = _load_dpdp_store()
+    artifacts = store.get("evidence_vault", {}).get(org_id, [])
+    now = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    for a in artifacts:
+        if a.get("id") == artifact_id:
+            next_v = len(a.get("versions", [])) + 1
+            safe_name = meta["safe_filename"]
+            stored_filename = f"{artifact_id}_v{next_v}_{safe_name}"
+            org_dir = _get_dpdp_org_evidence_dir(org_id)
+            dest_path = safe_resolve_under_dir(org_dir, stored_filename)
+            payload, encrypted_flag = encrypt_bytes_if_configured(bytes(file_bytes))
+            atomic_write_bytes(dest_path, payload)
+
+            file_hash = f"sha256:{meta['sha256']}"
+            ver = {
+                "version": next_v,
+                "filename": safe_name,
+                "stored_filename": stored_filename,
+                "file_hash": file_hash,
+                "mime_type": meta["mime_type"],
+                "size_bytes": meta["size_bytes"],
+                "encrypted": encrypted_flag,
+                "uploaded_at": now,
+                "uploaded_by": uploaded_by,
+                "notes": sanitize_plain_text(notes, 400),
+            }
+            a.setdefault("versions", []).append(ver)
+            a["filename"] = safe_name
+            a["stored_filename"] = stored_filename
+            a["file_hash"] = file_hash
+            a["mime_type"] = meta["mime_type"]
+            a["size_bytes"] = meta["size_bytes"]
+            a["has_physical_file"] = True
+            a["previewable"] = meta["previewable"]
+            a["encrypted"] = encrypted_flag
+            a["status"] = "Uploaded"
+            a.setdefault("audit_trail", []).append({
+                "action": f"NEW_VERSION_V{next_v}",
+                "timestamp": now,
+                "actor": uploaded_by,
+                "notes": sanitize_plain_text(notes, 400),
+            })
+            _save_dpdp_store(store)
+            return a
+    return None
+
+
+def delete_evidence_artifact(org_id: str, artifact_id: str) -> bool:
+    store = _load_dpdp_store()
+    artifacts = store.get("evidence_vault", {}).get(org_id, [])
+    target = next((a for a in artifacts if a.get("id") == artifact_id), None)
+    if not target:
+        return False
+
+    org_dir = _get_dpdp_org_evidence_dir(org_id)
+    for v in target.get("versions", []):
+        sname = v.get("stored_filename")
+        if sname:
+            try:
+                p = safe_resolve_under_dir(org_dir, sname)
+                if os.path.exists(p):
+                    os.remove(p)
+            except Exception:
+                pass
+    if target.get("stored_filename"):
+        try:
+            p = safe_resolve_under_dir(org_dir, target["stored_filename"])
+            if os.path.exists(p):
+                os.remove(p)
+        except Exception:
+            pass
+
+    store["evidence_vault"][org_id] = [a for a in artifacts if a.get("id") != artifact_id]
+    _save_dpdp_store(store)
+    return True
 
 def get_evidence_artifacts(org_id: str, category: Optional[str] = None, status: Optional[str] = None, control_id: Optional[str] = None) -> List[Dict[str, Any]]:
     """Returns all evidence artifacts uploaded by the organization."""
@@ -1567,9 +1872,9 @@ DOCUMENT_TEMPLATES = {
         "description": "Standardized notice specifying collected personal data, exact purposes, rights mechanisms, and Grievance Officer details."
     },
     "ropa_inventory": {
-        "title": "Record of Personal Data Processing Activities (RoPA - Section 8(1))",
-        "statutory_ref": "DPDP Act 2023, Section 8(1); Rule 5",
-        "description": "Comprehensive catalog of digital data streams, legal bases, departments, retention limits, and storage systems."
+        "title": "Customer Data Processing Register (Section 8 Accountability)",
+        "statutory_ref": "DPDP Act 2023, Sections 4, 5 & 8",
+        "description": "Plain-English catalog of digital data streams, legal bases, departments, retention limits, and storage systems."
     },
     "retention_policy": {
         "title": "Data Retention & Erasure Policy (Section 8(7) & Rule 8)",
@@ -1583,17 +1888,17 @@ DOCUMENT_TEMPLATES = {
     },
     "rights_procedure": {
         "title": "Data Principal Rights Request Handling SOP (Sections 11–14)",
-        "statutory_ref": "DPDP Act 2023, Sections 11, 12, 13, 14; Rule 12",
+        "statutory_ref": "DPDP Act 2023, Sections 11, 12, 13, 14; Rule 14",
         "description": "Workflows for processing customer and patient requests for access, correction, erasure, and nominee designation."
     },
     "grievance_procedure": {
         "title": "Grievance Redressal Policy & Escalation Mechanism (Section 8(10))",
         "statutory_ref": "DPDP Act 2023, Section 8(10)-(11); Rule 9",
-        "description": "Structured procedure for handling privacy disputes, SLA timelines, and communication before Board escalation."
+        "description": "Structured procedure for handling privacy disputes, response timelines, and communication before Board escalation."
     },
     "vendor_register": {
         "title": "Third-Party Data Processor Agreement (DPA) Register (Section 8(2))",
-        "statutory_ref": "DPDP Act 2023, Section 8(1)-(2); Rule 5",
+        "statutory_ref": "DPDP Act 2023, Section 8(1)-(2)",
         "description": "Register of third-party software vendors, hosting providers, and labs with executed DPA clauses."
     },
     "employee_privacy_policy": {
@@ -1614,10 +1919,10 @@ def generate_dpdp_document(org_id: str, doc_type: str, custom_params: Optional[D
     Clearly watermarked and labeled as DRAFT requiring legal review.
     """
     profile = get_onboarding_profile(org_id) or {}
-    company_name = profile.get("company_name", "Arogya Diagnostics Clinic Ltd")
-    industry = profile.get("industry", "Healthcare (Clinics & Diagnostics)")
-    dpo_email = profile.get("contact_email", "grievance@organisation.com")
-    website = profile.get("website_url", "https://arogyaclinic.in")
+    company_name = profile.get("company_name") or "Your Organisation"
+    industry = profile.get("industry") or "Business & Services"
+    dpo_email = profile.get("contact_email") or "grievance@organisation.com"
+    website = profile.get("website_url") or "https://your-business-website.example"
     now = datetime.datetime.now(datetime.timezone.utc).strftime("%d %B %Y")
     
     meta = DOCUMENT_TEMPLATES.get(doc_type, DOCUMENT_TEMPLATES["privacy_notice"])
@@ -1719,18 +2024,18 @@ Concurrently notify affected Data Principals in clear plain language with recomm
         content = disclaimer_header + f"""{company_name.upper()}
 DATA PRINCIPAL RIGHTS HANDLING PROCEDURE (SECTIONS 11-14)
 
-1. STATUTORY SLA
-All Data Principal rights requests (Access, Correction, Erasure, Grievance, Nomination) must be acknowledged within 24 hours and fully resolved within 72 hours under our internal privacy SLA.
+1. PUBLISHED GRIEVANCE & REQUEST HANDLING TIMELINE
+All Data Principal rights requests (Access, Correction, Erasure, Grievance, Nomination) must be acknowledged promptly and resolved within our published internal and grievance redressal timelines (note: the DPDP Act 2023 does not mandate a generic 72-hour deadline for rights requests).
 
 2. VERIFICATION PROCEDURE
-Before disclosing medical or billing records, verify the identity of the Data Principal via registered mobile OTP or government photo ID check.
+Before disclosing medical, financial, or customer records, verify the identity of the requester using registered mobile/email verification or valid photo ID check.
 """
     else:
         content = disclaimer_header + f"""{company_name.upper()}
 COMPLIANCE GOVERNANCE DOCUMENT: {meta['title']}
 Statutory Reference: {meta['statutory_ref']}
 
-This document establishes standard operating protocols for {company_name} to guarantee compliance with the Digital Personal Data Protection Act, 2023.
+This document establishes standard operating protocols for {company_name} to support operational readiness under India's Digital Personal Data Protection Act, 2023.
 """
 
     doc_record = {
@@ -1804,10 +2109,11 @@ def compare_website_scans(org_id: str, current_scan_id: Optional[str] = None, pr
 # ==============================================================================
 
 def get_admin_system_metrics(requesting_user_id: Optional[str] = None) -> Dict[str, Any]:
-    """Returns platform-wide administration metrics for system operators."""
+    """Returns platform-wide administration metrics derived strictly from persisted store records."""
     store = _load_dpdp_store()
-    
-    total_orgs = len(store.get("onboarding_profiles", {}))
+
+    profiles = store.get("onboarding_profiles", {})
+    total_orgs = len(profiles)
     total_scans = sum(len(scans) for scans in store.get("website_scans", {}).values())
     total_evidence = sum(len(evs) for evs in store.get("evidence_vault", {}).values())
     total_inventories = sum(len(items) for items in store.get("data_inventories", {}).values())
@@ -1815,14 +2121,18 @@ def get_admin_system_metrics(requesting_user_id: Optional[str] = None) -> Dict[s
     total_vendors = sum(len(v) for v in store.get("vendors", {}).values())
     total_retention = sum(len(r) for r in store.get("retention_schedules", {}).values())
     total_erasure = sum(len(e) for e in store.get("erasure_tasks", {}).values())
-    
-    # Calculate aggregate readiness score dynamically across assessments
+
+    sector_counts: Dict[str, int] = {}
+    for p in profiles.values():
+        ind = sanitize_plain_text(p.get("industry") or "Unspecified", 80) or "Unspecified"
+        sector_counts[ind] = sector_counts.get(ind, 0) + 1
+
     scores = []
     for ass in store.get("assessments", {}).values():
         if isinstance(ass, dict) and "readiness_score" in ass:
             scores.append(ass["readiness_score"])
     avg_score = int(sum(scores) / len(scores)) if scores else 0
-    
+
     return {
         "platform_status": "OPERATIONAL",
         "system_status": "Operational",
@@ -1836,18 +2146,286 @@ def get_admin_system_metrics(requesting_user_id: Optional[str] = None) -> Dict[s
         "total_retention_schedules": total_retention,
         "total_erasure_tasks": total_erasure,
         "aggregate_readiness_score": avg_score,
-        "sector_distribution": {
-            "Healthcare (Clinics & Diagnostics)": 4,
-            "SaaS / Technology": 3,
-            "E-Commerce & Retail": 2,
-            "EdTech & Education": 2,
-            "Financial Services": 1
-        },
-        "legal_database_version": "2026.11.3 (India DPDP Act 2023 & Rules 2025)",
-        "last_legal_review": "2026-11-22",
+        "sector_distribution": sector_counts,
+        "legal_database_version": "2026.11.4 (India DPDP Act 2023 & Rules 2025)",
+        "last_legal_review": "2026-11-26",
         "active_plans": {
             "starter": {"price_inr": 999, "name": "Starter Plan"},
             "growth": {"price_inr": 1999, "name": "Growth Plan"},
-            "business": {"price_inr": 2999, "name": "Business Plan"}
-        }
+            "business": {"price_inr": 2999, "name": "Business Plan"},
+        },
     }
+
+
+# ==============================================================================
+# PART 4 & 5: HONEST SETUP PROGRESS, REAL ATTENTION TASKS, GENUINE ACTIVITY
+# ==============================================================================
+
+def get_setup_progress(org_id: str) -> Dict[str, Any]:
+    """
+    Computes genuine 'X of 6' workspace setup steps without fake percentage inflation.
+    """
+    profile = get_onboarding_profile(org_id) or {}
+    inventory = get_data_inventory(org_id)
+    scans = get_website_scans(org_id)
+    notices = get_privacy_notices(org_id)
+    vendors = get_vendors(org_id)
+    evidence = get_evidence_artifacts(org_id)
+
+    has_notice = bool(notices) or any("notice" in (e.get("category", "") + e.get("title", "")).lower() for e in evidence)
+    steps = [
+        {
+            "key": "business_profile",
+            "title": "Tell us about your business",
+            "completed": bool(profile.get("onboarding_completed") or (profile.get("company_name") and profile.get("industry"))),
+            "action_view": "onboarding",
+            "action_label": "Complete setup",
+        },
+        {
+            "key": "customer_data",
+            "title": "Record your customer data",
+            "completed": len(inventory) > 0,
+            "action_view": "inventory",
+            "action_label": "Add customer data",
+        },
+        {
+            "key": "website_scan",
+            "title": "Scan your website",
+            "completed": len(scans) > 0,
+            "action_view": "scanner",
+            "action_label": "Scan website",
+        },
+        {
+            "key": "privacy_notice",
+            "title": "Create or upload your Privacy Notice",
+            "completed": has_notice,
+            "action_view": "notices",
+            "action_label": "Create Privacy Notice",
+        },
+        {
+            "key": "vendors",
+            "title": "Add companies you share data with",
+            "completed": len(vendors) > 0,
+            "action_view": "vendors",
+            "action_label": "Add a company",
+        },
+        {
+            "key": "evidence",
+            "title": "Upload proof into Evidence Vault",
+            "completed": len(evidence) > 0,
+            "action_view": "evidence",
+            "action_label": "Upload proof",
+        },
+    ]
+    completed_count = sum(1 for s in steps if s["completed"])
+    next_step = next((s for s in steps if not s["completed"]), None)
+    return {
+        "completed_count": completed_count,
+        "total_steps": 6,
+        "steps": steps,
+        "next_recommended_step": next_step,
+        "onboarding_completed": bool(profile.get("onboarding_completed")),
+    }
+
+
+def get_home_attention_tasks(org_id: str, limit: int = 3) -> List[Dict[str, Any]]:
+    """
+    Returns at most 3 plain-English, genuinely detected items needing attention,
+    each with a working action target inside the dashboard.
+    """
+    tasks: List[Dict[str, Any]] = []
+    scans = get_website_scans(org_id)
+    notices = get_privacy_notices(org_id)
+    vendors = get_vendors(org_id)
+    retention = get_retention_schedules(org_id)
+    incidents = get_breach_incidents(org_id)
+    requests_list = get_rights_requests(org_id)
+    inventory = get_data_inventory(org_id)
+
+    if not inventory:
+        tasks.append({
+            "id": "attn-inventory",
+            "title": "List what customer details your business collects",
+            "why": "Every privacy notice, vendor check, and deletion rule starts with knowing what customer data you hold.",
+            "action_label": "Add customer data",
+            "fix_target": "inventory",
+            "severity": "HIGH",
+        })
+
+    if not notices:
+        tasks.append({
+            "id": "attn-notice",
+            "title": "Create your customer Privacy Notice draft",
+            "why": "Customers need clear plain-English details of what you collect, why you collect it, and who to contact.",
+            "action_label": "Create Privacy Notice",
+            "fix_target": "notices",
+            "severity": "HIGH",
+        })
+
+    unsigned_vendors = [
+        v for v in vendors
+        if not any(ok_w in str(v.get("dpa_status", "")).upper() for ok_w in ("SIGNED", "EXECUTED", "ACTIVE"))
+    ]
+    if unsigned_vendors:
+        v0 = unsigned_vendors[0]
+        tasks.append({
+            "id": "attn-vendor-dpa",
+            "title": f"Check agreement with {v0.get('name', 'vendor')} ({len(unsigned_vendors)} pending)",
+            "why": "Section 8(2) requires written contracts with software, lab, and cloud vendors that handle your customer data.",
+            "action_label": "Review companies",
+            "fix_target": "vendors",
+            "severity": "HIGH",
+        })
+    elif not vendors:
+        tasks.append({
+            "id": "attn-vendors-empty",
+            "title": "Add software, lab, or courier companies you share data with",
+            "why": "Track billing tools, hosting, labs, and payment gateways so contracts and risks stay organised.",
+            "action_label": "Add company",
+            "fix_target": "vendors",
+            "severity": "MEDIUM",
+        })
+
+    if scans:
+        latest = scans[0]
+        open_gaps = [f for f in latest.get("findings", []) if f.get("severity") in ("CRITICAL", "HIGH")]
+        if open_gaps:
+            tasks.append({
+                "id": "attn-scan-gap",
+                "title": open_gaps[0].get("title", "Fix website privacy issue"),
+                "why": f"Found on {latest.get('target_url', 'your website')} during your website privacy check.",
+                "action_label": "Fix this",
+                "fix_target": "scanner",
+                "severity": open_gaps[0].get("severity", "HIGH"),
+            })
+    else:
+        tasks.append({
+            "id": "attn-scan-run",
+            "title": "Check your public website for visible privacy gaps",
+            "why": "Find missing privacy notice links, pre-checked boxes, or third-party scripts on your public website.",
+            "action_label": "Run website check",
+            "fix_target": "scanner",
+            "severity": "MEDIUM",
+        })
+
+    open_req = [r for r in requests_list if r.get("status") not in ("COMPLETED", "REJECTED")]
+    if open_req:
+        tasks.append({
+            "id": "attn-requests",
+            "title": f"Respond to {len(open_req)} open customer privacy request(s)",
+            "why": "Keep verification and response records ready so no customer enquiry is missed.",
+            "action_label": "Open requests",
+            "fix_target": "rights",
+            "severity": "HIGH",
+        })
+
+    if not retention:
+        tasks.append({
+            "id": "attn-retention",
+            "title": "Set how long you keep customer records before deletion",
+            "why": "Avoid storing old forms and records indefinitely once the purpose ends.",
+            "action_label": "Set deletion rules",
+            "fix_target": "retention",
+            "severity": "MEDIUM",
+        })
+
+    if any(i.get("board_notification_status") == "DRAFT_PENDING_CUSTOMER_APPROVAL" for i in incidents):
+        tasks.append({
+            "id": "attn-incident",
+            "title": "Review open incident timeline & notification draft",
+            "why": "Ensure containment notes and notification drafts have human approval before sending.",
+            "action_label": "Open incidents",
+            "fix_target": "breaches",
+            "severity": "CRITICAL",
+        })
+
+    rem_tasks = [t for t in get_remediation_tasks(org_id) if t.get("status") not in ("Resolved", "Completed", "RESOLVED", "Not applicable")]
+    for rt in rem_tasks[:3]:
+        tasks.append({
+            "id": rt.get("id"),
+            "title": rt.get("title", "Follow-up task"),
+            "why": rt.get("description", "Action item from your Action Plan."),
+            "action_label": "Fix this",
+            "fix_target": "remediation",
+            "severity": rt.get("severity", "MEDIUM"),
+        })
+
+    return tasks[:limit]
+
+
+def get_recent_activity(org_id: str, limit: int = 12) -> List[Dict[str, Any]]:
+    """
+    Returns strictly genuine chronological activity recorded in this organisation's DB
+    and security audit logs. Zero invented placeholder activity.
+    """
+    events: List[Dict[str, Any]] = []
+
+    for sc in get_website_scans(org_id):
+        events.append({
+            "timestamp": sc.get("scanned_at") or sc.get("created_at") or "",
+            "title": f"Website scanned: {sc.get('target_url', '')}",
+            "category": "Website Check",
+            "target_view": "scanner",
+        })
+    for ev in get_evidence_artifacts(org_id):
+        events.append({
+            "timestamp": ev.get("uploaded_at") or "",
+            "title": f"Evidence uploaded: {ev.get('title', ev.get('filename', 'Document'))} ({ev.get('status', 'Uploaded')})",
+            "category": "Evidence Vault",
+            "target_view": "evidence",
+        })
+    for n in get_privacy_notices(org_id):
+        events.append({
+            "timestamp": n.get("updated_at") or n.get("created_at") or "",
+            "title": f"Privacy Notice saved: {n.get('title', 'Notice')} ({n.get('version', 'v1.0')})",
+            "category": "Privacy Notice",
+            "target_view": "notices",
+        })
+    for req in get_rights_requests(org_id):
+        events.append({
+            "timestamp": req.get("received_at") or "",
+            "title": f"Customer privacy request logged ({req.get('type', 'ACCESS')} - {req.get('status', 'RECEIVED')})",
+            "category": "Customer Requests",
+            "target_view": "rights",
+        })
+    for inc in get_breach_incidents(org_id):
+        events.append({
+            "timestamp": inc.get("created_at") or "",
+            "title": f"Incident logged: {inc.get('title', 'Security Incident')}",
+            "category": "Incident Response",
+            "target_view": "breaches",
+        })
+    for aud in get_audit_logs(org_id, limit=limit):
+        events.append({
+            "timestamp": aud.get("timestamp", ""),
+            "title": f"Account event: {aud.get('action', '')}",
+            "category": "Audit Trail",
+            "target_view": "settings",
+        })
+
+    events.sort(key=lambda e: str(e.get("timestamp", "")), reverse=True)
+    return events[:limit]
+
+
+def delete_all_org_dpdp_data(org_id: str) -> None:
+    """Purges all DPDP operational records and physical DPDP evidence files for org_id."""
+    store = _load_dpdp_store()
+    for bucket in (
+        "data_inventories", "assessments", "privacy_notices", "consent_records",
+        "withdrawal_requests", "rights_requests", "vendors", "retention_schedules",
+        "breach_incidents", "remediation_tasks", "onboarding_profiles", "erasure_tasks",
+        "website_scans", "evidence_vault", "organisational_assessments", "generated_documents",
+    ):
+        store.get(bucket, {}).pop(org_id, None)
+    _save_dpdp_store(store)
+
+    try:
+        org_dir = _get_dpdp_org_evidence_dir(org_id)
+        if os.path.isdir(org_dir):
+            for fname in os.listdir(org_dir):
+                fpath = safe_resolve_under_dir(org_dir, fname)
+                if os.path.isfile(fpath):
+                    os.remove(fpath)
+            os.rmdir(org_dir)
+    except Exception:
+        pass

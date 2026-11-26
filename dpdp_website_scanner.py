@@ -589,6 +589,94 @@ class DPDPWebsiteScanner:
 
         self._evaluate_all_findings()
 
+    def _build_scan_buckets(self) -> Dict[str, List[Dict[str, str]]]:
+        """Separates observed website scan outputs into 4 honest, plain-English buckets."""
+        what_was_found: List[Dict[str, str]] = []
+        what_was_not_found: List[Dict[str, str]] = []
+        what_needs_input: List[Dict[str, str]] = []
+        what_cannot_be_checked: List[Dict[str, str]] = [
+            {
+                "title": "Internal databases & staff access controls",
+                "reason": "An external website scan can only read public web pages; it cannot verify encryption at rest, database backups, or employee login permissions.",
+            },
+            {
+                "title": "Signed vendor contracts (Data Processing Agreements)",
+                "reason": "Even when third-party scripts (like analytics or payment gateways) are detected, contracts between your business and vendors are stored privately.",
+            },
+            {
+                "title": "Consent withdrawal & deletion workflows",
+                "reason": "Whether your backend stops emails or erases customer records within retention windows must be confirmed in your internal operations workspace.",
+            },
+        ]
+
+        if self.normalized_url.startswith("https://"):
+            what_was_found.append({
+                "title": "HTTPS encrypted website connection active",
+                "detail": f"Public pages at {self.normalized_url} are delivered over HTTPS.",
+            })
+        if self.privacy_pages:
+            what_was_found.append({
+                "title": f"Privacy Notice link found ({len(self.privacy_pages)} page(s))",
+                "detail": ", ".join(p.get("url", "") for p in self.privacy_pages[:3]),
+            })
+        if self.all_forms:
+            what_was_found.append({
+                "title": f"Public data-collection forms inspected ({len(self.all_forms)})",
+                "detail": f"Reviewed form fields across {len(self.scanned_pages)} public page(s).",
+            })
+        if self.third_party_services:
+            svc_names = ", ".join(s.get("name", s.get("domain", "")) for s in self.third_party_services[:4])
+            what_was_found.append({
+                "title": f"Third-party tools/scripts detected ({len(self.third_party_services)})",
+                "detail": svc_names,
+            })
+
+        homepage_headers = self.scanned_pages[0].get("headers", {}) if self.scanned_pages else {}
+        h_lower = {k.lower(): v for k, v in homepage_headers.items()}
+        present_sec_headers = [
+            hdr for hdr in ("strict-transport-security", "x-frame-options", "x-content-type-options", "content-security-policy")
+            if hdr in h_lower
+        ]
+        if present_sec_headers:
+            what_was_found.append({
+                "title": f"HTTP security headers present ({len(present_sec_headers)})",
+                "detail": ", ".join(present_sec_headers),
+            })
+
+        for f in self.findings:
+            if f.get("severity") == "INFORMATIONAL":
+                continue
+            what_was_not_found.append({
+                "title": f.get("title", "Observed gap"),
+                "detail": f.get("observation", ""),
+                "severity": f.get("severity", "MEDIUM"),
+                "legal_reference": f.get("legal_reference", ""),
+                "recommended_action": f.get("recommended_action", ""),
+            })
+
+        if self.all_forms:
+            what_needs_input.append({
+                "title": "Confirm lawful purpose for website forms",
+                "detail": "Clarify whether enquiry forms rely on customer consent (Section 6) or voluntary service request without objection (Section 7(a)).",
+            })
+        if self.third_party_services:
+            what_needs_input.append({
+                "title": "Confirm vendor contracts for website scripts",
+                "detail": "Add detected analytics, chat, or payment providers to 'Companies I Share Data With' and verify contractual safeguards.",
+            })
+        if not self.children_data_processed:
+            what_needs_input.append({
+                "title": "Confirm whether anyone under 18 submits forms",
+                "detail": "If minors (students/patients under 18) use your site, Section 9 verifiable parental consent and zero behavioral tracking rules apply.",
+            })
+
+        return {
+            "what_was_found": what_was_found,
+            "what_was_not_found": what_was_not_found,
+            "what_needs_input": what_needs_input,
+            "what_cannot_be_checked": what_cannot_be_checked,
+        }
+
     def _stage_09_generate_report(self, cb: Optional[Callable]) -> Dict[str, Any]:
         self.current_stage = "09_REPORT_GENERATION"
         self.progress_percent = 100
@@ -596,14 +684,15 @@ class DPDPWebsiteScanner:
         if cb:
             cb({"stage": self.current_stage, "percent": self.progress_percent, "msg": "Report generated successfully."})
 
-        # Calculate high-level metrics
+        # Calculate high-level metrics honestly without synthetic padding floors
         critical_count = sum(1 for f in self.findings if f["severity"] == "CRITICAL")
         high_count = sum(1 for f in self.findings if f["severity"] == "HIGH")
         medium_count = sum(1 for f in self.findings if f["severity"] == "MEDIUM")
         low_count = sum(1 for f in self.findings if f["severity"] == "LOW")
         info_count = sum(1 for f in self.findings if f["severity"] == "INFORMATIONAL")
 
-        readiness_score = max(20, min(95, 100 - (critical_count * 20 + high_count * 12 + medium_count * 6 + low_count * 2)))
+        readiness_score = max(0, min(100, 100 - (critical_count * 20 + high_count * 12 + medium_count * 6 + low_count * 2)))
+        buckets = self._build_scan_buckets()
 
         self.summary_metrics = {
             "pages_scanned_count": len(self.scanned_pages),
@@ -618,6 +707,12 @@ class DPDPWebsiteScanner:
             "info_count": info_count,
             "readiness_score": readiness_score,
             "scan_duration_seconds": round(time.time() - self.created_at, 2),
+            "scan_buckets": {
+                "found_count": len(buckets["what_was_found"]),
+                "not_found_count": len(buckets["what_was_not_found"]),
+                "needs_input_count": len(buckets["what_needs_input"]),
+                "cannot_check_count": len(buckets["what_cannot_be_checked"]),
+            },
         }
 
         return {
@@ -629,6 +724,7 @@ class DPDPWebsiteScanner:
             "country": self.country,
             "scanned_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
             "summary_metrics": self.summary_metrics,
+            "scan_buckets": buckets,
             "findings": self.findings,
             "forms": self.all_forms,
             "third_party_services": self.third_party_services,
@@ -1087,4 +1183,7 @@ def generate_demo_website_scan(
 
     scanner.privacy_pages = []  # Notice not detected
     scanner._stage_08_statutory_mapping(None)
-    return scanner._stage_09_generate_report(None)
+    report = scanner._stage_09_generate_report(None)
+    report["is_demo"] = True
+    report["demo_label"] = "DEMO DATA — Example information for demonstration only."
+    return report

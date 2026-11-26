@@ -21,15 +21,15 @@ Official Phased Commencement Milestones:
 
 from typing import Dict, Any, List
 
-COMMENCEMENT_ENGINE_VERSION = "v3.0.0"
-LAST_REVIEWED_DATE = "2026-11-22"
+COMMENCEMENT_ENGINE_VERSION = "v3.1.0"
+LAST_REVIEWED_DATE = "2026-11-26"
 
 OFFICIAL_SOURCES = {
     "ACT": "The Digital Personal Data Protection Act, 2023 (Act No. 22 of 2023), Gazette of India Extraordinary",
     "RULES_2025": "Digital Personal Data Protection Rules, 2025, Ministry of Electronics and Information Technology (MeitY)",
     "NOTIF_PHASE_1": "Gazette Notification S.O. 4880(E) dated 13 November 2025",
     "NOTIF_PHASE_2": "Gazette Notification S.O. 5122(E) dated 13 November 2026",
-    "REMOVAL_OF_DIFFICULTIES": "Digital Personal Data Protection (Removal of Difficulties) Order, October 2026"
+    "REMOVAL_OF_DIFFICULTIES": "Digital Personal Data Protection (Removal of Difficulties) Order, October 2026 (textual clarifications for Sections 9 and 10)",
 }
 
 COMMENCEMENT_MILESTONES = [
@@ -190,5 +190,5 @@ def get_statutory_commencement(section_str: str) -> Dict[str, Any]:
 
 
 def is_currently_enforceable(section_str: str) -> bool:
-    """Returns True if the obligation is in force as of today (22 Nov 2026)."""
+    """Returns True if the obligation is in force as of the reference date (26 Nov 2026)."""
     return get_statutory_commencement(section_str).get("enforceable_now", False)
