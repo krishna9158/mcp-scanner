@@ -1,0 +1,63 @@
+{% extends "public_base.html" %}
+{% block title %}{{ doc.title }} — TrustAudit{% endblock %}
+{% block content %}
+<section class="ta-section ta-section-forest" style="padding:54px 0;">
+  <div class="ta-container" style="max-width:980px;">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+      <span class="badge badge-lime">Version {{ doc.version }}</span>
+      <span class="badge badge-neutral" style="background:rgba(255,255,255,0.14);color:#FFFFFF;">Effective: {{ doc.effective_date }}</span>
+    </div>
+    <h1 class="ta-h1" style="color:#FFFFFF;font-size:36px;">{{ doc.title }}</h1>
+    <p class="ta-lead" style="color:#C2D0C8;">{{ doc.subtitle }}</p>
+  </div>
+</section>
+
+<section class="ta-section" style="padding-top:42px;">
+  <div class="ta-container" style="max-width:980px;">
+    <div style="display:grid;grid-template-columns:240px 1fr;gap:28px;align-items:start;" class="grid-legal">
+      <aside class="card" style="position:sticky;top:84px;padding:18px;">
+        <div style="font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-muted);margin-bottom:10px;">Legal Policies</div>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:18px;">
+          <a href="/privacy" class="btn btn-sm {% if doc.slug == 'privacy' %}btn-primary{% else %}btn-ghost{% endif %}" style="justify-content:flex-start;">Privacy Notice</a>
+          <a href="/terms" class="btn btn-sm {% if doc.slug == 'terms' %}btn-primary{% else %}btn-ghost{% endif %}" style="justify-content:flex-start;">Terms of Service</a>
+          <a href="/acceptable-use" class="btn btn-sm {% if doc.slug == 'acceptable-use' %}btn-primary{% else %}btn-ghost{% endif %}" style="justify-content:flex-start;">Acceptable Use</a>
+          <a href="/data-processing" class="btn btn-sm {% if doc.slug == 'data-processing' %}btn-primary{% else %}btn-ghost{% endif %}" style="justify-content:flex-start;">Data Processing</a>
+          <a href="/ai-disclosure" class="btn btn-sm {% if doc.slug == 'ai-disclosure' %}btn-primary{% else %}btn-ghost{% endif %}" style="justify-content:flex-start;">AI Disclosure</a>
+        </div>
+        <div style="font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-muted);margin-bottom:8px;">On This Page</div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;font-size:13px;">
+          {% for sec in doc.sections %}
+          <li><a href="#{{ sec.id }}" style="color:var(--ink-soft);text-decoration:none;">{{ sec.heading }}</a></li>
+          {% endfor %}
+        </ul>
+      </aside>
+
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        {% for sec in doc.sections %}
+        <article id="{{ sec.id }}" class="card" style="padding:24px;">
+          <h2 class="ta-h3" style="margin-bottom:8px;">{{ sec.heading }}</h2>
+          <p class="ta-muted" style="line-height:1.7;font-size:14.5px;">{{ sec.body }}</p>
+        </article>
+        {% endfor %}
+
+        <div class="card ta-section-muted" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+          <div>
+            <strong>Questions or Privacy Requests?</strong>
+            <div class="ta-muted" style="font-size:13px;">Contact {{ contacts.privacy_email or 'our Grievance Desk via /security' }} or open the public security page.</div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <a href="/security" class="btn btn-outline btn-sm cta-arrow-btn">Security &amp; Trust Centre <span class="ta-arrow" aria-hidden="true">&rarr;</span></a>
+            <a href="/register?plan=free" class="btn btn-primary btn-sm cta-arrow-btn">Continue to Sign Up <span class="ta-arrow" aria-hidden="true">&rarr;</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<style>
+  @media (max-width: 820px) {
+    .grid-legal { grid-template-columns: 1fr !important; }
+    .grid-legal aside { position: static !important; }
+  }
+</style>
+{% endblock %}

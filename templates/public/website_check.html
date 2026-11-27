@@ -40,12 +40,22 @@
       </div>
 
       <div id="wc-progress" style="display:none;margin-top:16px;padding:12px 14px;border-radius:10px;background:var(--bg-muted);">
-        <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-bottom:6px;">
-          <span id="wc-stage">Initialising website check...</span>
-          <span id="wc-pct">15%</span>
+        <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:700;margin-bottom:6px;gap:8px;">
+          <span id="wc-stage">Waiting for job queue...</span>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <span id="wc-pct">0%</span>
+            <button id="wc-cancel-btn" type="button" class="btn btn-ghost btn-sm" style="display:none;padding:2px 8px;font-size:11.5px;" onclick="cancelActiveCheck()">Cancel</button>
+          </div>
         </div>
         <div style="height:8px;background:rgba(15,43,34,0.1);border-radius:99px;overflow:hidden;">
-          <div id="wc-bar" style="height:100%;width:15%;background:var(--emerald);transition:width .25s ease;"></div>
+          <div id="wc-bar" style="height:100%;width:0%;background:var(--emerald);transition:width .25s ease;"></div>
+        </div>
+      </div>
+
+      <div id="wc-error-box" style="display:none;margin-top:12px;padding:12px 14px;border-radius:10px;border:1px solid rgba(180,35,24,0.28);background:#fef3f2;">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
+          <span id="wc-error-msg" style="font-size:13px;color:#b42318;font-weight:600;"></span>
+          <button id="wc-retry-btn" type="button" class="btn btn-outline btn-sm" onclick="retryLastWebsiteCheck()">Retry Check</button>
         </div>
       </div>
     </div>
@@ -76,14 +86,59 @@
 {% block extra_scripts %}
 <script>
   let LAST_WC_REPORT = null;
-  function setWcProgress(show, pct, stage) {
+  let ACTIVE_WC_JOB_ID = null;
+  let WC_CANCEL_REQUESTED = false;
+  let LAST_WC_MODE = false;
+
+  function setWcError(msg) {
+    const box = document.getElementById('wc-error-box');
+    const txt = document.getElementById('wc-error-msg');
+    if (!box || !txt) return;
+    if (msg) {
+      txt.textContent = msg;
+      box.style.display = 'block';
+    } else {
+      txt.textContent = '';
+      box.style.display = 'none';
+    }
+  }
+
+  function setWcProgress(show, pct, stage, canCancel) {
     const box = document.getElementById('wc-progress');
+    const cancelBtn = document.getElementById('wc-cancel-btn');
     box.style.display = show ? 'block' : 'none';
     if (show) {
-      document.getElementById('wc-pct').textContent = (pct || 0) + '%';
-      document.getElementById('wc-stage').textContent = stage || 'Checking...';
-      document.getElementById('wc-bar').style.width = (pct || 0) + '%';
+      const safePct = Math.max(0, Math.min(100, Number(pct || 0)));
+      document.getElementById('wc-pct').textContent = safePct + '%';
+      document.getElementById('wc-stage').textContent = stage || 'Waiting for job queue...';
+      document.getElementById('wc-bar').style.width = safePct + '%';
+      if (cancelBtn) {
+        cancelBtn.style.display = canCancel ? 'inline-flex' : 'none';
+      }
+    } else if (cancelBtn) {
+      cancelBtn.style.display = 'none';
     }
+  }
+
+  async function cancelActiveCheck() {
+    WC_CANCEL_REQUESTED = true;
+    const cancelBtn = document.getElementById('wc-cancel-btn');
+    if (cancelBtn) cancelBtn.disabled = true;
+    setWcProgress(true, Number(document.getElementById('wc-pct').textContent.replace('%', '')) || 0, 'Cancelling website check...', false);
+    if (ACTIVE_WC_JOB_ID) {
+      try {
+        await TA.apiJson('/api/jobs/' + encodeURIComponent(ACTIVE_WC_JOB_ID) + '/cancel', { method: 'POST', body: '{}' });
+      } catch (e) {}
+    }
+    ACTIVE_WC_JOB_ID = null;
+    if (cancelBtn) cancelBtn.disabled = false;
+    setWcProgress(false);
+    setWcError('Website privacy check cancelled before completion.');
+  }
+
+  function retryLastWebsiteCheck() {
+    setWcError('');
+    startWebsiteCheck(LAST_WC_MODE);
   }
 
   function renderWcReport(report) {
@@ -119,6 +174,10 @@
   }
 
   async function startWebsiteCheck(demoMode) {
+    LAST_WC_MODE = Boolean(demoMode);
+    WC_CANCEL_REQUESTED = false;
+    ACTIVE_WC_JOB_ID = null;
+    setWcError('');
     const authChk = document.getElementById('wc-auth');
     if (!demoMode && !authChk.checked) {
       TA.toast('Please tick the domain authorisation checkbox first.', 'err');
@@ -129,22 +188,26 @@
     const tok = TA.getToken();
 
     if (demoMode || !tok) {
-      setWcProgress(true, 45, demoMode ? 'Loading sample clinic inspection...' : 'Sign in required for custom live URL scans; showing public preview if Demo selected...');
       if (!demoMode && !tok) {
         setWcProgress(false);
         TA.toast('Please sign in to inspect your custom live domain cleanly, or click "Run Demo Sample Inspection".', 'err');
         return;
       }
+      setWcProgress(true, 0, 'Requesting sample inspection from server...', false);
       try {
         const dm = await TA.apiJson('/api/demo/workspace');
-        setWcProgress(true, 100, 'Completed');
+        setWcProgress(true, 100, 'Completed', false);
         renderWcReport(dm.sample_scan || {});
         setTimeout(function () { setWcProgress(false); }, 500);
-      } catch (e) { setWcProgress(false); TA.toast(e.message, 'err'); }
+      } catch (e) {
+        setWcProgress(false);
+        setWcError(e.message || 'Unable to load sample inspection.');
+        TA.toast(e.message, 'err');
+      }
       return;
     }
 
-    setWcProgress(true, 20, 'Starting background website check...');
+    setWcProgress(true, 0, 'Submitting website check to job queue...', false);
     try {
       const startRes = await TA.apiJson('/api/dpdp/scanner/start?async=1', {
         method: 'POST',
@@ -157,32 +220,48 @@
       });
       const jobId = startRes.job_id;
       if (startRes.scan) {
-        setWcProgress(false);
+        setWcProgress(true, 100, 'Completed', false);
         renderWcReport(startRes.scan);
         loadHistory();
+        setTimeout(function () { setWcProgress(false); }, 350);
         return;
       }
       if (jobId) {
+        ACTIVE_WC_JOB_ID = jobId;
+        setWcProgress(true, startRes.progress || 0, startRes.stage || 'Queued for live page check...', true);
         for (let i = 0; i < 45; i++) {
           await new Promise(function (r) { setTimeout(r, 700); });
+          if (WC_CANCEL_REQUESTED || ACTIVE_WC_JOB_ID !== jobId) return;
           const st = await TA.apiJson('/api/jobs/' + encodeURIComponent(jobId));
           const j = st.job || {};
-          setWcProgress(true, j.progress || 50, j.stage || 'Scanning pages...');
+          setWcProgress(true, j.progress || 0, j.stage || 'Scanning public pages...', true);
           if (j.status === 'COMPLETED' && j.result && j.result.scan) {
+            ACTIVE_WC_JOB_ID = null;
             setWcProgress(false);
             renderWcReport(j.result.scan);
             loadHistory();
             return;
           }
           if (j.status === 'FAILED' || j.status === 'CANCELLED') {
+            ACTIVE_WC_JOB_ID = null;
             setWcProgress(false);
-            TA.toast(j.error || 'Website check did not complete.', 'err');
+            const msg = j.error || (j.status === 'CANCELLED' ? 'Website check cancelled.' : 'Website check did not complete.');
+            setWcError(msg);
+            TA.toast(msg, 'err');
             return;
           }
         }
+        ACTIVE_WC_JOB_ID = null;
+        setWcProgress(false);
+        setWcError('Check is taking longer than expected. You can retry or review history shortly.');
+      } else {
+        setWcProgress(false);
+        setWcError('Job queue did not return a scan or job ID.');
       }
     } catch (e) {
+      ACTIVE_WC_JOB_ID = null;
       setWcProgress(false);
+      setWcError(e.message || 'Website privacy check failed.');
       TA.toast(e.message, 'err');
     }
   }

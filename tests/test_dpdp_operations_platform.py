@@ -349,9 +349,9 @@ class TestDPOperationsPlatform:
         assert res.status_code == 200
         body = res.data.decode("utf-8")
 
-        assert "Your Business Has Customer Data. We Help You Stay in Control." in body
+        assert "Your Customer Data. Finally Under Control." in body
         assert "Start My Free Assessment" in body
-        assert "Explore the Platform" in body
+        assert "Explore TrustAudit" in body
 
         for route_link in ["/features", "/industries", "/pricing", "/how-it-works", "/security", "/resources", "/demo"]:
             assert route_link in body, f"Missing routed website link: {route_link}"

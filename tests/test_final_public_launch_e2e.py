@@ -59,9 +59,9 @@ class TestPublicLaunchPagesAndLegalAccuracy:
         res = client.get("/")
         assert res.status_code == 200
         html = res.get_data(as_text=True)
-        assert "Your Business Has Customer Data. We Help You Stay in Control." in html
+        assert "Your Customer Data. Finally Under Control." in html
         assert "Start My Free Assessment" in html
-        assert "Explore the Platform" in html
+        assert "Explore TrustAudit" in html
         assert "DISCOVER" in html and "UNDERSTAND" in html and "ASSESS" in html and "PROVE" in html
         assert "13 November 2025" in html
         assert "13 November 2026" in html

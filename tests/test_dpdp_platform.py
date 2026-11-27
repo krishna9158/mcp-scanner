@@ -328,12 +328,12 @@ class TestDPDPCompleteSuite:
         assert reg.status_code == 201
         res = client.get("/app/home")
         assert res.status_code == 200
-        assert b"Data Inventory" in res.data
+        assert b"Customer Data" in res.data
         assert b"Privacy Notices" in res.data
         assert b"Consent Records" in res.data
-        assert b"Privacy Requests" in res.data
-        assert b"Vendors &amp; Processors" in res.data
-        assert b"Retention &amp; Deletion" in res.data
+        assert b"Customer Privacy Requests" in res.data
+        assert b"Companies You Share Data With" in res.data
+        assert b"Data Retention &amp; Deletion" in res.data
         assert b"Incident Response" in res.data
         assert b"Evidence Vault" in res.data
         assert b"Action Plan" in res.data
@@ -342,9 +342,9 @@ class TestDPDPCompleteSuite:
     def test_x_homepage_links(self, client):
         res = client.get("/")
         assert res.status_code == 200
-        assert b"Your Business Has Customer Data. We Help You Stay in Control." in res.data
+        assert b"Your Customer Data. Finally Under Control." in res.data
         assert b"Start My Free Assessment" in res.data
-        assert b"Explore the Platform" in res.data
+        assert b"Explore TrustAudit" in res.data
         assert b"Healthcare" in res.data
         assert b"DISCOVER" in res.data
         assert b"UNDERSTAND" in res.data

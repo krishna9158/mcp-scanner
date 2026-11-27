@@ -317,6 +317,7 @@ tbody tr:hover { background: rgba(14, 124, 91, 0.03); }
 
 /* Responsive Breakpoints */
 @media (max-width: 980px) {
+  .grid-pipe { grid-template-columns: 1fr !important; }
   .grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .grid-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .grid-2, .grid-split { grid-template-columns: 1fr; }

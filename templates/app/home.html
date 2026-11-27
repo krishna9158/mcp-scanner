@@ -2,17 +2,37 @@
 {% block content %}
 <div class="page-head">
   <div>
-    <h1 class="page-title">Welcome to <span id="home-org-name">{{ org_info.name if org_info else 'Your Business' }}</span>.</h1>
+    <h1 class="page-title">Welcome to <span id="home-org-name">{{ org_info.name if org_info else 'Registered Organisation' }}</span>.</h1>
     <p class="page-sub">Here's your privacy operations overview. Real saved data only—no fake compliance percentages.</p>
+    <div class="wf-strip" style="margin-top:10px;">
+      <a href="/app/discovery" class="wf-stage-pill active" style="text-decoration:none;">DISCOVER</a>
+      <span class="wf-arrow" aria-hidden="true">&rarr;</span>
+      <a href="/app/data-map" class="wf-stage-pill" style="text-decoration:none;">UNDERSTAND</a>
+      <span class="wf-arrow" aria-hidden="true">&rarr;</span>
+      <a href="/app/assessment" class="wf-stage-pill" style="text-decoration:none;">ASSESS</a>
+      <span class="wf-arrow" aria-hidden="true">&rarr;</span>
+      <a href="/app/action-plan" class="wf-stage-pill" style="text-decoration:none;">FIX</a>
+      <span class="wf-arrow" aria-hidden="true">&rarr;</span>
+      <a href="/app/evidence" class="wf-stage-pill" style="text-decoration:none;">PROVE</a>
+      <span class="wf-arrow" aria-hidden="true">&rarr;</span>
+      <a href="/app/privacy-requests" class="wf-stage-pill" style="text-decoration:none;">MAINTAIN</a>
+    </div>
   </div>
   <div style="display:flex;gap:8px;flex-wrap:wrap;">
-    <a href="/app/discovery" class="btn btn-outline btn-sm">Discover Website</a>
-    <a href="/app/data-inventory" class="btn btn-outline btn-sm">Add Business Activity</a>
-    <a href="/app/vendors" class="btn btn-outline btn-sm">Add Vendor</a>
+    <a href="/website-check" class="btn btn-outline btn-sm cta-arrow-btn">Check Website <span class="ta-arrow">&rarr;</span></a>
+    <a href="/app/data-inventory" class="btn btn-outline btn-sm">Add Customer Data</a>
+    <a href="/app/vendors" class="btn btn-outline btn-sm">Add Company Shared With</a>
     <a href="/app/notices" class="btn btn-outline btn-sm">Create Privacy Notice</a>
-    <a href="/app/privacy-requests" class="btn btn-outline btn-sm">Open Customer Requests</a>
-    <a href="/app/privacy-assistant" class="btn btn-primary btn-sm">Ask TrustAudit AI</a>
+    <a href="/app/privacy-requests" class="btn btn-outline btn-sm">Customer Requests</a>
+    <a href="/app/privacy-assistant" class="btn btn-primary btn-sm cta-arrow-btn">Ask TrustAudit AI <span class="ta-arrow">&rarr;</span></a>
   </div>
+</div>
+
+<div id="mfa-recommend-banner" style="display:none;margin-bottom:18px;padding:12px 16px;border-radius:11px;background:var(--amber-soft);border:1px solid rgba(180,83,9,0.22);display:none;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+  <div style="font-size:13.5px;color:var(--amber);font-weight:700;">
+    Recommended Security Step: Protect this administrator account by enrolling Authenticator 2FA (offline QR + 8 single-use recovery codes).
+  </div>
+  <a href="/app/settings" class="btn btn-primary btn-sm cta-arrow-btn">Enable 2FA Now <span class="ta-arrow">&rarr;</span></a>
 </div>
 
 <!-- C. BUSINESS PRIVACY OVERVIEW (Real DB Counters) -->
@@ -102,6 +122,11 @@
       ]);
       const org = home.organisation || {};
       if (org.name) document.getElementById('home-org-name').textContent = org.name;
+      const usr = home.user || {};
+      if (usr && usr.mfa_enabled === false) {
+        const mb = document.getElementById('mfa-recommend-banner');
+        if (mb) mb.style.display = 'flex';
+      }
       const cnt = home.counts || {};
       document.getElementById('cnt-inv').textContent = cnt.inventory_count || 0;
       document.getElementById('cnt-vnd').textContent = cnt.vendors_count || 0;

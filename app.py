@@ -77,6 +77,18 @@ def add_security_and_cache_headers(response):
     response.headers.setdefault("X-Frame-Options", "SAMEORIGIN")
     response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
     response.headers.setdefault("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
+    response.headers.setdefault(
+        "Content-Security-Policy",
+        "default-src 'self'; "
+        "script-src 'self' 'unsafe-inline'; "
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+        "font-src 'self' https://fonts.gstatic.com data:; "
+        "img-src 'self' data: https:; "
+        "connect-src 'self'; "
+        "frame-ancestors 'self'; "
+        "object-src 'none'; "
+        "base-uri 'self'",
+    )
     is_https = request.is_secure or (request.headers.get("X-Forwarded-Proto", "").lower() == "https")
     if is_https:
         response.headers.setdefault("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
@@ -154,15 +166,15 @@ APP_PAGE_META = {
     "home": ("app/home.html", "Home Overview"),
     "onboarding": ("app/onboarding.html", "Guided Onboarding"),
     "discovery": ("app/discovery.html", "Discovery Centre"),
-    "data-inventory": ("app/data_inventory.html", "Business Data Inventory"),
+    "data-inventory": ("app/data_inventory.html", "Customer Data"),
     "data-map": ("app/data_map.html", "Visual Data Map"),
     "assessment": ("app/assessment.html", "Privacy Assessment"),
     "action-plan": ("app/action_plan.html", "Action Plan"),
-    "vendors": ("app/vendors.html", "Vendors & Processors"),
+    "vendors": ("app/vendors.html", "Companies You Share Data With"),
     "notices": ("app/notices.html", "Privacy Notices"),
     "consent": ("app/consent.html", "Consent Records"),
     "privacy-requests": ("app/privacy_requests.html", "Customer Privacy Requests"),
-    "retention": ("app/retention.html", "Retention & Deletion"),
+    "retention": ("app/retention.html", "Data Retention & Deletion"),
     "incidents": ("app/incidents.html", "Incident Response"),
     "document-centre": ("app/document_centre.html", "Document Centre"),
     "evidence": ("app/evidence.html", "Evidence Vault"),
@@ -284,6 +296,20 @@ def public_resources_view():
 @app.route("/about", methods=["GET"])
 def public_about_view():
     return render_template("public/about.html", active_nav="about")
+
+
+@app.route("/privacy", methods=["GET"])
+@app.route("/terms", methods=["GET"])
+@app.route("/acceptable-use", methods=["GET"])
+@app.route("/data-processing", methods=["GET"])
+@app.route("/ai-disclosure", methods=["GET"])
+def public_legal_doc_view():
+    """Serves truthful, version-controlled public legal and compliance disclosure documents."""
+    import legal_docs
+    slug = request.path.strip("/").lower() or "privacy"
+    doc = legal_docs.get_legal_document(slug)
+    contacts = legal_docs.get_contact_config()
+    return render_template("public/legal_doc.html", doc=doc, contacts=contacts, active_nav="legal")
 
 
 @app.route("/login", methods=["GET"])
@@ -1498,6 +1524,7 @@ def api_auth_register():
     industry = data.get("industry", "")
     website = data.get("website", "")
     terms_accepted = data.get("terms_accepted", None)
+    privacy_accepted = data.get("privacy_accepted", None)
 
     if not email or not password:
         return jsonify({"status": "error", "message": "Email and password are required."}), 400
@@ -1505,6 +1532,7 @@ def api_auth_register():
     ok, msg, res = saas_store.register_user(
         email, password, name, org_name, country=country, plan=plan, industry=industry, website=website,
         terms_accepted=bool(terms_accepted) if terms_accepted is not None else None,
+        privacy_accepted=bool(privacy_accepted) if privacy_accepted is not None else None,
     )
     if not ok:
         return jsonify({"status": "error", "message": msg}), 400
@@ -1534,7 +1562,7 @@ def api_auth_login():
     data = request.get_json(silent=True) or {}
     email = data.get("email", "")
     password = data.get("password", "")
-    totp_code = data.get("totp_code") or data.get("code")
+    totp_code = data.get("totp_code") or data.get("mfa_code") or data.get("code")
     recovery_code = data.get("recovery_code")
 
     ok, msg, res = saas_store.authenticate_user(email, password, totp_code=totp_code, recovery_code=recovery_code)
@@ -1755,17 +1783,23 @@ def api_public_grievance_submit():
 
 @app.route("/.well-known/security.txt", methods=["GET"])
 def well_known_security_txt():
-    """RFC 9116 standard security disclosure metadata."""
-    txt = (
-        "Contact: mailto:security@trustaudit.io\n"
-        "Contact: mailto:grievance@trustaudit.io\n"
-        "Expires: 2027-11-19T00:00:00.000Z\n"
-        "Preferred-Languages: en\n"
-        "Canonical: https://mcp-scanner.onrender.com/.well-known/security.txt\n"
-        "Policy: https://mcp-scanner.onrender.com/trust#disclosure\n"
-        "Hiring: https://mcp-scanner.onrender.com/\n"
-    )
-    return Response(txt, mimetype="text/plain; charset=utf-8")
+    """RFC 9116 compliant security disclosure metadata reflecting verified contact channels."""
+    import datetime
+    sec_email = os.environ.get("TRUSTAUDIT_SECURITY_EMAIL", "").strip()
+    grv_email = os.environ.get("TRUSTAUDIT_GRIEVANCE_EMAIL", "").strip()
+    expires_iso = (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=330)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    base_url = request.url_root.rstrip("/")
+    lines = []
+    if sec_email:
+        lines.append(f"Contact: mailto:{sec_email}")
+    if grv_email:
+        lines.append(f"Contact: mailto:{grv_email}")
+    lines.append(f"Contact: {base_url}/security")
+    lines.append(f"Expires: {expires_iso}")
+    lines.append("Preferred-Languages: en")
+    lines.append(f"Canonical: {base_url}/.well-known/security.txt")
+    lines.append(f"Policy: {base_url}/security")
+    return Response("\n".join(lines) + "\n", mimetype="text/plain; charset=utf-8")
 
 
 @app.route("/api/public/quick-check", methods=["POST"])

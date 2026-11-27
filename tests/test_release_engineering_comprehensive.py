@@ -400,3 +400,178 @@ def test_owasp_security_boundaries_and_cross_tenant_jobs(isolated_env):
     }, json={"category": "Test"})
     assert csrf_res.status_code in (401, 403)
 
+
+def _totp_at(secret_b32: str, counter: int) -> str:
+    key = base64.b32decode(secret_b32.upper())
+    h = hmac.new(key, struct.pack(">Q", counter), hashlib.sha1).digest()
+    idx = h[-1] & 0x0F
+    code = (
+        (h[idx] & 0x7F) << 24
+        | (h[idx + 1] & 0xFF) << 16
+        | (h[idx + 2] & 0xFF) << 8
+        | (h[idx + 3] & 0xFF)
+    )
+    return str(code % 1000000).zfill(6)
+
+
+def test_legal_pages_separate_consents_and_no_fabricated_addresses(isolated_env):
+    _mod, client = isolated_env
+    import legal_docs
+    import saas_store
+
+    routes = [
+        ("/privacy", legal_docs.LEGAL_DOC_VERSIONS["privacy"], "Privacy Notice"),
+        ("/terms", legal_docs.LEGAL_DOC_VERSIONS["terms"], "Terms of Service"),
+        ("/acceptable-use", legal_docs.LEGAL_DOC_VERSIONS["acceptable_use"], "Acceptable Use"),
+        ("/data-processing", legal_docs.LEGAL_DOC_VERSIONS["data_processing"], "Data Processing"),
+        ("/ai-disclosure", legal_docs.LEGAL_DOC_VERSIONS["ai_disclosure"], "AI Processing"),
+    ]
+    for path, ver, heading in routes:
+        res = client.get(path)
+        assert res.status_code == 200, f"{path} failed with {res.status_code}"
+        html = res.get_data(as_text=True)
+        assert ver in html
+        assert heading.lower() in html.lower()
+        for fake in ("hsr layout", "indiranagar", "123 mg road", "cin u72900"):
+            assert fake not in html.lower()
+
+    # Registration UI exposes separate Terms & Privacy checkboxes
+    reg_html = client.get("/register?plan=starter").get_data(as_text=True)
+    assert 'id="reg-terms"' in reg_html
+    assert 'id="reg-privacy"' in reg_html
+    assert '/privacy' in reg_html and '/terms' in reg_html
+
+    # Explicit privacy_accepted=False rejected
+    bad_priv = client.post("/api/auth/register", json={
+        "name": "Ravi Kumar", "company_name": "Kaveri Labs", "email": "ravi@kaveri.in",
+        "password": "StrongPassword#9", "plan": "starter",
+        "terms_accepted": True, "privacy_accepted": False,
+    })
+    assert bad_priv.status_code == 400
+
+    # Successful signup persists both policy versions & timestamps
+    ok = client.post("/api/auth/register", json={
+        "name": "Ravi Kumar", "company_name": "Kaveri Labs", "email": "ravi@kaveri.in",
+        "password": "StrongPassword#9", "plan": "starter",
+        "terms_accepted": True, "privacy_accepted": True,
+    })
+    assert ok.status_code == 201
+    import json
+    with open(saas_store.DATA_FILE, "r", encoding="utf-8") as fh:
+        data = json.load(fh)
+    usr = next(u for u in data["users"].values() if u["email"] == "ravi@kaveri.in")
+    org = data["organizations"][usr["org_id"]]
+    assert org["accepted_terms_version"] == legal_docs.LEGAL_DOC_VERSIONS["terms"]
+    assert org["accepted_privacy_version"] == legal_docs.LEGAL_DOC_VERSIONS["privacy"]
+    assert org.get("accepted_terms_at") and org.get("accepted_privacy_at")
+
+
+def test_totp_otp_replay_prevention(isolated_env):
+    _mod, client = isolated_env
+    reg = client.post("/api/auth/register", json={
+        "name": "Ananya Iyer", "company_name": "Lotus Diagnostics", "email": "ananya@lotus.in",
+        "password": "StrongPassword#1", "plan": "starter",
+        "terms_accepted": True, "privacy_accepted": True,
+    })
+    assert reg.status_code == 201
+    tok = reg.get_json()["data"]["token"]
+    hdr = {"Authorization": f"Bearer {tok}"}
+
+    setup = client.post("/api/auth/mfa/setup", headers=hdr, json={}).get_json()["data"]
+    secret = setup["secret"]
+
+    # Confirm MFA with base counter
+    base_counter = int(time.time() // 30)
+    code_1 = _totp_at(secret, base_counter)
+    en = client.post("/api/auth/mfa/enable", headers=hdr, json={"code": code_1})
+    assert en.status_code == 200
+
+    # Replaying that exact same OTP code must be rejected (401)
+    replay = client.post("/api/auth/login", json={
+        "email": "ananya@lotus.in", "password": "StrongPassword#1", "totp_code": code_1,
+    })
+    assert replay.status_code == 401
+
+    # Advancing to base_counter + 1 (within +/-1 skew) succeeds once, then immediate replay is blocked
+    code_2 = _totp_at(secret, base_counter + 1)
+    ok_login = client.post("/api/auth/login", json={
+        "email": "ananya@lotus.in", "password": "StrongPassword#1", "totp_code": code_2,
+    })
+    assert ok_login.status_code == 200
+    assert ok_login.get_json()["data"]["token"]
+    replay_2 = client.post("/api/auth/login", json={
+        "email": "ananya@lotus.in", "password": "StrongPassword#1", "totp_code": code_2,
+    })
+    assert replay_2.status_code == 401
+
+
+def test_csp_security_txt_corrigendum_and_plain_english_ux(isolated_env):
+    _mod, client = isolated_env
+    import dpdp_commencement
+    import dpdp_engine
+
+    # Security headers & security.txt
+    home_res = client.get("/")
+    assert home_res.status_code == 200
+    csp = home_res.headers.get("Content-Security-Policy", "")
+    assert "default-src 'self'" in csp
+    assert "frame-ancestors 'self'" in csp
+
+    home_html = home_res.get_data(as_text=True)
+    assert "Your Customer Data. Finally Under Control." in home_html
+    assert "Explore TrustAudit" in home_html
+    assert "<animateMotion" in home_html
+    assert 'href="/privacy"' in home_html
+    assert 'href="/terms"' in home_html
+
+    sec_txt = client.get("/.well-known/security.txt")
+    assert sec_txt.status_code == 200
+    txt = sec_txt.get_data(as_text=True)
+    assert "Contact:" in txt and "Expires:" in txt
+    assert "Hiring:" not in txt
+
+    # Legal corrigendum & S.O. 5458(E) alignment
+    timeline_blob = " ".join(
+        str(m.get("date", "")) + " " + str(m.get("title", "")) + " " + str(m.get("description", ""))
+        for m in dpdp_engine.STATUTORY_TIMELINE
+    )
+    assert "G.S.R. 892(E)" in timeline_blob
+    assert "11 December 2025" in timeline_blob
+    assert "6 October 2026" in timeline_blob
+    assert "child or of a person with disability" in timeline_blob
+    assert "13 May 2027" in timeline_blob
+    comm_blob = str(dpdp_commencement.OFFICIAL_SOURCES) + " " + str(dpdp_commencement.COMMENCEMENT_MILESTONES)
+    assert "G.S.R. 892(E)" in comm_blob
+    assert "6 October 2026" in comm_blob
+    assert "child or of a person with disability" in comm_blob
+
+    # /website-check never shows hardcoded 15% and includes Cancel / Retry
+    wc_html = client.get("/website-check").get_data(as_text=True)
+    assert ">15%<" not in wc_html
+    assert "wc-cancel-btn" in wc_html
+    assert "cancelActiveCheck" in wc_html
+    assert "retryLastWebsiteCheck" in wc_html
+
+    # Unauthenticated /app/home redirects safely to /login; authenticated shows plain-English labels & stage bar
+    unauth_app = client.get("/app/home")
+    assert unauth_app.status_code == 302 and "/login" in (unauth_app.headers.get("Location", ""))
+
+    reg_ux = client.post("/api/auth/register", json={
+        "name": "Priya Menon", "company_name": "CareFirst Clinic", "email": "priya@carefirst.in",
+        "password": "StrongPassword#5", "plan": "starter",
+        "terms_accepted": True, "privacy_accepted": True,
+    })
+    assert reg_ux.status_code == 201
+    tok_ux = reg_ux.get_json()["data"]["token"]
+
+    app_res = client.get("/app/home", headers={"Authorization": f"Bearer {tok_ux}"})
+    assert app_res.status_code == 200
+    app_html = app_res.get_data(as_text=True)
+    assert "Customer Data" in app_html
+    assert "Companies You Share Data With" in app_html
+    assert "Customer Privacy Requests" in app_html
+    assert "Data Retention &amp; Deletion" in app_html
+    for stage in ("DISCOVER", "UNDERSTAND", "ASSESS", "FIX", "PROVE", "MAINTAIN"):
+        assert stage in app_html
+
+

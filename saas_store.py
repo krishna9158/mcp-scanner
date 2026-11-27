@@ -1098,15 +1098,20 @@ def register_user(
     industry: str = "",
     website: str = "",
     terms_accepted: Optional[bool] = None,
+    privacy_accepted: Optional[bool] = None,
 ) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
     """Registers a new user and provisions an isolated organization with OWASP-hardened hashing."""
+    import legal_docs
+
     email_clean = sanitize_plain_text(email, 160).lower()
     if not email_clean or not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email_clean):
         return False, "Please enter a valid work email address.", None
     if not password or len(password) < 8:
         return False, "Password must be at least 8 characters long.", None
     if terms_accepted is False:
-        return False, "You must acknowledge the Privacy Notice & Terms of Service to create an account.", None
+        return False, "You must accept the Terms of Service & Acceptable Use Policy to create an account.", None
+    if privacy_accepted is False:
+        return False, "You must acknowledge the Privacy Notice & AI Processing Disclosure to create an account.", None
 
     raw_plan = "" if plan is None else str(plan).strip().lower()
     alias_map = {"pro": "growth", "enterprise": "business"}
@@ -1126,7 +1131,10 @@ def register_user(
     org_id = f"org-{uuid.uuid4().hex[:8]}"
     uid = f"usr-{uuid.uuid4().hex[:8]}"
     pwd_hash, salt = _hash_password(password, iterations=DEFAULT_PBKDF2_ITERATIONS)
-    clean_org_name = sanitize_plain_text(org_name, 160) or "My Business"
+    clean_org_name = sanitize_plain_text(org_name, 160) or "Registered Organisation"
+    now_iso = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+    terms_ver = legal_docs.LEGAL_DOC_VERSIONS["terms"]
+    priv_ver = legal_docs.LEGAL_DOC_VERSIONS["privacy"]
 
     new_org = {
         "id": org_id,
@@ -1137,6 +1145,10 @@ def register_user(
         "created_at": time.time(),
         "max_projects": PLANS[clean_plan]["max_projects"],
         "scans_count": 0,
+        "accepted_terms_version": terms_ver,
+        "accepted_terms_at": now_iso,
+        "accepted_privacy_version": priv_ver,
+        "accepted_privacy_at": now_iso,
     }
 
     new_user = {
@@ -1152,6 +1164,11 @@ def register_user(
         "salt": salt,
         "mfa_enabled": False,
         "mfa_secret": None,
+        "last_totp_counter": 0,
+        "accepted_terms_version": terms_ver,
+        "accepted_terms_at": now_iso,
+        "accepted_privacy_version": priv_ver,
+        "accepted_privacy_at": now_iso,
         "created_at": time.time(),
     }
 
@@ -1186,7 +1203,11 @@ def register_user(
         actor_user_id=uid,
         actor_email=email_clean,
         actor_role="admin",
-        details={"plan": clean_plan},
+        details={
+            "plan": clean_plan,
+            "accepted_terms_version": terms_ver,
+            "accepted_privacy_version": priv_ver,
+        },
     )
     user_safe = dict(new_user)
     user_safe.pop("pwd_hash", None)
@@ -1266,9 +1287,14 @@ def authenticate_user(
             matched_user["mfa_recovery_hashes"] = stored_hashes
             recovery_used = True
         else:
-            if not verify_totp_token(matched_user.get("mfa_secret", ""), cand_totp):
+            ok_totp, used_ctr = verify_totp_token_with_counter(matched_user.get("mfa_secret", ""), cand_totp)
+            if not ok_totp:
                 record_failed_login(email_clean)
                 return False, "Invalid Multi-Factor Authentication code.", None
+            if used_ctr <= int(matched_user.get("last_totp_counter") or 0):
+                record_failed_login(email_clean)
+                return False, "This authenticator code was already used. Please wait for the next 30-second code.", None
+            matched_user["last_totp_counter"] = used_ctr
 
     clear_failed_logins(email_clean)
 
@@ -1601,18 +1627,18 @@ def get_totp_uri(email: str, secret: str, issuer: str = "TrustAudit") -> str:
     return f"otpauth://totp/{label}?secret={secret}&issuer={issuer_enc}&algorithm=SHA1&digits=6&period=30"
 
 
-def verify_totp_token(secret: str, token: str, window: int = 1, time_step: int = 30) -> bool:
-    """Verifies a 6-digit TOTP code against a Base32 secret with drift window."""
+def verify_totp_token_with_counter(secret: str, token: str, window: int = 1, time_step: int = 30) -> Tuple[bool, int]:
+    """Verifies a 6-digit TOTP code against a Base32 secret with drift window and returns matching time-step counter."""
     if not secret or not token:
-        return False
+        return False, 0
     clean_token = token.strip()
     if len(clean_token) != 6 or not clean_token.isdigit():
-        return False
+        return False, 0
 
     try:
         key = base64.b32decode(secret.upper())
     except Exception:
-        return False
+        return False, 0
 
     current_counter = int(time.time() // time_step)
     for offset in range(-window, window + 1):
@@ -1628,8 +1654,14 @@ def verify_totp_token(secret: str, token: str, window: int = 1, time_step: int =
         )
         expected_token = str(code % 1000000).zfill(6)
         if secrets.compare_digest(clean_token, expected_token):
-            return True
-    return False
+            return True, counter
+    return False, 0
+
+
+def verify_totp_token(secret: str, token: str, window: int = 1, time_step: int = 30) -> bool:
+    """Verifies a 6-digit TOTP code against a Base32 secret with drift window."""
+    ok, _ctr = verify_totp_token_with_counter(secret, token, window=window, time_step=time_step)
+    return ok
 
 
 def setup_mfa_for_user(user_id: str) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
@@ -1677,13 +1709,15 @@ def confirm_and_enable_mfa_with_recovery(user_id: str, code: str) -> Tuple[bool,
     if not pending_secret:
         return False, "No pending MFA configuration found. Please start setup again.", []
 
-    if not verify_totp_token(pending_secret, code):
+    ok_totp, used_ctr = verify_totp_token_with_counter(pending_secret, code)
+    if not ok_totp:
         return False, "Invalid verification code. Please check your authenticator app and try again.", []
 
     recovery_codes, recovery_hashes = _generate_recovery_codes(8)
     user["mfa_enabled"] = True
     user["mfa_secret"] = pending_secret
     user["mfa_recovery_hashes"] = recovery_hashes
+    user["last_totp_counter"] = used_ctr
     user.pop("mfa_pending_secret", None)
     _save_data(data)
     append_audit_log(

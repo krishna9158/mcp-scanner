@@ -31,15 +31,15 @@ STATUTORY_TIMELINE = [
     },
     {
         "date": "13 November 2025",
-        "title": "DPDP Rules Notified (G.S.R. 846(E)) & Commencement Notification (G.S.R. 843(E))",
-        "description": "Ministry of Electronics and Information Technology (MeitY) notified the DPDP Rules, 2025 under G.S.R. 846(E) alongside commencement notification G.S.R. 843(E), bringing preliminary and Data Protection Board institutional provisions into force (Sections 1, 2, 18–26, 33–35, 40).",
+        "title": "DPDP Rules Notified (G.S.R. 846(E)), G.S.R. 843(E) & Corrigendum G.S.R. 892(E)",
+        "description": "Ministry of Electronics and Information Technology (MeitY) notified the DPDP Rules, 2025 under G.S.R. 846(E) alongside commencement notification G.S.R. 843(E), bringing preliminary and Data Protection Board institutional provisions into force (Sections 1, 2, 18–26, 33–35, 40), followed by Corrigendum G.S.R. 892(E) dated 11 December 2025.",
         "status": "COMPLETED",
         "badge": "In Force"
     },
     {
-        "date": "October 2026",
+        "date": "6 October 2026",
         "title": "S.O. 5458(E) Removal of Difficulties Order, 2026",
-        "description": "Official Gazette Order S.O. 5458(E) clarifying wording in Section 9(1) and changing the Section 10(2)(c)(ii) reference from 'audit' to 'data audit'.",
+        "description": "Official Gazette Order S.O. 5458(E) clarifying statutory wording in Section 9(1) to 'child or of a person with disability' and updating Section 10(2)(c)(ii) from 'audit' to 'data audit'. This textual correction does not accelerate the 13 May 2027 substantive commencement date.",
         "status": "COMPLETED",
         "badge": "Gazette Order"
     },
@@ -1416,12 +1416,12 @@ AI_KNOWLEDGE_BASE = [
         "section": "Section 9 of DPDP Act, 2023 read with Rule 10 & October 2026 Removal of Difficulties Order",
         "effective_status": "Scheduled to commence on 13 May 2027",
         "answer": (
-            "Section 9(1) strictly governs the processing of personal data of children (defined as under 18 years of age) "
-            "and persons with disabilities who have lawful guardians. Data Fiduciaries must obtain verifiable consent of "
-            "the parent or lawful guardian before processing such data. They are prohibited from undertaking tracking, behavioral monitoring, or targeted advertising "
-            "directed at children, or any processing likely to cause detrimental effect on a child's well-being. "
-            "The October 2026 Removal of Difficulties Order (S.O. 5458(E)) clarified textual wording in Section 9(1) "
-            "and replaced 'audit' with 'data audit' in Section 10(2)(c)(ii)."
+            "Section 9(1) strictly governs the processing of personal data of a 'child or of a person with disability' "
+            "(covering children under 18 years of age and persons with disabilities who have lawful guardians). Data Fiduciaries must obtain verifiable consent of "
+            "the parent or lawful guardian before processing such data, and are prohibited from tracking, behavioral monitoring, or targeted advertising "
+            "directed at children, or processing likely to cause detrimental effect on a child's well-being. "
+            "Published on 6 October 2026, S.O. 5458(E) clarified textual wording in Section 9(1) "
+            "and replaced 'audit' with 'data audit' in Section 10(2)(c)(ii) without changing or accelerating 13 May 2027 commencement."
         ),
         "source": "DPDP Act, 2023, Section 9; Rule 10; October 2026 Removal of Difficulties Order",
         "expert_review": "Required for platforms offering pediatric or minor services."

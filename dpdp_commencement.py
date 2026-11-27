@@ -26,11 +26,12 @@ LAST_REVIEWED_DATE = "2026-11-26"
 
 OFFICIAL_SOURCES = {
     "ACT": "The Digital Personal Data Protection Act, 2023 (Act No. 22 of 2023), Gazette of India Extraordinary",
-    "RULES_2025": "Digital Personal Data Protection Rules, 2025 (G.S.R. 846(E) & applicable corrigenda), Ministry of Electronics and Information Technology (MeitY)",
+    "RULES_2025": "Digital Personal Data Protection Rules, 2025 (G.S.R. 846(E) read with Corrigendum G.S.R. 892(E), dated 11 December 2025), MeitY",
+    "CORRIGENDUM_2025": "Corrigendum G.S.R. 892(E), dated 11 December 2025 to DPDP Rules, 2025",
     "NOTIF_COMMENCEMENT": "G.S.R. 843(E) Commencement Notification dated 13 November 2025 (with S.O. 4880(E) / S.O. 5122(E))",
     "NOTIF_PHASE_1": "G.S.R. 843(E) & S.O. 4880(E) dated 13 November 2025 (Phase 1 Institutional Commencement)",
     "NOTIF_PHASE_2": "G.S.R. 843(E) & S.O. 5122(E) dated 13 November 2026 (Section 6(9), Section 27(1)(d) & Rule 4 Consent Managers)",
-    "REMOVAL_OF_DIFFICULTIES": "S.O. 5458(E), Digital Personal Data Protection (Removal of Difficulties) Order, October 2026 (clarifies wording in Section 9(1) and updates Section 10(2)(c)(ii) from 'audit' to 'data audit')",
+    "REMOVAL_OF_DIFFICULTIES": "Removal of Difficulties Order S.O. 5458(E), published 6 October 2026 (clarifies Section 9(1) wording 'child or of a person with disability' and updates Section 10(2)(c)(ii) to 'data audit'; makes textual corrections only and does not alter the 13 May 2027 commencement date)",
 }
 
 COMMENCEMENT_MILESTONES = [

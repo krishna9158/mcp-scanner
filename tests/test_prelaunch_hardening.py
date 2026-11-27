@@ -145,8 +145,9 @@ class TestAuthHardeningAndMFA:
         ok, msg = saas_store.confirm_and_enable_mfa(uid, "000000")
         assert ok is False
 
-        # Generate legitimate code
-        code = self._generate_test_totp(secret)
+        # Generate legitimate code for base counter
+        base_counter = int(time.time() // 30)
+        code = self._generate_test_totp(secret, counter=base_counter)
         ok, msg = saas_store.confirm_and_enable_mfa(uid, code)
         assert ok is True
 
@@ -155,16 +156,21 @@ class TestAuthHardeningAndMFA:
         assert ok is False
         assert msg == "MFA_REQUIRED"
 
-        # Attempt login with correct code
-        code_fresh = self._generate_test_totp(secret)
+        # Replay of consumed enrollment OTP must be rejected cleanly
+        ok_rep, _msg_rep, _auth_rep = saas_store.authenticate_user(email, pwd, totp_code=code)
+        assert ok_rep is False
+
+        # Attempt login with next window code (valid within skew=1, counter > last_totp_counter)
+        code_fresh = self._generate_test_totp(secret, counter=base_counter + 1)
         ok, msg, auth_res = saas_store.authenticate_user(email, pwd, totp_code=code_fresh)
         assert ok is True
         assert auth_res["token"] is not None
 
-    def _generate_test_totp(self, secret: str) -> str:
+    def _generate_test_totp(self, secret: str, counter: int = None) -> str:
         import base64, struct, hmac, hashlib
         key = base64.b32decode(secret)
-        counter = int(time.time() // 30)
+        if counter is None:
+            counter = int(time.time() // 30)
         msg = struct.pack(">Q", counter)
         h = hmac.new(key, msg, hashlib.sha1).digest()
         idx = h[-1] & 0x0F
@@ -188,14 +194,23 @@ class TestPublicAndGovernanceEndpoints:
         app.app.config["TESTING"] = True
         return app.app.test_client()
 
-    def test_security_txt_endpoint(self, client):
+    def test_security_txt_endpoint(self, client, monkeypatch):
+        monkeypatch.delenv("TRUSTAUDIT_SECURITY_EMAIL", raising=False)
+        monkeypatch.delenv("TRUSTAUDIT_GRIEVANCE_EMAIL", raising=False)
         res = client.get("/.well-known/security.txt")
         assert res.status_code == 200
         assert "text/plain" in res.content_type
         txt = res.data.decode("utf-8")
-        assert "Contact: mailto:security@trustaudit.io" in txt
-        assert "Contact: mailto:grievance@trustaudit.io" in txt
-        assert "Canonical: https://mcp-scanner.onrender.com/.well-known/security.txt" in txt
+        assert "Contact: http://" in txt and "/security" in txt
+        assert "Canonical: http://" in txt and "/.well-known/security.txt" in txt
+        assert "Hiring:" not in txt
+
+        monkeypatch.setenv("TRUSTAUDIT_SECURITY_EMAIL", "security@trustaudit.io")
+        monkeypatch.setenv("TRUSTAUDIT_GRIEVANCE_EMAIL", "grievance@trustaudit.io")
+        res_cfg = client.get("/.well-known/security.txt")
+        txt_cfg = res_cfg.get_data(as_text=True)
+        assert "Contact: mailto:security@trustaudit.io" in txt_cfg
+        assert "Contact: mailto:grievance@trustaudit.io" in txt_cfg
 
     def test_grievance_submission_endpoint(self, client):
         payload = {
