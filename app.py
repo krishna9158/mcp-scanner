@@ -226,12 +226,14 @@ def _render_app_page(page_key: str):
         return Response("Forbidden: Platform administrator privileges required.", status=403, mimetype="text/plain")
     tpl, title = APP_PAGE_META[page_key]
     org_info = saas_store.get_organization(org_id)
+    onboarding_profile = dpdp_store.get_onboarding_profile(org_id) or {}
     org_slug = (org_info.get("slug") if org_info else None) or org_id
     return render_template(
         tpl,
         active_page=page_key,
         page_title=title,
         org_info=org_info,
+        onboarding_profile=onboarding_profile,
         org_slug=org_slug,
         current_user=user,
         plans=saas_store.get_public_plans(),

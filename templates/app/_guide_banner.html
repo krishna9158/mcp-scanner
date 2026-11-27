@@ -1,5 +1,5 @@
 {% macro page_guide(what_is_this, why_it_matters, what_next, legal_ref='', industry_examples=None, ask_q='What should I do next?') %}
-{% set raw_ind = ((org_info.industry if org_info and org_info.industry else 'saas')|string)|lower %}
+{% set raw_ind = ((onboarding_profile.get('industry') if onboarding_profile else '') or (org_info.get('industry') if org_info else '') or 'saas')|string|lower %}
 {% set ind_key = 'healthcare' if ('health' in raw_ind or 'clinic' in raw_ind or 'hosp' in raw_ind) else ('ecommerce' if ('ecom' in raw_ind or 'retail' in raw_ind) else ('education' if ('edu' in raw_ind or 'school' in raw_ind) else 'saas')) %}
 <section class="guide-banner" aria-label="Plain-English Page Guide">
   <div class="guide-grid">

@@ -105,11 +105,12 @@
     const feed = document.getElementById('ai-chat-feed');
     if (feed.querySelector('.empty-state')) feed.innerHTML = '';
     const ansText = res.answer || res.response || '';
+    const ansHtml = TA.esc(ansText).replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
     const card = document.createElement('div');
     card.style.cssText = 'padding:14px;border:1px solid var(--border);border-radius:12px;background:var(--bg);';
     card.innerHTML =
       '<div style="font-weight:800;font-size:13.5px;margin-bottom:8px;">You: ' + TA.esc(res.query) + '</div>' +
-      '<div style="white-space:pre-wrap;font-size:13.5px;line-height:1.6;">' + TA.esc(ansText) + '</div>' +
+      '<div style="white-space:pre-wrap;font-size:13.5px;line-height:1.6;">' + ansHtml + '</div>' +
       '<details style="margin-top:8px;font-size:12px;color:var(--ink-muted);"><summary style="cursor:pointer;font-weight:700;">Show legal reference</summary>' +
       '<div style="margin-top:6px;">Section: ' + TA.esc(res.matched_section || 'DPDP Act, 2023') + ' &bull; ' + TA.esc(res.rule_ref || 'DPDP Rules, 2025') + ' &bull; Status: ' + TA.esc(res.commencement_status || '') + ' (' + TA.esc(res.effective_date || '') + ')</div></details>' +
       '<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">' +

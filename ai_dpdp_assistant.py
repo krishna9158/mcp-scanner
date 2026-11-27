@@ -63,7 +63,7 @@ DPDP_KNOWLEDGE_CORPUS: List[Dict[str, Any]] = [
     {
         "id": "KB-OVERVIEW-TIMELINE",
         "section": "DPDP Act, 2023 Commencement & Readiness Scope",
-        "rules": ["S.O. 4880(E)", "S.O. 5122(E)"],
+        "rules": ["G.S.R. 843(E)", "G.S.R. 846(E)", "G.S.R. 892(E)", "S.O. 5458(E)"],
         "title": "What the DPDP Law Means for Your Business & Effective Dates",
         "effective_date": "Phased: 13 Nov 2025, 13 Nov 2026 & 13 May 2027",
         "commencement_status": "Phased commencement (Substantive duties 13 May 2027)",
@@ -91,12 +91,12 @@ DPDP_KNOWLEDGE_CORPUS: List[Dict[str, Any]] = [
             "you need to organise what data you hold, explain how you use it clearly, keep it safe, sign agreements with software vendors, "
             "and prepare workflows to delete or update customer data before 13 May 2027."
         ),
-        "source_doc": "DPDP Act, 2023; Notifications S.O. 4880(E) & S.O. 5122(E); DPDP Rules, 2025",
+        "source_doc": "DPDP Act, 2023; Notifications G.S.R. 843(E), G.S.R. 846(E), Corrigendum G.S.R. 892(E) & Order S.O. 5458(E)",
         "source_url": "https://www.meity.gov.in/content/digital-personal-data-protection-act-2023",
         "penalties": "Schedule Items 1–6 (up to ₹250 crore ceiling depending on provision)",
         "action_guidance": (
-            "Complete your 6-step Setup Checklist in TrustAudit: record your customer data streams, review your website, "
-            "publish a clear Privacy Notice, track your software/lab vendors, and keep evidence files ready."
+            "Complete your 5-step Business Setup Guide in TrustAudit: record your customer information, review your website, "
+            "publish a clear Privacy Notice, track companies you share data with, and keep proof files ready."
         ),
     },
     {
@@ -483,13 +483,13 @@ DPDP_KNOWLEDGE_CORPUS: List[Dict[str, Any]] = [
         "keywords": ["consent manager", "registration", "meity", "interoperable", "in force", "active", "rule 4"],
         "summary": (
             "Section 6(9) and Rule 4 establish the framework for DPBI-registered Consent Managers acting as neutral platforms for individuals to manage consent across fiduciaries. "
-            "Commenced into force on 13 November 2026 under S.O. 5122(E). TrustAudit helps businesses manage internal consent logs and readiness — TrustAudit itself does NOT act as a registered Consent Manager."
+            "Commenced into force on 13 November 2026 (Section 6(9), Section 27(1)(d), Rule 4 under DPDP Rules, 2025 G.S.R. 846(E) & Corrigendum G.S.R. 892(E)). TrustAudit helps businesses manage internal consent logs and readiness — TrustAudit itself does NOT act as a registered Consent Manager."
         ),
         "plain_summary": (
             "Consent Manager registration rules took effect on 13 November 2026. Most everyday businesses are Data Fiduciaries (not Consent Managers), "
             "so you simply need clean internal consent tracking and readiness."
         ),
-        "source_doc": "DPDP Act, 2023, Section 6(9); Rule 4; S.O. 5122(E)",
+        "source_doc": "DPDP Act, 2023, Section 6(9), Section 27(1)(d); DPDP Rules, 2025 Rule 4 (G.S.R. 846(E) & G.S.R. 892(E))",
         "source_url": "https://www.meity.gov.in/content/digital-personal-data-protection-act-2023",
         "penalties": "Up to ₹50 crore (Schedule Item 6: General Contravention)",
         "action_guidance": "Keep clear records of consent sources and withdrawal dates in TrustAudit's Consent Records module.",
