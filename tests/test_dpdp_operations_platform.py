@@ -349,18 +349,18 @@ class TestDPOperationsPlatform:
         assert res.status_code == 200
         body = res.data.decode("utf-8")
 
-        assert "Your Customer Data. Finally Under Control." in body
-        assert "Start My Free Assessment" in body
-        assert "Explore TrustAudit" in body
+        assert "Not Sure Where Your Customer Data Goes? Start Here." in body
+        assert "Check My Business" in body
+        assert "See a Live Demo" in body
 
         for route_link in ["/features", "/industries", "/pricing", "/how-it-works", "/security", "/resources", "/demo"]:
             assert route_link in body, f"Missing routed website link: {route_link}"
 
-        assert "Data Inventory" in body or "Customer Data" in body
-        assert "Visual Data Map" in body or "Data Map" in body
-        assert "Action Management" in body or "Action Plan" in body
-        assert "Vendor Operations" in body or "Vendor" in body
-        assert "Customer Privacy Portal" in body
+        assert "What TrustAudit Does" in body
+        assert "How It Works in Three Simple Steps" in body
+        assert "What You Can Discover" in body
+        assert "How TrustAudit Helps Fix Gaps" in body
+        assert "Customer Request" in body
 
         res_lib = client.get("/resources")
         lib_body = res_lib.data.decode("utf-8")

@@ -1,12 +1,27 @@
 {% extends "app_base.html" %}
+{% from "app/_guide_banner.html" import page_guide %}
 {% block content %}
 <div class="page-head">
   <div>
-    <h1 class="page-title">Privacy Notices (Section 5 &amp; Rule 3)</h1>
-    <p class="page-sub">Drafted dynamically from your Customer Data Inventory and Grievance Officer details. Always labeled Draft until approved by your team.</p>
+    <h1 class="page-title">Privacy Notice</h1>
+    <p class="page-sub">Generate and edit a clear notice telling customers what data you collect and how to contact you. Saved as Draft until approved by your team.</p>
   </div>
   <button type="button" class="btn btn-primary btn-sm" onclick="openGenNoticeModal()">+ Generate Notice Draft</button>
 </div>
+
+{{ page_guide(
+  "The plain-language page shown to your customers explaining what personal details you take, why you need them, and how they can ask for changes.",
+  "Customers expect honesty before filling out forms or paying—and Section 5 requires clear notice whenever you rely on consent.",
+  "Click + Generate Notice Draft to pre-fill items from your Customer Information List, edit wording, and approve when ready.",
+  legal_ref="DPDP Act Section 5 & Rule 3 (itemised notice with grievance contact & withdrawal ease), scheduled for 13 May 2027.",
+  industry_examples={
+    "healthcare": "Explain why booking phones, diagnostic reports, and insurance details are collected.",
+    "saas": "Explain signup credentials, workspace emails, billing GST invoices, and product logs.",
+    "ecommerce": "Explain order shipping addresses, refund UPI details, and promotional opt-in choices.",
+    "education": "Explain student admissions, parent emergency contacts, and attendance records."
+  },
+  ask_q="Help me create a privacy notice."
+) }}
 
 <div class="grid-split">
   <div class="card">

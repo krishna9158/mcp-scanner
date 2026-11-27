@@ -25,19 +25,16 @@
       </a>
 
       <nav class="pub-links" aria-label="Primary navigation">
-        <a href="/features" class="{% if active_nav == 'features' %}active{% endif %}">Features</a>
-        <a href="/website-check" class="{% if active_nav == 'website-check' %}active{% endif %}">Website Check</a>
-        <a href="/industries" class="{% if active_nav == 'industries' %}active{% endif %}">Industries</a>
+        <a href="/features" class="{% if active_nav == 'features' %}active{% endif %}">Product</a>
         <a href="/how-it-works" class="{% if active_nav == 'how_it_works' %}active{% endif %}">How It Works</a>
+        <a href="/industries" class="{% if active_nav == 'industries' %}active{% endif %}">Industries</a>
         <a href="/pricing" class="{% if active_nav == 'pricing' %}active{% endif %}">Pricing</a>
-        <a href="/security" class="{% if active_nav == 'security' %}active{% endif %}">Security</a>
         <a href="/resources" class="{% if active_nav == 'resources' %}active{% endif %}">Resources</a>
-        <a href="/demo" class="{% if active_nav == 'demo' %}active{% endif %}">Demo</a>
       </nav>
 
       <div class="pub-actions">
         <a href="/login" class="btn btn-ghost btn-sm">Sign In</a>
-        <a href="/register?plan=free" class="btn btn-primary btn-sm cta-arrow-btn">Start Free Assessment <span class="ta-arrow" aria-hidden="true">&rarr;</span></a>
+        <a href="/register?plan=free" class="btn btn-primary btn-sm cta-arrow-btn">Start Free <span class="ta-arrow" aria-hidden="true">&rarr;</span></a>
         <button type="button" class="mobile-menu-btn" aria-label="Open menu" onclick="openMobileMenu()">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         </button>
@@ -107,19 +104,17 @@
   <script src="/static/js/trustaudit-core.js"></script>
   <script>
     function openMobileMenu() {
-      TA.openModal('Navigation',
+      TA.openModal('Menu',
         '<div style="display:flex;flex-direction:column;gap:10px;">' +
-        '<a href="/features" class="btn btn-outline">Features</a>' +
-        '<a href="/website-check" class="btn btn-outline">Website Check</a>' +
-        '<a href="/industries" class="btn btn-outline">Industries</a>' +
+        '<a href="/features" class="btn btn-outline">Product</a>' +
         '<a href="/how-it-works" class="btn btn-outline">How It Works</a>' +
+        '<a href="/industries" class="btn btn-outline">Industries</a>' +
         '<a href="/pricing" class="btn btn-outline">Pricing</a>' +
-        '<a href="/security" class="btn btn-outline">Security & Trust</a>' +
-        '<a href="/resources" class="btn btn-outline">Resources & DPDP Law</a>' +
-        '<a href="/about" class="btn btn-outline">About</a>' +
-        '<a href="/demo" class="btn btn-outline">Explore Demo</a>' +
+        '<a href="/resources" class="btn btn-outline">Resources</a>' +
+        '<a href="/demo" class="btn btn-outline">See a Live Demo</a>' +
+        '<a href="/security" class="btn btn-outline">Security &amp; Trust</a>' +
         '<a href="/login" class="btn btn-outline">Sign In</a>' +
-        '<a href="/register?plan=free" class="btn btn-primary cta-arrow-btn">Start My Free Assessment <span class="ta-arrow" aria-hidden="true">&rarr;</span></a>' +
+        '<a href="/register?plan=free" class="btn btn-primary cta-arrow-btn">Start Free <span class="ta-arrow" aria-hidden="true">&rarr;</span></a>' +
         '</div>'
       );
     }

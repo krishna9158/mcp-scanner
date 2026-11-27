@@ -25,49 +25,49 @@
         <button type="button" class="btn btn-ghost btn-sm" style="color:#9DB0A5;" onclick="TA.toggleSidebar()" title="Collapse navigation">&#9776;</button>
       </div>
 
-      <div class="sidebar-org-meta" style="padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.08);">
-        <div style="font-size:13px;font-weight:700;color:#FFFFFF;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ org_info.name if org_info else 'My Organisation' }}</div>
-        <div style="font-size:11.5px;color:#89A395;margin-top:2px;">{{ org_info.plan_details.name if org_info and org_info.plan_details else 'Starter' }} &bull; {{ current_user.role|capitalize if current_user else 'Member' }}</div>
+      <div class="sidebar-org-meta" style="padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;justify-content:space-between;align-items:center;gap:8px;">
+        <div style="min-width:0;">
+          <div style="font-size:13px;font-weight:700;color:#FFFFFF;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ org_info.name if org_info else 'My Business' }}</div>
+          <div style="font-size:11.5px;color:#89A395;margin-top:2px;">{{ org_info.plan_details.name if org_info and org_info.plan_details else 'Free' }} &bull; {{ current_user.role|capitalize if current_user else 'Admin' }}</div>
+        </div>
+        <a href="/app/settings" title="Settings &amp; 2FA" style="font-size:11.5px;color:#B8C9BF;text-decoration:none;padding:4px 8px;border:1px solid rgba(255,255,255,0.16);border-radius:6px;">Settings</a>
+      </div>
+
+      <div class="nav-group" style="padding-bottom:2px;">
+        <div class="nav-group-title">01. HOME</div>
+        <a href="/app/home" class="nav-item {% if active_page == 'home' %}active{% endif %}" title="Home">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>
+          <span class="nav-label">Home</span>
+        </a>
       </div>
 
       {% set nav_groups = [
-        ("Discover", [
-          ("home", "/app/home", "Home Overview"),
-          ("onboarding", "/app/onboarding", "Guided Onboarding"),
-          ("discovery", "/app/discovery", "Discovery Centre"),
-          ("website-check", "/website-check", "Website Privacy Check")
+        ("02. My Business Data", [
+          ("data-inventory", "/app/data-inventory", "Customer Information"),
+          ("data-map", "/app/data-map", "Where My Data Goes"),
+          ("vendors", "/app/vendors", "Companies I Share Data With"),
+          ("website-check", "/app/website-check", "Website Check")
         ]),
-        ("Understand & Assess", [
-          ("data-inventory", "/app/data-inventory", "Customer Data"),
-          ("data-map", "/app/data-map", "Visual Data Map"),
+        ("03. My Privacy Tasks", [
           ("assessment", "/app/assessment", "Privacy Assessment"),
-          ("action-plan", "/app/action-plan", "Action Plan")
-        ]),
-        ("Fix & Maintain", [
-          ("vendors", "/app/vendors", "Companies You Share Data With"),
-          ("notices", "/app/notices", "Privacy Notices"),
           ("consent", "/app/consent", "Consent Records"),
-          ("privacy-requests", "/app/privacy-requests", "Customer Privacy Requests"),
+          ("privacy-requests", "/app/privacy-requests", "Customer Requests"),
           ("retention", "/app/retention", "Data Retention & Deletion"),
-          ("incidents", "/app/incidents", "Incident Response")
+          ("incidents", "/app/incidents", "Privacy Incident Response"),
+          ("vendor-reviews", "/app/vendor-reviews", "Vendor Reviews")
         ]),
-        ("Prove & Assist", [
-          ("document-centre", "/app/document-centre", "Document Centre"),
-          ("evidence", "/app/evidence", "Evidence Vault"),
-          ("reports", "/app/reports", "Reports & Bundles"),
-          ("privacy-assistant", "/app/privacy-assistant", "AI Privacy Assistant")
-        ]),
-        ("External Portals", [
-          ("privacy-portal", "/app/privacy-portal", "Customer Portal"),
-          ("privacy-profile", "/app/privacy-profile", "Privacy Profile"),
-          ("integrations", "/app/integrations", "Integrations"),
-          ("settings", "/app/settings", "Settings & Security")
+        ("04. Documents & Records", [
+          ("notices", "/app/notices", "Privacy Notice"),
+          ("document-centre", "/app/document-centre", "My Documents"),
+          ("evidence", "/app/evidence", "Evidence"),
+          ("reports", "/app/reports", "Reports"),
+          ("history", "/app/history", "History")
         ])
       ] %}
 
       {% for group_name, items in nav_groups %}
       <div class="nav-group">
-        <button type="button" class="nav-group-toggle" data-group="{{ group_name|lower|replace(' ', '_')|replace('&', '') }}" onclick="TA.toggleNavGroup(this)">
+        <button type="button" class="nav-group-toggle" data-group="{{ group_name|lower|replace(' ', '_')|replace('.', '')|replace('&', '') }}" onclick="TA.toggleNavGroup(this)">
           <span>{{ group_name }}</span>
           <span class="nav-chevron" aria-hidden="true">&rsaquo;</span>
         </button>
@@ -81,6 +81,22 @@
         </div>
       </div>
       {% endfor %}
+
+      <div class="nav-group" style="margin-top:auto;padding-top:14px;border-top:1px solid rgba(255,255,255,0.08);">
+        <div class="nav-group-title">Help</div>
+        <a href="/app/privacy-assistant" class="nav-item {% if active_page == 'privacy-assistant' %}active{% endif %}" title="AI Assistant">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span class="nav-label">AI Assistant</span>
+        </a>
+        <a href="/app/learning" class="nav-item {% if active_page == 'learning' %}active{% endif %}" title="Learning Centre">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          <span class="nav-label">Learning Centre</span>
+        </a>
+        <a href="javascript:void(0)" class="nav-item" onclick="TA.openReportProblemModal()" title="Support">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span class="nav-label">Support</span>
+        </a>
+      </div>
 
       {% if current_user and current_user.is_platform_admin %}
       <div class="nav-group" style="margin-bottom:20px;">

@@ -328,28 +328,37 @@ class TestDPDPCompleteSuite:
         assert reg.status_code == 201
         res = client.get("/app/home")
         assert res.status_code == 200
-        assert b"Customer Data" in res.data
-        assert b"Privacy Notices" in res.data
+        assert b"Customer Information" in res.data
+        assert b"Where My Data Goes" in res.data
+        assert b"Companies I Share Data With" in res.data
+        assert b"Website Check" in res.data
+        assert b"Privacy Assessment" in res.data
         assert b"Consent Records" in res.data
-        assert b"Customer Privacy Requests" in res.data
-        assert b"Companies You Share Data With" in res.data
+        assert b"Customer Requests" in res.data
         assert b"Data Retention &amp; Deletion" in res.data
-        assert b"Incident Response" in res.data
-        assert b"Evidence Vault" in res.data
-        assert b"Action Plan" in res.data
+        assert b"Privacy Incident Response" in res.data
+        assert b"Vendor Reviews" in res.data
+        assert b"Privacy Notice" in res.data
+        assert b"My Documents" in res.data
+        assert b"Evidence" in res.data
+        assert b"Reports" in res.data
+        assert b"History" in res.data
+        assert b"AI Assistant" in res.data
+        assert b"Learning Centre" in res.data
 
     # X. Homepage links & GTM hero sections
     def test_x_homepage_links(self, client):
         res = client.get("/")
         assert res.status_code == 200
-        assert b"Your Customer Data. Finally Under Control." in res.data
-        assert b"Start My Free Assessment" in res.data
-        assert b"Explore TrustAudit" in res.data
-        assert b"Healthcare" in res.data
-        assert b"DISCOVER" in res.data
-        assert b"UNDERSTAND" in res.data
-        assert b"ASSESS" in res.data
-        assert b"MAINTAIN" in res.data
+        assert b"Not Sure Where Your Customer Data Goes? Start Here." in res.data
+        assert b"Check My Business" in res.data
+        assert b"See a Live Demo" in res.data
+        assert b"Clinics &amp; Healthcare" in res.data
+        assert b"Product" in res.data
+        assert b"How It Works" in res.data
+        assert b"Industries" in res.data
+        assert b"Pricing" in res.data
+        assert b"Resources" in res.data
 
     # Y. Pricing and subscription limits
     def test_y_pricing_and_plans(self, client):

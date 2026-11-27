@@ -1,0 +1,40 @@
+{% macro page_guide(what_is_this, why_it_matters, what_next, legal_ref='', industry_examples=None, ask_q='What should I do next?') %}
+{% set raw_ind = ((org_info.industry if org_info and org_info.industry else 'saas')|string)|lower %}
+{% set ind_key = 'healthcare' if ('health' in raw_ind or 'clinic' in raw_ind or 'hosp' in raw_ind) else ('ecommerce' if ('ecom' in raw_ind or 'retail' in raw_ind) else ('education' if ('edu' in raw_ind or 'school' in raw_ind) else 'saas')) %}
+<section class="guide-banner" aria-label="Plain-English Page Guide">
+  <div class="guide-grid">
+    <div>
+      <div class="guide-col-label">What Is This?</div>
+      <div class="guide-col-text">{{ what_is_this }}</div>
+    </div>
+    <div>
+      <div class="guide-col-label">Why Does It Matter?</div>
+      <div class="guide-col-text">{{ why_it_matters }}</div>
+    </div>
+    <div>
+      <div class="guide-col-label">What Should I Do Next?</div>
+      <div class="guide-col-text">{{ what_next }}</div>
+    </div>
+  </div>
+  {% if industry_examples or legal_ref %}
+  <div class="guide-footer">
+    <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+      {% if industry_examples %}
+      <span class="badge badge-neutral" style="white-space:normal;text-align:left;line-height:1.4;">
+        <strong>Example for your business:</strong>&nbsp;{{ industry_examples.get(ind_key) or industry_examples.get('saas') }}
+      </span>
+      {% endif %}
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+      {% if legal_ref %}
+      <details class="guide-legal-toggle">
+        <summary>Show legal context (DPDP)</summary>
+        <div class="guide-legal-body">{{ legal_ref }}</div>
+      </details>
+      {% endif %}
+      <a href="/app/privacy-assistant?q={{ ask_q|urlencode }}" class="btn btn-ghost btn-sm" style="color:var(--emerald);font-weight:700;">Ask TrustAudit AI &rarr;</a>
+    </div>
+  </div>
+  {% endif %}
+</section>
+{% endmacro %}

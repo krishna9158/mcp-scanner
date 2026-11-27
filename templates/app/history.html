@@ -1,0 +1,67 @@
+{% extends "app_base.html" %}
+{% from "app/_guide_banner.html" import page_guide %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">History</h1>
+    <p class="page-sub">Chronological timeline of real actions, website checks, approvals, and security changes across your workspace.</p>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+    <a href="/api/audit-logs?format=csv" class="btn btn-outline btn-sm">Download Audit CSV</a>
+    <a href="/api/dpdp/backup/export" class="btn btn-primary btn-sm">Download Workspace Snapshot</a>
+  </div>
+</div>
+
+{{ page_guide(
+  "History keeps a tamper-resistant chronological record of real account logins, 2FA updates, website checks, notices, and confirmations.",
+  "If a customer, auditor, or manager asks when something was updated or approved, this timeline shows real facts with timestamps.",
+  "Filter events below or download the CSV record whenever you need an external trail.",
+  legal_ref="Supports internal accountability and Rule 6 reasonable safeguard audit-log practices across workspace actions.",
+  industry_examples={
+    "healthcare": "Track when patient notices were published, lab vendor agreements approved, and staff members logged in.",
+    "saas": "Maintain audit trails for customer deletion requests, MFA enrollment, and data inventory approvals.",
+    "ecommerce": "Review timestamps for marketing consent updates, retention schedule runs, and export downloads.",
+    "education": "Record when examination data retention rules and parent privacy notices were updated."
+  },
+  ask_q="What records should I keep to prove our privacy practices?"
+) }}
+
+<div class="grid-split">
+  <div class="card">
+    <h2 class="ta-h3" style="margin-bottom:12px;">Workspace Activity Events</h2>
+    <div id="hist-events">Loading workspace history...</div>
+  </div>
+  <div class="card">
+    <h2 class="ta-h3" style="margin-bottom:12px;">Account &amp; Security Log</h2>
+    <div id="hist-audit">Loading audit log...</div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  async function loadHistoryPage() {
+    const [sumRes, audRes] = await Promise.all([
+      TA.apiJson('/api/dpdp/home-summary'),
+      TA.apiJson('/api/audit-logs?limit=40').catch(function () { return { events: [] }; }),
+    ]);
+    const acts = sumRes.recent_activity || [];
+    const elAct = document.getElementById('hist-events');
+    elAct.innerHTML = acts.length ? acts.map(function (a) {
+      return '<div style="padding:10px 12px;border:1px solid var(--border);border-radius:9px;margin-bottom:8px;">' +
+        '<div style="font-weight:700;font-size:13.5px;">' + TA.esc(a.title) + '</div>' +
+        '<div class="ta-muted" style="font-size:12px;margin-top:2px;">' + TA.esc(a.category || 'Workspace') + ' &bull; ' + TA.esc((a.timestamp || '').slice(0, 19)) + '</div></div>';
+    }).join('') : '<div class="empty-state"><p class="ta-muted">No workspace events recorded yet.</p></div>';
+
+    const evs = audRes.events || [];
+    const elAud = document.getElementById('hist-audit');
+    elAud.innerHTML = evs.length ? evs.map(function (e) {
+      return '<div style="padding:10px 12px;border:1px solid var(--border);border-radius:9px;margin-bottom:8px;">' +
+        '<div style="display:flex;justify-content:space-between;gap:8px;"><strong style="font-size:13px;">' + TA.esc(e.action || 'event') + '</strong>' +
+        '<span class="badge badge-neutral">' + TA.esc(e.status || 'success') + '</span></div>' +
+        '<div class="ta-muted" style="font-size:12px;margin-top:3px;">' + TA.esc(e.actor_email || 'System') + ' &bull; ' + TA.esc((e.timestamp || '').slice(0, 19)) + '</div></div>';
+    }).join('') : '<div class="empty-state"><p class="ta-muted">No security audit events logged yet.</p></div>';
+  }
+  loadHistoryPage();
+</script>
+{% endblock %}

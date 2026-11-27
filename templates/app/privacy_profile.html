@@ -1,12 +1,21 @@
 {% extends "app_base.html" %}
+{% from "app/_guide_banner.html" import page_guide %}
 {% block content %}
 <div class="page-head">
   <div>
     <h1 class="page-title">Shareable Privacy Profile</h1>
-    <p class="page-sub">Choose strictly what approved information your business shares publicly. Internal inventory, vendor contracts, customer requests, security settings, and Vault files are never exposed.</p>
+    <p class="page-sub">Share only reviewed public details when partners ask about your privacy practices—internal records stay strictly private.</p>
   </div>
   <a id="pp-live-link" href="/p/{{ org_slug }}" target="_blank" class="btn btn-primary btn-sm">Preview Public Profile &rarr;</a>
 </div>
+
+{{ page_guide(
+  "A clean public summary card showing only the business contact, Privacy Notice, and practices you explicitly choose to publish.",
+  "Helpful when enterprise clients, schools, or hospital partners ask for basic privacy transparency before working with you.",
+  "Fill in your public contact details below and preview the page—drafts and uploaded files never appear unless you publish them.",
+  legal_ref="Truthful disclosure control: unreviewed workspaces explicitly state 'Not yet formally reviewed' and never imply certification.",
+  ask_q="What should we share publicly about our privacy practices?"
+) }}
 
 <div class="card">
   <form onsubmit="saveProfileCfg(event)">

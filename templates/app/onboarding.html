@@ -2,118 +2,138 @@
 {% block content %}
 <div class="page-head">
   <div>
-    <h1 class="page-title">Guided Business Setup (Zero Blank-Page Typing)</h1>
-    <p class="page-sub">Save progress anytime, skip optional steps, and confirm only what applies. Extracted items always stay drafts until you confirm them.</p>
+    <h1 class="page-title">Let Us Set Up Your Business in 5 Simple Steps</h1>
+    <p class="page-sub">You do not need to know legal terminology before starting. Save and continue later anytime.</p>
   </div>
-  <button type="button" class="btn btn-outline btn-sm" onclick="saveProgress(false)">Save Progress &amp; Continue Later</button>
+  <button type="button" class="btn btn-outline btn-sm" onclick="saveProgress(false)">Save and Continue Later</button>
 </div>
 
 <div class="stepper" id="onb-stepper">
-  <button type="button" class="step-pill active" onclick="goStep(1)">1. Your Business</button>
+  <button type="button" class="step-pill active" onclick="goStep(1)">1. My Business</button>
   <button type="button" class="step-pill" onclick="goStep(2)">2. What You Do</button>
-  <button type="button" class="step-pill" onclick="goStep(3)">3. Website Check</button>
-  <button type="button" class="step-pill" onclick="goStep(4)">4. Import Docs</button>
-  <button type="button" class="step-pill" onclick="goStep(5)">5. External Services</button>
-  <button type="button" class="step-pill" onclick="goStep(6)">6. Review &amp; Finish</button>
+  <button type="button" class="step-pill" onclick="goStep(3)">3. Check Website</button>
+  <button type="button" class="step-pill" onclick="goStep(4)">4. Review Info</button>
+  <button type="button" class="step-pill" onclick="goStep(5)">5. Action Plan</button>
 </div>
 
-<!-- STEP 1 -->
-<div id="step-1" class="card">
-  <h2 class="ta-h3">Step 1 &mdash; Your Business</h2>
-  <p class="ta-muted" style="margin-bottom:16px;">Choose an industry card to tailor suggested customer activities automatically.</p>
+<!-- STEP 1 — MY BUSINESS -->
+<section id="step-1" class="card">
+  <h2 class="ta-h3">Step 1 &mdash; My Business</h2>
+  <p class="ta-muted" style="margin-bottom:16px;">Choose what best matches your business so we can suggest everyday customer activities for you.</p>
   <div class="grid-3" id="ind-cards" style="margin-bottom:18px;">
     {% for key, title, sub in [
-      ("healthcare", "Healthcare / Clinic / Hospital", "Appointments, lab reports, billing & insurance"),
-      ("saas", "SaaS &amp; Technology", "Signups, auth, billing, product analytics"),
-      ("ecommerce", "E-Commerce &amp; Retail", "Orders, delivery addresses, payments, pixels"),
-      ("education", "Education &amp; EdTech", "Student records, guardians, attendance, fees"),
-      ("professional_services", "Professional Services", "Client matters, contracts, GST billing, staff")
+      ("healthcare", "Healthcare / Clinic / Hospital", "Appointments, patient details, lab reports, billing & insurance"),
+      ("saas", "SaaS &amp; Software", "Registration, accounts, payments, analytics & support"),
+      ("ecommerce", "E-Commerce &amp; Retail", "Orders, delivery details, payments, returns & marketing"),
+      ("education", "Education &amp; Schools", "Student registration, parent details, attendance & exams"),
+      ("professional_services", "Professional Services", "Client engagements, contracts & billing")
     ] %}
-    <div class="card card-hover ind-card" data-ind="{{ key }}" style="cursor:pointer;padding:16px;" onclick="pickIndustry('{{ key }}', this)">
+    <div class="card card-hover ind-card" data-ind="{{ key }}" style="cursor:pointer;padding:15px;" onclick="pickIndustry('{{ key }}', this)">
       <strong>{{ title|safe }}</strong>
       <div class="ta-muted" style="font-size:12.5px;margin-top:4px;">{{ sub }}</div>
     </div>
     {% endfor %}
   </div>
   <div class="grid-2">
-    <div class="field"><label>Business Name</label><input id="ob-name" class="input" placeholder="e.g., Kaveri Care Clinic"></div>
-    <div class="field"><label>Public Website (Optional)</label><input id="ob-web" type="url" class="input" placeholder="https://clinic.in"></div>
-    <div class="field"><label>Business Size</label><select id="ob-size" class="input"><option>1-10 employees</option><option>11-50 employees</option><option>51-250 employees</option><option>250+ employees</option></select></div>
-    <div class="field"><label>Privacy / Grievance Email</label><input id="ob-email" type="email" class="input" placeholder="privacy@clinic.in"></div>
+    <div class="field"><label for="ob-name">Business name</label><input id="ob-name" class="input" placeholder="e.g., Apollo Care Clinic"></div>
+    <div class="field"><label for="ob-web">Website (Optional)</label><input id="ob-web" type="url" class="input" placeholder="https://yourbusiness.in"></div>
+    <div class="field"><label for="ob-size">Business size</label><select id="ob-size" class="input"><option>1-10 employees</option><option>11-50 employees</option><option>51-250 employees</option><option>250+ employees</option></select></div>
+    <div class="field"><label for="ob-email">Contact email for customer questions (Optional)</label><input id="ob-email" type="email" class="input" placeholder="privacy@yourbusiness.in"></div>
   </div>
   <input id="ob-ind" type="hidden" value="healthcare">
-  <div style="display:flex;justify-content:space-between;margin-top:12px;">
-    <button type="button" class="btn btn-outline" onclick="saveProgress(false)">Save Draft</button>
-    <button type="button" class="btn btn-primary" onclick="saveProgress(true, 2)">Continue to Step 2 &rarr;</button>
+  <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:12px;">
+    <button type="button" class="btn btn-outline" onclick="saveProgress(false)">Save and Continue Later</button>
+    <button id="ob-step1-next" type="button" class="btn btn-primary cta-arrow-btn" onclick="saveProgress(true, 2)">Next: What Does My Business Do? <span class="ta-arrow">&rarr;</span></button>
   </div>
-</div>
+</section>
 
-<!-- STEP 2 -->
-<div id="step-2" class="card" style="display:none;">
-  <h2 class="ta-h3">Step 2 &mdash; What Does Your Business Do?</h2>
-  <p class="ta-muted" style="margin-bottom:14px;">Select activities that apply. Selected items create draft Customer Data Inventory entries marked <code>SUGGESTED — NEEDS CONFIRMATION</code>.</p>
+<!-- STEP 2 — WHAT DOES MY BUSINESS DO? -->
+<section id="step-2" class="card" style="display:none;">
+  <h2 class="ta-h3">Step 2 &mdash; What Does My Business Do?</h2>
+  <p class="ta-muted" style="margin-bottom:14px;">Click any activities that match your business (you can choose multiple). These create editable drafts—never marked confirmed until Step 4.</p>
   <div id="act-grid" class="grid-3" style="margin-bottom:18px;"></div>
   <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;">
     <button type="button" class="btn btn-outline" onclick="goStep(1)">&larr; Back</button>
-    <div style="display:flex;gap:8px;">
-      <button type="button" class="btn btn-ghost" onclick="goStep(3)">Skip Optional Step</button>
-      <button type="button" class="btn btn-primary" onclick="confirmActivities()">Generate Draft Inventory &amp; Next &rarr;</button>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button type="button" class="btn btn-ghost" onclick="saveProgress(false)">Save &amp; Continue Later</button>
+      <button type="button" class="btn btn-outline" onclick="goStep(3)">Skip Step</button>
+      <button id="ob-step2-next" type="button" class="btn btn-primary cta-arrow-btn" onclick="confirmActivities()">Next: Check My Website <span class="ta-arrow">&rarr;</span></button>
     </div>
   </div>
-</div>
+</section>
 
-<!-- STEP 3 -->
-<div id="step-3" class="card" style="display:none;">
-  <h2 class="ta-h3">Step 3 &mdash; Discover Public Website Information</h2>
-  <p class="ta-muted" style="margin-bottom:14px;">Inspect public privacy notice links, enquiry forms, cookies, and third-party scripts cleanly with SSRF protection.</p>
+<!-- STEP 3 — CHECK MY WEBSITE -->
+<section id="step-3" class="card" style="display:none;">
+  <h2 class="ta-h3">Step 3 &mdash; Check My Website</h2>
+  <p class="ta-muted" style="margin-bottom:14px;">We check publicly visible pages to suggest your Privacy Notice link, contact details, public forms, visible fields, and third-party scripts.</p>
   <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;">
-    <input id="ob-scan-url" type="url" class="input" style="flex:1;" placeholder="https://yourcompany.in">
-    <button type="button" class="btn btn-primary" onclick="runOnboardingScan()">Inspect Website</button>
+    <label for="ob-scan-url" class="sr-only">Public Website URL</label>
+    <input id="ob-scan-url" type="url" class="input" style="flex:1;min-width:240px;" placeholder="https://yourbusiness.in">
+    <button id="ob-scan-btn" type="button" class="btn btn-primary" onclick="runOnboardingScan()">Check Public Website</button>
   </div>
   <div id="ob-scan-out"></div>
-  <div style="display:flex;justify-content:space-between;margin-top:18px;">
+
+  <details style="margin-top:16px;padding:12px 14px;border:1px solid var(--border);border-radius:10px;background:var(--bg-muted);">
+    <summary style="cursor:pointer;font-weight:700;font-size:13.5px;">Optional: Have an existing spreadsheet or policy file? Upload it cleanly</summary>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px;">
+      <input id="ob-extract-file" type="file" accept=".csv,.xlsx,.docx,.pdf,.txt,.md,.json" class="input" style="max-width:380px;">
+      <button type="button" class="btn btn-outline btn-sm" onclick="runOnboardingExtract()">Extract Suggestions</button>
+    </div>
+    <div id="ob-extract-out" style="margin-top:10px;"></div>
+  </details>
+
+  <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:18px;">
     <button type="button" class="btn btn-outline" onclick="goStep(2)">&larr; Back</button>
-    <button type="button" class="btn btn-primary" onclick="goStep(4)">Next: Import Docs &rarr;</button>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button type="button" class="btn btn-ghost" onclick="saveProgress(false)">Save &amp; Continue Later</button>
+      <button id="ob-step3-next" type="button" class="btn btn-primary cta-arrow-btn" onclick="goStep(4)">Next: Review My Information <span class="ta-arrow">&rarr;</span></button>
+    </div>
   </div>
-</div>
+</section>
 
-<!-- STEP 4 -->
-<div id="step-4" class="card" style="display:none;">
-  <h2 class="ta-h3">Step 4 &mdash; Import Existing Information (CSV, XLSX, DOCX, PDF)</h2>
-  <p class="ta-muted" style="margin-bottom:14px;">Upload existing privacy policies or spreadsheets. TrustAudit extracts candidate fields and vendor names as unverified drafts for your review.</p>
-  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px;">
-    <input id="ob-extract-file" type="file" accept=".csv,.xlsx,.docx,.pdf,.txt,.md,.json" class="input" style="max-width:420px;">
-    <button type="button" class="btn btn-primary" onclick="runOnboardingExtract()">Extract Draft Suggestions</button>
+<!-- STEP 4 — REVIEW MY INFORMATION -->
+<section id="step-4" class="card" style="display:none;">
+  <h2 class="ta-h3">Step 4 &mdash; Review My Information</h2>
+  <p class="ta-muted" style="margin-bottom:14px;">Everything below starts as an unverified suggestion. Choose <strong>Confirm</strong>, <strong>Edit</strong>, or <strong>Reject</strong> so only accurate facts enter your workspace.</p>
+
+  <div style="margin-bottom:18px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+      <h3 style="font-size:16px;margin:0;">Suggested Customer Information</h3>
+      <button type="button" class="btn btn-outline btn-sm" onclick="loadReviewItems()">Refresh List</button>
+    </div>
+    <div id="ob-review-items"><div class="skeleton" style="height:60px;"></div></div>
   </div>
-  <div id="ob-extract-out"></div>
-  <div style="display:flex;justify-content:space-between;margin-top:18px;">
+
+  <details style="margin-bottom:16px;padding:12px 14px;border:1px solid var(--border);border-radius:10px;">
+    <summary style="cursor:pointer;font-weight:700;font-size:14px;">Optional: Select common External Services your business uses (e.g. AWS, Razorpay, Zoho, WhatsApp)</summary>
+    <div style="margin-top:12px;">
+      <input id="vnd-search" class="input" placeholder="Search Razorpay, AWS, Zoho CRM, WhatsApp, Google Analytics..." oninput="renderServiceDirectory()" style="margin-bottom:12px;">
+      <div id="svc-dir-grid" class="grid-3"></div>
+    </div>
+  </details>
+
+  <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;">
     <button type="button" class="btn btn-outline" onclick="goStep(3)">&larr; Back</button>
-    <button type="button" class="btn btn-primary" onclick="goStep(5)">Next: External Services &rarr;</button>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button type="button" class="btn btn-ghost" onclick="saveProgress(false)">Save &amp; Continue Later</button>
+      <button id="ob-step4-next" type="button" class="btn btn-emerald cta-arrow-btn" onclick="createActionPlan()">Next: Create My Action Plan <span class="ta-arrow">&rarr;</span></button>
+    </div>
   </div>
-</div>
+</section>
 
-<!-- STEP 5 -->
-<div id="step-5" class="card" style="display:none;">
-  <h2 class="ta-h3">Step 5 &mdash; Add External Services &amp; Software Tools</h2>
-  <p class="ta-muted" style="margin-bottom:12px;">Search by service or category. Clicking <strong>Confirm Vendor</strong> saves that provider into your Vendor Register.</p>
-  <input id="vnd-search" class="input" placeholder="Search Razorpay, AWS, Zoho CRM, WhatsApp, Google Analytics, Freshdesk..." oninput="renderServiceDirectory()" style="margin-bottom:14px;">
-  <div id="svc-dir-grid" class="grid-3"></div>
-  <div style="display:flex;justify-content:space-between;margin-top:18px;">
+<!-- STEP 5 — CREATE MY ACTION PLAN -->
+<section id="step-5" class="card" style="display:none;">
+  <span class="badge badge-emerald">Workspace Ready</span>
+  <h2 class="ta-h3" style="margin-top:10px;">Step 5 &mdash; Your Personalised Action Plan</h2>
+  <p class="ta-muted" style="margin-bottom:16px;">Here are your top three most relevant next steps based on what you saved and confirmed.</p>
+  <div id="ob-plan-cards" class="grid-3" style="margin-bottom:20px;">
+    <div class="skeleton" style="height:140px;"></div>
+  </div>
+  <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;">
     <button type="button" class="btn btn-outline" onclick="goStep(4)">&larr; Back</button>
-    <button type="button" class="btn btn-primary" onclick="goStep(6)">Next: Review &amp; Launch &rarr;</button>
+    <a id="ob-finish-home" href="/app/home" class="btn btn-primary cta-arrow-btn">Open My Home Workspace <span class="ta-arrow">&rarr;</span></a>
   </div>
-</div>
-
-<!-- STEP 6 -->
-<div id="step-6" class="card" style="display:none;">
-  <h2 class="ta-h3">Step 6 &mdash; Review Your Initial Privacy Workspace</h2>
-  <p class="ta-muted" style="margin-bottom:16px;">Finish guided onboarding to review suggested items, generate initial action items, and jump straight to your Home Command Centre.</p>
-  <div id="ob-review-summary" class="grid-3" style="margin-bottom:18px;"></div>
-  <div style="display:flex;justify-content:space-between;">
-    <button type="button" class="btn btn-outline" onclick="goStep(5)">&larr; Back</button>
-    <button type="button" class="btn btn-emerald" onclick="finishOnboarding()">Complete Setup &amp; Open Home &rarr;</button>
-  </div>
-</div>
+</section>
 {% endblock %}
 
 {% block extra_scripts %}
@@ -122,7 +142,7 @@
   let SELECTED_ACTIVITIES = new Set();
 
   function goStep(n) {
-    for (let i = 1; i <= 6; i++) {
+    for (let i = 1; i <= 5; i++) {
       document.getElementById('step-' + i).style.display = (i === n) ? 'block' : 'none';
     }
     document.querySelectorAll('#onb-stepper .step-pill').forEach(function (el, idx) {
@@ -131,8 +151,10 @@
       if (idx + 1 === n) el.classList.add('active');
     });
     if (n === 2) loadActivitySuggestions();
-    if (n === 5 && !DIRECTORY.length) loadServiceDirectory();
-    if (n === 6) loadReviewSummary();
+    if (n === 4) {
+      loadReviewItems();
+      if (!DIRECTORY.length) loadServiceDirectory();
+    }
   }
 
   function pickIndustry(key, el) {
@@ -150,6 +172,7 @@
         document.getElementById('ob-web').value = p.website_url;
         document.getElementById('ob-scan-url').value = p.website_url;
       }
+      if (p.business_size) document.getElementById('ob-size').value = p.business_size;
       if (p.contact_email) document.getElementById('ob-email').value = p.contact_email;
       if (p.industry) {
         document.getElementById('ob-ind').value = p.industry;
@@ -174,7 +197,7 @@
           apply_industry_template: false,
         }),
       });
-      TA.toast('Progress saved');
+      TA.toast(advance ? 'Step 1 saved' : 'Progress saved — you can continue anytime');
       if (advance && nextStep) goStep(nextStep);
     } catch (e) { TA.toast(e.message, 'err'); }
   }
@@ -185,9 +208,9 @@
     const list = d.activities || [];
     document.getElementById('act-grid').innerHTML = list.map(function (a) {
       const active = SELECTED_ACTIVITIES.has(a.key);
-      return '<div class="card card-hover" style="cursor:pointer;padding:14px;' + (active ? 'border-color:var(--emerald);background:var(--emerald-soft);' : '') + '" onclick="toggleActivity(\'' + TA.esc(a.key) + '\', this)">' +
+      return '<div class="card card-hover ob-act-card" data-act="' + TA.esc(a.key) + '" style="cursor:pointer;padding:14px;' + (active ? 'border-color:var(--emerald);background:var(--emerald-soft);' : '') + '" onclick="toggleActivity(\'' + TA.esc(a.key) + '\', this)">' +
         '<strong>' + TA.esc(a.label) + '</strong>' +
-        '<div class="ta-muted" style="font-size:12px;margin-top:4px;">' + TA.esc(a.category) + ' &bull; ' + TA.esc((a.fields || []).slice(0, 3).join(', ')) + '</div></div>';
+        '<div class="ta-muted" style="font-size:12px;margin-top:4px;">' + TA.esc((a.fields || []).slice(0, 3).join(', ')) + '</div></div>';
     }).join('');
   }
 
@@ -212,7 +235,7 @@
           selected_keys: Array.from(SELECTED_ACTIVITIES),
         }),
       });
-      TA.toast((res.created_count || 0) + ' draft record(s) marked SUGGESTED — NEEDS CONFIRMATION');
+      TA.toast((res.created_count || 0) + ' draft suggestion(s) ready to review in Step 4');
       goStep(3);
     } catch (e) { TA.toast(e.message, 'err'); }
   }
@@ -220,16 +243,31 @@
   async function runOnboardingScan() {
     const u = document.getElementById('ob-scan-url').value.trim();
     const out = document.getElementById('ob-scan-out');
-    if (!u) return TA.toast('Enter website URL', 'err');
-    out.innerHTML = '<div class="skeleton" style="height:56px;"></div>';
+    if (!u) return TA.toast('Enter your public website URL', 'err');
+    out.innerHTML = '<div class="skeleton" style="height:64px;"></div>';
     try {
-      const res = await TA.apiJson('/api/dpdp/scanner/start', { method: 'POST', body: JSON.stringify({ website_url: u, target_url: u, authorization_confirmed: true }) });
+      const res = await TA.apiJson('/api/dpdp/scanner/start', {
+        method: 'POST',
+        body: JSON.stringify({ website_url: u, target_url: u, authorization_confirmed: true }),
+      });
       const sc = res.scan || {};
       const findings = sc.findings || [];
-      out.innerHTML = '<div style="padding:14px;border-radius:10px;border:1px solid var(--border);"><strong>Scan saved (' + findings.length + ' item(s) observed)</strong>' +
-        '<div class="ta-muted" style="margin-top:6px;">Open Discovery Centre to confirm or reject website findings cleanly.</div></div>';
-      TA.toast('Website discovery complete');
-    } catch (e) { out.innerHTML = '<span style="color:var(--rose);">' + TA.esc(e.message) + '</span>'; }
+      const trackers = sc.third_party_scripts || sc.trackers || [];
+      const emails = sc.emails_detected || [];
+      out.innerHTML =
+        '<div style="padding:14px;border-radius:10px;border:1px solid var(--border);background:var(--bg);">' +
+        '<strong>Website suggestions detected (' + TA.esc(sc.target_url || u) + ')</strong>' +
+        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;margin-top:10px;font-size:12.5px;">' +
+        '<div><strong>Privacy notice:</strong> ' + (sc.has_privacy_policy ? 'Found' : 'Not clearly linked') + '</div>' +
+        '<div><strong>Contact details:</strong> ' + (emails.length ? TA.esc(emails.join(', ')) : 'Verify on website') + '</div>' +
+        '<div><strong>Public forms:</strong> ' + TA.esc(sc.forms_detected_count != null ? sc.forms_detected_count : findings.length) + ' item(s)</div>' +
+        '<div><strong>Visible fields / gaps:</strong> ' + findings.length + ' observation(s)</div>' +
+        '<div><strong>Third-party scripts:</strong> ' + trackers.length + ' domain(s)</div>' +
+        '</div></div>';
+      TA.toast('Website check complete');
+    } catch (e) {
+      out.innerHTML = '<div style="padding:10px;border-radius:8px;border:1px solid var(--rose);color:var(--rose);font-size:13px;">' + TA.esc(e.message) + '</div>';
+    }
   }
 
   async function runOnboardingExtract() {
@@ -238,57 +276,114 @@
     if (!f) return TA.toast('Select a CSV, XLSX, DOCX, or PDF file', 'err');
     const fd = new FormData();
     fd.append('file', f);
-    out.innerHTML = '<div class="skeleton" style="height:56px;"></div>';
+    out.innerHTML = '<div class="skeleton" style="height:44px;"></div>';
     try {
       const res = await TA.apiJson('/api/dpdp/extraction/upload', { method: 'POST', body: fd });
       const ex = res.extraction || {};
-      out.innerHTML = '<div style="padding:14px;border-radius:10px;border:1px solid var(--border);">' +
-        '<strong>Extracted ' + (ex.suggestions_count || 0) + ' unverified draft(s) from ' + TA.esc(ex.filename || f.name) + '</strong>' +
-        (ex.warnings && ex.warnings.length ? '<div style="color:var(--amber);font-size:13px;margin-top:4px;">' + TA.esc(ex.warnings.join(' ')) + '</div>' : '') +
-        '<div style="margin-top:8px;"><a href="/app/discovery" class="btn btn-outline btn-sm">Review &amp; Confirm Drafts in Discovery &rarr;</a></div></div>';
-      TA.toast('Document extraction complete');
+      out.innerHTML = '<div style="font-size:13px;color:var(--emerald);font-weight:700;">Extracted ' + (ex.suggestions_count || 0) + ' unverified draft(s) from ' + TA.esc(ex.filename || f.name) + '. Review them cleanly in Step 4.</div>';
     } catch (e) { out.innerHTML = '<span style="color:var(--rose);">' + TA.esc(e.message) + '</span>'; }
   }
 
-  async function loadServiceDirectory() {
-    const res = await TA.apiJson('/api/dpdp/vendors/directory');
-    DIRECTORY = res.directory || [];
-    renderServiceDirectory();
+  async function loadReviewItems() {
+    const el = document.getElementById('ob-review-items');
+    try {
+      const [invRes, sugRes] = await Promise.all([
+        TA.apiJson('/api/dpdp/inventory'),
+        TA.apiJson('/api/dpdp/extraction/suggestions').catch(function () { return { suggestions: [] }; }),
+      ]);
+      const inv = invRes.items || [];
+      const sugs = (sugRes.suggestions || []).filter(function (s) { return s.status !== 'Rejected'; });
+      if (!inv.length && !sugs.length) {
+        el.innerHTML = '<div class="empty-state"><p class="ta-muted">No suggested items yet. Select activities in Step 2 or skip straight to Step 5 to see your initial Action Plan.</p></div>';
+        return;
+      }
+      el.innerHTML = inv.map(function (r) {
+        const isConfirmed = String(r.confirmation_status || '').indexOf('Confirmed') !== -1;
+        return '<div class="card" style="padding:14px;margin-bottom:10px;">' +
+          '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">' +
+          '<div><strong>' + TA.esc(r.source || r.category) + '</strong> <span class="badge ' + (isConfirmed ? 'badge-emerald' : 'badge-amber') + '">' + TA.esc(r.confirmation_status || 'SUGGESTED — NEEDS CONFIRMATION') + '</span>' +
+          '<div class="ta-muted" style="font-size:12.5px;margin-top:4px;">Fields: ' + TA.esc((r.fields || []).join(', ')) + ' &bull; Stored in: ' + TA.esc(r.storage_system || 'Business System') + '</div></div>' +
+          '<div style="display:flex;gap:6px;flex-wrap:wrap;">' +
+          (isConfirmed ? '' : '<button type="button" class="btn btn-emerald btn-sm" onclick="confirmInvDraft(\'' + TA.esc(r.id) + '\')">Confirm</button>') +
+          '<button type="button" class="btn btn-outline btn-sm" onclick=\'editInvDraft(' + JSON.stringify(r) + ')\'>Edit</button>' +
+          '<button type="button" class="btn btn-ghost btn-sm" onclick="rejectInvDraft(\'' + TA.esc(r.id) + '\')">Reject</button>' +
+          '</div></div></div>';
+      }).join('') +
+      sugs.slice(0, 8).map(function (s) {
+        const isConf = s.status === 'Confirmed by business';
+        return '<div class="card" style="padding:14px;margin-bottom:10px;">' +
+          '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">' +
+          '<div><strong>' + TA.esc(s.value) + '</strong> <span class="badge ' + (isConf ? 'badge-emerald' : 'badge-amber') + '">' + TA.esc(s.status || 'Needs review') + '</span>' +
+          '<div class="ta-muted" style="font-size:12.5px;margin-top:4px;">From ' + TA.esc(s.source_document || 'Website / Document') + ' &bull; ' + TA.esc(s.category || '') + '</div></div>' +
+          '<div style="display:flex;gap:6px;flex-wrap:wrap;">' +
+          (isConf ? '' : '<button type="button" class="btn btn-emerald btn-sm" onclick="reviewExtracted(\'' + TA.esc(s.id) + '\', \'accept\')">Confirm</button>') +
+          '<button type="button" class="btn btn-ghost btn-sm" onclick="reviewExtracted(\'' + TA.esc(s.id) + '\', \'reject\')">Reject</button>' +
+          '</div></div></div>';
+      }).join('');
+    } catch (e) {
+      el.innerHTML = '<div style="color:var(--rose);">' + TA.esc(e.message) + '</div>';
+    }
   }
 
+  async function confirmInvDraft(id) {
+    await TA.apiJson('/api/dpdp/inventory/bulk-review', { method: 'POST', body: JSON.stringify({ entry_ids: [id], status: 'Confirmed by business' }) });
+    TA.toast('Confirmed'); loadReviewItems();
+  }
+  function editInvDraft(r) {
+    TA.openModal('Edit Suggested Item',
+      '<div class="field"><label for="ed-inv-src">Activity / Source</label><input id="ed-inv-src" class="input" value="' + TA.esc(r.source || '') + '"></div>' +
+      '<div class="field"><label for="ed-inv-pur">Purpose</label><input id="ed-inv-pur" class="input" value="' + TA.esc(r.purpose || '') + '"></div>' +
+      '<div class="field"><label for="ed-inv-sys">Where stored</label><input id="ed-inv-sys" class="input" value="' + TA.esc(r.storage_system || '') + '"></div>' +
+      '<button type="button" class="btn btn-primary" style="width:100%;" onclick="saveInvEdit(\'' + TA.esc(r.id) + '\')">Save &amp; Confirm</button>'
+    );
+  }
+  async function saveInvEdit(id) {
+    await TA.apiJson('/api/dpdp/inventory/' + encodeURIComponent(id), {
+      method: 'PUT',
+      body: JSON.stringify({
+        source: document.getElementById('ed-inv-src').value.trim(),
+        purpose: document.getElementById('ed-inv-pur').value.trim(),
+        storage_system: document.getElementById('ed-inv-sys').value.trim(),
+        confirmation_status: 'Confirmed by business',
+      }),
+    });
+    TA.closeModal(); TA.toast('Updated and confirmed'); loadReviewItems();
+  }
+  async function rejectInvDraft(id) {
+    await TA.apiJson('/api/dpdp/inventory/' + encodeURIComponent(id), { method: 'DELETE' });
+    TA.toast('Suggestion removed'); loadReviewItems();
+  }
+  async function reviewExtracted(id, act) {
+    await TA.apiJson('/api/dpdp/extraction/suggestions/' + encodeURIComponent(id) + '/review', { method: 'POST', body: JSON.stringify({ action: act }) });
+    TA.toast('Suggestion ' + act + 'ed'); loadReviewItems();
+  }
+
+  async function loadServiceDirectory() {
+    try {
+      const res = await TA.apiJson('/api/dpdp/vendors/directory');
+      DIRECTORY = res.directory || [];
+      renderServiceDirectory();
+    } catch (e) {}
+  }
   function renderServiceDirectory() {
     const q = (document.getElementById('vnd-search').value || '').toLowerCase();
     const list = DIRECTORY.filter(function (v) { return (v.name + ' ' + v.category + ' ' + v.role).toLowerCase().indexOf(q) !== -1; });
-    document.getElementById('svc-dir-grid').innerHTML = list.slice(0, 12).map(function (v) {
-      return '<div class="card" style="padding:14px;"><span class="badge badge-neutral">' + TA.esc(v.category) + '</span>' +
-        '<div style="font-weight:800;margin:8px 0 4px;">' + TA.esc(v.name) + '</div>' +
-        '<div class="ta-muted" style="font-size:12px;margin-bottom:10px;">' + TA.esc(v.role) + '</div>' +
-        '<button type="button" class="btn btn-outline btn-sm" onclick=\'confirmService(' + JSON.stringify(v) + ', this)\'>Confirm Vendor</button></div>';
+    document.getElementById('svc-dir-grid').innerHTML = list.slice(0, 9).map(function (v) {
+      return '<div class="card" style="padding:12px;"><span class="badge badge-neutral">' + TA.esc(v.category) + '</span>' +
+        '<div style="font-weight:800;margin:6px 0 4px;">' + TA.esc(v.name) + '</div>' +
+        '<button type="button" class="btn btn-outline btn-sm" onclick=\'confirmService(' + JSON.stringify(v) + ', this)\'>Add Service</button></div>';
     }).join('');
   }
-
   async function confirmService(v, btn) {
-    try {
-      await TA.apiJson('/api/dpdp/vendors', {
-        method: 'POST',
-        body: JSON.stringify({ name: v.name, category: v.category, service: v.role, data_location: v.data_location, dpa_status: 'PENDING_REVIEW' }),
-      });
-      btn.textContent = 'Added';
-      btn.disabled = true;
-      TA.toast(v.name + ' added to Vendors');
-    } catch (e) { TA.toast(e.message, 'err'); }
+    await TA.apiJson('/api/dpdp/vendors', {
+      method: 'POST',
+      body: JSON.stringify({ name: v.name, category: v.category, service: v.role, data_location: v.data_location, dpa_status: 'PENDING_REVIEW' }),
+    });
+    btn.textContent = 'Added'; btn.disabled = true; TA.toast(v.name + ' added');
   }
 
-  async function loadReviewSummary() {
-    const d = await TA.apiJson('/api/dpdp/home-summary');
-    const c = d.counts || {};
-    document.getElementById('ob-review-summary').innerHTML =
-      '<div class="card"><div class="ta-muted">Data Inventory Drafts/Confirmed</div><div style="font-size:26px;font-weight:850;">' + (c.inventory_count || 0) + '</div></div>' +
-      '<div class="card"><div class="ta-muted">Confirmed Vendors</div><div style="font-size:26px;font-weight:850;">' + (c.vendors_count || 0) + '</div></div>' +
-      '<div class="card"><div class="ta-muted">Website Scans</div><div style="font-size:26px;font-weight:850;">' + (c.website_scans_count || 0) + '</div></div>';
-  }
-
-  async function finishOnboarding() {
+  async function createActionPlan() {
+    goStep(5);
     try {
       await TA.apiJson('/api/dpdp/onboarding', {
         method: 'POST',
@@ -296,10 +391,29 @@
           company_name: document.getElementById('ob-name').value.trim(),
           website_url: document.getElementById('ob-web').value.trim(),
           industry: document.getElementById('ob-ind').value,
+          business_size: document.getElementById('ob-size').value,
+          contact_email: document.getElementById('ob-email').value.trim(),
           onboarding_completed: true,
         }),
       });
-      window.location.href = '/app/home';
+      const sum = await TA.apiJson('/api/dpdp/home-summary');
+      const tasks = sum.attention_tasks || [];
+      const routeMap = {
+        onboarding: '/app/onboarding', inventory: '/app/data-inventory', scanner: '/app/website-check',
+        'website-check': '/app/website-check', notices: '/app/notices', vendors: '/app/vendors',
+        'vendor-reviews': '/app/vendor-reviews', rights: '/app/privacy-requests', retention: '/app/retention',
+        breaches: '/app/incidents', evidence: '/app/evidence', remediation: '/app/action-plan',
+      };
+      document.getElementById('ob-plan-cards').innerHTML = (tasks.length ? tasks.slice(0, 3) : [{
+        title: 'Create your customer Privacy Notice', why: 'Show customers what data you collect and how to reach you.', what_to_do: 'Open Privacy Notice to build your plain-English draft.', action_label: 'Start Notice', fix_target: 'notices', status: 'Ready'
+      }]).map(function (t, idx) {
+        const href = routeMap[t.fix_target] || '/app/home';
+        return '<div class="next-step-card"><div>' +
+          '<span class="badge badge-amber">Priority ' + (idx + 1) + '</span>' +
+          '<h3 style="font-size:15.5px;margin:8px 0;">' + TA.esc(t.title) + '</h3>' +
+          '<div class="ta-muted" style="font-size:13px;">' + TA.esc(t.why || '') + '</div></div>' +
+          '<a href="' + href + '" class="btn btn-primary btn-sm">' + TA.esc(t.action_label || 'Open Task') + ' &rarr;</a></div>';
+      }).join('');
     } catch (e) { TA.toast(e.message, 'err'); }
   }
 

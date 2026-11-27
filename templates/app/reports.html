@@ -1,11 +1,26 @@
 {% extends "app_base.html" %}
+{% from "app/_guide_banner.html" import page_guide %}
 {% block content %}
 <div class="page-head">
   <div>
-    <h1 class="page-title">Reports &amp; Evidence Bundles</h1>
-    <p class="page-sub">Every download is generated live from your verified database records and physical Evidence Vault files—never fabricated compliance scores.</p>
+    <h1 class="page-title">Reports</h1>
+    <p class="page-sub">Download honest PDFs, ZIP Evidence Bundles, spreadsheets, and snapshots built strictly from your confirmed records and uploaded proof.</p>
   </div>
 </div>
+
+{{ page_guide(
+  "Clean summaries you can share with founders, partners, or external reviewers showing what you have organised and stored.",
+  "Instead of scrambling through folders, download one combined ZIP pack or executive PDF built directly from real saved data.",
+  "Download the Readiness PDF for leadership summaries or the Audit ZIP Bundle for notices plus uploaded agreement files.",
+  legal_ref="All exported files reflect actual stored records without artificial compliance scores or government certification claims.",
+  industry_examples={
+    "healthcare": "Share your Privacy Summary PDF with hospital management or partner labs.",
+    "saas": "Send your Enterprise Trust Pack ZIP & CSV register during enterprise procurement.",
+    "ecommerce": "Export retention logs, vendor DPAs, and Privacy Notice versions cleanly.",
+    "education": "Export guardian notice records and assessment status for school trustees."
+  },
+  ask_q="What should be inside our privacy evidence report?"
+) }}
 
 <div class="grid-2">
   <div class="card card-hover">

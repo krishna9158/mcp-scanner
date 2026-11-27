@@ -1,11 +1,27 @@
 {% extends "app_base.html" %}
+{% from "app/_guide_banner.html" import page_guide %}
 {% block content %}
 <div class="page-head">
   <div>
-    <h1 class="page-title">Document Centre (9 Guided Templates)</h1>
-    <p class="page-sub">Every template populates from your organisation profile and carries an explicit Draft label requiring business and legal review before external use.</p>
+    <h1 class="page-title">My Documents</h1>
+    <p class="page-sub">Generate plain-English privacy templates pre-filled with your business info, or extract suggestions from uploaded files.</p>
   </div>
+  <a href="/app/discovery" class="btn btn-outline btn-sm">Import &amp; Extract Files (.CSV, .PDF, .DOCX) &rarr;</a>
 </div>
+
+{{ page_guide(
+  "Ready-to-edit privacy documents tailored to your business—kept strictly as Drafts until you review and approve them.",
+  "Saves hours of blank-page typing while ensuring notices, vendor agreements, and internal policies match what you actually do.",
+  "Choose any template below to generate a Word (.docx) or text draft, or click Import & Extract Files to scan an existing policy.",
+  legal_ref="Includes DPDP-aligned drafts covering Notices (Sec 5), Processor DPAs (Sec 8(2)), Children's Guardian Consent (Sec 9), Deletion Requests (Sec 12), and Breach Plans (Rule 7).",
+  industry_examples={
+    "healthcare": "Draft a Patient Privacy Notice and Partner Lab Data Sharing Addendum in two clicks.",
+    "saas": "Draft your Customer DPA, Cookie & Tracking Notice, and Retention Schedule.",
+    "ecommerce": "Draft Storefront Privacy Notice and Logistics Partner Agreement.",
+    "education": "Draft Parent & Guardian Consent Policy and Student Records SOP."
+  },
+  ask_q="Help me create a privacy notice."
+) }}
 
 <div id="doc-templates-grid" class="grid-3" style="margin-bottom:24px;"></div>
 

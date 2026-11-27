@@ -2,57 +2,62 @@
 {% block content %}
 <div class="page-head">
   <div>
-    <h1 class="page-title">AI Privacy Assistant</h1>
-    <p class="page-sub">Source-grounded guidance built from DPDP Act 2023, DPDP Rules 2025, G.S.R. 843(E)/846(E), and S.O. 5458(E). PII is minimised before prompt handling.</p>
+    <h1 class="page-title">AI Assistant</h1>
+    <p class="page-sub">A helpful plain-English guide using official DPDP references and your confirmed business information—never inventing laws or penalties.</p>
   </div>
-  <button type="button" class="btn btn-outline btn-sm" onclick="startNewChat()">+ New Conversation</button>
+  <button type="button" class="btn btn-outline btn-sm" onclick="startNewChat()">+ New Question Thread</button>
 </div>
 
 <style>
-  .ai-ws-grid { display:grid; grid-template-columns:240px 1fr 310px; gap:18px; align-items:start; }
-  @media (max-width: 1080px) { .ai-ws-grid { grid-template-columns: 1fr; } }
+  .ai-ws-grid { display:grid; grid-template-columns:1fr 310px; gap:18px; align-items:start; }
+  @media (max-width: 1020px) { .ai-ws-grid { grid-template-columns: 1fr; } }
 </style>
-<div class="ai-ws-grid">
-  <!-- Sidebar -->
-  <div class="card" style="padding:14px;">
-    <strong style="font-size:13px;">Conversation History</strong>
-    <div id="ai-conv-list" style="margin-top:10px;display:flex;flex-direction:column;gap:6px;">Loading...</div>
-  </div>
 
-  <!-- Main Chat Area -->
-  <div class="card" style="display:flex;flex-direction:column;gap:14px;min-height:520px;">
+<div class="ai-ws-grid">
+  <!-- Main Simple Assistant -->
+  <div class="card" style="display:flex;flex-direction:column;gap:14px;min-height:480px;">
     <div>
-      <div style="font-size:12px;font-weight:700;color:var(--ink-muted);margin-bottom:8px;">SUGGESTED PROMPTS</div>
-      <div style="display:flex;flex-wrap:wrap;gap:6px;">
+      <div style="font-size:11.5px;font-weight:800;color:var(--emerald);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">Common Questions</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;">
         {% for prompt in [
-          "What does DPDP mean for my business?",
-          "Review my privacy notice.",
-          "Explain my three most important findings.",
-          "What should my clinic do next?",
-          "How do I handle a customer deletion request?",
-          "Explain the relevant legal requirement in simple language."
+          "What should I do next?",
+          "Explain this finding.",
+          "What does this legal term mean?",
+          "Help me create a privacy notice.",
+          "How do I handle a customer request?"
         ] %}
-        <button type="button" class="btn btn-outline btn-sm" style="font-size:12px;" onclick="askPrompt(this.textContent)">{{ prompt }}</button>
+        <button type="button" class="btn btn-outline btn-sm ai-prompt-chip" style="font-size:12.5px;" onclick="askPrompt(this.textContent)">{{ prompt }}</button>
         {% endfor %}
       </div>
     </div>
 
-    <div id="ai-chat-feed" style="flex:1;display:flex;flex-direction:column;gap:12px;max-height:430px;overflow-y:auto;padding-right:4px;">
-      <div class="empty-state" style="padding:28px;"><p class="ta-muted">Click a prompt above or ask any question below about Indian DPDP readiness, your notices, vendors, retention, or requests.</p></div>
+    <div id="ai-chat-feed" style="flex:1;display:flex;flex-direction:column;gap:12px;max-height:420px;overflow-y:auto;padding-right:4px;">
+      <div class="empty-state" style="padding:28px;">
+        <h3 style="margin-bottom:6px;">Ask anything in plain language</h3>
+        <p class="ta-muted">Pick a prompt above or type a question below. Customer emails and phone numbers are removed before sending external AI requests.</p>
+      </div>
     </div>
 
     <form onsubmit="submitAiQuestion(event)" style="display:flex;gap:8px;padding-top:10px;border-top:1px solid var(--border);">
-      <input id="ai-q-input" class="input" style="flex:1;" placeholder="Ask a plain-language privacy question..." required>
-      <button id="ai-q-btn" type="submit" class="btn btn-primary" style="white-space:nowrap;">Ask Assistant</button>
+      <label for="ai-q-input" class="sr-only">Ask a plain-language privacy question</label>
+      <input id="ai-q-input" class="input" style="flex:1;" placeholder="Ask e.g. What does this legal term mean?" required>
+      <button id="ai-q-btn" type="submit" class="btn btn-primary" style="white-space:nowrap;">Ask TrustAudit</button>
     </form>
   </div>
 
-  <!-- Legal Source Panel -->
-  <div class="card" style="padding:16px;">
-    <span class="badge badge-forest">Legal Source Panel</span>
-    <div id="ai-source-panel" style="margin-top:12px;font-size:13px;display:flex;flex-direction:column;gap:10px;">
-      <div class="ta-muted">Send a question to inspect the exact statutory section, Rules, commencement status, official source, and next action.</div>
+  <!-- Secondary Sidebar: Official References + Recent Chats -->
+  <div style="display:flex;flex-direction:column;gap:16px;">
+    <div class="card" style="padding:16px;">
+      <span class="badge badge-forest">Legal Reference &amp; Next Step</span>
+      <div id="ai-source-panel" style="margin-top:12px;font-size:13px;display:flex;flex-direction:column;gap:10px;">
+        <div class="ta-muted">Ask a question to view the matched DPDP section, commencement schedule, official Gazette reference, and plain next step.</div>
+      </div>
     </div>
+
+    <details class="card" style="padding:14px;">
+      <summary style="cursor:pointer;font-size:13.5px;font-weight:800;">Recent Conversations</summary>
+      <div id="ai-conv-list" style="margin-top:10px;display:flex;flex-direction:column;gap:6px;">Loading...</div>
+    </details>
   </div>
 </div>
 {% endblock %}
@@ -63,7 +68,7 @@
 
   function startNewChat() {
     CUR_CONV_ID = 'conv-' + Date.now();
-    document.getElementById('ai-chat-feed').innerHTML = '<div class="empty-state" style="padding:28px;"><p class="ta-muted">Started a new privacy consultation thread.</p></div>';
+    document.getElementById('ai-chat-feed').innerHTML = '<div class="empty-state" style="padding:28px;"><p class="ta-muted">Started a new guide conversation.</p></div>';
   }
 
   async function loadConversations() {
@@ -105,30 +110,29 @@
     card.innerHTML =
       '<div style="font-weight:800;font-size:13.5px;margin-bottom:8px;">You: ' + TA.esc(res.query) + '</div>' +
       '<div style="white-space:pre-wrap;font-size:13.5px;line-height:1.6;">' + TA.esc(ansText) + '</div>' +
+      '<details style="margin-top:8px;font-size:12px;color:var(--ink-muted);"><summary style="cursor:pointer;font-weight:700;">Show legal reference</summary>' +
+      '<div style="margin-top:6px;">Section: ' + TA.esc(res.matched_section || 'DPDP Act, 2023') + ' &bull; ' + TA.esc(res.rule_ref || 'DPDP Rules, 2025') + ' &bull; Status: ' + TA.esc(res.commencement_status || '') + ' (' + TA.esc(res.effective_date || '') + ')</div></details>' +
       '<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">' +
       '<button type="button" class="btn btn-outline btn-sm" style="font-size:11.5px;" onclick=\'copyAns(' + JSON.stringify(ansText) + ')\'>Copy Answer</button>' +
-      '<button type="button" class="btn btn-ghost btn-sm" style="font-size:11.5px;" onclick="sendFb(\'' + TA.esc(res.message_id || '') + '\', \'helpful\')">Helpful</button>' +
-      '<button type="button" class="btn btn-ghost btn-sm" style="font-size:11.5px;" onclick="sendFb(\'' + TA.esc(res.message_id || '') + '\', \'not_helpful\')">Needs Detail</button></div>';
+      '<button type="button" class="btn btn-ghost btn-sm" style="font-size:11.5px;" onclick="sendFb(\'' + TA.esc(res.message_id || '') + '\', \'helpful\')">Helpful</button></div>';
     feed.appendChild(card);
     feed.scrollTop = feed.scrollHeight;
 
     document.getElementById('ai-source-panel').innerHTML =
-      '<div><strong>Matched Section:</strong><br>' + TA.esc(res.matched_section || 'DPDP Act, 2023') + '</div>' +
-      '<div><strong>Rule / Order Ref:</strong><br>' + TA.esc(res.rule_ref || 'DPDP Rules, 2025') + '</div>' +
-      '<div><strong>Commencement Status:</strong><br><span class="badge badge-amber">' + TA.esc(res.commencement_status || res.effective_status || '') + '</span><div class="ta-muted" style="font-size:12px;margin-top:3px;">' + TA.esc(res.effective_date || '') + '</div></div>' +
-      '<div><strong>Official Source:</strong><br><span class="ta-muted">' + TA.esc(res.official_source || res.source_document || '') + '</span></div>' +
-      '<div><strong>Suggested Next Action:</strong><br><span class="ta-muted">' + TA.esc(res.suggested_next_action || res.recommended_action || '') + '</span></div>' +
-      '<div style="padding:10px;border-radius:8px;background:var(--bg-muted);font-size:11.5px;"><strong>AI Processing Disclosure:</strong> ' + TA.esc(res.data_handling_notice || 'Processed locally on verified statutory engine.') + '</div>';
+      '<div><strong>Plain Next Action:</strong><br><span class="ta-muted">' + TA.esc(res.suggested_next_action || res.recommended_action || 'Open your Home next steps.') + '</span></div>' +
+      '<div><strong>Legal Section &amp; Rules:</strong><br>' + TA.esc(res.matched_section || 'DPDP Act, 2023') + ' (' + TA.esc(res.rule_ref || 'DPDP Rules, 2025') + ')</div>' +
+      '<div><strong>Schedule Status:</strong><br><span class="badge badge-neutral">' + TA.esc(res.commencement_status || res.effective_status || '') + '</span> <span class="ta-muted">' + TA.esc(res.effective_date || '') + '</span></div>' +
+      '<div><strong>Official Source:</strong><br><span class="ta-muted">' + TA.esc(res.official_source || res.source_document || 'Official DPDP Gazette Corpus') + '</span></div>';
   }
 
   function copyAns(txt) {
     if (navigator.clipboard) navigator.clipboard.writeText(txt);
-    TA.toast('Answer copied to clipboard');
+    TA.toast('Answer copied');
   }
 
   async function sendFb(msgId, rating) {
     await TA.apiJson('/api/dpdp/assistant/feedback', { method: 'POST', body: JSON.stringify({ message_id: msgId, rating: rating }) });
-    TA.toast('Feedback recorded');
+    TA.toast('Thank you for the feedback');
   }
 
   async function submitAiQuestion(ev) {
@@ -151,5 +155,12 @@
   }
 
   loadConversations();
+  (function () {
+    const qParam = new URLSearchParams(window.location.search).get('q');
+    if (qParam) {
+      document.getElementById('ai-q-input').value = qParam;
+      submitAiQuestion();
+    }
+  })();
 </script>
 {% endblock %}

@@ -1,12 +1,21 @@
 {% extends "app_base.html" %}
+{% from "app/_guide_banner.html" import page_guide %}
 {% block content %}
 <div class="page-head">
   <div>
     <h1 class="page-title">Customer Privacy Request Portal</h1>
-    <p class="page-sub">Publish your organisation's branded intake page so customers can request access, correction, erasure, or file a privacy grievance with secure anti-abuse checks.</p>
+    <p class="page-sub">Publish a clean webpage where your customers can submit access, correction, or deletion enquiries without lost emails.</p>
   </div>
   <a id="pt-live-link" href="/portal/{{ org_slug }}" target="_blank" class="btn btn-primary btn-sm">Open Live Portal &rarr;</a>
 </div>
+
+{{ page_guide(
+  "A hosted webpage for your customers to submit access, edit, or delete data enquiries cleanly with reference tracking.",
+  "Gives people a clear doorway to exercise their rights and keeps enquiries organised inside Customer Requests.",
+  "Confirm your privacy email below, copy the hosted link, and add it to your website footer or Privacy Notice.",
+  legal_ref="Supports DPDP Act Sections 11–14 intake for access, correction, erasure, grievance redressal, and nomination.",
+  ask_q="How do I handle a customer request?"
+) }}
 
 <div class="grid-2">
   <div class="card">

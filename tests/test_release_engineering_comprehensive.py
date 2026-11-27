@@ -518,8 +518,9 @@ def test_csp_security_txt_corrigendum_and_plain_english_ux(isolated_env):
     assert "frame-ancestors 'self'" in csp
 
     home_html = home_res.get_data(as_text=True)
-    assert "Your Customer Data. Finally Under Control." in home_html
-    assert "Explore TrustAudit" in home_html
+    assert "Not Sure Where Your Customer Data Goes? Start Here." in home_html
+    assert "Check My Business" in home_html
+    assert "See a Live Demo" in home_html
     assert "<animateMotion" in home_html
     assert 'href="/privacy"' in home_html
     assert 'href="/terms"' in home_html
@@ -567,11 +568,73 @@ def test_csp_security_txt_corrigendum_and_plain_english_ux(isolated_env):
     app_res = client.get("/app/home", headers={"Authorization": f"Bearer {tok_ux}"})
     assert app_res.status_code == 200
     app_html = app_res.get_data(as_text=True)
-    assert "Customer Data" in app_html
-    assert "Companies You Share Data With" in app_html
-    assert "Customer Privacy Requests" in app_html
-    assert "Data Retention &amp; Deletion" in app_html
-    for stage in ("DISCOVER", "UNDERSTAND", "ASSESS", "FIX", "PROVE", "MAINTAIN"):
-        assert stage in app_html
+    for area in ("01. HOME", "02. My Business Data", "03. My Privacy Tasks", "04. Documents &amp; Records", "Help"):
+        assert area in app_html
+    for label in ("Customer Information", "Where My Data Goes", "Companies I Share Data With", "Website Check", "Vendor Reviews", "My Documents", "History", "Learning Centre", "AI Assistant"):
+        assert label in app_html
+    for home_sec in ("Your Business Setup", "Your Next Three Steps", "My Business Data", "Recent Activity", "Not sure what something means?"):
+        assert home_sec in app_html
+
+
+def test_first_time_founder_simplified_ux_journey(isolated_env):
+    _mod, client = isolated_env
+    # 1. Homepage public nav strictly simplified
+    pub_html = client.get("/").get_data(as_text=True)
+    assert "Understand what happens to your customer data and know exactly what to do next." in pub_html
+    for link in ("Product", "How It Works", "Industries", "Pricing", "Resources", "Sign In", "Start Free"):
+        assert link in pub_html
+
+    # 2. First-time user signs up for a clinic
+    reg = client.post("/api/auth/register", json={
+        "name": "Neha Joshi", "company_name": "City Care Clinic", "email": "neha@citycare.in",
+        "password": "ClinicPassword#1", "plan": "free", "industry": "healthcare",
+        "terms_accepted": True, "privacy_accepted": True,
+    })
+    assert reg.status_code == 201
+    tok = reg.get_json()["data"]["token"]
+    hdr = {"Authorization": f"Bearer {tok}"}
+
+    # 3. Step 1-2: Business profile & healthcare activity suggestions
+    assert client.post("/api/dpdp/onboarding", headers=hdr, json={
+        "company_name": "City Care Clinic", "website_url": "https://citycare.in", "industry": "healthcare", "business_size": "1-10 employees",
+    }).status_code == 200
+    acts = client.get("/api/dpdp/onboarding/activities?industry=healthcare", headers=hdr).get_json()["activities"]
+    act_labels = [a["label"] for a in acts]
+    for needed in ("Appointments", "Patient contact details", "Diagnostic reports", "Billing", "Insurance"):
+        assert needed in act_labels
+
+    sug = client.post("/api/dpdp/onboarding/activities", headers=hdr, json={
+        "industry": "healthcare", "selected_keys": ["patient_appointments", "diagnostic_reports"],
+    }).get_json()
+    assert sug["created_count"] == 2
+    drafts = client.get("/api/dpdp/inventory", headers=hdr).get_json()["items"]
+    assert all("SUGGESTED" in (d.get("confirmation_status") or "").upper() for d in drafts)
+
+    # 4. Step 4-5: Confirm one draft cleanly -> Finish onboarding -> Next 3 Steps returned
+    assert client.post("/api/dpdp/inventory/bulk-review", headers=hdr, json={
+        "entry_ids": [drafts[0]["id"]], "status": "Confirmed by business",
+    }).status_code == 200
+    ob_done = client.post("/api/dpdp/onboarding", headers=hdr, json={"onboarding_completed": True}).get_json()
+    assert ob_done["setup_progress"]["total_steps"] == 5
+
+    home_json = client.get("/api/dpdp/home-summary", headers=hdr).get_json()
+    assert len(home_json["attention_tasks"]) <= 3
+    assert "what_to_do" in home_json["attention_tasks"][0]
+
+    # 5. All new workspace pages & plain-English guide banners render cleanly at 200
+    for route, needle in [
+        ("/app/onboarding", "5 Simple Steps"),
+        ("/app/website-check", "What Is This?"),
+        ("/app/vendor-reviews", "Vendor Reviews"),
+        ("/app/history", "History"),
+        ("/app/learning", "Learning Centre"),
+        ("/app/data-inventory", "Customer Information List"),
+        ("/app/action-plan", "Fix My Privacy Gaps"),
+        ("/app/evidence", "Documents &amp; Proof"),
+        ("/app/privacy-assistant", "What does this legal term mean?"),
+    ]:
+        pg = client.get(route, headers=hdr)
+        assert pg.status_code == 200, f"{route} failed: {pg.status_code}"
+        assert needle in pg.get_data(as_text=True), f"{route} missing {needle}"
 
 

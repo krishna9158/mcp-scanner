@@ -394,7 +394,7 @@ class TestDPDPWebsiteScannerSuite:
         res = client.get("/app/discovery")
         assert res.status_code == 200
         html_text = res.get_data(as_text=True)
-        assert "Discovery Centre" in html_text
+        assert "Suggestions &amp; Document Import" in html_text
         assert "Website Privacy Discovery" in html_text
         assert 'id="disc-url"' in html_text
         assert 'id="disc-file"' in html_text
@@ -402,10 +402,10 @@ class TestDPDPWebsiteScannerSuite:
 
     # 18. Homepage Rendering
     def test_18_homepage_has_website_scanner_link(self, client):
-        """Verifies public landing page features live Quick Public Website Check widget and links."""
+        """Verifies public landing page features live Interactive Website Check widget and links."""
         res = client.get("/")
         assert res.status_code == 200
         html_text = res.get_data(as_text=True)
-        assert "Instant Public Website Check" in html_text
+        assert "Check Website" in html_text
         assert "/api/public/quick-check" in html_text
         assert 'id="home-scan-url"' in html_text

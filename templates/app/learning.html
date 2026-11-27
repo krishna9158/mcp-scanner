@@ -1,0 +1,80 @@
+{% extends "app_base.html" %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Learning Centre</h1>
+    <p class="page-sub">Everyday explanations of privacy responsibilities for Indian businesses—with official DPDP references neatly tucked inside expandable notes.</p>
+  </div>
+  <div style="display:flex;gap:8px;">
+    <a href="/resources" class="btn btn-outline btn-sm">Open Full Gazette Registry</a>
+    <a href="/app/privacy-assistant" class="btn btn-primary btn-sm">Ask AI Assistant &rarr;</a>
+  </div>
+</div>
+
+<div class="grid-2" style="margin-bottom:20px;">
+  {% for title, plain_summary, practical_step, legal_detail in [
+    (
+      "Business Responsible for Data (Data Fiduciary)",
+      "Your business decides why customer phone numbers, bills, or medical records are collected and how they are used.",
+      "List what customer data you hold under My Business Data -> Customer Information.",
+      "DPDP Act 2023, Section 2(i): Data Fiduciary means any person who determines the purpose and means of processing of personal data."
+    ),
+    (
+      "External Company Handling Data (Data Processor)",
+      "Software tools, cloud hosts, billing systems, couriers, or diagnostic labs that handle customer data on your instructions.",
+      "Record them in Companies I Share Data With and track their written agreements under Vendor Reviews.",
+      "Section 2(k) & Section 8(2): Processing via external companies requires a valid written contract and accountability remains with your business."
+    ),
+    (
+      "Permission vs Everyday Business Need (Consent & Section 7)",
+      "Asking for clear permission (such as optional promotional WhatsApp updates) is different from fulfilling what a customer paid or asked you to do, or legal duties like GST billing or payroll.",
+      "Keep pre-ticked promotional boxes off your forms and record permissions cleanly in Consent Records.",
+      "Section 6 (consent must be free, specific, informed, unambiguous) and Section 7 (legitimate uses). Note Section 6(9) Consent Manager framework effective 13 November 2026; substantive duties commence 13 May 2027."
+    ),
+    (
+      "Children & Guardian Consent",
+      "If your school, clinic, or app collects personal data of a child (under 18) or a person with a disability who has a lawful guardian, extra care and verifiable guardian permission apply.",
+      "Record guardian permissions cleanly and avoid tracking or targeted marketing on children's accounts.",
+      "Section 9(1) as updated by Gazette Order S.O. 5458(E) dated 6 October 2026: wording clarified to 'child or of a person with disability'; substantive commencement remains 13 May 2027."
+    )
+  ] %}
+  <div class="card">
+    <h2 class="ta-h3">{{ title }}</h2>
+    <p class="ta-muted" style="margin:8px 0;">{{ plain_summary }}</p>
+    <div style="padding:10px 12px;border-radius:9px;background:var(--emerald-soft);color:var(--emerald);font-size:13px;font-weight:700;margin-bottom:10px;">
+      Next step: {{ practical_step }}
+    </div>
+    <details class="guide-legal-toggle">
+      <summary>Legal reference (optional)</summary>
+      <div class="guide-legal-body">{{ legal_detail }}</div>
+    </details>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="card">
+  <h2 class="ta-h3">Official DPDP Schedule Summary</h2>
+  <div class="grid-4" style="margin-top:12px;">
+    <div style="padding:12px;border:1px solid var(--border);border-radius:10px;">
+      <span class="badge badge-emerald">In Force</span>
+      <div style="font-weight:800;margin-top:6px;">13 Nov &amp; 11 Dec 2025</div>
+      <div class="ta-muted" style="font-size:12.5px;">Rules notified (G.S.R. 846(E), G.S.R. 843(E)) and Corrigendum G.S.R. 892(E).</div>
+    </div>
+    <div style="padding:12px;border:1px solid var(--border);border-radius:10px;">
+      <span class="badge badge-neutral">Textual Clarification</span>
+      <div style="font-weight:800;margin-top:6px;">6 October 2026</div>
+      <div class="ta-muted" style="font-size:12.5px;">S.O. 5458(E) refined Sec 9(1) disability wording &amp; Sec 10 data audit. Does not accelerate May 2027.</div>
+    </div>
+    <div style="padding:12px;border:1px solid var(--border);border-radius:10px;">
+      <span class="badge badge-amber">Phase 2</span>
+      <div style="font-weight:800;margin-top:6px;">13 November 2026</div>
+      <div class="ta-muted" style="font-size:12.5px;">Consent Manager provisions (Sec 6(9), Sec 27(1)(d), Rule 4).</div>
+    </div>
+    <div style="padding:12px;border:1px solid var(--border);border-radius:10px;">
+      <span class="badge badge-forest">Full Duties</span>
+      <div style="font-weight:800;margin-top:6px;">13 May 2027</div>
+      <div class="ta-muted" style="font-size:12.5px;">Core Data Fiduciary obligations (notices, safeguards, breaches, requests, penalties).</div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,12 +1,27 @@
 {% extends "app_base.html" %}
+{% from "app/_guide_banner.html" import page_guide %}
 {% block content %}
 <div class="page-head">
   <div>
     <h1 class="page-title">Privacy Incident Response</h1>
-    <p class="page-sub">Track incident discovery timelines, containment actions, internal approvals, and Board notification drafts (Section 8(6) &amp; Rule 7 — scheduled for 13 May 2027). <em>TrustAudit does not claim automatic external breach detection without connected telemetry.</em></p>
+    <p class="page-sub">Record suspected leaks or account breaches, manage immediate containment steps, and prepare clear notification drafts for approval.</p>
   </div>
   <button type="button" class="btn btn-primary btn-sm" onclick="openIncModal()">+ Report Suspected Incident</button>
 </div>
+
+{{ page_guide(
+  "Your checklist and workspace log if someone loses a laptop, exposes customer data, or suffers an account compromise.",
+  "Calm, structured containment within the first hour protects customers and keeps human approval clear before sending any notice.",
+  "Follow the 5-step checklist if anything happens—nothing is sent externally unless your team approves it.",
+  legal_ref="Supports DPDP Act Section 8(6) and Rule 7 breach notification workflow (dual-stage Board & affected person intimation, commencing 13 May 2027).",
+  industry_examples={
+    "healthcare": "Staff tablet lost or patient report emailed to the wrong clinic contact.",
+    "saas": "Exposed API key or unauthorised dashboard login incident.",
+    "ecommerce": "Misconfigured S3 folder or leaked shipping spreadsheet.",
+    "education": "Unauthorised access to parent contact sheets or student portal."
+  },
+  ask_q="What should we do if a personal data incident occurs?"
+) }}
 
 <div class="grid-split">
   <div class="card">

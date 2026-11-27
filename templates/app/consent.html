@@ -1,9 +1,10 @@
 {% extends "app_base.html" %}
+{% from "app/_guide_banner.html" import page_guide %}
 {% block content %}
 <div class="page-head">
   <div>
-    <h1 class="page-title">Consent &amp; Lawful Basis Records</h1>
-    <p class="page-sub">Record purpose-based consents alongside non-consent Section 7 grounds. <strong>Notice:</strong> TrustAudit is a business readiness log, not a statutory registered Consent Manager, and does not claim live real-time enforcement unless a tested integration exists.</p>
+    <h1 class="page-title">Consent Records</h1>
+    <p class="page-sub">Keep a clean log of customer permissions (or everyday non-consent uses like fulfilling orders or statutory billing) and withdrawals.</p>
   </div>
   <div style="display:flex;gap:8px;flex-wrap:wrap;">
     <label class="btn btn-outline btn-sm" style="cursor:pointer;">
@@ -11,9 +12,23 @@
       <input type="file" accept=".csv" style="display:none;" onchange="importConsentCsvFile(this)">
     </label>
     <button type="button" class="btn btn-outline btn-sm" onclick="openWithdrawModal()">Log Consent Withdrawal</button>
-    <button type="button" class="btn btn-primary btn-sm" onclick="openAddConsentModal()">+ Record Consent / Lawful Ground</button>
+    <button type="button" class="btn btn-primary btn-sm" onclick="openAddConsentModal()">+ Record Consent / Ground</button>
   </div>
 </div>
+
+{{ page_guide(
+  "A log recording when customers gave optional permission (or when you used data for a clear everyday purpose like billing or delivery).",
+  "Promotional messages require real opt-in consent—and when someone asks to opt out, stopping external notifications cleanly protects trust.",
+  "Record consent events, import an opt-in CSV, or log any customer withdrawal so external processors can be alerted.",
+  legal_ref="DPDP Act Section 6 (free, specific, informed, unambiguous consent) and Section 7 (legitimate uses). TrustAudit is operational logging software, not a statutory Consent Manager (Rule 4 / Sec 6(9) effective 13 Nov 2026).",
+  industry_examples={
+    "healthcare": "Separately track diagnostic care vs optional clinic health-camp SMS opt-ins.",
+    "saas": "Separate essential product login accounts from optional newsletter marketing permissions.",
+    "ecommerce": "Log promotional WhatsApp/email opt-ins separately from fulfilling delivery orders.",
+    "education": "Keep verifiable parent/guardian permission records for school photography or apps."
+  },
+  ask_q="When do we need customer consent versus everyday business grounds?"
+) }}
 
 <div class="grid-split">
   <div class="card">

@@ -1,9 +1,10 @@
 {% extends "app_base.html" %}
+{% from "app/_guide_banner.html" import page_guide %}
 {% block content %}
 <div class="page-head">
   <div>
-    <h1 class="page-title">Business Data Inventory</h1>
-    <p class="page-sub">Organised across 8 understandable categories with CSV/XLSX import, duplicate detection, bulk review, and version history.</p>
+    <h1 class="page-title">Customer Information List</h1>
+    <p class="page-sub">Every type of personal detail your business holds—kept as editable drafts until confirmed by your team.</p>
   </div>
   <div style="display:flex;gap:8px;flex-wrap:wrap;">
     <button type="button" class="btn btn-outline btn-sm" onclick="bulkConfirm()">Bulk Confirm Drafts</button>
@@ -12,6 +13,20 @@
     <button type="button" class="btn btn-primary btn-sm" onclick="openAddInvModal()">+ Add Data Record</button>
   </div>
 </div>
+
+{{ page_guide(
+  "A single list showing what customer details your business collects, why you collect them, and where they are saved.",
+  "You cannot write an honest Privacy Notice or delete old records safely unless you know what customer data you actually have.",
+  "Confirm or edit any Suggested drafts below, import an existing spreadsheet if helpful, or add a missing item.",
+  legal_ref="Known legally as a Record of Processing Activities supporting DPDP Act Section 5 itemised notices and Rule 8 retention planning.",
+  industry_examples={
+    "healthcare": "Appointments, phone numbers, lab test reports, billing invoices, and insurance claims.",
+    "saas": "Workspace signups, user accounts, GST billing records, analytics logs, and support tickets.",
+    "ecommerce": "Online orders, home delivery addresses, UPI/card payment references, and returns.",
+    "education": "Student admission forms, parent contact numbers, attendance sheets, and exam scores."
+  },
+  ask_q="What customer information should we list first?"
+) }}
 
 <div class="card" style="margin-bottom:18px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
   <input id="inv-search" class="input" style="max-width:300px;" placeholder="Filter by field, purpose, system..." oninput="renderInventory()">

@@ -1,9 +1,10 @@
 {% extends "app_base.html" %}
+{% from "app/_guide_banner.html" import page_guide %}
 {% block content %}
 <div class="page-head">
   <div>
-    <h1 class="page-title">Action Plan &amp; Remediation Centre</h1>
-    <p class="page-sub">Manage privacy fixes by owner, due date, and required evidence across Kanban, List, and Calendar layouts.</p>
+    <h1 class="page-title">Fix My Privacy Gaps</h1>
+    <p class="page-sub">Organise your privacy improvements by owner, status, and proof across Board, List, and Calendar views.</p>
   </div>
   <div style="display:flex;gap:8px;flex-wrap:wrap;">
     <button type="button" class="btn btn-outline btn-sm" onclick="setLayout('kanban')">Kanban View</button>
@@ -12,6 +13,20 @@
     <button type="button" class="btn btn-primary btn-sm" onclick="openNewTaskModal()">+ Add Task</button>
   </div>
 </div>
+
+{{ page_guide(
+  "Your practical to-do list turning website findings and assessment answers into assigned tasks.",
+  "Instead of reading all DPDP clauses at once, your team sees clear next steps with owners and due dates.",
+  "Start with High Priority items first (such as creating your Privacy Notice or checking external agreements) and attach proof when done.",
+  legal_ref="Consolidates privacy remediation actions linked to DPDP Act obligations commencing 13 May 2027 without overwhelming your dashboard.",
+  industry_examples={
+    "healthcare": "Publish clinic Privacy Notice, review lab agreement, and disable pre-ticked marketing SMS.",
+    "saas": "Update signup Privacy Notice link, approve cloud hosting DPA, and set support deletion schedule.",
+    "ecommerce": "Review cookie marketing consent, check courier agreement, and track refund deletion periods.",
+    "education": "Collect parent notice acknowledgements and set old student exam retention rules."
+  },
+  ask_q="What should I do next?"
+) }}
 
 <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;">
   {% for fkey, flabel in [

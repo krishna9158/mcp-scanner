@@ -1,9 +1,10 @@
 {% extends "app_base.html" %}
+{% from "app/_guide_banner.html" import page_guide %}
 {% block content %}
 <div class="page-head">
   <div>
-    <h1 class="page-title">Visual Data Map</h1>
-    <p class="page-sub">Interactive diagram built exclusively from confirmed Customer Data Inventory &amp; Vendor sharing links. Click any node or connection line to inspect details.</p>
+    <h1 class="page-title">Where My Data Goes</h1>
+    <p class="page-sub">Interactive diagram built exclusively from confirmed Customer Information &amp; external sharing links.</p>
   </div>
   <div style="display:flex;gap:8px;flex-wrap:wrap;">
     <button type="button" class="btn btn-outline btn-sm" onclick="zoomMap(1.15)">Zoom +</button>
@@ -12,6 +13,20 @@
     <button type="button" class="btn btn-primary btn-sm" onclick="exportMapSvg()">Export SVG Image</button>
   </div>
 </div>
+
+{{ page_guide(
+  "A visual picture showing how customer information enters your business, where it is stored, and which external tools receive copies.",
+  "Helps everyone on your team see blind spots—like patient or buyer phones flowing to an unreviewed tool.",
+  "Click any box below to inspect its purpose and contracts, or confirm more items in Customer Information to expand this map.",
+  legal_ref="Supports DPDP accountability between Business Responsible for Data (Data Fiduciary) and External Companies Handling Data (Data Processors) under Section 8(2).",
+  industry_examples={
+    "healthcare": "Booking Form -> Clinic Desk System -> External Pathology Lab & WhatsApp Reminders.",
+    "saas": "Signup Page -> Cloud Database -> Payment Gateway & Helpdesk Tool.",
+    "ecommerce": "Checkout -> Order System -> Courier Logistics Partner & Ad Pixels.",
+    "education": "Admission Portal -> School MIS -> Fee Gateway & Parent Alert Service."
+  },
+  ask_q="Explain how customer data flows to external services."
+) }}
 
 <div class="card" style="margin-bottom:18px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
   <input id="map-filter" class="input" style="max-width:280px;" placeholder="Filter nodes or vendors..." oninput="renderSvgMap()">

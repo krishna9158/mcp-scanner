@@ -1,12 +1,27 @@
 {% extends "app_base.html" %}
+{% from "app/_guide_banner.html" import page_guide %}
 {% block content %}
 <div class="page-head">
   <div>
-    <h1 class="page-title">Evidence Vault</h1>
-    <p class="page-sub">Physical file storage (5 MB limit, safe extension &amp; magic-byte verification, version tracking, and 5-state review workflow).</p>
+    <h1 class="page-title">Documents &amp; Proof (Evidence)</h1>
+    <p class="page-sub">Store signed external company agreements, approved Privacy Notices, and deletion proof safely (5 MB limit, verified file types).</p>
   </div>
-  <button type="button" class="btn btn-primary btn-sm" onclick="openUploadModal()">+ Upload Evidence File</button>
+  <button type="button" class="btn btn-primary btn-sm" onclick="openUploadModal()">+ Upload Proof File</button>
 </div>
+
+{{ page_guide(
+  "A clean folder for real files that prove your business actually completed privacy fixes—such as signed agreements and notice screenshots.",
+  "Writing 'Done' on a task is easy to forget; keeping real proof makes audits, customer questions, and partner checks effortless.",
+  "Upload signed agreements, published Privacy Notices, or deletion confirmations (.pdf, .png, .docx, .xlsx, .csv) and verify them.",
+  legal_ref="Known commonly as the Evidence Vault; uploaded files follow safe magic-byte verification and optional application-layer Fernet encryption shown on /trust.",
+  industry_examples={
+    "healthcare": "Signed lab partner confidentiality agreement, reception desk Privacy Notice PDF, and deletion logs.",
+    "saas": "AWS/hosting DPA PDF, published website privacy page screenshot, and annual staff security log.",
+    "ecommerce": "Signed payment/logistics agreements and cookie consent implementation screenshots.",
+    "education": "Parent guardian consent form sample and student archive disposal record."
+  },
+  ask_q="What proof documents should our business save?"
+) }}
 
 <div id="evidence-table-wrap">Loading Evidence Vault...</div>
 {% endblock %}

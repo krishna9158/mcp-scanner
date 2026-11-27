@@ -187,16 +187,22 @@
 
   function openCommandPalette() {
     const quickLinks = [
-      { kind: 'Workspace', title: 'Home Command Centre', subtitle: 'Setup progress and top priority actions', href: '/app/home' },
-      { kind: 'Workspace', title: 'Guided Onboarding', subtitle: '6-step assisted setup wizard', href: '/app/onboarding' },
-      { kind: 'Workspace', title: 'Discovery Centre', subtitle: 'Website, CSV/XLSX/DOCX/PDF & vendor discovery', href: '/app/discovery' },
-      { kind: 'Workspace', title: 'Business Data Inventory', subtitle: 'Manage personal data categories & import CSV/XLSX', href: '/app/data-inventory' },
-      { kind: 'Workspace', title: 'Visual Data Map', subtitle: 'Interactive SVG data-flow explorer', href: '/app/data-map' },
-      { kind: 'Workspace', title: 'Privacy Assessment', subtitle: '10 understandable privacy topics', href: '/app/assessment' },
-      { kind: 'Workspace', title: 'Action Plan', subtitle: 'Kanban, List & Calendar task manager', href: '/app/action-plan' },
-      { kind: 'Workspace', title: 'Vendors & Processors', subtitle: 'Track contracts, questionnaires & risks', href: '/app/vendors' },
-      { kind: 'Workspace', title: 'Customer Privacy Portal', subtitle: 'Configure branded request intake URL', href: '/app/privacy-portal' },
-      { kind: 'Workspace', title: 'AI Privacy Assistant', subtitle: 'Ask grounded DPDP Act & Rules questions', href: '/app/privacy-assistant' },
+      { kind: '01. Home', title: 'Home', subtitle: 'Your business setup, next 3 steps & recent activity', href: '/app/home' },
+      { kind: 'Setup', title: '5-Step Guided Onboarding', subtitle: 'Answer simple business questions & review suggestions', href: '/app/onboarding' },
+      { kind: '02. My Business Data', title: 'Customer Information List', subtitle: 'Review confirmed & suggested customer data items', href: '/app/data-inventory' },
+      { kind: '02. My Business Data', title: 'Where My Data Goes', subtitle: 'Interactive visual diagram of customer data flows', href: '/app/data-map' },
+      { kind: '02. My Business Data', title: 'Companies I Share Data With', subtitle: 'Track external services & partners receiving data', href: '/app/vendors' },
+      { kind: '02. My Business Data', title: 'Website Check', subtitle: 'Check public website notices, forms & trackers', href: '/app/website-check' },
+      { kind: '03. My Privacy Tasks', title: 'Privacy Assessment', subtitle: '10 plain-language questions with practical guidance', href: '/app/assessment' },
+      { kind: '03. My Privacy Tasks', title: 'Fix My Privacy Gaps', subtitle: 'Organise privacy tasks by owner & status', href: '/app/action-plan' },
+      { kind: '03. My Privacy Tasks', title: 'Customer Requests', subtitle: 'Handle customer access, correction & deletion requests', href: '/app/privacy-requests' },
+      { kind: '03. My Privacy Tasks', title: 'Vendor Reviews', subtitle: 'Track external agreements & questionnaires', href: '/app/vendor-reviews' },
+      { kind: '04. Documents & Records', title: 'Privacy Notice', subtitle: 'Draft, edit & publish your customer Privacy Notice', href: '/app/notices' },
+      { kind: '04. Documents & Records', title: 'My Documents & Suggestions', subtitle: 'Templates & document extraction drafts', href: '/app/document-centre' },
+      { kind: '04. Documents & Records', title: 'Evidence (Documents & Proof)', subtitle: 'Upload agreements, notices & screenshots securely', href: '/app/evidence' },
+      { kind: 'Help', title: 'AI Assistant', subtitle: 'Ask plain-English privacy & next-step questions', href: '/app/privacy-assistant' },
+      { kind: 'Help', title: 'Learning Centre', subtitle: 'Plain-English privacy basics & official DPDP timeline', href: '/app/learning' },
+      { kind: 'Workspace', title: 'Settings & 2FA', subtitle: 'Authenticator QR, recovery codes, team & sessions', href: '/app/settings' },
     ];
     openModal(
       'Quick Search (Cmd/Ctrl + K)',
@@ -268,27 +274,27 @@
   function openContextualHelp() {
     const p = window.location.pathname || '/app/home';
     const guide = {
-      '/app/home': ['Home Overview', 'Tracks setup progress (X of 6), top 3 priority tasks, and chronological workspace activity without inflated scores.'],
-      '/app/onboarding': ['Guided Onboarding', 'Confirm business details, personal data uses, and systems step by step before creating records.'],
-      '/app/discovery': ['Discovery Centre', 'Upload CSV/XLSX/DOCX/PDF files or run a Website Check to extract draft records labeled Needs review until approved.'],
-      '/app/data-inventory': ['Data Inventory', 'Track personal data categories, collection sources, lawful bases (Sec 6 consent vs Sec 7), storage, and retention.'],
-      '/app/data-map': ['Visual Data Map', 'Visualises confirmed Customer -> Intake -> Storage -> Vendor flows. Unconfirmed drafts stay out until accepted.'],
-      '/app/assessment': ['10-Topic Privacy Assessment', 'Covers Sections 3-17, S.O. 5458(E), and Rule 3-16 using 5 honest states from Not assessed to Verified.'],
-      '/app/action-plan': ['Action Plan', 'Switch between Kanban, List, and Calendar views to assign owners, due dates, and completion notes.'],
-      '/app/vendors': ['Vendors & Processors', 'Record cloud hosts, labs, and SaaS vendors, send Vendor Questionnaires, and track Section 8(2) contracts.'],
-      '/app/privacy-portal': ['Customer Privacy Portal', 'Configure your /portal/<slug> page for data principal access, correction, erasure, and grievance requests.'],
-      '/app/privacy-profile': ['Privacy Profile', 'Share only approved public details at /p/<slug>; unpublished drafts and vendor secrets never appear.'],
-      '/app/settings': ['Settings, 2FA & Sessions', 'Configure TOTP 2FA with offline SVG QR + 8 recovery codes, revoke other sessions, change password, or export audit logs.'],
+      '/app/home': ['Home Overview', 'Shows your 5 business setup milestones, top 3 recommended actions, 4 real data counts, and recent workspace events.'],
+      '/app/onboarding': ['5-Step Onboarding', 'Answer simple questions about your business, run a quick website check, Confirm/Edit/Reject suggested items, and get your Top 3 Action Plan.'],
+      '/app/data-inventory': ['Customer Information List', 'Lists what customer details you collect. Extracted items stay marked Suggested until you confirm them.'],
+      '/app/data-map': ['Where My Data Goes', 'Visual diagram of your confirmed Customer Information moving through internal systems to external services.'],
+      '/app/vendors': ['Companies I Share Data With', 'External tools, labs, or partners that receive customer data on your instructions (cloud hosts, billing, SMS, CRM).'],
+      '/app/vendor-reviews': ['Vendor Reviews', 'Check written agreement status and send restricted questionnaires to external companies.'],
+      '/app/website-check': ['Website Check', 'Inspects public pages for Privacy Notice links, enquiry forms, and third-party scripts cleanly.'],
+      '/app/assessment': ['Privacy Assessment', 'Answer 10 plain-English topics and attach real proof; TrustAudit never invents compliance certificates.'],
+      '/app/privacy-requests': ['Customer Requests', 'Track requests from customers wanting to see, correct, or erase their personal details.'],
+      '/app/notices': ['Privacy Notice', 'Draft and review the plain-English notice explaining to customers what you collect and who to contact.'],
+      '/app/document-centre': ['My Documents', 'Ready-to-edit document templates and spreadsheets/PDF discovery tools—kept Draft until reviewed.'],
+      '/app/evidence': ['Documents & Proof (Evidence)', 'Store signed vendor agreements, notices, and retention logs securely.'],
+      '/app/settings': ['Settings & 2FA', 'Enroll offline Authenticator QR 2FA, inspect 8 single-use recovery codes, revoke other sessions, or change password.'],
     };
-    const item = guide[p] || ['TrustAudit Workspace Help', 'Use Cmd/Ctrl + K to jump cleanly across inventory, vendors, notices, tasks, evidence, and reports.'];
+    const item = guide[p] || ['TrustAudit Guided Help', 'Press Ctrl+K (or Cmd+K) anytime to jump across Home, My Business Data, My Privacy Tasks, Documents & Records, or Help.'];
     openModal('Help: ' + item[0],
       '<p style="font-size:14.5px;line-height:1.6;margin-bottom:14px;">' + esc(item[1]) + '</p>' +
-      '<div style="padding:12px;border-radius:10px;background:var(--bg-muted);font-size:13px;margin-bottom:14px;">' +
-      '<strong>Statutory Note:</strong> Substantive DPDP duties commence <strong>13 May 2027</strong> (Consent Manager rules 13 Nov 2026; S.O. 5458(E) clarified Sec 9(1) &amp; Sec 10 data audit).' +
-      '</div>' +
       '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
-      '<a href="/resources" class="btn btn-outline btn-sm">Open Statutory Library</a>' +
-      '<button type="button" class="btn btn-primary btn-sm" onclick="TA.openReportProblemModal()">Report a Problem</button></div>'
+      '<a href="/app/privacy-assistant" class="btn btn-primary btn-sm">Ask AI Assistant</a>' +
+      '<a href="/app/learning" class="btn btn-outline btn-sm">Learning Centre</a>' +
+      '<button type="button" class="btn btn-ghost btn-sm" onclick="TA.openReportProblemModal()">Report Issue</button></div>'
     );
   }
 

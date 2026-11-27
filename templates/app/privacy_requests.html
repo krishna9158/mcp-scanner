@@ -1,15 +1,30 @@
 {% extends "app_base.html" %}
+{% from "app/_guide_banner.html" import page_guide %}
 {% block content %}
 <div class="page-head">
   <div>
     <h1 class="page-title">Customer Privacy Requests</h1>
-    <p class="page-sub">Verify requester identity, assign owners, record decisions, and resolve access, correction, erasure, nomination, and grievance enquiries cleanly.</p>
+    <p class="page-sub">Manage requests from customers asking to see, fix, or delete their data, verify identity, and track replies in one place.</p>
   </div>
   <div style="display:flex;gap:8px;">
-    <a href="/app/privacy-portal" class="btn btn-outline btn-sm">Portal Settings</a>
+    <a href="/app/privacy-portal" class="btn btn-outline btn-sm">Customer Request Page Settings</a>
     <button type="button" class="btn btn-primary btn-sm" onclick="openAddReqModal()">+ Log Customer Request</button>
   </div>
 </div>
+
+{{ page_guide(
+  "A clean inbox for handling requests from customers, patients, students, or staff to view, correct, or erase their personal details.",
+  "Requests buried in email inboxes easily get missed; customers and regulators look for proof of timely, fair handling.",
+  "Log an incoming email/WhatsApp enquiry here or share your Customer Request Page link so requests enter cleanly.",
+  legal_ref="Known legally as Data Principal Rights under Sections 11–14 (Access, Correction/Erasure, Grievance Redressal, Right to Nominate), commencing 13 May 2027.",
+  industry_examples={
+    "healthcare": "A patient asks for a correction to an address or deletion of old promotional clinic contacts.",
+    "saas": "A user cancels an account and asks to confirm account profile erasure.",
+    "ecommerce": "A shopper asks to remove saved shipping addresses after closing their account.",
+    "education": "A parent asks to update student contact details or nominate a guardian representative."
+  },
+  ask_q="How do I handle a customer request?"
+) }}
 
 <div id="requests-table-wrap">Loading requests...</div>
 {% endblock %}

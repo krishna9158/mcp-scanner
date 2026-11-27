@@ -1,12 +1,27 @@
 {% extends "app_base.html" %}
+{% from "app/_guide_banner.html" import page_guide %}
 {% block content %}
 <div class="page-head">
   <div>
-    <h1 class="page-title">Vendors &amp; Processors</h1>
-    <p class="page-sub">Track Data Processing Agreements (DPAs), hosting locations, transparent risk factors (never invented scores), and restricted vendor questionnaires.</p>
+    <h1 class="page-title">Companies I Share Data With</h1>
+    <p class="page-sub">Track external companies handling data—agreements, hosting regions, clear risk reasons, and questionnaires.</p>
   </div>
-  <button type="button" class="btn btn-primary btn-sm" onclick="openAddVendorModal()">+ Add Vendor / Processor</button>
+  <button type="button" class="btn btn-primary btn-sm" onclick="openAddVendorModal()">+ Add External Company</button>
 </div>
+
+{{ page_guide(
+  "A register of external tools, software services, and partner businesses that receive your customer data.",
+  "When an external company loses or misuses data you shared with them, your business remains responsible for keeping customers safe.",
+  "Add any cloud host, payment provider, CRM, messaging app, or partner lab you use, then review their agreement in Vendor Reviews.",
+  legal_ref="Known legally as External Companies Handling Data (Data Processors) under Section 2(k) and Section 8(2) contract rules.",
+  industry_examples={
+    "healthcare": "Pathology partner labs, cloud backup hosts, billing software, and WhatsApp reminder apps.",
+    "saas": "AWS/GCP servers, Razorpay/Stripe, Freshdesk support, and email delivery tools.",
+    "ecommerce": "Shiprocket/Delhivery couriers, Razorpay payments, Shopify plugins, and marketing tools.",
+    "education": "School ERP systems, fee payment gateways, and parent SMS services."
+  },
+  ask_q="What agreement do we need with an external company handling customer data?"
+) }}
 
 <div class="card" style="margin-bottom:20px;">
   <h2 class="ta-h3" style="margin-bottom:10px;">Vendor Relationship Map</h2>

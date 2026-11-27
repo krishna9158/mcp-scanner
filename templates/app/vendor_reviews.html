@@ -1,0 +1,74 @@
+{% extends "app_base.html" %}
+{% from "app/_guide_banner.html" import page_guide %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Vendor Reviews</h1>
+    <p class="page-sub">Review agreements, data locations, and questionnaires with the external companies handling your customer data.</p>
+  </div>
+  <a href="/app/vendors" class="btn btn-outline btn-sm">Manage Companies Shared With &rarr;</a>
+</div>
+
+{{ page_guide(
+  "This checklist tracks whether each external tool or partner has an active written privacy agreement and reviewed questionnaire.",
+  "If a cloud host, payment provider, or lab loses customer data without an agreement, your business remains responsible for Customer Information.",
+  "Send a questionnaire link to any Pending company below, then mark Signed / Reviewed once their agreement is saved.",
+  legal_ref="Section 8(2) permits engaging a Data Processor only under a valid contract; TrustAudit tracks contract and questionnaire review status cleanly without legal certification.",
+  industry_examples={
+    "healthcare": "Review written agreements with pathology labs, hospital billing vendors, and WhatsApp reminder providers.",
+    "saas": "Review cloud hosting DPAs, transactional email providers, payment gateways, and helpdesk platforms.",
+    "ecommerce": "Review courier partners, return logistics portals, payment gateways, and ad platforms.",
+    "education": "Review school ERP/MIS providers, SMS alert vendors, and online fee payment gateways."
+  },
+  ask_q="Do we need a contract with external companies handling our customer data?"
+) }}
+
+<div id="vr-list">Loading vendor reviews...</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  async function loadVendorReviews() {
+    const d = await TA.apiJson('/api/dpdp/vendors');
+    const list = d.vendors || [];
+    const el = document.getElementById('vr-list');
+    if (!list.length) {
+      el.innerHTML = '<div class="empty-state"><h3>No external companies added yet</h3><p class="ta-muted" style="margin:6px 0 14px;">Add your cloud host, payment gateway, CRM, or partner lab first.</p><a href="/app/vendors" class="btn btn-primary btn-sm">Add Companies I Share Data With &rarr;</a></div>';
+      return;
+    }
+    el.innerHTML = '<div class="tbl-wrap"><table><thead><tr><th>Company &amp; Role</th><th>Hosting Region</th><th>Agreement Status</th><th>Why It Needs Attention</th><th>Review Action</th></tr></thead><tbody>' +
+      list.map(function (v) {
+        const ok = /SIGNED|EXECUTED|ACTIVE/i.test(v.dpa_status || '');
+        return '<tr><td><strong>' + TA.esc(v.name) + '</strong><div class="ta-muted" style="font-size:12px;">' + TA.esc(v.category || v.service || '') + '</div></td>' +
+          '<td>' + TA.esc(v.data_location || 'Confirm region') + '</td>' +
+          '<td><span class="badge ' + (ok ? 'badge-emerald' : 'badge-amber') + '">' + TA.esc(v.dpa_status || 'PENDING_REVIEW') + '</span></td>' +
+          '<td class="ta-muted" style="font-size:12.5px;">' + TA.esc((v.risk_basis || []).join('; ') || (ok ? 'Agreement confirmed on record' : 'Needs agreement & privacy check')) + '</td>' +
+          '<td style="white-space:nowrap;">' +
+          '<button type="button" class="btn btn-outline btn-sm" onclick="sendReviewLink(\'' + TA.esc(v.id) + '\')">Send Questionnaire</button> ' +
+          (ok ? '' : '<button type="button" class="btn btn-emerald btn-sm" onclick="markReviewed(\'' + TA.esc(v.id) + '\')">Mark Reviewed</button>') +
+          '</td></tr>';
+      }).join('') + '</tbody></table></div>';
+  }
+
+  async function markReviewed(id) {
+    await TA.apiJson('/api/dpdp/vendors/' + encodeURIComponent(id), {
+      method: 'PUT',
+      body: JSON.stringify({ dpa_status: 'EXECUTED', status: 'Approved' }),
+    });
+    TA.toast('Vendor agreement marked reviewed');
+    loadVendorReviews();
+  }
+
+  async function sendReviewLink(id) {
+    const res = await TA.apiJson('/api/dpdp/vendors/' + encodeURIComponent(id) + '/intake-link', { method: 'POST' });
+    const url = window.location.origin + res.intake_path;
+    TA.openModal('Vendor Review Questionnaire Link',
+      '<p class="ta-muted" style="margin-bottom:10px;">Send this private form link to your external company contact cleanly:</p>' +
+      '<input class="input ta-mono" readonly value="' + TA.esc(url) + '" onclick="this.select()">' +
+      '<div style="margin-top:12px;"><a href="' + TA.esc(res.intake_path) + '" target="_blank" class="btn btn-primary btn-sm">Preview Form &rarr;</a></div>'
+    );
+  }
+
+  loadVendorReviews();
+</script>
+{% endblock %}

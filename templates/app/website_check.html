@@ -1,0 +1,178 @@
+{% extends "app_base.html" %}
+{% from "app/_guide_banner.html" import page_guide %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Website Check</h1>
+    <p class="page-sub">Inspect your public website for Privacy Notice links, enquiry forms, visible collection fields, and third-party tracking scripts.</p>
+  </div>
+  <a href="/website-check" class="btn btn-outline btn-sm">Open Public Share Link</a>
+</div>
+
+{{ page_guide(
+  "Website Check looks at your public web pages just like a customer or regulator visiting them in a browser.",
+  "Websites are often the first place people notice a missing Privacy Notice, pre-ticked marketing boxes, or hidden external trackers.",
+  "Enter your website URL below, confirm you own it, inspect the findings, and review suggested updates in your Customer Information List.",
+  legal_ref="Section 5 requires a clear notice for consent-based collection (substantive enforcement from 13 May 2027); Section 6 requires free, specific, unconditional consent without pre-ticked boxes.",
+  industry_examples={
+    "healthcare": "Check booking pages for appointment forms, WhatsApp widgets, and patient Privacy Notice links.",
+    "saas": "Check signup/demo pages for analytics tags, cookie banners, and privacy links.",
+    "ecommerce": "Check checkout and newsletter forms for pre-ticked promotional opt-ins and ad pixels.",
+    "education": "Check admission enquiry forms for guardian contact details and notice clarity."
+  },
+  ask_q="Explain my website check finding."
+) }}
+
+<div class="card" style="margin-bottom:20px;">
+  <div class="grid-2">
+    <div class="field">
+      <label for="awc-url">Public Website URL</label>
+      <input id="awc-url" type="url" class="input" value="{{ org_info.website_url if org_info and org_info.website_url else '' }}" placeholder="https://yourbusiness.in">
+    </div>
+    <div class="field">
+      <label for="awc-biz">Business Name</label>
+      <input id="awc-biz" class="input" value="{{ org_info.name if org_info else '' }}" placeholder="Your Business Name">
+    </div>
+  </div>
+  <label style="display:flex;gap:8px;align-items:center;font-size:13px;color:var(--ink-soft);margin-bottom:14px;cursor:pointer;">
+    <input id="awc-auth" type="checkbox" style="width:16px;height:16px;accent-color:var(--emerald);" checked>
+    <span>I confirm I am authorised to check this public domain (internal/private IP ranges are safely blocked).</span>
+  </label>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+    <button type="button" class="btn btn-primary cta-arrow-btn" onclick="runAppWebsiteCheck()">Check Website Now <span class="ta-arrow" aria-hidden="true">&rarr;</span></button>
+    <a href="/app/data-inventory" class="btn btn-outline btn-sm">Review Customer Information &rarr;</a>
+  </div>
+  <div id="awc-progress" style="display:none;margin-top:14px;padding:12px;border-radius:10px;background:var(--bg-muted);">
+    <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-bottom:6px;">
+      <span id="awc-stage">Waiting for job queue...</span>
+      <div>
+        <span id="awc-pct">0%</span>
+        <button id="awc-cancel" type="button" class="btn btn-ghost btn-sm" style="display:none;margin-left:8px;" onclick="cancelAppScan()">Cancel</button>
+      </div>
+    </div>
+    <div style="height:8px;border-radius:99px;background:rgba(15,43,34,0.1);overflow:hidden;">
+      <div id="awc-bar" style="height:100%;width:0%;background:var(--emerald);transition:width .25s ease;"></div>
+    </div>
+  </div>
+</div>
+
+<div id="awc-results" class="card" style="display:none;margin-bottom:20px;"></div>
+
+<div class="card">
+  <h2 class="ta-h3" style="margin-bottom:12px;">Past Website Checks</h2>
+  <div id="awc-history">Loading past checks...</div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  let AWC_JOB = null;
+  let AWC_CANCELLED = false;
+
+  function setAwcProg(show, pct, stage, canCancel) {
+    const box = document.getElementById('awc-progress');
+    const cbtn = document.getElementById('awc-cancel');
+    box.style.display = show ? 'block' : 'none';
+    if (show) {
+      const p = Math.max(0, Math.min(100, Number(pct || 0)));
+      document.getElementById('awc-pct').textContent = p + '%';
+      document.getElementById('awc-stage').textContent = stage || 'Waiting...';
+      document.getElementById('awc-bar').style.width = p + '%';
+      cbtn.style.display = canCancel ? 'inline-flex' : 'none';
+    }
+  }
+
+  async function cancelAppScan() {
+    AWC_CANCELLED = true;
+    if (AWC_JOB) {
+      try { await TA.apiJson('/api/jobs/' + encodeURIComponent(AWC_JOB) + '/cancel', { method: 'POST', body: '{}' }); } catch (e) {}
+    }
+    AWC_JOB = null;
+    setAwcProg(false);
+    TA.toast('Website check cancelled.');
+  }
+
+  function renderScanReport(sc) {
+    const out = document.getElementById('awc-results');
+    out.style.display = 'block';
+    const findings = sc.findings || [];
+    const trackers = sc.third_party_scripts || sc.trackers || [];
+    out.innerHTML =
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">' +
+      '<div><strong>Latest Check: ' + TA.esc(sc.target_url || '') + '</strong></div>' +
+      '<span class="badge badge-emerald">' + TA.esc(sc.pages_scanned_count || 1) + ' page(s) checked</span></div>' +
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">' +
+      '<span class="badge badge-neutral">Privacy Notice link: ' + (sc.has_privacy_policy ? 'Found' : 'Needs Review') + '</span>' +
+      '<span class="badge badge-neutral">External Scripts: ' + trackers.length + '</span>' +
+      '</div>' +
+      (findings.length ? findings.map(function (f) {
+        return '<div style="padding:12px;border:1px solid var(--border);border-radius:10px;margin-bottom:8px;">' +
+          '<div style="display:flex;justify-content:space-between;gap:8px;"><strong>' + TA.esc(f.title || f.id) + '</strong><span class="badge badge-amber">' + TA.esc(f.severity || 'MEDIUM') + '</span></div>' +
+          '<div class="ta-muted" style="font-size:13px;margin-top:4px;">' + TA.esc(f.why_it_matters || f.observation || '') + '</div>' +
+          (f.recommended_action ? '<div style="font-size:12.5px;margin-top:6px;color:var(--emerald);font-weight:700;">What to do: ' + TA.esc(f.recommended_action) + '</div>' : '') +
+          '</div>';
+      }).join('') : '<div class="ta-muted">No major public-page privacy gaps detected.</div>');
+  }
+
+  async function runAppWebsiteCheck() {
+    if (!document.getElementById('awc-auth').checked) {
+      return TA.toast('Confirm domain authorisation first.', 'err');
+    }
+    const url = document.getElementById('awc-url').value.trim();
+    const biz = document.getElementById('awc-biz').value.trim();
+    if (!url) return TA.toast('Enter your website URL', 'err');
+    AWC_CANCELLED = false;
+    AWC_JOB = null;
+    setAwcProg(true, 0, 'Submitting website check...', false);
+    try {
+      const startRes = await TA.apiJson('/api/dpdp/scanner/start?async=1', {
+        method: 'POST',
+        body: JSON.stringify({ target_url: url, website_url: url, business_name: biz || 'My Business', authorization_confirmed: true, async: true }),
+      });
+      if (startRes.scan) {
+        setAwcProg(false);
+        renderScanReport(startRes.scan);
+        loadScanHistory();
+        return;
+      }
+      if (startRes.job_id) {
+        AWC_JOB = startRes.job_id;
+        setAwcProg(true, startRes.progress || 0, startRes.stage || 'Inspecting public pages...', true);
+        for (let i = 0; i < 45; i++) {
+          await new Promise(function (r) { setTimeout(r, 700); });
+          if (AWC_CANCELLED || AWC_JOB !== startRes.job_id) return;
+          const st = await TA.apiJson('/api/jobs/' + encodeURIComponent(AWC_JOB));
+          const j = st.job || {};
+          setAwcProg(true, j.progress || 0, j.stage || 'Scanning...', true);
+          if (j.status === 'COMPLETED' && j.result && j.result.scan) {
+            AWC_JOB = null; setAwcProg(false); renderScanReport(j.result.scan); loadScanHistory(); return;
+          }
+          if (j.status === 'FAILED' || j.status === 'CANCELLED') {
+            AWC_JOB = null; setAwcProg(false); TA.toast(j.error || 'Check did not complete.', 'err'); return;
+          }
+        }
+      }
+    } catch (e) { setAwcProg(false); TA.toast(e.message, 'err'); }
+  }
+
+  async function loadScanHistory() {
+    try {
+      const d = await TA.apiJson('/api/dpdp/scanner/history');
+      const items = d.scans || [];
+      const el = document.getElementById('awc-history');
+      if (!items.length) {
+        el.innerHTML = '<div class="empty-state"><p class="ta-muted">No website checks saved yet. Enter your public website URL above to start.</p></div>';
+        return;
+      }
+      el.innerHTML = items.map(function (s) {
+        return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);gap:10px;flex-wrap:wrap;">' +
+          '<div><strong>' + TA.esc(s.target_url) + '</strong><div class="ta-muted" style="font-size:12px;">' + TA.esc((s.scanned_at || s.created_at || '').slice(0, 16)) + '</div></div>' +
+          '<div style="display:flex;gap:8px;align-items:center;"><span class="badge badge-neutral">' + TA.esc((s.findings || []).length) + ' item(s)</span>' +
+          '<button type="button" class="btn btn-outline btn-sm" onclick=\'renderScanReport(' + JSON.stringify(s) + ')\'>View Findings</button></div></div>';
+      }).join('');
+    } catch (e) {}
+  }
+
+  loadScanHistory();
+</script>
+{% endblock %}

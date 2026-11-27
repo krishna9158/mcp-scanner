@@ -1,18 +1,29 @@
 {% extends "app_base.html" %}
+{% from "app/_guide_banner.html" import page_guide %}
 {% block content %}
 <div class="page-head">
   <div>
-    <h1 class="page-title">Privacy Assessment Engine (10 Guided Topics)</h1>
-    <p class="page-sub">Answer in plain business language. Picking <strong>Not sure</strong> opens practical next steps rather than counting an automatic violation.</p>
+    <h1 class="page-title">Privacy Assessment</h1>
+    <p class="page-sub">Answer 10 clear business questions. Picking <strong>Not sure</strong> gives practical guidance rather than automatic violations.</p>
   </div>
   <div style="display:flex;gap:8px;">
     <a href="/app/reports" class="btn btn-outline btn-sm">Assessment Report</a>
   </div>
 </div>
 
-<div style="padding:12px 16px;border-radius:10px;background:var(--bg-muted);border:1px solid var(--border);font-size:13.5px;margin-bottom:20px;">
-  <strong>Certification Clarity:</strong> Assessment answers track business self-attestation versus verified proof across five distinct states (<code>Not assessed</code> &rarr; <code>Business self-attested</code> &rarr; <code>Evidence uploaded</code> &rarr; <code>Evidence reviewed</code> &rarr; <code>Verified</code>). TrustAudit never issues statutory compliance certificates.
-</div>
+{{ page_guide(
+  "Ten understandable questions checking how your business handles notices, consent, security, vendors, children's data, and customer requests.",
+  "Shows honestly where your team already has proof versus what still needs work—without fake scores or automatic compliance certificates.",
+  "Click Yes, No, Partially, Not sure, or Not applicable on each card and link supporting proof where available.",
+  legal_ref="Maps practically to DPDP Act Sections 3–17 and DPDP Rules 3–16 (substantive duties commencing 13 May 2027; Consent Manager provisions 13 Nov 2026).",
+  industry_examples={
+    "healthcare": "Check if patients get a clear notice at reception and if partner diagnostic labs signed agreements.",
+    "saas": "Check if team accounts use 2FA, cookies ask permission, and deleted customer accounts are purged.",
+    "ecommerce": "Check marketing opt-in fairness, payment gateway contracts, and refund deletion rules.",
+    "education": "Check verifiable guardian consent for student accounts under Section 9(1)."
+  },
+  ask_q="What should I do next?"
+) }}
 
 <div class="grid-4" style="margin-bottom:20px;">
   <div class="card"><div class="ta-muted">Topics Answered</div><div id="as-ans" style="font-size:26px;font-weight:850;">0 / 10</div></div>

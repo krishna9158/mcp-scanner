@@ -2193,7 +2193,7 @@ def get_admin_system_metrics(requesting_user_id: Optional[str] = None) -> Dict[s
 
 def get_setup_progress(org_id: str) -> Dict[str, Any]:
     """
-    Computes genuine 'X of 6' workspace setup steps without fake percentage inflation.
+    Computes genuine 'X of 5' workspace setup milestones without fake percentage inflation.
     """
     profile = get_onboarding_profile(org_id) or {}
     inventory = get_data_inventory(org_id)
@@ -2202,93 +2202,91 @@ def get_setup_progress(org_id: str) -> Dict[str, Any]:
     vendors = get_vendors(org_id)
     evidence = get_evidence_artifacts(org_id)
 
-    has_notice = bool(notices) or any("notice" in (e.get("category", "") + e.get("title", "")).lower() for e in evidence)
+    has_privacy_docs = bool(notices) or bool(evidence)
     steps = [
         {
-            "key": "business_profile",
-            "title": "Tell us about your business",
+            "key": "business_details",
+            "title": "Business details",
             "completed": bool(profile.get("onboarding_completed") or (profile.get("company_name") and profile.get("industry"))),
             "action_view": "onboarding",
-            "action_label": "Complete setup",
+            "action_label": "Update details",
         },
         {
-            "key": "customer_data",
-            "title": "Record your customer data",
+            "key": "website_check",
+            "title": "Website check",
+            "completed": len(scans) > 0,
+            "action_view": "website-check",
+            "action_label": "Check site",
+        },
+        {
+            "key": "customer_information",
+            "title": "Customer information",
             "completed": len(inventory) > 0,
             "action_view": "inventory",
-            "action_label": "Add customer data",
+            "action_label": "Review data",
         },
         {
-            "key": "website_scan",
-            "title": "Scan your website",
-            "completed": len(scans) > 0,
-            "action_view": "scanner",
-            "action_label": "Scan website",
-        },
-        {
-            "key": "privacy_notice",
-            "title": "Create or upload your Privacy Notice",
-            "completed": has_notice,
-            "action_view": "notices",
-            "action_label": "Create Privacy Notice",
-        },
-        {
-            "key": "vendors",
-            "title": "Add companies you share data with",
+            "key": "external_services",
+            "title": "External services",
             "completed": len(vendors) > 0,
             "action_view": "vendors",
-            "action_label": "Add a company",
+            "action_label": "Add companies",
         },
         {
-            "key": "evidence",
-            "title": "Upload proof into Evidence Vault",
-            "completed": len(evidence) > 0,
-            "action_view": "evidence",
-            "action_label": "Upload proof",
+            "key": "privacy_documents",
+            "title": "Privacy documents",
+            "completed": has_privacy_docs,
+            "action_view": "notices",
+            "action_label": "Create notice",
         },
     ]
     completed_count = sum(1 for s in steps if s["completed"])
     next_step = next((s for s in steps if not s["completed"]), None)
     return {
         "completed_count": completed_count,
-        "total_steps": 6,
+        "total_steps": 5,
         "steps": steps,
         "next_recommended_step": next_step,
         "onboarding_completed": bool(profile.get("onboarding_completed")),
     }
 
 
-def get_home_attention_tasks(org_id: str, limit: int = 3) -> List[Dict[str, Any]]:
-    """
-    Returns at most 3 plain-English, genuinely detected items needing attention,
-    each with a working action target inside the dashboard.
-    """
+def _build_next_actions(inventory, notices, vendors, scans, requests_list, retention, incidents, rem_tasks, limit: int = 3) -> List[Dict[str, Any]]:
     tasks: List[Dict[str, Any]] = []
-    scans = get_website_scans(org_id)
-    notices = get_privacy_notices(org_id)
-    vendors = get_vendors(org_id)
-    retention = get_retention_schedules(org_id)
-    incidents = get_breach_incidents(org_id)
-    requests_list = get_rights_requests(org_id)
-    inventory = get_data_inventory(org_id)
-
     if not inventory:
         tasks.append({
             "id": "attn-inventory",
             "title": "List what customer details your business collects",
-            "why": "Every privacy notice, vendor check, and deletion rule starts with knowing what customer data you hold.",
+            "why": "Every privacy notice, vendor agreement, and deletion rule starts with knowing what customer data you hold.",
+            "what_to_do": "Open Customer Information and confirm suggested items or upload your spreadsheet.",
             "action_label": "Add customer data",
             "fix_target": "inventory",
+            "status": "Needs attention",
             "severity": "HIGH",
         })
+    else:
+        drafts = [it for it in inventory if "CONFIRMATION" in str(it.get("confirmation_status", "")).upper() or "SUGGESTED" in str(it.get("confirmation_status", "")).upper()]
+        if drafts:
+            tasks.append({
+                "id": "attn-inventory-drafts",
+                "title": f"Confirm or edit {len(drafts)} suggested customer data item(s)",
+                "why": "Suggestions stay drafts until someone in your business confirms they are accurate.",
+                "what_to_do": "Open Customer Information, check suggested fields, and confirm what applies to you.",
+                "action_label": "Review drafts",
+                "fix_target": "inventory",
+                "status": "Pending review",
+                "severity": "HIGH",
+            })
 
     if not notices:
         tasks.append({
             "id": "attn-notice",
             "title": "Create your customer Privacy Notice draft",
             "why": "Customers need clear plain-English details of what you collect, why you collect it, and who to contact.",
+            "what_to_do": "Generate an editable draft built from your Customer Information and review it before publishing.",
             "action_label": "Create Privacy Notice",
             "fix_target": "notices",
+            "status": "Needs attention",
             "severity": "HIGH",
         })
 
@@ -2300,41 +2298,48 @@ def get_home_attention_tasks(org_id: str, limit: int = 3) -> List[Dict[str, Any]
         v0 = unsigned_vendors[0]
         tasks.append({
             "id": "attn-vendor-dpa",
-            "title": f"Check agreement with {v0.get('name', 'vendor')} ({len(unsigned_vendors)} pending)",
-            "why": "Section 8(2) requires written contracts with software, lab, and cloud vendors that handle your customer data.",
+            "title": f"Review agreement with {v0.get('name', 'external service')} ({len(unsigned_vendors)} pending)",
+            "why": "You remain responsible for customer data shared with external tools unless written privacy agreements are in place.",
+            "what_to_do": "Open Vendor Reviews to send a quick questionnaire or record an executed agreement.",
             "action_label": "Review companies",
-            "fix_target": "vendors",
+            "fix_target": "vendor-reviews",
+            "status": "Needs review",
             "severity": "HIGH",
         })
     elif not vendors:
         tasks.append({
             "id": "attn-vendors-empty",
             "title": "Add software, lab, or courier companies you share data with",
-            "why": "Track billing tools, hosting, labs, and payment gateways so contracts and risks stay organised.",
-            "action_label": "Add company",
+            "why": "Track billing tools, hosting, labs, and payment gateways so agreements and risks stay organised.",
+            "what_to_do": "Add external tools your business uses in Companies I Share Data With.",
+            "action_label": "Add companies",
             "fix_target": "vendors",
+            "status": "To do",
             "severity": "MEDIUM",
         })
 
     if scans:
-        latest = scans[0]
-        open_gaps = [f for f in latest.get("findings", []) if f.get("severity") in ("CRITICAL", "HIGH")]
+        open_gaps = [f for f in scans[0].get("findings", []) if f.get("severity") in ("CRITICAL", "HIGH")]
         if open_gaps:
             tasks.append({
                 "id": "attn-scan-gap",
                 "title": open_gaps[0].get("title", "Fix website privacy issue"),
-                "why": f"Found on {latest.get('target_url', 'your website')} during your website privacy check.",
-                "action_label": "Fix this",
-                "fix_target": "scanner",
+                "why": f"Found publicly on {scans[0].get('target_url', 'your website')} during Website Check.",
+                "what_to_do": open_gaps[0].get("recommended_action") or "Open Website Check to view instructions and update your site.",
+                "action_label": "Fix finding",
+                "fix_target": "website-check",
+                "status": "Needs attention",
                 "severity": open_gaps[0].get("severity", "HIGH"),
             })
     else:
         tasks.append({
             "id": "attn-scan-run",
-            "title": "Check your public website for visible privacy gaps",
-            "why": "Find missing privacy notice links, pre-checked boxes, or third-party scripts on your public website.",
+            "title": "Run a Website Check for visible privacy gaps",
+            "why": "Spotting missing privacy notice links or hidden scripts takes under a minute on your public website.",
+            "what_to_do": "Enter your website URL in Website Check to inspect forms, links, and scripts.",
             "action_label": "Run website check",
-            "fix_target": "scanner",
+            "fix_target": "website-check",
+            "status": "To do",
             "severity": "MEDIUM",
         })
 
@@ -2342,20 +2347,24 @@ def get_home_attention_tasks(org_id: str, limit: int = 3) -> List[Dict[str, Any]
     if open_req:
         tasks.append({
             "id": "attn-requests",
-            "title": f"Respond to {len(open_req)} open customer privacy request(s)",
-            "why": "Keep verification and response records ready so no customer enquiry is missed.",
+            "title": f"Respond to {len(open_req)} open customer request(s)",
+            "why": "Customers asking to view, update, or erase data expect a tracked response.",
+            "what_to_do": "Open Customer Requests to verify details and record your resolution.",
             "action_label": "Open requests",
             "fix_target": "rights",
+            "status": "In progress",
             "severity": "HIGH",
         })
 
     if not retention:
         tasks.append({
             "id": "attn-retention",
-            "title": "Set how long you keep customer records before deletion",
-            "why": "Avoid storing old forms and records indefinitely once the purpose ends.",
+            "title": "Set how long you keep customer records",
+            "why": "Avoid keeping old enquiry forms or customer files indefinitely after their purpose ends.",
+            "what_to_do": "Add simple keeping periods in Data Retention & Deletion.",
             "action_label": "Set deletion rules",
             "fix_target": "retention",
+            "status": "To do",
             "severity": "MEDIUM",
         })
 
@@ -2364,23 +2373,43 @@ def get_home_attention_tasks(org_id: str, limit: int = 3) -> List[Dict[str, Any]
             "id": "attn-incident",
             "title": "Review open incident timeline & notification draft",
             "why": "Ensure containment notes and notification drafts have human approval before sending.",
+            "what_to_do": "Review open items under Privacy Incident Response.",
             "action_label": "Open incidents",
             "fix_target": "breaches",
+            "status": "Needs approval",
             "severity": "CRITICAL",
         })
 
-    rem_tasks = [t for t in get_remediation_tasks(org_id) if t.get("status") not in ("Resolved", "Completed", "RESOLVED", "Not applicable")]
-    for rt in rem_tasks[:3]:
+    for rt in [t for t in rem_tasks if t.get("status") not in ("Resolved", "Completed", "RESOLVED", "Not applicable")][:3]:
         tasks.append({
             "id": rt.get("id"),
             "title": rt.get("title", "Follow-up task"),
-            "why": rt.get("description", "Action item from your Action Plan."),
-            "action_label": "Fix this",
+            "why": rt.get("why_it_matters") or rt.get("description", "Action item from your privacy workspace."),
+            "what_to_do": rt.get("description") or "Open this task to update status or attach proof.",
+            "action_label": "Start task",
             "fix_target": "remediation",
+            "status": rt.get("status") or "Open",
             "severity": rt.get("severity", "MEDIUM"),
         })
-
     return tasks[:limit]
+
+
+def get_home_attention_tasks(org_id: str, limit: int = 3) -> List[Dict[str, Any]]:
+    """
+    Returns at most 3 plain-English, genuinely detected items needing attention,
+    each with a working action target inside the dashboard.
+    """
+    return _build_next_actions(
+        inventory=get_data_inventory(org_id),
+        notices=get_privacy_notices(org_id),
+        vendors=get_vendors(org_id),
+        scans=get_website_scans(org_id),
+        requests_list=get_rights_requests(org_id),
+        retention=get_retention_schedules(org_id),
+        incidents=get_breach_incidents(org_id),
+        rem_tasks=get_remediation_tasks(org_id),
+        limit=limit,
+    )
 
 
 def get_recent_activity(org_id: str, limit: int = 12) -> List[Dict[str, Any]]:
@@ -2443,44 +2472,39 @@ def get_recent_activity(org_id: str, limit: int = 12) -> List[Dict[str, Any]]:
 
 INDUSTRY_SUGGESTED_ACTIVITIES: Dict[str, List[Dict[str, Any]]] = {
     "healthcare": [
-        {"key": "patient_appointments", "label": "Patient appointments", "category": "Health information", "fields": ["Patient Name", "Phone Number", "Appointment Date", "Doctor Requested"], "purpose": "Scheduling consultations and sending appointment reminders", "storage_system": "Clinic Booking Software / Register"},
-        {"key": "contact_details", "label": "Contact details", "category": "Contact information", "fields": ["Full Name", "Mobile Number", "Email", "Emergency Contact"], "purpose": "Patient communication and follow-up care", "storage_system": "Reception CRM / Clinic Database"},
+        {"key": "patient_appointments", "label": "Appointments", "category": "Health information", "fields": ["Patient Name", "Phone Number", "Appointment Date", "Doctor Requested"], "purpose": "Scheduling consultations and sending appointment reminders", "storage_system": "Clinic Booking Software / Register"},
+        {"key": "contact_details", "label": "Patient contact details", "category": "Contact information", "fields": ["Full Name", "Mobile Number", "Email", "Emergency Contact"], "purpose": "Patient communication and follow-up care", "storage_system": "Reception CRM / Clinic Database"},
         {"key": "diagnostic_reports", "label": "Diagnostic reports", "category": "Health information", "fields": ["Patient ID", "Test Results", "Sample Type", "Clinical Notes"], "purpose": "Laboratory testing and medical report delivery", "storage_system": "Lab Management System"},
         {"key": "billing", "label": "Billing", "category": "Billing information", "fields": ["Patient Name", "Invoice Number", "Payment Mode", "GST/Receipt Details"], "purpose": "Medical billing and statutory tax records", "storage_system": "Billing Software"},
-        {"key": "insurance_information", "label": "Insurance information", "category": "Billing information", "fields": ["Policyholder Name", "Policy Number", "Insurer/TPA Name"], "purpose": "Cashless or reimbursement insurance claim processing", "storage_system": "Insurance Desk Portal"},
-        {"key": "website_enquiries", "label": "Website enquiries", "category": "Website and application information", "fields": ["Visitor Name", "Phone", "Message", "Session Analytics"], "purpose": "Answering patient enquiries from public website", "storage_system": "Website Form & Email"},
-        {"key": "doctor_referrals", "label": "Doctor referrals", "category": "Health information", "fields": ["Referring Doctor Name", "Patient Name", "Clinical Summary"], "purpose": "Coordinating specialist referrals", "storage_system": "Clinical Records System"},
+        {"key": "insurance_information", "label": "Insurance", "category": "Billing information", "fields": ["Policyholder Name", "Policy Number", "Insurer/TPA Name"], "purpose": "Cashless or reimbursement insurance claim processing", "storage_system": "Insurance Desk Portal"},
     ],
     "saas": [
         {"key": "registration", "label": "Registration", "category": "Customer accounts", "fields": ["Full Name", "Work Email", "Organisation Name"], "purpose": "Creating customer workspace accounts", "storage_system": "Application Database"},
-        {"key": "user_profiles", "label": "User profiles", "category": "Customer accounts", "fields": ["Name", "Email", "Job Role", "Preferences"], "purpose": "Managing team member roles and workspace access", "storage_system": "Application Database"},
-        {"key": "subscription_billing", "label": "Subscription billing", "category": "Billing information", "fields": ["Company Billing Name", "GSTIN", "Payment Method Token", "Invoices"], "purpose": "SaaS subscription invoicing and payment collection", "storage_system": "Payment Gateway & Billing Software"},
-        {"key": "authentication", "label": "Authentication", "category": "Customer accounts", "fields": ["Email", "Hashed Password", "MFA Secret", "Login Logs"], "purpose": "Securing user logins and preventing unauthorised access", "storage_system": "Auth Store"},
-        {"key": "product_analytics", "label": "Product analytics", "category": "Website and application information", "fields": ["User ID", "Page/Feature Events", "IP Address", "Browser"], "purpose": "Improving product reliability and feature usability", "storage_system": "Analytics Platform"},
-        {"key": "customer_support", "label": "Customer support", "category": "Contact information", "fields": ["Name", "Email", "Support Ticket History"], "purpose": "Resolving customer technical issues", "storage_system": "Helpdesk Software"},
-        {"key": "marketing_communications", "label": "Marketing communications", "category": "Contact information", "fields": ["Name", "Business Email", "Opt-in Status"], "purpose": "Product updates and webinar announcements", "storage_system": "Email Marketing Platform"},
+        {"key": "user_profiles", "label": "Accounts", "category": "Customer accounts", "fields": ["Name", "Email", "Job Role", "Preferences"], "purpose": "Managing customer accounts and workspace access", "storage_system": "Application Database"},
+        {"key": "subscription_billing", "label": "Payments", "category": "Billing information", "fields": ["Company Billing Name", "GSTIN", "Payment Method Token", "Invoices"], "purpose": "SaaS subscription invoicing and payment collection", "storage_system": "Payment Gateway & Billing Software"},
+        {"key": "product_analytics", "label": "Analytics", "category": "Website and application information", "fields": ["User ID", "Page/Feature Events", "IP Address", "Browser"], "purpose": "Improving product reliability and usability", "storage_system": "Analytics Platform"},
+        {"key": "customer_support", "label": "Customer support", "category": "Contact information", "fields": ["Name", "Email", "Support Ticket History"], "purpose": "Resolving customer questions and issues", "storage_system": "Helpdesk Software"},
     ],
     "ecommerce": [
-        {"key": "customer_accounts", "label": "Customer accounts", "category": "Customer accounts", "fields": ["Name", "Email", "Mobile Number", "Saved Passwords"], "purpose": "Order tracking and customer login profiles", "storage_system": "Storefront Database"},
-        {"key": "order_history", "label": "Order history", "category": "Customer accounts", "fields": ["Order ID", "Purchased Items", "Order Timestamps"], "purpose": "Order fulfilment, warranty, and support", "storage_system": "Order Management System"},
-        {"key": "delivery_information", "label": "Delivery information", "category": "Contact information", "fields": ["Recipient Name", "Street Address", "PIN Code", "Delivery Phone"], "purpose": "Shipping parcels via logistics partners", "storage_system": "Shipping & Courier Partners"},
-        {"key": "payment_processing", "label": "Payment processing", "category": "Billing information", "fields": ["Transaction ID", "UPI/Card Token", "Amount"], "purpose": "Checkout payment collection and refunds", "storage_system": "Payment Gateway"},
+        {"key": "order_history", "label": "Orders", "category": "Customer accounts", "fields": ["Order ID", "Purchased Items", "Order Timestamps"], "purpose": "Order fulfilment, warranty, and support", "storage_system": "Order Management System"},
+        {"key": "delivery_information", "label": "Delivery details", "category": "Contact information", "fields": ["Recipient Name", "Street Address", "PIN Code", "Delivery Phone"], "purpose": "Shipping parcels via logistics partners", "storage_system": "Shipping & Courier Partners"},
+        {"key": "payment_processing", "label": "Payments", "category": "Billing information", "fields": ["Transaction ID", "UPI/Card Token", "Amount"], "purpose": "Checkout payment collection and refunds", "storage_system": "Payment Gateway"},
         {"key": "returns", "label": "Returns", "category": "Billing information", "fields": ["Order ID", "Pickup Address", "Refund Account / UPI"], "purpose": "Processing product exchanges and refunds", "storage_system": "Returns Desk & Finance"},
-        {"key": "marketing_campaigns", "label": "Marketing campaigns", "category": "Website and application information", "fields": ["Email", "Phone", "Ad Pixels", "Cart Activity"], "purpose": "Promotional messaging with opt-out support", "storage_system": "Marketing & Analytics Tools"},
+        {"key": "marketing_campaigns", "label": "Marketing", "category": "Website and application information", "fields": ["Email", "Phone", "Ad Pixels", "Cart Activity"], "purpose": "Promotional messaging with opt-out support", "storage_system": "Marketing & Analytics Tools"},
     ],
     "education": [
         {"key": "student_registration", "label": "Student registration", "category": "Student information", "fields": ["Student Name", "Date of Birth", "Admission ID", "Grade/Course"], "purpose": "Student enrolment and academic records", "storage_system": "School / EdTech MIS"},
-        {"key": "parent_contact", "label": "Parent contact information", "category": "Contact information", "fields": ["Parent/Guardian Name", "Mobile Number", "Email", "Residential Address"], "purpose": "Guardian notifications and Section 9 consent", "storage_system": "MIS & Messaging Tool"},
+        {"key": "parent_contact", "label": "Parent details", "category": "Contact information", "fields": ["Parent/Guardian Name", "Mobile Number", "Email", "Residential Address"], "purpose": "Guardian notifications and parental permission records", "storage_system": "MIS & Messaging Tool"},
         {"key": "attendance", "label": "Attendance", "category": "Student information", "fields": ["Student ID", "Daily Attendance Status", "Timetable"], "purpose": "Daily attendance monitoring and safety alerts", "storage_system": "Attendance Register / App"},
-        {"key": "fee_records", "label": "Fee records", "category": "Billing information", "fields": ["Student ID", "Payer Name", "Fee Receipt", "Payment Reference"], "purpose": "Tuition fee collection and accounting", "storage_system": "Fee Billing System"},
         {"key": "examination_records", "label": "Examination records", "category": "Student information", "fields": ["Student ID", "Roll Number", "Assessment Marks", "Report Cards"], "purpose": "Academic grading and certificate issuance", "storage_system": "Examination Database"},
+        {"key": "fee_records", "label": "Fee records", "category": "Billing information", "fields": ["Student ID", "Payer Name", "Fee Receipt", "Payment Reference"], "purpose": "Tuition fee collection and receipts", "storage_system": "Fee Billing System"},
     ],
     "professional_services": [
         {"key": "client_information", "label": "Client information", "category": "Contact information", "fields": ["Client Contact Name", "Work Email", "Phone", "Organisation"], "purpose": "Client onboarding and advisory engagements", "storage_system": "Practice CRM"},
-        {"key": "contracts", "label": "Contracts", "category": "Other personal information", "fields": ["Signatory Name", "Authorised Signatory Details", "Signed SOW/NDA"], "purpose": "Executing client agreements and compliance audits", "storage_system": "Document Storage"},
+        {"key": "contracts", "label": "Contracts", "category": "Other personal information", "fields": ["Signatory Name", "Authorised Signatory Details", "Signed SOW/NDA"], "purpose": "Executing client agreements and audits", "storage_system": "Document Storage"},
         {"key": "billing", "label": "Billing", "category": "Billing information", "fields": ["Billing Contact", "Invoice", "PAN/GST Details", "Bank Reference"], "purpose": "Fee invoicing and tax compliance", "storage_system": "Accounting Software"},
         {"key": "communication_records", "label": "Communication records", "category": "Contact information", "fields": ["Email Threads", "Meeting Notes", "Call Logs"], "purpose": "Client advisory records and project follow-up", "storage_system": "Business Email / Cloud Drive"},
-        {"key": "employee_data", "label": "Employee data", "category": "Employee information", "fields": ["Employee Name", "PAN", "Bank Account", "PF/ESI Details"], "purpose": "Employment administration under Section 7(i)", "storage_system": "HR & Payroll Software"},
+        {"key": "employee_data", "label": "Employee data", "category": "Employee information", "fields": ["Employee Name", "PAN", "Bank Account", "PF/ESI Details"], "purpose": "Employment administration", "storage_system": "HR & Payroll Software"},
     ],
 }
 
@@ -3278,63 +3302,54 @@ def get_home_summary_fast(org_id: str) -> Dict[str, Any]:
     if rem_tasks_all is None:
         rem_tasks_all = _initialize_assessment(org_id).get("remediation_tasks", [])
 
-    has_notice = bool(notices) or any("notice" in (e.get("category", "") + e.get("title", "")).lower() for e in evidence)
+    has_privacy_docs = bool(notices) or bool(evidence)
     steps = [
-        {"key": "business_profile", "title": "Tell us about your business", "completed": bool(profile.get("onboarding_completed") or (profile.get("company_name") and profile.get("industry"))), "action_view": "onboarding", "action_label": "Complete setup"},
-        {"key": "customer_data", "title": "Record your customer data", "completed": len(inventory) > 0, "action_view": "inventory", "action_label": "Add customer data"},
-        {"key": "website_scan", "title": "Scan your website", "completed": len(scans) > 0, "action_view": "scanner", "action_label": "Scan website"},
-        {"key": "privacy_notice", "title": "Create or upload your Privacy Notice", "completed": has_notice, "action_view": "notices", "action_label": "Create Privacy Notice"},
-        {"key": "vendors", "title": "Add companies you share data with", "completed": len(vendors) > 0, "action_view": "vendors", "action_label": "Add a company"},
-        {"key": "evidence", "title": "Upload proof into Evidence Vault", "completed": len(evidence) > 0, "action_view": "evidence", "action_label": "Upload proof"},
+        {"key": "business_details", "title": "Business details", "completed": bool(profile.get("onboarding_completed") or (profile.get("company_name") and profile.get("industry"))), "action_view": "onboarding", "action_label": "Update details"},
+        {"key": "website_check", "title": "Website check", "completed": len(scans) > 0, "action_view": "website-check", "action_label": "Check site"},
+        {"key": "customer_information", "title": "Customer information", "completed": len(inventory) > 0, "action_view": "inventory", "action_label": "Review data"},
+        {"key": "external_services", "title": "External services", "completed": len(vendors) > 0, "action_view": "vendors", "action_label": "Add companies"},
+        {"key": "privacy_documents", "title": "Privacy documents", "completed": has_privacy_docs, "action_view": "notices", "action_label": "Create notice"},
     ]
     completed_count = sum(1 for s in steps if s["completed"])
     setup_progress = {
         "completed_count": completed_count,
-        "total_steps": 6,
+        "total_steps": 5,
         "steps": steps,
         "next_recommended_step": next((s for s in steps if not s["completed"]), None),
         "onboarding_completed": bool(profile.get("onboarding_completed")),
     }
 
-    attention: List[Dict[str, Any]] = []
-    if not inventory:
-        attention.append({"id": "attn-inventory", "title": "List what customer details your business collects", "why": "Every privacy notice, vendor check, and deletion rule starts with knowing what customer data you hold.", "action_label": "Add customer data", "fix_target": "inventory", "severity": "HIGH"})
-    if not notices:
-        attention.append({"id": "attn-notice", "title": "Create your customer Privacy Notice draft", "why": "Customers need clear plain-English details of what you collect, why you collect it, and who to contact.", "action_label": "Create Privacy Notice", "fix_target": "notices", "severity": "HIGH"})
-    unsigned_vendors = [v for v in vendors if not any(w in str(v.get("dpa_status", "")).upper() for w in ("SIGNED", "EXECUTED", "ACTIVE"))]
-    if unsigned_vendors:
-        v0 = unsigned_vendors[0]
-        attention.append({"id": "attn-vendor-dpa", "title": f"Check agreement with {v0.get('name', 'vendor')} ({len(unsigned_vendors)} pending)", "why": "Section 8(2) requires written contracts with software, lab, and cloud vendors that handle your customer data.", "action_label": "Review companies", "fix_target": "vendors", "severity": "HIGH"})
-    elif not vendors:
-        attention.append({"id": "attn-vendors-empty", "title": "Add software, lab, or courier companies you share data with", "why": "Track billing tools, hosting, labs, and payment gateways so contracts and risks stay organised.", "action_label": "Add company", "fix_target": "vendors", "severity": "MEDIUM"})
-    if scans:
-        open_gaps = [f for f in scans[0].get("findings", []) if f.get("severity") in ("CRITICAL", "HIGH")]
-        if open_gaps:
-            attention.append({"id": "attn-scan-gap", "title": open_gaps[0].get("title", "Fix website privacy issue"), "why": f"Found on {scans[0].get('target_url', 'your website')} during your website privacy check.", "action_label": "Fix this", "fix_target": "scanner", "severity": open_gaps[0].get("severity", "HIGH")})
-    else:
-        attention.append({"id": "attn-scan-run", "title": "Check your public website for visible privacy gaps", "why": "Find missing privacy notice links, pre-checked boxes, or third-party scripts on your public website.", "action_label": "Run website check", "fix_target": "scanner", "severity": "MEDIUM"})
+    attention = _build_next_actions(
+        inventory=inventory,
+        notices=notices,
+        vendors=vendors,
+        scans=scans,
+        requests_list=requests_list,
+        retention=retention,
+        incidents=incidents,
+        rem_tasks=rem_tasks_all,
+        limit=3,
+    )
     open_req = [r for r in requests_list if r.get("status") not in ("COMPLETED", "REJECTED")]
-    if open_req:
-        attention.append({"id": "attn-requests", "title": f"Respond to {len(open_req)} open customer privacy request(s)", "why": "Keep verification and response records ready so no customer enquiry is missed.", "action_label": "Open requests", "fix_target": "rights", "severity": "HIGH"})
-    for rt in [t for t in rem_tasks_all if t.get("status") not in ("Resolved", "Completed", "RESOLVED", "Not applicable")][:3]:
-        attention.append({"id": rt.get("id"), "title": rt.get("title", "Follow-up task"), "why": rt.get("description", "Action item from your Action Plan."), "action_label": "Fix this", "fix_target": "remediation", "severity": rt.get("severity", "MEDIUM")})
-    attention = attention[:3]
+    generated_docs = store.get("generated_documents", {}).get(org_id, [])
 
     events: List[Dict[str, Any]] = []
     for sc in scans[:5]:
-        events.append({"timestamp": sc.get("scanned_at") or sc.get("created_at") or "", "title": f"Website scanned: {sc.get('target_url', '')}", "category": "Website Check", "target_view": "scanner"})
+        events.append({"timestamp": sc.get("scanned_at") or sc.get("created_at") or "", "title": f"Website checked: {sc.get('target_url', '')}", "category": "Website Check", "target_view": "website-check"})
     for ev in evidence[:5]:
-        events.append({"timestamp": ev.get("uploaded_at") or "", "title": f"Evidence uploaded: {ev.get('title', ev.get('filename', 'Document'))} ({ev.get('status', 'Uploaded')})", "category": "Evidence Vault", "target_view": "evidence"})
+        events.append({"timestamp": ev.get("uploaded_at") or "", "title": f"Document uploaded: {ev.get('title', ev.get('filename', 'Document'))} ({ev.get('status', 'Uploaded')})", "category": "Documents & Proof", "target_view": "evidence"})
     for n in notices[:5]:
         events.append({"timestamp": n.get("updated_at") or n.get("created_at") or "", "title": f"Privacy Notice saved: {n.get('title', 'Notice')} ({n.get('version', 'v1.0')})", "category": "Privacy Notice", "target_view": "notices"})
     for req in requests_list[:5]:
-        events.append({"timestamp": req.get("received_at") or "", "title": f"Customer privacy request logged ({req.get('type', 'ACCESS')} - {req.get('status', 'RECEIVED')})", "category": "Customer Requests", "target_view": "rights"})
+        events.append({"timestamp": req.get("received_at") or "", "title": f"Customer request logged ({req.get('type', 'ACCESS')} - {req.get('status', 'RECEIVED')})", "category": "Customer Requests", "target_view": "rights"})
     for inc in incidents[:5]:
-        events.append({"timestamp": inc.get("created_at") or "", "title": f"Incident logged: {inc.get('title', 'Security Incident')}", "category": "Incident Response", "target_view": "breaches"})
+        events.append({"timestamp": inc.get("created_at") or "", "title": f"Incident logged: {inc.get('title', 'Privacy Incident')}", "category": "Privacy Incident Response", "target_view": "breaches"})
     for aud in get_audit_logs(org_id, limit=8):
-        events.append({"timestamp": aud.get("timestamp", ""), "title": f"Account event: {aud.get('action', '')}", "category": "Audit Trail", "target_view": "settings"})
+        events.append({"timestamp": aud.get("timestamp", ""), "title": f"Account event: {aud.get('action', '')}", "category": "History", "target_view": "settings"})
     events.sort(key=lambda e: str(e.get("timestamp", "")), reverse=True)
 
+    open_rem_count = sum(1 for t in rem_tasks_all if t.get("status") not in ("Resolved", "Completed", "RESOLVED", "Not applicable"))
+    docs_count = len(notices) + len(evidence) + len(generated_docs)
     return {
         "profile": profile,
         "setup_progress": setup_progress,
@@ -3342,9 +3357,12 @@ def get_home_summary_fast(org_id: str) -> Dict[str, Any]:
         "recent_activity": events[:10],
         "counts": {
             "inventory_count": len(inventory),
+            "data_categories_count": len({str(i.get("category", "")).strip() for i in inventory if str(i.get("category", "")).strip()}) or len(inventory),
             "vendor_count": len(vendors),
             "vendors_count": len(vendors),
             "notice_count": len(notices),
+            "documents_count": docs_count,
+            "open_tasks_count": len(attention) if not rem_tasks_all else max(len(attention), open_rem_count),
             "consent_count": len(consents),
             "request_count": len(requests_list),
             "rights_requests_count": len(requests_list),

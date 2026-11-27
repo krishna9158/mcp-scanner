@@ -1,15 +1,26 @@
 {% extends "app_base.html" %}
+{% from "app/_guide_banner.html" import page_guide %}
 {% block content %}
 <div class="page-head">
   <div>
-    <h1 class="page-title">Discovery Centre</h1>
-    <p class="page-sub">Discover personal data clues from your public website, uploaded CSV/XLSX/DOCX/PDF files, and vendor tools—then confirm, edit, or reject every suggestion cleanly.</p>
+    <h1 class="page-title">Suggestions &amp; Document Import</h1>
+    <p class="page-sub">Upload spreadsheets or policy files (.CSV, .XLSX, .DOCX, .PDF) or inspect your public website—then Confirm, Edit, or Reject suggestions.</p>
   </div>
 </div>
 
-<div style="padding:12px 16px;border-radius:10px;background:var(--amber-soft);color:var(--amber);font-size:13.5px;font-weight:700;margin-bottom:20px;">
-  Important Technical Boundary: Public website inspection cannot inspect internal databases, HR files, or private billing software. Database discovery requires an authorised connector (planned roadmap), never guessed internal scans.
-</div>
+{{ page_guide(
+  "Let TrustAudit extract candidate customer fields, systems, and external companies from files you already have.",
+  "Avoids re-typing existing spreadsheets and notices while keeping humans in control of what gets confirmed.",
+  "Upload a CSV, Excel, Word, or PDF file below, review every extracted item, and click Confirm, Edit, or Reject.",
+  legal_ref="Technical boundary: Public checks inspect only external pages; private databases require an authorised connector.",
+  industry_examples={
+    "healthcare": "Upload a patient appointment export header CSV or clinic privacy policy PDF.",
+    "saas": "Upload an existing vendor register XLSX or website terms/privacy PDF.",
+    "ecommerce": "Upload an order schema sheet CSV or customer refund policy DOCX.",
+    "education": "Upload a student admission form template PDF or parent consent sheet."
+  },
+  ask_q="How do I confirm or reject extracted data suggestions?"
+) }}
 
 <div class="grid-2" style="margin-bottom:22px;">
   <div class="card">

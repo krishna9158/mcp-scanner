@@ -1,15 +1,30 @@
 {% extends "app_base.html" %}
+{% from "app/_guide_banner.html" import page_guide %}
 {% block content %}
 <div class="page-head">
   <div>
-    <h1 class="page-title">Data Retention &amp; Guided Deletion Workflow</h1>
-    <p class="page-sub">Define keeping durations, note Indian legal retention exceptions, and track manual 6-step deletion workflows with verification proof. TrustAudit never claims external automated deletion unless confirmed by a connected system.</p>
+    <h1 class="page-title">Data Retention &amp; Deletion</h1>
+    <p class="page-sub">Set plain keeping durations, record Indian statutory keeping requirements (such as tax invoices), and track guided deletion tasks.</p>
   </div>
   <div style="display:flex;gap:8px;">
     <button type="button" class="btn btn-outline btn-sm" onclick="openAddErasureModal()">+ Start Guided Deletion</button>
-    <button type="button" class="btn btn-primary btn-sm" onclick="openAddRetModal()">+ Add Retention Rule</button>
+    <button type="button" class="btn btn-primary btn-sm" onclick="openAddRetModal()">+ Add Keeping Rule</button>
   </div>
 </div>
+
+{{ page_guide(
+  "Decide how long you actually need different customer records—and keep track once old unnecessary files should be cleaned up.",
+  "Holding old personal details forever increases risk; deleting what is no longer needed protects both customers and your business.",
+  "Set a keeping rule for each data group or start a 6-step Guided Deletion workflow with completion proof.",
+  legal_ref="DPDP Act Section 8(7) & Rule 8 (erase when purpose is no longer served unless legal retention applies, such as GST/tax or medical record laws).",
+  industry_examples={
+    "healthcare": "Retain clinical records per medical guidelines while purging stale appointment marketing lists.",
+    "saas": "Delete inactive trial/closed account profiles after grace period while keeping GST billing invoices.",
+    "ecommerce": "Erase old marketing leads after opt-out while keeping invoice records for statutory tax audits.",
+    "education": "Purge enquiry forms post-admission while retaining student exam histories."
+  },
+  ask_q="How long should we keep customer invoices and personal records?"
+) }}
 
 <div class="card" style="margin-bottom:20px;">
   <h2 class="ta-h3" style="margin-bottom:8px;">6-Step Guided Deletion Workflow</h2>
