@@ -176,34 +176,36 @@ class PurePythonPDFBuilder:
 
 
 def _gather_org_report_data(org_id: str) -> Dict[str, Any]:
-    org = saas_store.get_organization(org_id) or {"id": org_id, "name": "Your Organisation", "plan": "starter"}
-    profile = dpdp_store.get_onboarding_profile(org_id) or saas_store.get_org_profile(org_id) or {}
-    company_name = profile.get("company_name") or org.get("name") or "Your Business"
+    org = saas_store.get_organization(org_id) or {"id": org_id, "name": "Registered Organisation", "plan": "starter"}
+    fast = dpdp_store.get_home_summary_fast(org_id)
+    profile = fast["profile"] or saas_store.get_org_profile(org_id) or {}
+    company_name = profile.get("company_name") or org.get("name") or "Registered Organisation"
+    store = dpdp_store._read_dpdp_store_cached()
     return {
         "org": org,
         "profile": profile,
         "company_name": company_name,
         "generated_at": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
-        "setup_progress": dpdp_store.get_setup_progress(org_id),
-        "attention_tasks": dpdp_store.get_home_attention_tasks(org_id, limit=5),
-        "inventory": dpdp_store.get_data_inventory(org_id),
-        "vendors": dpdp_store.get_vendors(org_id),
-        "notices": dpdp_store.get_privacy_notices(org_id),
-        "consents": dpdp_store.get_consent_records(org_id),
-        "withdrawals": dpdp_store.get_withdrawal_requests(org_id),
-        "requests": dpdp_store.get_rights_requests(org_id),
-        "retention": dpdp_store.get_retention_schedules(org_id),
-        "erasures": dpdp_store.get_erasure_tasks(org_id),
-        "incidents": dpdp_store.get_breach_incidents(org_id),
-        "scans": dpdp_store.get_website_scans(org_id),
+        "setup_progress": fast["setup_progress"],
+        "attention_tasks": fast["attention_tasks"],
+        "inventory": list(store.get("data_inventories", {}).get(org_id, [])),
+        "vendors": list(store.get("vendors", {}).get(org_id, [])),
+        "notices": list(store.get("privacy_notices", {}).get(org_id, [])),
+        "consents": list(store.get("consent_records", {}).get(org_id, [])),
+        "withdrawals": list(store.get("withdrawal_requests", {}).get(org_id, [])),
+        "requests": list(store.get("rights_requests", {}).get(org_id, [])),
+        "retention": list(store.get("retention_schedules", {}).get(org_id, [])),
+        "erasures": list(store.get("erasure_tasks", {}).get(org_id, [])),
+        "incidents": list(store.get("breach_incidents", {}).get(org_id, [])),
+        "scans": list(store.get("website_scans", {}).get(org_id, [])),
         "evidence": dpdp_store.get_evidence_artifacts(org_id),
         "legacy_evidence": evidence_vault.list_evidence_for_org(org_id, framework="DPDP"),
     }
 
 
-def generate_dpdp_pdf_report(org_id: str) -> bytes:
+def generate_dpdp_pdf_report(org_id: str, bundle_data: Optional[Dict[str, Any]] = None) -> bytes:
     """Generates a valid binary PDF readiness report strictly from stored org data."""
-    d = _gather_org_report_data(org_id)
+    d = bundle_data or _gather_org_report_data(org_id)
     pdf = PurePythonPDFBuilder(f"{d['company_name']} DPDP Readiness Report")
 
     pdf.add_heading(f"DPDP Readiness & Data Operations Summary - {d['company_name']}")
@@ -284,9 +286,9 @@ def generate_dpdp_pdf_report(org_id: str) -> bytes:
     return pdf.build_bytes()
 
 
-def generate_dpdp_html_report(org_id: str) -> str:
+def generate_dpdp_html_report(org_id: str, bundle_data: Optional[Dict[str, Any]] = None) -> str:
     """Generates a print-ready HTML summary from real organisation data."""
-    d = _gather_org_report_data(org_id)
+    d = bundle_data or _gather_org_report_data(org_id)
     esc = html.escape
     prog = d["setup_progress"]
     inv_rows = "".join(
@@ -340,8 +342,8 @@ def generate_dpdp_html_report(org_id: str) -> str:
 </html>"""
 
 
-def generate_dpdp_csv_export(org_id: str, scope: str = "full") -> str:
-    d = _gather_org_report_data(org_id)
+def generate_dpdp_csv_export(org_id: str, scope: str = "full", bundle_data: Optional[Dict[str, Any]] = None) -> str:
+    d = bundle_data or _gather_org_report_data(org_id)
     buf = io.StringIO()
     w = csv.writer(buf)
 
@@ -388,12 +390,12 @@ def generate_dpdp_evidence_bundle_zip(org_id: str) -> bytes:
     d = _gather_org_report_data(org_id)
     out = io.BytesIO()
     with zipfile.ZipFile(out, "w", compression=zipfile.ZIP_DEFLATED) as zf:
-        zf.writestr("00_TrustAudit_DPDP_Readiness_Summary.pdf", generate_dpdp_pdf_report(org_id))
-        zf.writestr("00_TrustAudit_DPDP_Readiness_Summary.html", generate_dpdp_html_report(org_id).encode("utf-8"))
-        zf.writestr("01_Customer_Data_List.csv", generate_dpdp_csv_export(org_id, "inventory").encode("utf-8"))
-        zf.writestr("02_Vendors_and_Agreements.csv", generate_dpdp_csv_export(org_id, "vendors").encode("utf-8"))
-        zf.writestr("03_Customer_Privacy_Requests.csv", generate_dpdp_csv_export(org_id, "requests").encode("utf-8"))
-        zf.writestr("04_Retention_Rules.csv", generate_dpdp_csv_export(org_id, "retention").encode("utf-8"))
+        zf.writestr("00_TrustAudit_DPDP_Readiness_Summary.pdf", generate_dpdp_pdf_report(org_id, bundle_data=d))
+        zf.writestr("00_TrustAudit_DPDP_Readiness_Summary.html", generate_dpdp_html_report(org_id, bundle_data=d).encode("utf-8"))
+        zf.writestr("01_Customer_Data_List.csv", generate_dpdp_csv_export(org_id, "inventory", bundle_data=d).encode("utf-8"))
+        zf.writestr("02_Vendors_and_Agreements.csv", generate_dpdp_csv_export(org_id, "vendors", bundle_data=d).encode("utf-8"))
+        zf.writestr("03_Customer_Privacy_Requests.csv", generate_dpdp_csv_export(org_id, "requests", bundle_data=d).encode("utf-8"))
+        zf.writestr("04_Retention_Rules.csv", generate_dpdp_csv_export(org_id, "retention", bundle_data=d).encode("utf-8"))
 
         for idx, notice in enumerate(d["notices"], 1):
             fname = sanitize_filename(f"notice_{idx}_{notice.get('version', 'v1')}.txt")

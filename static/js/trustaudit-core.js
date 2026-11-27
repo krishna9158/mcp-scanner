@@ -37,8 +37,46 @@
     }, 3600);
   }
 
+  const _INFLIGHT_ABORTS = {};
+
+  function debounce(fn, waitMs) {
+    let timer = null;
+    return function () {
+      const ctx = this, args = arguments;
+      clearTimeout(timer);
+      timer = setTimeout(function () { fn.apply(ctx, args); }, waitMs || 250);
+    };
+  }
+
+  function paginate(items, page, perPage) {
+    const arr = Array.isArray(items) ? items : [];
+    const size = Math.max(1, perPage || 20);
+    const totalPages = Math.max(1, Math.ceil(arr.length / size));
+    const cur = Math.min(totalPages, Math.max(1, page || 1));
+    const start = (cur - 1) * size;
+    return { items: arr.slice(start, start + size), page: cur, totalPages: totalPages, total: arr.length };
+  }
+
+  function renderRetryBanner(el, msg, retryFn) {
+    if (!el) return;
+    el.innerHTML =
+      '<div style="padding:12px 14px;border-radius:10px;background:rgba(220,38,38,0.08);border:1px solid rgba(220,38,38,0.22);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">' +
+      '<span style="color:#B91C1C;font-size:13.5px;font-weight:600;">' + esc(msg || 'Unable to load section.') + '</span>' +
+      '<button type="button" class="btn btn-outline btn-sm" id="ta-retry-banner-btn">Retry</button></div>';
+    const b = document.getElementById('ta-retry-banner-btn');
+    if (b && typeof retryFn === 'function') b.onclick = retryFn;
+  }
+
   async function apiJson(url, opts) {
     const options = Object.assign({}, opts || {});
+    if (options.dedupeKey && typeof AbortController !== 'undefined') {
+      if (_INFLIGHT_ABORTS[options.dedupeKey]) {
+        try { _INFLIGHT_ABORTS[options.dedupeKey].abort(); } catch (e) {}
+      }
+      const ctrl = new AbortController();
+      _INFLIGHT_ABORTS[options.dedupeKey] = ctrl;
+      options.signal = ctrl.signal;
+    }
     const headers = Object.assign({}, options.headers || {});
     const tok = getToken();
     if (tok && !headers.Authorization) headers.Authorization = 'Bearer ' + tok;
@@ -195,6 +233,105 @@
     });
   }
 
+  async function loadNotificationBadge() {
+    const badge = document.getElementById('ta-notif-badge');
+    if (!badge) return;
+    try {
+      const res = await apiJson('/api/dpdp/notifications', { dedupeKey: 'notif_badge' });
+      const n = Number(res.count || 0);
+      if (n > 0) { badge.textContent = String(n > 9 ? '9+' : n); badge.style.display = 'inline-flex'; }
+      else { badge.style.display = 'none'; }
+    } catch (e) {}
+  }
+
+  async function openNotifications() {
+    openDrawer('Workspace Notifications', '<div class="ta-muted">Checking genuine action alerts...</div>');
+    try {
+      const res = await apiJson('/api/dpdp/notifications');
+      const items = res.notifications || [];
+      const body = document.getElementById('ta-drawer-body');
+      if (!items.length) {
+        body.innerHTML = '<div class="empty-state"><strong>All caught up</strong><p class="ta-muted" style="margin-top:6px;">No overdue tasks, expiring evidence, pending customer requests, or security alerts.</p></div>';
+        return;
+      }
+      body.innerHTML = items.map(function (it) {
+        const cls = it.severity === 'HIGH' ? 'badge-amber' : 'badge-neutral';
+        return '<a href="' + esc(it.href || '/app/home') + '" style="display:block;padding:12px;border:1px solid var(--border);border-radius:10px;text-decoration:none;margin-bottom:10px;">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;"><strong>' + esc(it.title) + '</strong><span class="badge ' + cls + '">' + esc(it.severity || 'INFO') + '</span></div>' +
+          '<div class="ta-muted" style="font-size:12.5px;margin-top:4px;">' + esc(it.detail || '') + '</div></a>';
+      }).join('');
+    } catch (e) {
+      openDrawer('Workspace Notifications', '<div class="ta-muted">Failed loading notifications: ' + esc(e.message) + '</div>');
+    }
+  }
+
+  function openContextualHelp() {
+    const p = window.location.pathname || '/app/home';
+    const guide = {
+      '/app/home': ['Home Overview', 'Tracks setup progress (X of 6), top 3 priority tasks, and chronological workspace activity without inflated scores.'],
+      '/app/onboarding': ['Guided Onboarding', 'Confirm business details, personal data uses, and systems step by step before creating records.'],
+      '/app/discovery': ['Discovery Centre', 'Upload CSV/XLSX/DOCX/PDF files or run a Website Check to extract draft records labeled Needs review until approved.'],
+      '/app/data-inventory': ['Data Inventory', 'Track personal data categories, collection sources, lawful bases (Sec 6 consent vs Sec 7), storage, and retention.'],
+      '/app/data-map': ['Visual Data Map', 'Visualises confirmed Customer -> Intake -> Storage -> Vendor flows. Unconfirmed drafts stay out until accepted.'],
+      '/app/assessment': ['10-Topic Privacy Assessment', 'Covers Sections 3-17, S.O. 5458(E), and Rule 3-16 using 5 honest states from Not assessed to Verified.'],
+      '/app/action-plan': ['Action Plan', 'Switch between Kanban, List, and Calendar views to assign owners, due dates, and completion notes.'],
+      '/app/vendors': ['Vendors & Processors', 'Record cloud hosts, labs, and SaaS vendors, send Vendor Questionnaires, and track Section 8(2) contracts.'],
+      '/app/privacy-portal': ['Customer Privacy Portal', 'Configure your /portal/<slug> page for data principal access, correction, erasure, and grievance requests.'],
+      '/app/privacy-profile': ['Privacy Profile', 'Share only approved public details at /p/<slug>; unpublished drafts and vendor secrets never appear.'],
+      '/app/settings': ['Settings, 2FA & Sessions', 'Configure TOTP 2FA with offline SVG QR + 8 recovery codes, revoke other sessions, change password, or export audit logs.'],
+    };
+    const item = guide[p] || ['TrustAudit Workspace Help', 'Use Cmd/Ctrl + K to jump cleanly across inventory, vendors, notices, tasks, evidence, and reports.'];
+    openModal('Help: ' + item[0],
+      '<p style="font-size:14.5px;line-height:1.6;margin-bottom:14px;">' + esc(item[1]) + '</p>' +
+      '<div style="padding:12px;border-radius:10px;background:var(--bg-muted);font-size:13px;margin-bottom:14px;">' +
+      '<strong>Statutory Note:</strong> Substantive DPDP duties commence <strong>13 May 2027</strong> (Consent Manager rules 13 Nov 2026; S.O. 5458(E) clarified Sec 9(1) &amp; Sec 10 data audit).' +
+      '</div>' +
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
+      '<a href="/resources" class="btn btn-outline btn-sm">Open Statutory Library</a>' +
+      '<button type="button" class="btn btn-primary btn-sm" onclick="TA.openReportProblemModal()">Report a Problem</button></div>'
+    );
+  }
+
+  function openReportProblemModal() {
+    openModal('Report a Product Problem',
+      '<p class="ta-muted" style="margin-bottom:12px;">Describe an issue or unexpected behaviour. TrustAudit logs only your workspace ID, current page path, and description&mdash;zero customer PII or passwords are attached.</p>' +
+      '<form onsubmit="TA._submitReportProblem(event)">' +
+      '<div class="field"><label for="rp-cat">Issue Area</label><select id="rp-cat" class="input"><option>Page or button issue</option><option>Report or export issue</option><option>Website check issue</option><option>Authentication / 2FA</option><option>Other</option></select></div>' +
+      '<div class="field"><label for="rp-desc">What happened?</label><textarea id="rp-desc" class="input" rows="3" required minlength="5" placeholder="Describe steps to reproduce cleanly..."></textarea></div>' +
+      '<button type="submit" class="btn btn-primary" style="width:100%;">Submit Issue Report</button></form>' +
+      '<div id="rp-out" style="margin-top:10px;font-size:13px;"></div>'
+    );
+  }
+
+  async function _submitReportProblem(ev) {
+    ev.preventDefault();
+    const out = document.getElementById('rp-out');
+    try {
+      const r = await apiJson('/api/support/report-problem', {
+        method: 'POST',
+        body: JSON.stringify({
+          category: document.getElementById('rp-cat').value,
+          description: document.getElementById('rp-desc').value.trim(),
+          page_route: window.location.pathname,
+          browser_info: (navigator.userAgent || '').slice(0, 140),
+        }),
+      });
+      out.innerHTML = '<div style="padding:10px;border-radius:8px;background:var(--emerald-soft);">' + esc(r.message) + '</div>';
+    } catch (e) {
+      out.innerHTML = '<span style="color:var(--rose);">' + esc(e.message) + '</span>';
+    }
+  }
+
+  function toggleNavGroup(btn) {
+    const grp = btn && btn.closest('.nav-group');
+    if (!grp) return;
+    grp.classList.toggle('collapsed');
+    const key = btn.getAttribute('data-group');
+    try {
+      if (key) localStorage.setItem('ta_nav_col_' + key, grp.classList.contains('collapsed') ? '1' : '0');
+    } catch (e) {}
+  }
+
   async function logout() {
     try { await apiJson('/api/auth/logout', { method: 'POST' }); } catch (e) {}
     setToken('');
@@ -219,6 +356,15 @@
         shell.classList.add('sidebar-collapsed');
       }
     } catch (e) {}
+    try {
+      document.querySelectorAll('.nav-group-toggle[data-group]').forEach(function (btn) {
+        const key = btn.getAttribute('data-group');
+        if (localStorage.getItem('ta_nav_col_' + key) === '1' && !btn.closest('.nav-group').querySelector('.nav-item.active')) {
+          btn.closest('.nav-group').classList.add('collapsed');
+        }
+      });
+    } catch (e) {}
+    if (document.getElementById('ta-notif-badge')) loadNotificationBadge();
     // Scroll reveal animation
     const els = document.querySelectorAll('.reveal');
     if (els.length && 'IntersectionObserver' in window) {
@@ -244,11 +390,19 @@
     setToken: setToken,
     esc: esc,
     toast: toast,
+    debounce: debounce,
+    paginate: paginate,
+    renderRetryBanner: renderRetryBanner,
     apiJson: apiJson,
     openModal: openModal,
     closeModal: closeModal,
     openDrawer: openDrawer,
     closeDrawer: closeDrawer,
+    openNotifications: openNotifications,
+    openContextualHelp: openContextualHelp,
+    openReportProblemModal: openReportProblemModal,
+    _submitReportProblem: _submitReportProblem,
+    toggleNavGroup: toggleNavGroup,
     toggleTheme: toggleTheme,
     toggleSidebar: toggleSidebar,
     openCommandPalette: openCommandPalette,

@@ -405,7 +405,9 @@ def test_demo_route_rendering(client):
     assert res.status_code == 200
     html = res.get_data(as_text=True)
     assert "DEMO MODE" in html
-    assert "Arogya Diagnostics Clinic Ltd" in html
+    assert "DEMO DATA" in html
+    assert "Arogya Diagnostics Clinic" in html
+    assert "Demo Workspace" in html
     assert "Create My Real Workspace" in html
     assert "Visual Data Map" in html
     assert "Customer Privacy Portal Preview" in html

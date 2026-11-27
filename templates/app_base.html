@@ -34,7 +34,8 @@
         ("Start & Discover", [
           ("home", "/app/home", "Home"),
           ("onboarding", "/app/onboarding", "Guided Onboarding"),
-          ("discovery", "/app/discovery", "Discovery Centre")
+          ("discovery", "/app/discovery", "Discovery Centre"),
+          ("website-check", "/website-check", "Website Privacy Check")
         ]),
         ("Understand & Assess", [
           ("data-inventory", "/app/data-inventory", "Data Inventory"),
@@ -66,13 +67,18 @@
 
       {% for group_name, items in nav_groups %}
       <div class="nav-group">
-        <div class="nav-group-title">{{ group_name }}</div>
-        {% for key, href, label in items %}
-        <a href="{{ href }}" class="nav-item {% if active_page == key %}active{% endif %}" title="{{ label }}">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/></svg>
-          <span class="nav-label">{{ label }}</span>
-        </a>
-        {% endfor %}
+        <button type="button" class="nav-group-toggle" data-group="{{ group_name|lower|replace(' ', '_')|replace('&', '') }}" onclick="TA.toggleNavGroup(this)">
+          <span>{{ group_name }}</span>
+          <span class="nav-chevron" aria-hidden="true">&rsaquo;</span>
+        </button>
+        <div class="nav-group-items">
+          {% for key, href, label in items %}
+          <a href="{{ href }}" class="nav-item {% if active_page == key %}active{% endif %}" title="{{ label }}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/></svg>
+            <span class="nav-label">{{ label }}</span>
+          </a>
+          {% endfor %}
+        </div>
       </div>
       {% endfor %}
 
@@ -103,6 +109,12 @@
             <span>Search workspace...</span>
             <span class="kbd">Ctrl+K</span>
           </button>
+          <button type="button" class="btn btn-outline btn-sm" onclick="TA.openNotifications()" title="Workspace Notifications" aria-label="Workspace Notifications">
+            <span>Alerts</span>
+            <span id="ta-notif-badge" class="notif-badge" style="display:none;margin-left:4px;">0</span>
+          </button>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="TA.openContextualHelp()" title="Contextual Help &amp; Guidance" aria-label="Help">? Help</button>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="TA.openReportProblemModal()" title="Report a Problem">Report Issue</button>
           {% if org_info and org_info.is_demo %}
           <span class="badge badge-amber">DEMO MODE</span>
           {% else %}

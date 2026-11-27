@@ -138,8 +138,8 @@ Our core architectural commitments:
    - *Requirement:* Mandatory notification to the Data Protection Board of India and affected Data Principals upon personal data breach.
    - *TrustAudit Checks:* Incident response policy evidence tracking and credential exposure alerting.
    - *Status:* Readiness assessment.
-7. **Section 9 & Rules (Children's Personal Data):**
-   - *Requirement:* Verifiable parental consent before processing minors' data; strict prohibition on behavioral profiling and targeted ads.
+7. **Section 9(1) & Rules (Children & Persons with Lawful Guardians):**
+   - *Requirement:* Verifiable consent of the parent or lawful guardian before processing personal data of children (<18) or persons with disabilities who have lawful guardians (clarified by S.O. 5458(E)); strict prohibition on behavioral profiling and targeted ads directed at children.
    - *Status:* Readiness assessment (Exempt/Not applicable for B2B API software).
 8. **Section 10 (Significant Data Fiduciary Obligations):**
    - *Requirement:* India-based DPO, statutory data auditor, and periodic DPIA upon government designation.

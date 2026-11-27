@@ -3,7 +3,11 @@
 <div class="page-head">
   <div>
     <h1 class="page-title">Workspace Settings, Team RBAC &amp; Security</h1>
-    <p class="page-sub">Manage team members &amp; permissions, plan quota, TOTP 2FA, audit trail logs, and organisation deletion.</p>
+    <p class="page-sub">Manage team members &amp; permissions, plan quota, Authenticator 2FA with QR &amp; recovery codes, active sessions, password security, audit exports, and organisation deletion.</p>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+    <a href="/api/audit-logs?format=csv" class="btn btn-outline btn-sm">Export Change History (CSV)</a>
+    <button type="button" id="demo-reset-btn" class="btn btn-outline btn-sm" style="display:none;" onclick="resetDemoWorkspaceNow()">Reset Demo Sample Data</button>
   </div>
 </div>
 
@@ -21,15 +25,43 @@
   <div class="card">
     <h2 class="ta-h3" style="margin-bottom:10px;">Plan &amp; Two-Factor Authentication</h2>
     <div id="plan-box" style="margin-bottom:16px;">Loading plan...</div>
-    <div style="padding-top:14px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;">
-      <button type="button" class="btn btn-outline btn-sm" onclick="setupMfaModal()">Configure 2FA (TOTP)</button>
+    <div id="mfa-status-box" style="padding:12px;border-radius:10px;background:var(--bg-muted);margin-bottom:14px;font-size:13px;">Checking 2FA status...</div>
+    <div style="padding-top:12px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;">
+      <button type="button" id="btn-mfa-setup" class="btn btn-outline btn-sm" onclick="setupMfaModal()">Configure 2FA (QR + Recovery)</button>
+      <button type="button" id="btn-mfa-regen" class="btn btn-outline btn-sm" style="display:none;" onclick="regenerateRecoveryModal()">Regenerate Recovery Codes</button>
+      <button type="button" id="btn-mfa-disable" class="btn btn-outline btn-sm" style="display:none;" onclick="disableMfaModal()">Disable 2FA</button>
       <button type="button" class="btn btn-danger btn-sm" onclick="confirmDeleteOrgModal()">Delete Organisation Permanently</button>
     </div>
   </div>
 </div>
 
+<div class="grid-2" style="margin-bottom:22px;">
+  <!-- Active Sessions -->
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <h2 class="ta-h3" style="margin:0;">Active Sessions &amp; Devices</h2>
+      <button type="button" class="btn btn-outline btn-sm" onclick="revokeOtherSessions()">Sign Out Other Sessions</button>
+    </div>
+    <div id="sessions-list">Loading active sessions...</div>
+  </div>
+
+  <!-- Change Password -->
+  <div class="card">
+    <h2 class="ta-h3" style="margin-bottom:10px;">Change Account Password</h2>
+    <form onsubmit="changePasswordNow(event)">
+      <div class="field"><label for="cp-cur">Current Password</label><input id="cp-cur" type="password" class="input" required></div>
+      <div class="field"><label for="cp-new">New Password (8+ chars)</label><input id="cp-new" type="password" class="input" minlength="8" required></div>
+      <div class="field"><label for="cp-conf">Confirm New Password</label><input id="cp-conf" type="password" class="input" minlength="8" required></div>
+      <button type="submit" class="btn btn-primary btn-sm">Update Password</button>
+    </form>
+  </div>
+</div>
+
 <div class="card">
-  <h2 class="ta-h3" style="margin-bottom:12px;">Persistent Organisation Audit Logs</h2>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+    <h2 class="ta-h3" style="margin:0;">Persistent Organisation Audit Logs</h2>
+    <a href="/api/audit-logs?format=csv" class="btn btn-ghost btn-sm">Download CSV</a>
+  </div>
   <div id="audit-logs-box">Loading audit trail...</div>
 </div>
 {% endblock %}
@@ -37,29 +69,61 @@
 {% block extra_scripts %}
 <script>
   async function loadSettings() {
-    const [me, tm, logs] = await Promise.all([
+    const [me, tm, logs, sess] = await Promise.all([
       TA.apiJson('/api/auth/me'),
       TA.apiJson('/api/team/members'),
-      TA.apiJson('/api/audit-logs').catch(function () { return { logs: [] }; }),
+      TA.apiJson('/api/audit-logs').catch(function () { return { events: [], logs: [] }; }),
+      TA.apiJson('/api/auth/sessions').catch(function () { return { sessions: [] }; }),
     ]);
+
+    const user = me.user || {};
+    const org = me.organization || {};
+    if (org.is_demo) {
+      document.getElementById('demo-reset-btn').style.display = 'inline-flex';
+    }
+
     const members = tm.members || [];
     document.getElementById('team-list').innerHTML = members.map(function (m) {
       return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);">' +
         '<div><strong>' + TA.esc(m.name) + '</strong><div class="ta-muted" style="font-size:12px;">' + TA.esc(m.email) + '</div></div>' +
         '<div style="display:flex;gap:6px;align-items:center;"><span class="badge badge-neutral">' + TA.esc(m.role) + '</span>' +
         '<button type="button" class="btn btn-ghost btn-sm" onclick="delMember(\'' + TA.esc(m.id) + '\')">Remove</button></div></div>';
-    }).join('');
+    }).join('') || '<div class="ta-muted">No members loaded.</div>';
 
-    const org = me.organization || {};
     const pd = org.plan_details || {};
     document.getElementById('plan-box').innerHTML =
-      '<div><strong>Current Tier:</strong> ' + TA.esc(pd.name || org.plan || 'Starter') + ' (&#8377;' + TA.esc(pd.price_monthly_inr || 0) + '/mo)</div>' +
+      '<div><strong>Current Tier:</strong> ' + TA.esc(pd.name || org.plan || 'Starter') + ' (&#8377;' + TA.esc(pd.price_monthly_inr ?? 0) + '/mo &bull; ' + TA.esc(pd.max_team_members || 3) + ' seats, ' + TA.esc(pd.max_data_streams || 25) + ' records)</div>' +
       '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">' +
+      '<button type="button" class="btn btn-outline btn-sm" onclick="switchPlan(\'free\')">Free</button>' +
       '<button type="button" class="btn btn-outline btn-sm" onclick="switchPlan(\'starter\')">Starter</button>' +
       '<button type="button" class="btn btn-outline btn-sm" onclick="switchPlan(\'growth\')">Growth</button>' +
       '<button type="button" class="btn btn-outline btn-sm" onclick="switchPlan(\'business\')">Business</button></div>';
 
-    const evs = logs.logs || [];
+    const mfaEl = document.getElementById('mfa-status-box');
+    if (user.mfa_enabled) {
+      mfaEl.innerHTML = '<span class="badge badge-emerald">2FA Enabled (TOTP Active)</span> &bull; Single-use recovery codes remaining: <strong>' + TA.esc(user.mfa_recovery_remaining ?? 0) + '</strong>';
+      document.getElementById('btn-mfa-setup').style.display = 'none';
+      document.getElementById('btn-mfa-regen').style.display = 'inline-flex';
+      document.getElementById('btn-mfa-disable').style.display = 'inline-flex';
+    } else {
+      mfaEl.innerHTML = '<span class="badge badge-amber">2FA Not Enabled</span> Click below to generate an offline QR code and 8 single-use recovery codes.';
+      document.getElementById('btn-mfa-setup').style.display = 'inline-flex';
+      document.getElementById('btn-mfa-regen').style.display = 'none';
+      document.getElementById('btn-mfa-disable').style.display = 'none';
+    }
+
+    const sessions = sess.sessions || [];
+    document.getElementById('sessions-list').innerHTML = sessions.length ? sessions.map(function (s) {
+      const exp = s.expires_at ? new Date(s.expires_at * 1000).toISOString().slice(0, 10) : '';
+      return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);gap:10px;">' +
+        '<div><strong>' + TA.esc(s.user_agent || 'Session') + '</strong>' +
+        (s.is_current ? ' <span class="badge badge-emerald">Current Session</span>' : '') +
+        '<div class="ta-muted ta-mono" style="font-size:11.5px;">ID: ' + TA.esc(s.session_id) + ' &bull; Expires: ' + TA.esc(exp) + '</div></div>' +
+        (s.is_current ? '' : '<button type="button" class="btn btn-outline btn-sm" onclick="revokeSession(\'' + TA.esc(s.session_id) + '\')">Revoke</button>') +
+        '</div>';
+    }).join('') : '<div class="ta-muted">Only current session active.</div>';
+
+    const evs = logs.events || logs.logs || [];
     document.getElementById('audit-logs-box').innerHTML = evs.length ? '<div class="tbl-wrap"><table><thead><tr><th>Timestamp</th><th>Action</th><th>Actor</th><th>Details</th></tr></thead><tbody>' +
       evs.slice(0, 30).map(function (l) {
         return '<tr><td class="ta-mono" style="font-size:12px;">' + TA.esc((l.timestamp || '').slice(0, 19)) + '</td><td><strong>' + TA.esc(l.action) + '</strong></td><td>' + TA.esc(l.actor_email || l.actor_id || 'System') + '</td><td class="ta-muted">' + TA.esc(JSON.stringify(l.details || {})) + '</td></tr>';
@@ -69,10 +133,10 @@
   function openInviteModal() {
     TA.openModal('Invite Team Member',
       '<form onsubmit="inviteMember(event)">' +
-      '<div class="field"><label>Name</label><input id="tm-name" class="input" required></div>' +
-      '<div class="field"><label>Work Email</label><input id="tm-email" type="email" class="input" required></div>' +
-      '<div class="field"><label>Role</label><select id="tm-role" class="input"><option value="member">Member (Edit Workspace)</option><option value="viewer">Viewer (Read-Only)</option><option value="admin">Admin</option></select></div>' +
-      '<div class="field"><label>Temporary Password (8+ chars)</label><input id="tm-pwd" type="password" class="input" minlength="8" required></div>' +
+      '<div class="field"><label for="tm-name">Name</label><input id="tm-name" class="input" required></div>' +
+      '<div class="field"><label for="tm-email">Work Email</label><input id="tm-email" type="email" class="input" required></div>' +
+      '<div class="field"><label for="tm-role">Role</label><select id="tm-role" class="input"><option value="member">Member (Edit Workspace)</option><option value="viewer">Viewer (Read-Only)</option><option value="admin">Admin</option></select></div>' +
+      '<div class="field"><label for="tm-pwd">Temporary Password (8+ chars)</label><input id="tm-pwd" type="password" class="input" minlength="8" required></div>' +
       '<button type="submit" class="btn btn-primary" style="width:100%;">Create Team Account</button></form>'
     );
   }
@@ -94,21 +158,116 @@
     try { await TA.apiJson('/api/billing/plan', { method: 'POST', body: JSON.stringify({ plan: p }) }); TA.toast('Plan updated to ' + p); loadSettings(); }
     catch (e) { TA.toast(e.message, 'err'); }
   }
+
   async function setupMfaModal() {
     try {
       const r = await TA.apiJson('/api/auth/mfa/setup', { method: 'POST', body: JSON.stringify({}) });
+      const d = r.data || {};
       TA.openModal('Enable Authenticator 2FA (TOTP)',
-        '<p class="ta-muted" style="margin-bottom:10px;">Add this secret key into Google Authenticator / 1Password:</p>' +
-        '<div class="card ta-mono" style="margin-bottom:12px;">' + TA.esc(r.secret || '') + '</div>' +
-        '<div class="field"><label>Enter 6-digit code from app to confirm</label><input id="mfa-code" class="input ta-mono" placeholder="123456"></div>' +
-        '<button type="button" class="btn btn-primary" onclick="enableMfa()">Verify &amp; Enable 2FA</button>'
+        '<p class="ta-muted" style="margin-bottom:10px;">Scan this locally generated QR code with Google Authenticator, Microsoft Authenticator, or 1Password (never sent to external APIs):</p>' +
+        '<div style="display:flex;justify-content:center;margin:10px 0;">' + (d.qr_svg || '') + '</div>' +
+        '<div class="ta-muted" style="font-size:12px;margin-bottom:4px;">Manual setup key:</div>' +
+        '<div class="card ta-mono" style="margin-bottom:12px;font-size:13px;padding:10px;">' + TA.esc(d.manual_entry_key || d.secret || '') + '</div>' +
+        '<div class="field"><label for="mfa-code">Enter 6-digit code from app to verify &amp; generate recovery codes</label><input id="mfa-code" class="input ta-mono" placeholder="123456" autocomplete="one-time-code"></div>' +
+        '<button type="button" class="btn btn-primary" onclick="enableMfa()">Verify OTP &amp; Enable 2FA</button>'
       );
     } catch (e) { TA.toast(e.message, 'err'); }
   }
-  async function enableMfa() {
-    try { await TA.apiJson('/api/auth/mfa/enable', { method: 'POST', body: JSON.stringify({ code: document.getElementById('mfa-code').value.trim() }) }); TA.closeModal(); TA.toast('2FA enabled'); }
-    catch (e) { TA.toast(e.message, 'err'); }
+
+  function showRecoveryCodesModal(codes, msg) {
+    TA.openModal('Save Your Single-Use Recovery Codes',
+      '<div style="padding:10px 12px;border-radius:8px;background:var(--amber-soft);color:var(--amber);font-size:13px;font-weight:700;margin-bottom:12px;">' + TA.esc(msg) + ' Store these 8 single-use codes safely. Each code works once if you lose your authenticator device and will NOT be shown again.</div>' +
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">' +
+      (codes || []).map(function (c) { return '<div class="ta-mono" style="padding:8px 10px;border:1px solid var(--border);border-radius:8px;text-align:center;font-weight:700;">' + TA.esc(c) + '</div>'; }).join('') +
+      '</div>' +
+      '<button type="button" class="btn btn-primary" onclick="copyRecoveryCodes(\'' + TA.esc((codes || []).join('\\n')) + '\')">Copy All Recovery Codes</button>'
+    );
   }
+  function copyRecoveryCodes(txt) {
+    navigator.clipboard && navigator.clipboard.writeText(txt.replace(/\\n/g, '\n'));
+    TA.toast('Recovery codes copied to clipboard');
+  }
+
+  async function enableMfa() {
+    try {
+      const res = await TA.apiJson('/api/auth/mfa/enable', { method: 'POST', body: JSON.stringify({ code: document.getElementById('mfa-code').value.trim() }) });
+      TA.closeModal();
+      loadSettings();
+      if (res.recovery_codes && res.recovery_codes.length) {
+        showRecoveryCodesModal(res.recovery_codes, res.message || '2FA Enabled.');
+      } else {
+        TA.toast('2FA enabled');
+      }
+    } catch (e) { TA.toast(e.message, 'err'); }
+  }
+
+  function regenerateRecoveryModal() {
+    TA.openModal('Regenerate Recovery Codes',
+      '<p class="ta-muted" style="margin-bottom:12px;">Enter your current 6-digit authenticator code to replace existing recovery codes with 8 fresh single-use codes.</p>' +
+      '<div class="field"><label for="regen-totp">Current 6-digit OTP</label><input id="regen-totp" class="input ta-mono" placeholder="123456"></div>' +
+      '<button type="button" class="btn btn-primary" onclick="doRegenerateRecovery()">Generate New Codes</button>'
+    );
+  }
+  async function doRegenerateRecovery() {
+    try {
+      const r = await TA.apiJson('/api/auth/mfa/recovery/regenerate', { method: 'POST', body: JSON.stringify({ code: document.getElementById('regen-totp').value.trim() }) });
+      TA.closeModal();
+      loadSettings();
+      showRecoveryCodesModal(r.recovery_codes, r.message);
+    } catch (e) { TA.toast(e.message, 'err'); }
+  }
+
+  function disableMfaModal() {
+    TA.openModal('Disable Authenticator 2FA',
+      '<p class="ta-muted" style="margin-bottom:12px;">Enter your current 6-digit authenticator code (or a saved recovery code) to disable 2FA.</p>' +
+      '<div class="field"><label for="dis-totp">Verification Code</label><input id="dis-totp" class="input ta-mono" placeholder="123456 or XXXX-XXXX"></div>' +
+      '<button type="button" class="btn btn-danger" onclick="doDisableMfa()">Disable 2FA</button>'
+    );
+  }
+  async function doDisableMfa() {
+    try {
+      await TA.apiJson('/api/auth/mfa/disable', { method: 'POST', body: JSON.stringify({ code: document.getElementById('dis-totp').value.trim() }) });
+      TA.closeModal(); TA.toast('2FA disabled'); loadSettings();
+    } catch (e) { TA.toast(e.message, 'err'); }
+  }
+
+  async function revokeSession(sid) {
+    try {
+      await TA.apiJson('/api/auth/sessions/revoke', { method: 'POST', body: JSON.stringify({ session_id: sid }) });
+      TA.toast('Session revoked'); loadSettings();
+    } catch (e) { TA.toast(e.message, 'err'); }
+  }
+  async function revokeOtherSessions() {
+    try {
+      const r = await TA.apiJson('/api/auth/sessions/revoke', { method: 'POST', body: JSON.stringify({ revoke_others: true }) });
+      TA.toast(r.message || 'Other sessions signed out'); loadSettings();
+    } catch (e) { TA.toast(e.message, 'err'); }
+  }
+
+  async function changePasswordNow(ev) {
+    ev.preventDefault();
+    const cur = document.getElementById('cp-cur').value;
+    const nw = document.getElementById('cp-new').value;
+    const cf = document.getElementById('cp-conf').value;
+    if (nw !== cf) { TA.toast('New passwords do not match.', 'err'); return; }
+    try {
+      const r = await TA.apiJson('/api/auth/change-password', { method: 'POST', body: JSON.stringify({ current_password: cur, new_password: nw }) });
+      document.getElementById('cp-cur').value = '';
+      document.getElementById('cp-new').value = '';
+      document.getElementById('cp-conf').value = '';
+      TA.toast(r.message || 'Password updated cleanly');
+      loadSettings();
+    } catch (e) { TA.toast(e.message, 'err'); }
+  }
+
+  async function resetDemoWorkspaceNow() {
+    try {
+      await TA.apiJson('/api/demo/reset', { method: 'POST', body: JSON.stringify({}) });
+      TA.toast('Demo Sandbox restored cleanly');
+      loadSettings();
+    } catch (e) { TA.toast(e.message, 'err'); }
+  }
+
   function confirmDeleteOrgModal() {
     TA.openModal('Confirm Permanent Organisation Deletion',
       '<p style="color:var(--rose);margin-bottom:14px;">This permanently deletes your organisation, team users, customer data inventory, vendor records, notices, scans, and all Evidence Vault files.</p>' +

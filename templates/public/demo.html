@@ -2,24 +2,24 @@
 {% block title %}Interactive Demo Sandbox — TrustAudit{% endblock %}
 {% block content %}
 <div style="background:var(--amber-soft);border-bottom:1px solid rgba(180,83,9,0.2);padding:10px 24px;text-align:center;font-size:13.5px;font-weight:700;color:var(--amber);">
-  DEMO MODE &mdash; Viewing clearly labeled sample clinic workspace (Arogya Diagnostics Clinic Ltd). Create a free account for your real organisation workspace.
+  DEMO MODE &mdash; DEMO DATA &mdash; FOR ILLUSTRATION ONLY. Viewing sample workspace (Arogya Diagnostics Clinic &mdash; Demo Workspace). Create a free account for your real organisation workspace.
 </div>
 <section class="ta-section" style="padding-top:40px;">
   <div class="ta-container">
     <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;margin-bottom:24px;">
       <div>
-        <span class="badge badge-amber">Sample Business Preview</span>
-        <h1 style="font-size:30px;margin-top:8px;">Arogya Diagnostics Clinic Ltd (Demo Sandbox)</h1>
-        <p class="ta-muted">Explore real workflow modules before signing up—every card below shows representative sample clinic data.</p>
+        <span class="badge badge-amber">Sample Business Preview &bull; Demo Data Only</span>
+        <h1 style="font-size:30px;margin-top:8px;">Arogya Diagnostics Clinic &mdash; Demo Workspace</h1>
+        <p class="ta-muted">Explore real workflow modules before signing up&mdash;every card below shows representative sample clinic data for illustration only.</p>
       </div>
-      <a href="/register" class="btn btn-primary btn-lg">Create My Real Workspace</a>
+      <a href="/register?plan=free" class="btn btn-primary btn-lg cta-arrow-btn">Create My Real Workspace <span class="ta-arrow" aria-hidden="true">&rarr;</span></a>
     </div>
 
     <div id="demo-stats" class="grid-4" style="margin-bottom:24px;">
-      <div class="card"><div class="ta-muted">Setup Milestones</div><div id="dm-setup" style="font-size:26px;font-weight:850;margin-top:4px;">5 of 6</div></div>
-      <div class="card"><div class="ta-muted">Data Categories Listed</div><div id="dm-inv" style="font-size:26px;font-weight:850;margin-top:4px;">4</div></div>
+      <div class="card"><div class="ta-muted">Setup Milestones</div><div id="dm-setup" style="font-size:26px;font-weight:850;margin-top:4px;">4 of 6</div></div>
+      <div class="card"><div class="ta-muted">Data Categories Listed</div><div id="dm-inv" style="font-size:26px;font-weight:850;margin-top:4px;">5</div></div>
       <div class="card"><div class="ta-muted">Vendors Tracked</div><div id="dm-vnd" style="font-size:26px;font-weight:850;margin-top:4px;">3</div></div>
-      <div class="card"><div class="ta-muted">Priority Open Tasks</div><div id="dm-tsk" style="font-size:26px;font-weight:850;margin-top:4px;">3</div></div>
+      <div class="card"><div class="ta-muted">Priority Open Tasks</div><div id="dm-tsk" style="font-size:26px;font-weight:850;margin-top:4px;">2</div></div>
     </div>
 
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;">
@@ -43,9 +43,9 @@
       DEMO_DATA = d;
       const c = d.counts || {};
       const st = d.setup_progress || {};
-      document.getElementById('dm-setup').textContent = (st.completed_count || 5) + ' of ' + (st.total_steps || 6);
-      document.getElementById('dm-inv').textContent = c.inventory || 0;
-      document.getElementById('dm-vnd').textContent = c.vendors || 0;
+      document.getElementById('dm-setup').textContent = (st.completed_count ?? 4) + ' of ' + (st.total_steps || 6);
+      document.getElementById('dm-inv').textContent = c.inventory_count ?? c.inventory ?? 0;
+      document.getElementById('dm-vnd').textContent = c.vendor_count ?? c.vendors ?? 0;
       document.getElementById('dm-tsk').textContent = (d.attention_tasks || []).length;
     } catch (e) {}
     showDemoPanel('datamap');

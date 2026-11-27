@@ -18,6 +18,8 @@ Features:
 - Zero-Exposure Credential Redaction & Security Hardening
 """
 
+import csv
+import io
 import os
 import tempfile
 import json
@@ -54,7 +56,9 @@ import prioritizer
 import alerts
 import compliance_engine
 import compliance_frameworks
+import demo_fixture
 import evidence_vault
+import job_manager
 import remediation_centre
 import inventory_engine
 import vuln_intel_sources
@@ -78,7 +82,9 @@ def add_security_and_cache_headers(response):
         response.headers.setdefault("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
 
     path = request.path or ""
-    if not (path.startswith("/api/dpdp/evidence/") and ("/download" in path or "/preview" in path)):
+    if path.startswith("/static/"):
+        response.headers["Cache-Control"] = "public, max-age=3600"
+    elif not (path.startswith("/api/dpdp/evidence/") and ("/download" in path or "/preview" in path)):
         response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate, max-age=0"
         response.headers["Pragma"] = "no-cache"
         response.headers["Expires"] = "0"
@@ -282,12 +288,23 @@ def public_about_view():
 
 @app.route("/login", methods=["GET"])
 def public_login_view():
-    return render_template("public/auth.html", mode="login", next_url=request.args.get("next", "/app/home"), selected_plan="")
+    return render_template("public/auth.html", mode="login", next_url=request.args.get("next", "/app/home"), selected_plan="", selected_plan_info=None, all_plans=[])
 
 
 @app.route("/register", methods=["GET"])
 def public_register_view():
-    return render_template("public/auth.html", mode="register", next_url="/app/onboarding", selected_plan=request.args.get("plan", "free"))
+    plans = saas_store.get_public_plans()
+    req_plan = (request.args.get("plan") or "free").strip().lower()
+    alias = {"pro": "growth", "enterprise": "business"}
+    req_plan = alias.get(req_plan, req_plan)
+    sel_info = next((p for p in plans if p.get("key") == req_plan), None) or (plans[0] if plans else None)
+    sel_key = sel_info["key"] if sel_info else "free"
+    return render_template("public/auth.html", mode="register", next_url="/app/onboarding", selected_plan=sel_key, selected_plan_info=sel_info, all_plans=plans)
+
+
+@app.route("/website-check", methods=["GET"])
+def public_website_check_view():
+    return render_template("public/website_check.html", active_nav="website-check")
 
 
 @app.route("/portal/<org_slug>", methods=["GET"])
@@ -323,14 +340,15 @@ def public_vendor_intake_view(token):
 
 @app.route("/scan", methods=["GET", "POST"])
 def scan_endpoint():
-    """Archived scanner endpoint with backward compatibility."""
+    """Archived scanner endpoint with redirect to Website Privacy Check."""
     if not FEATURE_LEGACY_SCANNERS:
         if request.headers.get("Accept") == "application/json" or request.is_json:
             return jsonify({
                 "status": "archived",
-                "message": "Security scanner features have been archived in this release. TrustAudit is now a dedicated DPDP Compliance Management Platform."
+                "redirect": "/website-check",
+                "message": "Legacy security scanner archived. Use /website-check for DPDP Website Privacy Checks."
             }), 200
-        return redirect("/")
+        return redirect("/website-check")
 
     result = None
     error = None
@@ -927,13 +945,36 @@ def api_integrations_test():
 
 @app.route("/api/audit-logs", methods=["GET"])
 def api_audit_logs():
-    """Returns tenant-isolated security & compliance audit logs."""
+    """Returns tenant-isolated security & compliance audit logs (JSON or CSV)."""
     org_id, _, err = require_authenticated_tenant()
     if err:
         return err
     limit = int(request.args.get("limit", 100) or 100)
     action_filter = request.args.get("action")
     events = security_utils.get_audit_logs(org_id, limit=limit, action_filter=action_filter)
+    if (request.args.get("format") or "").strip().lower() == "csv":
+        buf = io.StringIO()
+        w = csv.writer(buf)
+        w.writerow(["Timestamp", "Action", "Actor Email", "Actor Role", "Status", "Resource Type", "Resource ID", "Details"])
+        for ev in events:
+            w.writerow([
+                ev.get("timestamp", ""),
+                ev.get("action", ""),
+                ev.get("actor_email", ""),
+                ev.get("actor_role", ""),
+                ev.get("status", "success"),
+                ev.get("resource_type", ""),
+                ev.get("resource_id", ""),
+                json.dumps(ev.get("details") or {}),
+            ])
+        return Response(
+            buf.getvalue(),
+            mimetype="text/csv; charset=utf-8",
+            headers={
+                "Content-Disposition": f'attachment; filename="TrustAudit_Audit_History_{org_id}.csv"',
+                "X-Content-Type-Options": "nosniff",
+            },
+        )
     return jsonify({"status": "success", "events": events, "count": len(events)}), 200
 
 
@@ -1456,12 +1497,14 @@ def api_auth_register():
     plan = data.get("plan", "starter")
     industry = data.get("industry", "")
     website = data.get("website", "")
+    terms_accepted = data.get("terms_accepted", None)
 
     if not email or not password:
         return jsonify({"status": "error", "message": "Email and password are required."}), 400
 
     ok, msg, res = saas_store.register_user(
-        email, password, name, org_name, country=country, plan=plan, industry=industry, website=website
+        email, password, name, org_name, country=country, plan=plan, industry=industry, website=website,
+        terms_accepted=bool(terms_accepted) if terms_accepted is not None else None,
     )
     if not ok:
         return jsonify({"status": "error", "message": msg}), 400
@@ -1492,8 +1535,9 @@ def api_auth_login():
     email = data.get("email", "")
     password = data.get("password", "")
     totp_code = data.get("totp_code") or data.get("code")
+    recovery_code = data.get("recovery_code")
 
-    ok, msg, res = saas_store.authenticate_user(email, password, totp_code=totp_code)
+    ok, msg, res = saas_store.authenticate_user(email, password, totp_code=totp_code, recovery_code=recovery_code)
     if not ok:
         if msg == "MFA_REQUIRED":
             return jsonify({
@@ -1586,13 +1630,75 @@ def api_auth_mfa_setup():
 
 @app.route("/api/auth/mfa/enable", methods=["POST"])
 def api_auth_mfa_enable():
-    """Confirms TOTP code and activates MFA on account."""
+    """Confirms TOTP code, enables MFA on account, and issues 8 single-use recovery codes."""
     org_id, user = get_current_tenant_and_user(require_auth=True)
     if not user:
         return jsonify({"error": "Unauthorized. Active session token required."}), 401
     data = request.get_json(silent=True) or {}
     code = data.get("code", "")
-    ok, msg = saas_store.confirm_and_enable_mfa(user["id"], code)
+    ok, msg, recovery_codes = saas_store.confirm_and_enable_mfa_with_recovery(user["id"], code)
+    if not ok:
+        return jsonify({"status": "error", "message": msg}), 400
+    return jsonify({"status": "success", "message": msg, "recovery_codes": recovery_codes}), 200
+
+
+@app.route("/api/auth/mfa/recovery/regenerate", methods=["POST"])
+def api_auth_mfa_recovery_regenerate():
+    """Regenerates 8 single-use backup recovery codes after live TOTP verification."""
+    _org_id, user = get_current_tenant_and_user(require_auth=True)
+    if not user:
+        return jsonify({"error": "Unauthorized. Active session token required."}), 401
+    data = request.get_json(silent=True) or {}
+    code = data.get("code", "")
+    ok, msg, recovery_codes = saas_store.regenerate_mfa_recovery_codes(user["id"], code)
+    if not ok:
+        return jsonify({"status": "error", "message": msg}), 400
+    return jsonify({"status": "success", "message": msg, "recovery_codes": recovery_codes}), 200
+
+
+@app.route("/api/auth/sessions", methods=["GET"])
+def api_auth_sessions():
+    """Lists active sessions belonging to the authenticated user."""
+    _org_id, user = get_current_tenant_and_user(require_auth=True)
+    if not user:
+        return jsonify({"error": "Unauthorized. Active session token required."}), 401
+    auth_header = request.headers.get("Authorization", "")
+    cur_tok = auth_header[7:].strip() if auth_header.startswith("Bearer ") else request.cookies.get("trustaudit_session", "")
+    sessions = saas_store.list_user_sessions(user["id"], current_token=cur_tok)
+    return jsonify({"status": "success", "sessions": sessions}), 200
+
+
+@app.route("/api/auth/sessions/revoke", methods=["POST"])
+def api_auth_sessions_revoke():
+    """Revokes a specific session by ID or signs out all other active sessions."""
+    _org_id, user = get_current_tenant_and_user(require_auth=True)
+    if not user:
+        return jsonify({"error": "Unauthorized. Active session token required."}), 401
+    data = request.get_json(silent=True) or {}
+    auth_header = request.headers.get("Authorization", "")
+    cur_tok = auth_header[7:].strip() if auth_header.startswith("Bearer ") else request.cookies.get("trustaudit_session", "")
+    if data.get("revoke_others"):
+        count = saas_store.revoke_other_sessions(user["id"], keep_token=cur_tok)
+        return jsonify({"status": "success", "revoked_count": count, "message": f"Signed out {count} other session(s)."}), 200
+    sid = str(data.get("session_id") or "").strip()
+    ok = saas_store.revoke_user_session(user["id"], sid)
+    if not ok:
+        return jsonify({"status": "error", "message": "Session not found."}), 404
+    return jsonify({"status": "success", "message": "Session revoked cleanly."}), 200
+
+
+@app.route("/api/auth/change-password", methods=["POST"])
+def api_auth_change_password():
+    """Verifies current password and applies a new 600,000-iteration PBKDF2 password."""
+    _org_id, user = get_current_tenant_and_user(require_auth=True)
+    if not user:
+        return jsonify({"error": "Unauthorized. Active session token required."}), 401
+    data = request.get_json(silent=True) or {}
+    cur_pwd = data.get("current_password", "")
+    new_pwd = data.get("new_password", "")
+    auth_header = request.headers.get("Authorization", "")
+    cur_tok = auth_header[7:].strip() if auth_header.startswith("Bearer ") else request.cookies.get("trustaudit_session", "")
+    ok, msg = saas_store.change_user_password(user["id"], cur_pwd, new_pwd, keep_token=cur_tok)
     if not ok:
         return jsonify({"status": "error", "message": msg}), 400
     return jsonify({"status": "success", "message": msg}), 200
@@ -2027,17 +2133,23 @@ def api_remediation_sync():
 
 @app.route("/api/demo/workspace", methods=["GET"])
 def api_demo_workspace():
-    """Public read-only clearly labeled Demo Sandbox data for product exploration."""
+    """Public read-only clearly labeled Demo Sandbox data from unified demo fixture."""
     import dpdp_website_scanner
-    sample_scan = dpdp_website_scanner.generate_demo_website_scan()
+    seed = demo_fixture.get_demo_seed_collections()
+    sample_scan = dpdp_website_scanner.generate_demo_website_scan(
+        business_name=demo_fixture.DEMO_ORG_NAME,
+        target_url=demo_fixture.DEMO_WEBSITE,
+        industry="Healthcare",
+    )
     return jsonify({
         "status": "success",
         "is_demo": True,
-        "demo_banner": "DEMO DATA — Example information for demonstration only. Changes here are not saved to a customer workspace.",
+        "demo_banner": demo_fixture.DEMO_BANNER,
         "profile": {
-            "company_name": "Sample Indian Clinic (Demo Sandbox)",
-            "industry": "Healthcare (Clinics & Diagnostics)",
-            "website": "https://arogyaclinic.example.in",
+            "company_name": demo_fixture.DEMO_ORG_NAME,
+            "industry": demo_fixture.DEMO_INDUSTRY,
+            "website": demo_fixture.DEMO_WEBSITE,
+            "privacy_email": demo_fixture.DEMO_PRIVACY_EMAIL,
         },
         "setup_progress": {
             "completed_count": 4,
@@ -2051,42 +2163,56 @@ def api_demo_workspace():
                 {"key": "evidence", "title": "Upload proof into Evidence Vault", "completed": False},
             ],
         },
+        "attention_tasks": [
+            {"id": "demo-tsk-1", "title": "Execute written DPA with PathCare Reference Lab", "severity": "HIGH", "why": "Section 8(2) requires written contracts with external labs receiving patient records."},
+            {"id": "demo-tsk-2", "title": "Uncheck marketing consent box on patient booking form", "severity": "CRITICAL", "why": "Affirmative unchecked consent required under Section 6."},
+        ],
         "counts": {
-            "inventory_count": 5,
-            "vendor_count": 3,
-            "notice_count": 1,
-            "request_count": 2,
-            "retention_count": 4,
-            "incident_count": 1,
-            "evidence_count": 3,
+            "inventory_count": len(seed["inventory"]),
+            "vendor_count": len(seed["vendors"]),
+            "notice_count": len(seed["notices"]),
+            "request_count": len(seed["requests"]),
+            "retention_count": len(seed["retention"]),
+            "incident_count": len(seed["incidents"]),
+            "evidence_count": len(seed["evidence"]),
             "scan_count": 1,
         },
         "sample_scan": sample_scan,
     }), 200
 
 
+@app.route("/api/demo/reset", methods=["POST"])
+def api_demo_reset():
+    """Allows platform admins or authenticated demo workspace owner to reset ONLY org-default."""
+    org_id, user, err = require_authenticated_tenant(allowed_roles=("admin",))
+    if err:
+        return err
+    if not (user.get("is_platform_admin") or org_id == demo_fixture.DEMO_ORG_ID):
+        return jsonify({"status": "error", "message": "Demo reset is restricted to platform administrators or the demo sandbox owner."}), 403
+    summary = demo_fixture.reset_demo_workspace(actor=user.get("email") or "Administrator")
+    return jsonify({"status": "success", "message": "Demo sandbox restored to canonical fixture state.", "demo": summary}), 200
+
+
+@app.route("/api/admin/demo/reset", methods=["POST"])
+def api_admin_demo_reset():
+    """Platform-admin endpoint to cleanly reset demo workspace data."""
+    _org_id, user, err = require_platform_admin()
+    if err:
+        return err
+    summary = demo_fixture.reset_demo_workspace(actor=user.get("email") or "Platform Admin")
+    return jsonify({"status": "success", "message": "Demo sandbox restored.", "demo": summary}), 200
+
+
 @app.route("/api/dpdp/home-summary", methods=["GET"])
 def api_dpdp_home_summary():
-    """Returns genuine home dashboard metrics, 6-step setup progress, max 3 real tasks, and real recent activity."""
+    """Single-pass cached home dashboard metrics, 6-step setup progress, max 3 real tasks, and real activity."""
     org_id, user, err = require_authenticated_tenant()
     if err:
         return err
 
-    profile = dpdp_store.get_onboarding_profile(org_id) or saas_store.get_org_profile(org_id) or {}
+    fast = dpdp_store.get_home_summary_fast(org_id)
     org = saas_store.get_organization(org_id) or {}
-    setup = dpdp_store.get_setup_progress(org_id)
-    attention = dpdp_store.get_home_attention_tasks(org_id, limit=3)
-    activity = dpdp_store.get_recent_activity(org_id, limit=10)
-
-    inventory = dpdp_store.get_data_inventory(org_id)
-    vendors = dpdp_store.get_vendors(org_id)
-    notices = dpdp_store.get_privacy_notices(org_id)
-    requests_list = dpdp_store.get_rights_requests(org_id)
-    retention = dpdp_store.get_retention_schedules(org_id)
-    incidents = dpdp_store.get_breach_incidents(org_id)
-    evidence = dpdp_store.get_evidence_artifacts(org_id)
-    scans = dpdp_store.get_website_scans(org_id)
-    consents = dpdp_store.get_consent_records(org_id)
+    profile = fast["profile"] or saas_store.get_org_profile(org_id) or {}
 
     return jsonify({
         "status": "success",
@@ -2095,28 +2221,50 @@ def api_dpdp_home_summary():
         "organization": org,
         "organisation": org,
         "profile": profile,
-        "setup_progress": setup,
-        "attention_tasks": attention,
-        "recent_activity": activity,
-        "counts": {
-            "inventory_count": len(inventory),
-            "vendor_count": len(vendors),
-            "vendors_count": len(vendors),
-            "notice_count": len(notices),
-            "consent_count": len(consents),
-            "request_count": len(requests_list),
-            "rights_requests_count": len(requests_list),
-            "open_requests_count": sum(1 for r in requests_list if r.get("status") not in ("COMPLETED", "REJECTED")),
-            "retention_count": len(retention),
-            "incident_count": len(incidents),
-            "evidence_count": len(evidence),
-            "evidence_awaiting_review_count": sum(1 for e in evidence if e.get("status") in ("Uploaded", "Pending review")),
-            "scan_count": len(scans),
-            "website_scans_count": len(scans),
-        },
-        "latest_scan": scans[0] if scans else None,
+        "setup_progress": fast["setup_progress"],
+        "attention_tasks": fast["attention_tasks"],
+        "recent_activity": fast["recent_activity"],
+        "counts": fast["counts"],
+        "latest_scan": fast["latest_scan"],
         "encryption_status": security_utils.encryption_status_summary(),
     }), 200
+
+
+@app.route("/api/dpdp/notifications", methods=["GET"])
+def api_dpdp_notifications():
+    """Returns genuine notifications from stored tasks, requests, expiring evidence, DPAs, and security logs."""
+    org_id, _, err = require_authenticated_tenant()
+    if err:
+        return err
+    items = dpdp_store.get_notifications(org_id)
+    return jsonify({"status": "success", "notifications": items, "count": len(items)}), 200
+
+
+@app.route("/api/support/report-problem", methods=["POST"])
+def api_support_report_problem():
+    """Logs a user-reported problem with a reference ID without attaching sensitive customer PII."""
+    org_id, user, err = require_authenticated_tenant()
+    if err:
+        return err
+    data = request.get_json(silent=True) or {}
+    desc = str(data.get("description") or "").strip()
+    if not desc or len(desc) < 5:
+        return jsonify({"status": "error", "message": "Please describe what happened (at least 5 characters)."}), 400
+    entry = saas_store.record_support_problem(
+        org_id=org_id,
+        user_id=user.get("id", ""),
+        user_email=user.get("email", ""),
+        page_route=data.get("page_route", ""),
+        category=data.get("category", "Product issue"),
+        description=desc,
+        browser_info=data.get("browser_info", ""),
+    )
+    return jsonify({
+        "status": "success",
+        "reference_id": entry["reference_id"],
+        "message": f"Issue logged cleanly under reference {entry['reference_id']}. No customer records or passwords were attached.",
+        "ticket": entry,
+    }), 201
 
 
 @app.route("/api/dpdp/onboarding", methods=["GET", "POST"])
@@ -2777,6 +2925,87 @@ def api_dpdp_report_bundle():
     )
 
 
+@app.route("/api/dpdp/reports/jobs", methods=["POST"])
+def api_dpdp_report_job_start():
+    """Starts background job generating a ZIP Evidence Bundle or PDF Report without blocking UI."""
+    org_id, actor, err = require_authenticated_tenant()
+    if err:
+        return err
+    data = request.get_json(silent=True) or {}
+    kind = (data.get("kind") or "bundle").strip().lower()
+    idem = data.get("idempotency_key") or f"report-{kind}"
+
+    def _worker(update_progress, is_cancelled):
+        update_progress(20, "Gathering organisation readiness records...")
+        if is_cancelled():
+            return None
+        bdata = dpdp_reports._gather_org_report_data(org_id)
+        update_progress(60, f"Compiling {kind.upper()} artifact...")
+        if kind == "pdf":
+            raw = dpdp_reports.generate_dpdp_pdf_report(org_id, bundle_data=bdata)
+            return {
+                "bytes": raw,
+                "filename": f"TrustAudit_DPDP_Report_{org_id}.pdf",
+                "mimetype": "application/pdf",
+            }
+        raw = dpdp_reports.generate_dpdp_evidence_bundle_zip(org_id)
+        return {
+            "bytes": raw,
+            "filename": f"TrustAudit_Evidence_Bundle_{org_id}.zip",
+            "mimetype": "application/zip",
+        }
+
+    job = job_manager.submit_job(org_id, f"report_{kind}", f"Generate DPDP {kind.upper()} Export", _worker, idempotency_key=idem)
+    security_utils.append_audit_log(
+        org_id=org_id, action="report.job_started", resource_type="job",
+        resource_id=job["job_id"], actor_user_id=actor.get("id", ""), actor_email=actor.get("email", ""),
+    )
+    return jsonify({"status": "accepted", "job_id": job["job_id"], "job": job}), 202
+
+
+@app.route("/api/jobs/<job_id>", methods=["GET"])
+def api_job_status(job_id):
+    """Returns progress and result metadata for a tenant-isolated background job."""
+    org_id, _, err = require_authenticated_tenant()
+    if err:
+        return err
+    job = job_manager.get_job(org_id, job_id)
+    if not job:
+        return jsonify({"status": "error", "message": "Background job not found."}), 404
+    return jsonify({"status": "success", "job": job}), 200
+
+
+@app.route("/api/jobs/<job_id>/cancel", methods=["POST"])
+def api_job_cancel(job_id):
+    org_id, _, err = require_authenticated_tenant()
+    if err:
+        return err
+    job = job_manager.cancel_job(org_id, job_id)
+    if not job:
+        return jsonify({"status": "error", "message": "Background job not found."}), 404
+    return jsonify({"status": "success", "job": job}), 200
+
+
+@app.route("/api/jobs/<job_id>/download", methods=["GET"])
+def api_job_download(job_id):
+    """Downloads artifact generated by a completed background export job."""
+    org_id, _, err = require_authenticated_tenant()
+    if err:
+        return err
+    dl = job_manager.get_job_download(org_id, job_id)
+    if not dl:
+        return jsonify({"status": "error", "message": "Artifact not ready or job not found."}), 404
+    fname = security_utils.sanitize_filename(dl.get("filename", "export.bin"))
+    return Response(
+        dl["bytes"],
+        mimetype=dl.get("mimetype", "application/octet-stream"),
+        headers={
+            "Content-Disposition": f'attachment; filename="{fname}"',
+            "X-Content-Type-Options": "nosniff",
+        },
+    )
+
+
 # ==============================================================================
 # DPDP WEBSITE SCANNER & GAP DETECTION API
 # ==============================================================================
@@ -2831,6 +3060,57 @@ def api_dpdp_start_website_scan():
         )
         dpdp_store.save_website_scan(org_id, scan_report)
         return jsonify({"status": "success", "scan": scan_report}), 200
+
+    use_async = (request.args.get("async") in ("1", "true", "yes")) or bool(data.get("async"))
+    if use_async:
+        def _scan_worker(update_progress, is_cancelled):
+            import dpdp_website_scanner
+            update_progress(25, f"Inspecting public pages at {target_url}...")
+            if is_cancelled():
+                return None
+            scanner = dpdp_website_scanner.DPDPWebsiteScanner(
+                target_url=target_url,
+                business_name=business_name,
+                industry=industry,
+                country=country,
+                business_type=business_type,
+                website_purpose=website_purpose,
+                collects_personal_info=collects_personal_info,
+                children_data_processed=children_data_processed,
+                known_data_types=known_data_types,
+                authorization_confirmed=authorization_confirmed,
+                max_pages=20,
+            )
+            scan_rep = scanner.run_scan()
+            if is_cancelled():
+                return None
+            update_progress(85, "Saving observed findings to workspace...")
+            dpdp_store.save_website_scan(org_id, scan_rep)
+            disc_list = [
+                {
+                    "extracted_type": "tracker" if "script" in str(f.get("category", "")).lower() or "cookie" in str(f.get("title", "")).lower() else "website_form",
+                    "value": f.get("title", "Observed Website Privacy Item"),
+                    "category": "Website and application information",
+                    "fields": f.get("observed_items", []) or [f.get("description", "")[:100]],
+                    "purpose": f.get("remediation", "Review public form/notice alignment"),
+                    "storage_location": target_url,
+                    "source_document": target_url,
+                    "confidence": f.get("confidence", "MEDIUM"),
+                    "status": "Needs review",
+                }
+                for f in scan_rep.get("findings", [])[:20]
+            ]
+            if disc_list:
+                dpdp_store.save_discovery_suggestions(org_id, disc_list)
+            security_utils.append_audit_log(
+                org_id=org_id, action="scanner.website_scanned", resource_type="website_scan",
+                resource_id=scan_rep.get("scan_id", ""), actor_user_id=actor.get("id", ""), actor_email=actor.get("email", ""),
+                details={"target_url": target_url},
+            )
+            return {"scan": scan_rep}
+
+        job = job_manager.submit_job(org_id, "website_scan", f"Website Privacy Check: {target_url}", _scan_worker, idempotency_key=target_url.lower())
+        return jsonify({"status": "accepted", "job_id": job["job_id"], "job": job}), 202
 
     import dpdp_website_scanner
     scanner = dpdp_website_scanner.DPDPWebsiteScanner(
@@ -3339,15 +3619,90 @@ _PUBLIC_TRUST_CACHE = {"data": None, "cached_at": 0}
 
 @app.route("/api/public/trust-status", methods=["GET"])
 def api_public_trust_status():
-    """Returns truthful, non-inflated operational security telemetry for the public Trust Centre."""
+    """Returns truthful, configuration-aware operational security telemetry for the public Trust Centre."""
     now = time.time()
-    if _PUBLIC_TRUST_CACHE["data"] and (now - _PUBLIC_TRUST_CACHE["cached_at"] < 30):
+    enc_summary = security_utils.encryption_status_summary()
+    app_enc_on = bool(enc_summary.get("app_layer_encryption_configured"))
+    gemini_on = bool(os.environ.get("GEMINI_API_KEY", "").strip())
+    is_https = request.is_secure or (request.headers.get("X-Forwarded-Proto", "").lower() == "https")
+    cache_key = (app_enc_on, gemini_on, is_https)
+    if (
+        _PUBLIC_TRUST_CACHE["data"]
+        and _PUBLIC_TRUST_CACHE.get("key") == cache_key
+        and (now - _PUBLIC_TRUST_CACHE["cached_at"] < 30)
+    ):
         return jsonify(_PUBLIC_TRUST_CACHE["data"]), 200
 
-    enc_summary = security_utils.encryption_status_summary()
+    controls_matrix = [
+        {
+            "id": "tenant_isolation",
+            "control": "Multi-Tenant Organisation & RBAC Isolation",
+            "state": "Enabled and verified by automated test",
+            "basis": "Verified via pytest multi-tenant isolation, Viewer read-only enforcement, and Admin console 403 checks.",
+        },
+        {
+            "id": "password_hashing",
+            "control": "Password Storage (PBKDF2-HMAC-SHA256 600,000 iterations)",
+            "state": "Enabled and verified by automated test",
+            "basis": "Per-user 16-byte random salt, constant-time comparison, automatic rehash-on-login.",
+        },
+        {
+            "id": "session_and_mfa",
+            "control": "SHA-256 Session Storage, TOTP QR & Recovery Codes",
+            "state": "Enabled and verified by automated test",
+            "basis": "HttpOnly SameSite cookies, session revocation, offline SVG QR, and single-use recovery hashes.",
+        },
+        {
+            "id": "ssrf_upload_guards",
+            "control": "SSRF Protection & Safe File Upload Magic-Byte Validation",
+            "state": "Enabled and verified by automated test",
+            "basis": "Blocks private/loopback/CGNAT/IPv4-mapped IPv6/metadata IPs and enforces 5 MB allowlist with nosniff headers.",
+        },
+        {
+            "id": "app_layer_encryption",
+            "control": "Application-Layer File Encryption (Fernet via TRUSTAUDIT_DATA_KEY)",
+            "state": "Enabled and verified by automated test" if app_enc_on else "Not enabled",
+            "basis": (
+                "TRUSTAUDIT_DATA_KEY configured; Evidence Vault uploads encrypted with Fernet before disk write."
+                if app_enc_on
+                else "TRUSTAUDIT_DATA_KEY is not configured in this environment. Infrastructure disk encryption still applies if provided by host; app-layer Fernet encryption is Not enabled."
+            ),
+        },
+        {
+            "id": "tls_transport",
+            "control": "HTTPS / TLS Transport Encryption",
+            "state": "Enabled and verified by automated test" if is_https else "Partially configured",
+            "basis": (
+                "Serving over HTTPS with HSTS header active."
+                if is_https
+                else "Render production edge enforces TLS; current request arrived over local HTTP development socket."
+            ),
+        },
+        {
+            "id": "ai_privacy_layer",
+            "control": "AI Assistant PII Redaction Layer",
+            "state": "Enabled and verified by automated test" if not gemini_on else "Enabled but not independently tested",
+            "basis": (
+                "Local deterministic DPDP knowledge corpus active; zero prompts leave server to external LLM APIs."
+                if not gemini_on
+                else "External Gemini API configured with regex scrubbing of email/phone/PAN patterns prior to prompt submission."
+            ),
+        },
+    ]
+
+    posture_state = "verified" if app_enc_on else "attention_recommended"
+    posture_summary = (
+        "All Core Security Controls Active & Configured"
+        if app_enc_on
+        else "Service Healthy • App-Layer Fernet Encryption Not Enabled (TRUSTAUDIT_DATA_KEY unset)"
+    )
+
     telemetry = {
         "status": "healthy",
+        "posture_state": posture_state,
+        "posture_summary": posture_summary,
         "timestamp": time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime()),
+        "controls_matrix": controls_matrix,
         "tenant_isolation": {
             "status": "enforced",
             "verification": "Verified via automated pytest tenant isolation and RBAC boundary test suite",
@@ -3355,23 +3710,24 @@ def api_public_trust_status():
         "security_controls": {
             "encryption_in_transit": "HTTPS / TLS enforced in production behind Render edge proxy",
             "encryption_at_rest": (
-                "Render-managed volume encryption on persistent disks; application-layer Fernet encryption active for Evidence Vault files"
-                if enc_summary["app_layer_encryption_configured"]
-                else "Render-managed volume encryption on persistent disks; optional application-layer Fernet encryption available via TRUSTAUDIT_DATA_KEY"
+                "Application-layer Fernet encryption active for Evidence Vault files (TRUSTAUDIT_DATA_KEY configured)"
+                if app_enc_on
+                else "App-layer Fernet encryption is Not enabled (TRUSTAUDIT_DATA_KEY unset); hosting provider volume encryption applies"
             ),
             "password_hashing": "PBKDF2-HMAC-SHA256 (600,000 iterations, OWASP work factor with automatic rehash-on-login)",
             "session_security": "SHA-256 hashed persistent session tokens in HttpOnly SameSite cookies",
-            "mfa_status": "Optional RFC 6238 TOTP MFA available per user account",
+            "mfa_status": "Optional RFC 6238 TOTP MFA with offline SVG QR + 8 single-use recovery codes",
             "ssrf_protection": "Enforced (dual-stack DNS resolution, private/loopback/CGNAT/IPv4-mapped IPv6 blocking, cloud metadata rejection, redirect-hop checks)",
             "ai_assistant_privacy": (
                 "External Google Gemini API enabled (queries stripped of personal email/phone/ID strings before sending)"
-                if os.environ.get("GEMINI_API_KEY", "").strip()
+                if gemini_on
                 else "Local grounded DPDP knowledge engine active (queries processed locally without external LLM API)"
             ),
         },
     }
     _PUBLIC_TRUST_CACHE["data"] = telemetry
     _PUBLIC_TRUST_CACHE["cached_at"] = now
+    _PUBLIC_TRUST_CACHE["key"] = cache_key
     return jsonify(telemetry), 200
 
 
@@ -3393,14 +3749,20 @@ def api_public_trust_pack_download():
         return Response(
             zip_bytes,
             mimetype="application/zip",
-            headers={"Content-Disposition": 'attachment; filename="TrustAudit_Enterprise_Trust_Pack.zip"'}
+            headers={
+                "Content-Disposition": 'attachment; filename="TrustAudit_Enterprise_Trust_Pack.zip"',
+                "X-Content-Type-Options": "nosniff",
+            }
         )
     else:
         md_text = trust_pack_service.build_trust_pack_consolidated_markdown(docs_raw)
         return Response(
             md_text,
             mimetype="text/markdown",
-            headers={"Content-Disposition": 'attachment; filename="TrustAudit_Enterprise_Trust_Pack.md"'}
+            headers={
+                "Content-Disposition": 'attachment; filename="TrustAudit_Enterprise_Trust_Pack.md"',
+                "X-Content-Type-Options": "nosniff",
+            }
         )
 
 
@@ -3556,6 +3918,30 @@ def api_dpdp_extraction_upload():
     ok, err_msg, meta = security_utils.validate_uploaded_file(up_file.filename, raw_bytes)
     if not ok:
         return jsonify({"status": "error", "error": err_msg, "message": err_msg}), 400
+
+    use_async = (request.args.get("async") in ("1", "true", "yes")) or (request.form.get("async") in ("1", "true", "yes"))
+    if use_async:
+        safe_fname = meta["safe_filename"]
+
+        def _extract_worker(update_progress, is_cancelled):
+            update_progress(25, f"Parsing {safe_fname}...")
+            if is_cancelled():
+                return None
+            out = extraction_engine.extract_from_uploaded_file(safe_fname, raw_bytes)
+            if is_cancelled():
+                return None
+            update_progress(80, "Saving suggestions for human review...")
+            if out.get("suggestions"):
+                dpdp_store.save_discovery_suggestions(org_id, out["suggestions"])
+            security_utils.append_audit_log(
+                org_id=org_id, action="discovery.file_extracted", resource_type="discovery",
+                actor_user_id=actor.get("id", ""), actor_email=actor.get("email", ""),
+                details={"filename": safe_fname, "suggestions": out.get("suggestions_count", 0)},
+            )
+            return {"extraction": out}
+
+        job = job_manager.submit_job(org_id, "extraction", f"Extract Privacy Signals: {safe_fname}", _extract_worker, idempotency_key=f"{safe_fname}:{len(raw_bytes)}")
+        return jsonify({"status": "accepted", "job_id": job["job_id"], "job": job}), 202
 
     res = extraction_engine.extract_from_uploaded_file(meta["safe_filename"], raw_bytes)
     if res.get("suggestions"):

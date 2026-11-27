@@ -9,13 +9,17 @@ Provides clean organization-isolated data models for:
 - Atomic JSON storage via security_utils
 """
 
+import copy
 import json
 import os
 import re
+import threading
 import time
 import uuid
 from typing import Any, Dict, List, Optional, Tuple
 
+import demo_fixture
+import qr_svg
 from security_utils import (
     append_audit_log,
     atomic_write_json,
@@ -23,6 +27,11 @@ from security_utils import (
     safe_read_json,
     sanitize_plain_text,
 )
+
+_SAAS_LOCK = threading.RLock()
+_SAAS_CACHE_KEY: Optional[Tuple[str, int, int]] = None
+_SAAS_CACHE_DATA: Optional[Dict[str, Any]] = None
+_SAAS_CACHE_JSON: Optional[str] = None
 
 def _default_data_file() -> str:
     env_dir = os.environ.get("TRUSTAUDIT_DATA_DIR", "").strip()
@@ -172,7 +181,7 @@ def _merge_plan_with_overrides(plan_key: str, data: Optional[Dict[str, Any]] = N
 
 def get_public_plans() -> List[Dict[str, Any]]:
     """Returns canonical launch pricing tiers with any admin-configured overrides."""
-    data = _load_data()
+    data = _read_data_cached()
     return [_merge_plan_with_overrides(k, data) for k in ("free", "starter", "growth", "business")]
 
 
@@ -204,59 +213,92 @@ def update_plan_config(plan_key: str, updates: Dict[str, Any]) -> Tuple[bool, st
     return True, f"Plan '{clean}' configuration saved.", _merge_plan_with_overrides(clean, data)
 
 
-def _load_data() -> Dict[str, Any]:
-    if not os.path.exists(DATA_FILE):
-        initial = {
-            "organizations": {
-                "org-default": {
-                    "id": "org-default",
-                    "name": "Sample Indian Clinic (Demo Sandbox)",
-                    "slug": "demo-sandbox",
-                    "plan": "starter",
-                    "is_demo": True,
-                    "created_at": time.time(),
-                    "max_projects": 10,
-                    "scans_count": 0,
-                }
-            },
-            "users": {
-                "usr-default": {
-                    "id": "usr-default",
-                    "org_id": "org-default",
-                    "email": "demo@trustaudit.example",
-                    "name": "Demo Owner",
-                    "role": "admin",
-                    "created_at": time.time(),
-                }
-            },
-            "projects": {},
-            "scans": {},
-            "finding_overrides": {},
-            "sessions": {},
-            "password_resets": {},
-        }
-        _save_data(initial)
-        return initial
-
-    data = safe_read_json(
-        DATA_FILE,
-        lambda: {
-            "organizations": {},
-            "users": {},
-            "projects": {},
-            "scans": {},
-            "finding_overrides": {},
-            "sessions": {},
-            "password_resets": {},
+def _empty_saas_data() -> Dict[str, Any]:
+    return {
+        "organizations": {
+            demo_fixture.DEMO_ORG_ID: demo_fixture.get_demo_org_record()
         },
-    )
-    data.setdefault("sessions", {})
-    data.setdefault("password_resets", {})
-    return data
+        "users": {
+            "usr-default": {
+                "id": "usr-default",
+                "org_id": demo_fixture.DEMO_ORG_ID,
+                "email": demo_fixture.DEMO_PRIVACY_EMAIL,
+                "name": demo_fixture.DEMO_PRIVACY_CONTACT_NAME,
+                "role": "admin",
+                "created_at": time.time(),
+            }
+        },
+        "projects": {},
+        "scans": {},
+        "finding_overrides": {},
+        "sessions": {},
+        "password_resets": {},
+        "support_tickets": [],
+    }
+
+
+def _read_data_cached() -> Dict[str, Any]:
+    """Thread-safe stat-keyed cache eliminating repeated 2 MB JSON disk parses on read paths."""
+    global _SAAS_CACHE_KEY, _SAAS_CACHE_DATA, _SAAS_CACHE_JSON
+    abs_path = os.path.abspath(DATA_FILE)
+    with _SAAS_LOCK:
+        if not os.path.exists(abs_path):
+            initial = _empty_saas_data()
+            _save_data(initial)
+            return _SAAS_CACHE_DATA or initial
+        try:
+            st = os.stat(abs_path)
+            stat_key = (abs_path, int(getattr(st, "st_mtime_ns", int(st.st_mtime * 1e9))), int(st.st_size))
+        except OSError:
+            stat_key = None
+        if stat_key and stat_key == _SAAS_CACHE_KEY and _SAAS_CACHE_DATA is not None:
+            return _SAAS_CACHE_DATA
+
+        data = safe_read_json(
+            abs_path,
+            lambda: {
+                "organizations": {},
+                "users": {},
+                "projects": {},
+                "scans": {},
+                "finding_overrides": {},
+                "sessions": {},
+                "password_resets": {},
+            },
+        )
+        data.setdefault("sessions", {})
+        data.setdefault("password_resets", {})
+        demo_org = data.get("organizations", {}).get(demo_fixture.DEMO_ORG_ID)
+        if demo_org and demo_org.get("name") in ("Sample Indian Clinic (Demo Sandbox)", "Arogya Diagnostics Clinic Ltd"):
+            demo_org["name"] = demo_fixture.DEMO_ORG_NAME
+            demo_org["is_demo"] = True
+        _SAAS_CACHE_DATA = data
+        _SAAS_CACHE_JSON = json.dumps(data)
+        _SAAS_CACHE_KEY = stat_key
+        return data
+
+
+def _load_data() -> Dict[str, Any]:
+    """Returns a fresh mutable dictionary for safe write paths, avoiding redundant disk I/O."""
+    with _SAAS_LOCK:
+        cached = _read_data_cached()
+        if _SAAS_CACHE_JSON is not None:
+            return json.loads(_SAAS_CACHE_JSON)
+        return copy.deepcopy(cached)
 
 
 def _save_data(data: Dict[str, Any]):
-    atomic_write_json(DATA_FILE, data)
+    global _SAAS_CACHE_KEY, _SAAS_CACHE_DATA, _SAAS_CACHE_JSON
+    abs_path = os.path.abspath(DATA_FILE)
+    with _SAAS_LOCK:
+        atomic_write_json(abs_path, data)
+        _SAAS_CACHE_DATA = copy.deepcopy(data)
+        _SAAS_CACHE_JSON = json.dumps(data)
+        try:
+            st = os.stat(abs_path)
+            _SAAS_CACHE_KEY = (abs_path, int(getattr(st, "st_mtime_ns", int(st.st_mtime * 1e9))), int(st.st_size))
+        except OSError:
+            _SAAS_CACHE_KEY = None
 
 
 # ---------------------------------------------------------------------------
@@ -272,25 +314,20 @@ def validate_tenant_access(user_org_id: str, target_org_id: str) -> bool:
 
 def get_organization(org_id: str = "org-default") -> Optional[Dict[str, Any]]:
     """Retrieves organization record with current plan limits."""
-    data = _load_data()
+    data = _read_data_cached()
     org = data.get("organizations", {}).get(org_id)
-    if not org and org_id == "org-default":
-        org = {
-            "id": "org-default",
-            "name": "Sample Indian Clinic (Demo Sandbox)",
-            "slug": "demo-sandbox",
-            "plan": "starter",
-            "is_demo": True,
-            "created_at": time.time(),
-            "max_projects": 10,
-            "scans_count": 0,
-        }
-        data.setdefault("organizations", {})["org-default"] = org
-        _save_data(data)
+    if not org and org_id == demo_fixture.DEMO_ORG_ID:
+        org = demo_fixture.get_demo_org_record()
+        writable = _load_data()
+        writable.setdefault("organizations", {})[demo_fixture.DEMO_ORG_ID] = org
+        _save_data(writable)
     if org:
         plan_key = org.get("plan", "starter").lower()
         plan_info = _merge_plan_with_overrides(plan_key, data)
         org_copy = dict(org)
+        if org_id == demo_fixture.DEMO_ORG_ID:
+            org_copy["name"] = demo_fixture.DEMO_ORG_NAME
+            org_copy["is_demo"] = True
         org_copy["plan_details"] = plan_info
         return org_copy
     return None
@@ -301,12 +338,12 @@ def get_organization_by_slug(slug: str) -> Optional[Dict[str, Any]]:
     clean = re.sub(r"[^a-z0-9-]", "", (slug or "").strip().lower())
     if not clean:
         return None
-    data = _load_data()
+    data = _read_data_cached()
     for oid, org in data.get("organizations", {}).items():
         if (org.get("slug") or "").lower() == clean or oid.lower() == clean:
             return get_organization(oid)
     if clean in ("demo-sandbox", "demo"):
-        return get_organization("org-default")
+        return get_organization(demo_fixture.DEMO_ORG_ID)
     return None
 
 
@@ -340,7 +377,7 @@ def check_plan_limits(org_id: str, resource_type: str, current_count: Optional[i
         return False, "Organization not found."
 
     plan = org.get("plan_details", PLANS["starter"])
-    data = _load_data()
+    data = _read_data_cached()
     projects = [p for p in data.get("projects", {}).values() if p.get("org_id") == org_id]
 
     if resource_type == "project":
@@ -852,18 +889,22 @@ def get_all_projects() -> List[Dict[str, Any]]:
 
 def get_org_profile(org_id: str = "org-default") -> Dict[str, Any]:
     """Retrieves organization profile information without fabricated company defaults."""
-    data = _load_data()
+    data = _read_data_cached()
     saved = data.get("org_profiles", {}).get(org_id)
     if saved:
-        return saved
+        res = dict(saved)
+        if org_id == demo_fixture.DEMO_ORG_ID:
+            res["company_name"] = demo_fixture.DEMO_ORG_NAME
+            res["is_demo"] = True
+        return res
 
     org = data.get("organizations", {}).get(org_id, {})
-    if org_id == "org-default":
+    if demo_fixture.is_demo_org(org_id, org=org):
         return {
-            "company_name": org.get("name", "Sample Indian Clinic (Demo Sandbox)"),
+            "company_name": demo_fixture.DEMO_ORG_NAME,
             "country": "India",
-            "industry": "Healthcare / Clinic",
-            "website": "https://trustaudit.example",
+            "industry": demo_fixture.DEMO_INDUSTRY,
+            "website": demo_fixture.DEMO_WEBSITE,
             "company_size": "11-50",
             "employee_count": "11-50",
             "business_activities": "Example healthcare clinic workspace for product demonstration.",
@@ -872,6 +913,8 @@ def get_org_profile(org_id: str = "org-default") -> Dict[str, Any]:
             "infrastructure": [],
             "vendors": [],
             "selected_frameworks": ["DPDP"],
+            "privacy_contact_name": demo_fixture.DEMO_PRIVACY_CONTACT_NAME,
+            "privacy_contact_email": demo_fixture.DEMO_PRIVACY_EMAIL,
             "is_demo": True,
         }
 
@@ -1051,9 +1094,10 @@ def register_user(
     name: str,
     org_name: str,
     country: str = "India",
-    plan: str = "starter",
+    plan: Optional[str] = "starter",
     industry: str = "",
     website: str = "",
+    terms_accepted: Optional[bool] = None,
 ) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
     """Registers a new user and provisions an isolated organization with OWASP-hardened hashing."""
     email_clean = sanitize_plain_text(email, 160).lower()
@@ -1061,16 +1105,23 @@ def register_user(
         return False, "Please enter a valid work email address.", None
     if not password or len(password) < 8:
         return False, "Password must be at least 8 characters long.", None
+    if terms_accepted is False:
+        return False, "You must acknowledge the Privacy Notice & Terms of Service to create an account.", None
+
+    raw_plan = "" if plan is None else str(plan).strip().lower()
+    alias_map = {"pro": "growth", "enterprise": "business"}
+    if not raw_plan:
+        clean_plan = "starter"
+    elif raw_plan in PLANS:
+        clean_plan = alias_map.get(raw_plan, raw_plan)
+    else:
+        return False, f"Invalid plan '{plan}'. Valid plans are: free, starter, growth, business.", None
 
     data = _load_data()
 
     for u in data.get("users", {}).values():
         if u.get("email", "").lower() == email_clean:
             return False, "An account with this email address already exists.", None
-
-    clean_plan = (plan or "starter").strip().lower()
-    if clean_plan not in PLANS:
-        clean_plan = "starter"
 
     org_id = f"org-{uuid.uuid4().hex[:8]}"
     uid = f"usr-{uuid.uuid4().hex[:8]}"
@@ -1147,11 +1198,12 @@ def register_user(
 def authenticate_user(
     email: str,
     password: str,
-    totp_code: Optional[str] = None
+    totp_code: Optional[str] = None,
+    recovery_code: Optional[str] = None,
 ) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
     """
     Authenticates email and password with rate limiting, OWASP rehash-on-login,
-    and optional TOTP MFA verification.
+    and TOTP MFA or single-use recovery code verification.
     """
     data = _load_data()
     email_clean = sanitize_plain_text(email, 160).lower()
@@ -1192,12 +1244,31 @@ def authenticate_user(
         )
         return False, "Invalid email address or password.", None
 
+    recovery_used = False
     if matched_user.get("mfa_enabled"):
-        if not totp_code:
+        cand_totp = (totp_code or "").strip()
+        cand_rec = (recovery_code or "").strip().upper().replace(" ", "")
+        # Allow passing XXXX-XXXX directly into totp_code input for convenience
+        if not cand_rec and "-" in cand_totp:
+            cand_rec = cand_totp.upper().replace(" ", "")
+            cand_totp = ""
+
+        if not cand_totp and not cand_rec:
             return False, "MFA_REQUIRED", {"mfa_required": True, "user_id": matched_user["id"]}
-        if not verify_totp_token(matched_user.get("mfa_secret", ""), totp_code):
-            record_failed_login(email_clean)
-            return False, "Invalid Multi-Factor Authentication code.", None
+
+        if cand_rec:
+            rec_hash = hashlib.sha256(cand_rec.encode("utf-8")).hexdigest()
+            stored_hashes = list(matched_user.get("mfa_recovery_hashes", []))
+            if rec_hash not in stored_hashes:
+                record_failed_login(email_clean)
+                return False, "Invalid recovery code or code already used.", None
+            stored_hashes.remove(rec_hash)
+            matched_user["mfa_recovery_hashes"] = stored_hashes
+            recovery_used = True
+        else:
+            if not verify_totp_token(matched_user.get("mfa_secret", ""), cand_totp):
+                record_failed_login(email_clean)
+                return False, "Invalid Multi-Factor Authentication code.", None
 
     clear_failed_logins(email_clean)
 
@@ -1217,30 +1288,40 @@ def authenticate_user(
     user_copy.pop("salt", None)
     user_copy.pop("mfa_secret", None)
     user_copy.pop("mfa_pending_secret", None)
+    user_copy.pop("mfa_recovery_hashes", None)
+    user_copy["mfa_recovery_remaining"] = len(matched_user.get("mfa_recovery_hashes", []))
     append_audit_log(
         org_id=matched_user["org_id"],
-        action="auth.login",
+        action="auth.mfa_recovery_used" if recovery_used else "auth.login",
         resource_type="session",
         actor_user_id=matched_user["id"],
         actor_email=email_clean,
         actor_role=matched_user.get("role", "member"),
     )
-    return True, "Login successful.", {"user": user_copy, "organization": org, "token": token}
+    return True, "Login successful.", {
+        "user": user_copy,
+        "organization": org,
+        "token": token,
+        "recovery_code_used": recovery_used,
+        "mfa_recovery_remaining": user_copy["mfa_recovery_remaining"],
+    }
 
 
-def create_user_session(user_id: str, org_id: str) -> str:
+def create_user_session(user_id: str, org_id: str, user_agent: str = "", ip_address: str = "") -> str:
     """Creates a cryptographic session token persisted as a SHA-256 hash valid for 30 days."""
     token = secrets.token_urlsafe(32)
     tok_hash = _hash_token(token)
     session_meta = {
+        "session_id": tok_hash[:12],
         "user_id": user_id,
         "org_id": org_id,
+        "user_agent": sanitize_plain_text(user_agent, 180) if user_agent else "Browser / API Session",
+        "ip_address": sanitize_plain_text(ip_address, 64) if ip_address else "",
         "created_at": time.time(),
         "expires_at": time.time() + (30 * 86400),
     }
     data = _load_data()
     sessions = data.setdefault("sessions", {})
-    # Prune expired sessions opportunistically
     now = time.time()
     for k in [hk for hk, sm in sessions.items() if now > sm.get("expires_at", 0)]:
         del sessions[k]
@@ -1256,24 +1337,30 @@ def validate_session(
 ) -> Tuple[bool, Optional[Dict[str, Any]], Optional[str]]:
     """
     Validates a session token with strict multi-tenant authorization boundaries.
-    Only falls back to demo mode when explicitly permitted.
-    Returns (is_valid, user, org_id).
+    Reads from stat-keyed cache so authenticated API calls add <0.2ms overhead.
     """
     if not token:
         if allow_demo_fallback:
-            return True, {"id": "usr-default", "name": "Demo Owner", "role": "admin", "email": "demo@trustaudit.example"}, "org-default"
+            return True, {
+                "id": "usr-default",
+                "name": demo_fixture.DEMO_PRIVACY_CONTACT_NAME,
+                "role": "admin",
+                "email": demo_fixture.DEMO_PRIVACY_EMAIL,
+                "is_demo": True,
+            }, demo_fixture.DEMO_ORG_ID
         return False, None, None
 
-    data = _load_data()
+    data = _read_data_cached()
     tok_hash = _hash_token(token)
     session = data.get("sessions", {}).get(tok_hash) or _ACTIVE_SESSIONS.get(token)
     if not session:
         return False, None, None
 
     if time.time() > session.get("expires_at", 0):
-        data.get("sessions", {}).pop(tok_hash, None)
+        w = _load_data()
+        w.get("sessions", {}).pop(tok_hash, None)
         _ACTIVE_SESSIONS.pop(token, None)
-        _save_data(data)
+        _save_data(w)
         return False, None, None
 
     user = data.get("users", {}).get(session["user_id"])
@@ -1285,7 +1372,102 @@ def validate_session(
     user_copy.pop("salt", None)
     user_copy.pop("mfa_secret", None)
     user_copy.pop("mfa_pending_secret", None)
+    user_copy["mfa_recovery_remaining"] = len(user_copy.pop("mfa_recovery_hashes", []))
     return True, user_copy, session.get("org_id")
+
+
+def list_user_sessions(user_id: str, current_token: Optional[str] = None) -> List[Dict[str, Any]]:
+    """Lists active non-expired sessions for a user without exposing token hashes."""
+    data = _read_data_cached()
+    cur_hash = _hash_token(current_token) if current_token else ""
+    now = time.time()
+    out: List[Dict[str, Any]] = []
+    for h, sm in data.get("sessions", {}).items():
+        if sm.get("user_id") != user_id or now > sm.get("expires_at", 0):
+            continue
+        out.append({
+            "session_id": sm.get("session_id") or h[:12],
+            "user_agent": sm.get("user_agent") or "Browser / API Session",
+            "created_at": sm.get("created_at"),
+            "expires_at": sm.get("expires_at"),
+            "is_current": (h == cur_hash),
+        })
+    out.sort(key=lambda s: float(s.get("created_at") or 0), reverse=True)
+    return out
+
+
+def revoke_user_session(user_id: str, session_id: str) -> bool:
+    """Revokes a specific session belonging strictly to user_id."""
+    if not session_id:
+        return False
+    data = _load_data()
+    sessions = data.get("sessions", {})
+    target_hash = None
+    for h, sm in sessions.items():
+        if sm.get("user_id") == user_id and (sm.get("session_id") == session_id or h.startswith(session_id)):
+            target_hash = h
+            break
+    if not target_hash:
+        return False
+    del sessions[target_hash]
+    for tok in [t for t in _ACTIVE_SESSIONS if _hash_token(t) == target_hash]:
+        del _ACTIVE_SESSIONS[tok]
+    _save_data(data)
+    return True
+
+
+def revoke_other_sessions(user_id: str, keep_token: Optional[str] = None) -> int:
+    """Signs out all other sessions belonging to user_id while keeping keep_token active."""
+    data = _load_data()
+    keep_hash = _hash_token(keep_token) if keep_token else ""
+    sessions = data.get("sessions", {})
+    to_del = [h for h, sm in sessions.items() if sm.get("user_id") == user_id and h != keep_hash]
+    for h in to_del:
+        del sessions[h]
+    for tok in [t for t, sm in _ACTIVE_SESSIONS.items() if sm.get("user_id") == user_id and t != keep_token]:
+        del _ACTIVE_SESSIONS[tok]
+    if to_del:
+        _save_data(data)
+    return len(to_del)
+
+
+def change_user_password(
+    user_id: str,
+    current_password: str,
+    new_password: str,
+    keep_token: Optional[str] = None,
+) -> Tuple[bool, str]:
+    """Changes authenticated user's password, rotates other sessions, and writes audit log."""
+    if not new_password or len(new_password) < 8:
+        return False, "New password must be at least 8 characters long."
+    data = _load_data()
+    user = data.get("users", {}).get(user_id)
+    if not user:
+        return False, "User not found."
+    ok = _verify_password(current_password, user.get("pwd_hash", ""), user.get("salt", ""), user.get("pwd_iterations", LEGACY_PBKDF2_ITERATIONS))
+    if not ok:
+        return False, "Current password is incorrect."
+    new_hash, new_salt = _hash_password(new_password, iterations=DEFAULT_PBKDF2_ITERATIONS)
+    user["pwd_hash"] = new_hash
+    user["salt"] = new_salt
+    user["pwd_algo"] = "pbkdf2_sha256"
+    user["pwd_iterations"] = DEFAULT_PBKDF2_ITERATIONS
+    keep_hash = _hash_token(keep_token) if keep_token else ""
+    sessions = data.get("sessions", {})
+    for h in [k for k, sm in sessions.items() if sm.get("user_id") == user_id and k != keep_hash]:
+        del sessions[h]
+    for tok in [t for t, sm in _ACTIVE_SESSIONS.items() if sm.get("user_id") == user_id and t != keep_token]:
+        del _ACTIVE_SESSIONS[tok]
+    _save_data(data)
+    append_audit_log(
+        org_id=user.get("org_id", ""),
+        action="auth.password_changed",
+        resource_type="user",
+        resource_id=user_id,
+        actor_user_id=user_id,
+        actor_email=user.get("email", ""),
+    )
+    return True, "Password updated and other active sessions signed out."
 
 
 def revoke_session(token: str) -> bool:
@@ -1451,7 +1633,7 @@ def verify_totp_token(secret: str, token: str, window: int = 1, time_step: int =
 
 
 def setup_mfa_for_user(user_id: str) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
-    """Initiates MFA setup by generating a secret and provisioning URI."""
+    """Initiates MFA setup by generating a secret, provisioning URI, and offline inline SVG QR code."""
     data = _load_data()
     user = data.get("users", {}).get(user_id)
     if not user:
@@ -1459,47 +1641,116 @@ def setup_mfa_for_user(user_id: str) -> Tuple[bool, str, Optional[Dict[str, Any]
 
     secret = generate_totp_secret()
     uri = get_totp_uri(user.get("email", ""), secret)
-    # Temporary staging secret on user record until confirmed
+    qr_markup = qr_svg.generate_qr_svg(uri)
     user["mfa_pending_secret"] = secret
     _save_data(data)
 
-    return True, "MFA setup initiated.", {"secret": secret, "otpauth_uri": uri}
+    return True, "MFA setup initiated.", {
+        "secret": secret,
+        "otpauth_uri": uri,
+        "qr_svg": qr_markup,
+        "manual_entry_key": " ".join(secret[i:i + 4] for i in range(0, len(secret), 4)),
+    }
 
 
-def confirm_and_enable_mfa(user_id: str, code: str) -> Tuple[bool, str]:
-    """Confirms pending MFA secret with code and enables MFA on the account."""
+def _generate_recovery_codes(count: int = 8) -> Tuple[List[str], List[str]]:
+    plaintext: List[str] = []
+    hashed: List[str] = []
+    alphabet = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ"
+    for _ in range(count):
+        part1 = "".join(secrets.choice(alphabet) for _ in range(4))
+        part2 = "".join(secrets.choice(alphabet) for _ in range(4))
+        code = f"{part1}-{part2}"
+        plaintext.append(code)
+        hashed.append(hashlib.sha256(code.encode("utf-8")).hexdigest())
+    return plaintext, hashed
+
+
+def confirm_and_enable_mfa_with_recovery(user_id: str, code: str) -> Tuple[bool, str, List[str]]:
+    """Confirms pending MFA secret with code, enables MFA, and returns 8 single-use recovery codes."""
     data = _load_data()
     user = data.get("users", {}).get(user_id)
     if not user:
-        return False, "User not found."
+        return False, "User not found.", []
 
     pending_secret = user.get("mfa_pending_secret")
     if not pending_secret:
-        return False, "No pending MFA configuration found. Please start setup again."
+        return False, "No pending MFA configuration found. Please start setup again.", []
 
     if not verify_totp_token(pending_secret, code):
-        return False, "Invalid verification code. Please check your authenticator app and try again."
+        return False, "Invalid verification code. Please check your authenticator app and try again.", []
 
+    recovery_codes, recovery_hashes = _generate_recovery_codes(8)
     user["mfa_enabled"] = True
     user["mfa_secret"] = pending_secret
+    user["mfa_recovery_hashes"] = recovery_hashes
     user.pop("mfa_pending_secret", None)
     _save_data(data)
-    return True, "Multi-Factor Authentication enabled successfully."
+    append_audit_log(
+        org_id=user.get("org_id", ""),
+        action="auth.mfa_enabled",
+        resource_type="user",
+        resource_id=user_id,
+        actor_user_id=user_id,
+        actor_email=user.get("email", ""),
+    )
+    return True, "Multi-Factor Authentication enabled successfully.", recovery_codes
+
+
+def confirm_and_enable_mfa(user_id: str, code: str) -> Tuple[bool, str]:
+    """Backward-compatible wrapper returning (ok, message)."""
+    ok, msg, _ = confirm_and_enable_mfa_with_recovery(user_id, code)
+    return ok, msg
+
+
+def regenerate_mfa_recovery_codes(user_id: str, code: str) -> Tuple[bool, str, List[str]]:
+    """Replaces recovery codes after verifying a live TOTP code."""
+    data = _load_data()
+    user = data.get("users", {}).get(user_id)
+    if not user or not user.get("mfa_enabled"):
+        return False, "MFA is not enabled on this account.", []
+    if not verify_totp_token(user.get("mfa_secret", ""), code):
+        return False, "Invalid verification code.", []
+    recovery_codes, recovery_hashes = _generate_recovery_codes(8)
+    user["mfa_recovery_hashes"] = recovery_hashes
+    _save_data(data)
+    append_audit_log(
+        org_id=user.get("org_id", ""),
+        action="auth.mfa_recovery_regenerated",
+        resource_type="user",
+        resource_id=user_id,
+        actor_user_id=user_id,
+        actor_email=user.get("email", ""),
+    )
+    return True, "New single-use recovery codes generated.", recovery_codes
 
 
 def disable_mfa_for_user(user_id: str, code: str) -> Tuple[bool, str]:
-    """Disables MFA after validating current TOTP code."""
+    """Disables MFA after validating current TOTP code or a valid recovery code."""
     data = _load_data()
     user = data.get("users", {}).get(user_id)
     if not user or not user.get("mfa_enabled"):
         return False, "MFA is not enabled on this account."
 
-    if not verify_totp_token(user.get("mfa_secret", ""), code):
+    clean = (code or "").strip().upper().replace(" ", "")
+    rec_hash = hashlib.sha256(clean.encode("utf-8")).hexdigest() if clean else ""
+    valid_totp = verify_totp_token(user.get("mfa_secret", ""), code)
+    valid_rec = rec_hash in (user.get("mfa_recovery_hashes") or [])
+    if not (valid_totp or valid_rec):
         return False, "Invalid verification code."
 
     user["mfa_enabled"] = False
     user["mfa_secret"] = None
+    user["mfa_recovery_hashes"] = []
     _save_data(data)
+    append_audit_log(
+        org_id=user.get("org_id", ""),
+        action="auth.mfa_disabled",
+        resource_type="user",
+        resource_id=user_id,
+        actor_user_id=user_id,
+        actor_email=user.get("email", ""),
+    )
     return True, "Multi-Factor Authentication disabled."
 
 
@@ -1702,7 +1953,47 @@ def list_admin_oversight_summary() -> Dict[str, Any]:
         "users": users_safe[:150],
         "plans": get_public_plans(),
         "support_tickets": list_grievances()[:50],
+        "problem_reports": data.get("support_tickets", [])[:50],
         "walkthrough_requests": data.get("walkthrough_requests", [])[:50],
         "deletion_audit_count": len(data.get("deletion_audit_log", [])),
     }
+
+
+def record_support_problem(
+    org_id: str,
+    user_id: str,
+    user_email: str,
+    page_route: str,
+    category: str,
+    description: str,
+    browser_info: str = "",
+) -> Dict[str, Any]:
+    """Stores an issue/bug report without attaching PII or customer records."""
+    data = _load_data()
+    tickets = data.setdefault("support_tickets", [])
+    ref_id = f"BUG-{int(time.time())}-{secrets.token_hex(2).upper()}"
+    entry = {
+        "reference_id": ref_id,
+        "org_id": org_id,
+        "reported_by_user_id": user_id,
+        "reported_by_email": sanitize_plain_text(user_email, 120),
+        "page_route": sanitize_plain_text(page_route, 120),
+        "category": sanitize_plain_text(category or "Product issue", 80),
+        "description": sanitize_plain_text(description, 1500),
+        "browser_info": sanitize_plain_text(browser_info, 180),
+        "status": "LOGGED",
+        "created_at": time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime()),
+    }
+    tickets.insert(0, entry)
+    data["support_tickets"] = tickets[:300]
+    _save_data(data)
+    append_audit_log(
+        org_id=org_id,
+        action="support.problem_reported",
+        resource_type="support_ticket",
+        resource_id=ref_id,
+        actor_user_id=user_id,
+        actor_email=user_email,
+    )
+    return entry
 

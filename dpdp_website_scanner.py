@@ -960,8 +960,8 @@ class DPDPWebsiteScanner:
                     "effective_date": "13 May 2027",
                     "observation": f"Website context indicates services for minors / students / pediatric patients, but no verifiable parental or guardian consent workflow was observed.",
                     "evidence_snippet": f"Selected industry: '{self.industry}'; no parental consent disclosures detected on public intake forms.",
-                    "why_it_matters": "Section 9(1) strictly mandates that a Data Fiduciary must obtain verifiable consent of the parent or lawful guardian before processing any personal data of a child. Section 9(2) and (3) strictly prohibit tracking, behavioral monitoring, or targeted ads directed at children.",
-                    "recommended_action": "Implement a verifiable parental/guardian consent verification step during child registration, and ensure analytics scripts are disabled for minor user journeys.",
+                    "why_it_matters": "Section 9(1) strictly mandates that a Data Fiduciary must obtain verifiable consent of the parent or lawful guardian before processing personal data of a child or a person with disability who has a lawful guardian. Section 9(2) and (3) prohibit tracking, behavioral monitoring, or targeted ads directed at children.",
+                    "recommended_action": "Implement a verifiable parent/lawful guardian consent verification step prior to processing, and ensure analytics scripts are disabled for minor user journeys.",
                     "required_evidence": "Documented parental consent workflow and guardian verification log.",
                     "remediation_action_type": "IMPLEMENT_PARENTAL_CONSENT",
                     "statutory_penalty_ref": "SEC_09",
@@ -1086,7 +1086,7 @@ class DPDPWebsiteScanner:
 # DEMO / SIMULATION FIXTURE GENERATOR
 # ==============================================================================
 def generate_demo_website_scan(
-    business_name: str = "Arogya Diagnostics & Health Clinic",
+    business_name: str = "Arogya Diagnostics Clinic — Demo Workspace",
     target_url: str = "https://arogyaclinic.example.in",
     industry: str = "Healthcare",
 ) -> Dict[str, Any]:
@@ -1185,5 +1185,5 @@ def generate_demo_website_scan(
     scanner._stage_08_statutory_mapping(None)
     report = scanner._stage_09_generate_report(None)
     report["is_demo"] = True
-    report["demo_label"] = "DEMO DATA — Example information for demonstration only."
+    report["demo_label"] = "DEMO DATA — FOR ILLUSTRATION ONLY."
     return report

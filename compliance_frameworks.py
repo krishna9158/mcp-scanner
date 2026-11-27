@@ -266,10 +266,10 @@ CONTROLS_DATABASE: Dict[str, List[Dict[str, Any]]] = {
         {
             "control_id": "DPDP-SEC-09",
             "section": "Section 9 & applicable Rules",
-            "title": "Processing of Personal Data of Children",
-            "official_ref": "DPDP Act 2023, Section 9 read with applicable DPDP Rules 2025",
-            "description": "A Data Fiduciary must obtain verifiable consent of the parent or lawful guardian before processing personal data of a child. Must not undertake tracking or behavioral monitoring of children or targeted advertising directed at children.",
-            "applicability": "Applies to businesses offering goods or services to minors (<18 years in India).",
+            "title": "Processing of Personal Data of Children & Persons with Lawful Guardians",
+            "official_ref": "DPDP Act 2023, Section 9(1) (clarified by S.O. 5458(E), Oct 2026) read with applicable DPDP Rules 2025",
+            "description": "A Data Fiduciary must obtain verifiable consent of the parent or lawful guardian before processing personal data of a child or a person with disability who has a lawful guardian. Must not undertake tracking, behavioral monitoring, or targeted advertising directed at children.",
+            "applicability": "Applies to businesses processing personal data of children (<18 years) or persons with disabilities who have lawful guardians in India.",
             "enforcement_phase": "SCHEDULED_TO_COMMENCE",
             "effective_date": "13 May 2027 (Scheduled commencement)",
             "status_display": "Readiness assessment",
@@ -1046,7 +1046,7 @@ def generate_organization_assessment(
                 findings_by_control.setdefault(cid, []).append(f)
 
     assessment_results: Dict[str, Any] = {
-        "organization_name": profile.get("company_name", "Acme AI Labs"),
+        "organization_name": profile.get("company_name") or "Registered Organisation",
         "country": profile.get("country", "India"),
         "assessed_at": time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime()),
         "applicability": applicability,

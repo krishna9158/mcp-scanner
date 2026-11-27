@@ -24,7 +24,7 @@
         <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;font-size:13.5px;color:var(--ink-soft);margin-bottom:20px;flex:1;">
           {% for f in plan.features %}<li>&#10003; {{ f }}</li>{% endfor %}
         </ul>
-        <a href="/register?plan={{ plan.key }}" class="btn {% if plan.key == 'growth' %}btn-primary{% else %}btn-outline{% endif %}" style="width:100%;">Start Free Assessment</a>
+        <a href="/register?plan={{ plan.key }}" class="btn cta-arrow-btn {% if plan.key == 'growth' %}btn-primary{% else %}btn-outline{% endif %}" style="width:100%;">Choose {{ plan.name }} <span class="ta-arrow" aria-hidden="true">&rarr;</span></a>
       </div>
       {% endfor %}
     </div>

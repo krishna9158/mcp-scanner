@@ -2,7 +2,7 @@
 {% block title %}{% if mode == 'register' %}Create Account{% else %}Sign In{% endif %} — TrustAudit{% endblock %}
 {% block content %}
 <section class="ta-section" style="min-height:76vh;display:flex;align-items:center;">
-  <div class="ta-container" style="max-width:480px;width:100%;">
+  <div class="ta-container" style="max-width:520px;width:100%;">
     <div class="card" style="padding:30px;box-shadow:var(--shadow-md);">
       <div style="display:flex;gap:8px;margin-bottom:20px;padding:4px;background:var(--bg-muted);border-radius:10px;">
         <a href="/login{% if next_url %}?next={{ next_url|urlencode }}{% endif %}" class="btn btn-sm {% if mode != 'register' %}btn-primary{% else %}btn-ghost{% endif %}" style="flex:1;">Sign In</a>
@@ -11,11 +11,35 @@
 
       {% if mode == 'register' %}
       <h1 style="font-size:22px;margin-bottom:6px;">Start Your Privacy Workspace</h1>
-      <p class="ta-muted" style="margin-bottom:18px;">Create an isolated organisation account and continue straight into assisted 6-step onboarding.</p>
+      <p class="ta-muted" style="margin-bottom:14px;">Create an isolated organisation account and continue straight into assisted 6-step onboarding. Optional 2FA with Authenticator QR &amp; recovery codes can be enabled immediately after signup.</p>
+
+      <!-- Selected Plan Summary Box with Change Plan control -->
+      <div id="selected-plan-banner" style="padding:14px 16px;border-radius:12px;border:1.5px solid var(--emerald);background:rgba(14,124,91,0.06);margin-bottom:18px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;">
+          <div>
+            <div style="font-size:11.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--emerald);">Selected Plan</div>
+            <div id="sp-title" style="font-size:17px;font-weight:800;margin-top:2px;">{{ selected_plan_info.name if selected_plan_info else (selected_plan or 'Free Community')|title }} &mdash; &#8377;{{ "{:,}".format(selected_plan_info.price_monthly_inr) if selected_plan_info else 0 }}/mo</div>
+            <div id="sp-limits" class="ta-muted" style="font-size:12.5px;margin-top:3px;">
+              Up to {{ selected_plan_info.max_domains if selected_plan_info else 1 }} website(s) &bull; {{ selected_plan_info.max_data_streams if selected_plan_info else 5 }} data records &bull; {{ selected_plan_info.max_team_members if selected_plan_info else 1 }} team member(s)
+            </div>
+          </div>
+          <button type="button" class="btn btn-outline btn-sm" onclick="openChangePlanModal()">Change Plan</button>
+        </div>
+        <div class="ta-muted" style="font-size:11.5px;margin-top:8px;">Early-access workspace selection: no card payment is processed now; quotas apply immediately inside your account.</div>
+      </div>
+
       <form onsubmit="submitAuthRegister(event)">
-        <div class="field"><label>Your Full Name</label><input id="reg-name" class="input" required placeholder="Priya Nair"></div>
-        <div class="field"><label>Organisation / Clinic Name</label><input id="reg-org" class="input" required placeholder="Kaveri Care Clinic"></div>
-        <div class="field"><label>Industry</label>
+        <div class="field">
+          <label for="reg-plan">Workspace Plan</label>
+          <select id="reg-plan" class="input" onchange="syncSelectedPlanCard(this.value)">
+            {% for pl in (all_plans or []) %}
+            <option value="{{ pl.key }}" {% if pl.key == (selected_plan or 'free') %}selected{% endif %}>{{ pl.name }} (&#8377;{{ "{:,}".format(pl.price_monthly_inr) }}/mo &bull; {{ pl.max_team_members }} users, {{ pl.max_data_streams }} records)</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="field"><label for="reg-name">Your Full Name</label><input id="reg-name" class="input" required placeholder="Priya Nair"></div>
+        <div class="field"><label for="reg-org">Organisation / Clinic Name</label><input id="reg-org" class="input" required placeholder="Kaveri Care Clinic"></div>
+        <div class="field"><label for="reg-ind">Industry</label>
           <select id="reg-ind" class="input">
             <option value="healthcare">Healthcare, Clinic or Hospital</option>
             <option value="saas">SaaS &amp; Technology Startup</option>
@@ -24,23 +48,32 @@
             <option value="professional_services">Professional Services &amp; Advisory</option>
           </select>
         </div>
-        <div class="field"><label>Work Email</label><input id="reg-email" type="email" class="input" required placeholder="priya@company.in"></div>
-        <div class="field"><label>Password (8+ characters)</label><input id="reg-pwd" type="password" class="input" minlength="8" required placeholder="Minimum 8 characters"></div>
-        <input id="reg-plan" type="hidden" value="{{ selected_plan or 'free' }}">
-        <button id="reg-btn" type="submit" class="btn btn-primary" style="width:100%;">Create Workspace &amp; Start Setup</button>
+        <div class="field"><label for="reg-email">Work Email</label><input id="reg-email" type="email" class="input" required placeholder="priya@company.in"></div>
+        <div class="field"><label for="reg-pwd">Password (8+ characters)</label><input id="reg-pwd" type="password" class="input" minlength="8" required placeholder="Minimum 8 characters"></div>
+        <div style="display:flex;gap:10px;align-items:flex-start;margin:12px 0 16px;">
+          <input id="reg-terms" type="checkbox" required style="margin-top:3px;width:16px;height:16px;accent-color:var(--emerald);">
+          <label for="reg-terms" style="font-size:12.5px;color:var(--ink-soft);line-height:1.45;cursor:pointer;">
+            I acknowledge TrustAudit's <a href="/privacy" target="_blank" style="color:var(--emerald);font-weight:700;">Privacy Notice</a> &amp; <a href="/terms" target="_blank" style="color:var(--emerald);font-weight:700;">Terms of Service</a> and understand that TrustAudit organises compliance readiness workflows rather than granting statutory certification.
+          </label>
+        </div>
+        <button id="reg-btn" type="submit" class="btn btn-primary cta-arrow-btn" style="width:100%;">Create Workspace &amp; Start Setup <span class="ta-arrow" aria-hidden="true">&rarr;</span></button>
       </form>
       {% else %}
       <h1 style="font-size:22px;margin-bottom:6px;">Sign In to TrustAudit</h1>
       <p class="ta-muted" style="margin-bottom:18px;">Access your organisation's routed DPDP privacy operations workspace.</p>
       <form onsubmit="submitAuthLogin(event)">
-        <div class="field"><label>Work Email</label><input id="log-email" type="email" class="input" required placeholder="you@company.in"></div>
-        <div class="field"><label>Password</label><input id="log-pwd" type="password" class="input" required placeholder="Your workspace password"></div>
-        <div id="mfa-row" class="field" style="display:none;"><label>Authenticator 2FA Code</label><input id="log-totp" class="input ta-mono" placeholder="6-digit OTP"></div>
-        <button id="log-btn" type="submit" class="btn btn-primary" style="width:100%;">Sign In to Workspace</button>
+        <div class="field"><label for="log-email">Work Email</label><input id="log-email" type="email" class="input" required placeholder="you@company.in"></div>
+        <div class="field"><label for="log-pwd">Password</label><input id="log-pwd" type="password" class="input" required placeholder="Your workspace password"></div>
+        <div id="mfa-row" class="field" style="display:none;">
+          <label for="log-totp">Authenticator 2FA Code or Single-Use Recovery Code</label>
+          <input id="log-totp" class="input ta-mono" placeholder="6-digit OTP or XXXX-XXXX recovery code">
+          <div class="ta-muted" style="font-size:12px;margin-top:4px;">Lost access to your authenticator app? Enter one of your saved 8-character single-use recovery codes (<code>XXXX-XXXX</code>).</div>
+        </div>
+        <button id="log-btn" type="submit" class="btn btn-primary cta-arrow-btn" style="width:100%;">Sign In to Workspace <span class="ta-arrow" aria-hidden="true">&rarr;</span></button>
       </form>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;font-size:13px;">
         <button type="button" class="btn btn-ghost btn-sm" onclick="openForgotModal()">Forgot password?</button>
-        <a href="/demo" style="font-weight:700;color:var(--emerald);text-decoration:none;">Explore Demo Sandbox &rarr;</a>
+        <a href="/demo" class="cta-arrow-link" style="font-weight:700;color:var(--emerald);text-decoration:none;">Explore Demo Sandbox <span class="ta-arrow" aria-hidden="true">&rarr;</span></a>
       </div>
       {% endif %}
       <div id="auth-msg" style="margin-top:14px;font-size:13.5px;"></div>
@@ -52,10 +85,42 @@
 {% block extra_scripts %}
 <script>
   const NEXT_URL = {{ (next_url or '/app/home')|tojson }};
+  const ALL_PLANS = {{ (all_plans or [])|tojson }};
+
+  function syncSelectedPlanCard(planKey) {
+    const p = ALL_PLANS.find(function (x) { return x.key === planKey; });
+    if (!p) return;
+    const titleEl = document.getElementById('sp-title');
+    const limEl = document.getElementById('sp-limits');
+    if (titleEl) titleEl.innerHTML = TA.esc(p.name) + ' &mdash; &#8377;' + Number(p.price_monthly_inr || 0).toLocaleString('en-IN') + '/mo';
+    if (limEl) limEl.textContent = 'Up to ' + (p.max_domains || 1) + ' website(s) • ' + (p.max_data_streams || 5) + ' data records • ' + (p.max_team_members || 1) + ' team member(s)';
+    const sel = document.getElementById('reg-plan');
+    if (sel && sel.value !== planKey) sel.value = planKey;
+  }
+
+  function openChangePlanModal() {
+    const cards = ALL_PLANS.map(function (p) {
+      return '<div style="padding:12px;border:1px solid var(--border);border-radius:10px;display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px;">' +
+        '<div><strong>' + TA.esc(p.name) + '</strong> (&\#8377;' + Number(p.price_monthly_inr || 0).toLocaleString('en-IN') + '/mo)' +
+        '<div class="ta-muted" style="font-size:12px;">' + (p.max_domains || 1) + ' sites &bull; ' + (p.max_data_streams || 5) + ' records &bull; ' + (p.max_team_members || 1) + ' users</div></div>' +
+        '<button type="button" class="btn btn-primary btn-sm" onclick="choosePlanFromModal(\'' + TA.esc(p.key) + '\')">Select</button></div>';
+    }).join('');
+    TA.openModal('Select Workspace Plan', '<p class="ta-muted" style="margin-bottom:12px;">Plan selection configures server-enforced workspace quotas immediately upon signup.</p>' + cards);
+  }
+  function choosePlanFromModal(k) {
+    syncSelectedPlanCard(k);
+    TA.closeModal();
+  }
+
   async function submitAuthRegister(ev) {
     ev.preventDefault();
     const msg = document.getElementById('auth-msg');
     const btn = document.getElementById('reg-btn');
+    const termsChk = document.getElementById('reg-terms');
+    if (termsChk && !termsChk.checked) {
+      msg.innerHTML = '<span style="color:var(--rose);">Please acknowledge the Privacy Notice and Terms of Service first.</span>';
+      return;
+    }
     btn.disabled = true;
     msg.textContent = 'Creating isolated workspace...';
     try {
@@ -68,6 +133,7 @@
           email: document.getElementById('reg-email').value.trim(),
           password: document.getElementById('reg-pwd').value,
           plan: document.getElementById('reg-plan').value || 'free',
+          terms_accepted: Boolean(termsChk && termsChk.checked),
         }),
       });
       if (res.data && res.data.token) TA.setToken(res.data.token);
@@ -98,7 +164,8 @@
       });
       if (res.mfa_required) {
         document.getElementById('mfa-row').style.display = 'block';
-        msg.innerHTML = '<span style="color:var(--amber);">Enter your 6-digit Authenticator 2FA code above.</span>';
+        document.getElementById('log-totp').focus();
+        msg.innerHTML = '<span style="color:var(--amber);">Enter your 6-digit Authenticator OTP or 8-character single-use recovery code above.</span>';
         return;
       }
       if (res.data && res.data.token) TA.setToken(res.data.token);
@@ -113,11 +180,11 @@
   function openForgotModal() {
     TA.openModal('Reset Workspace Password',
       '<p class="ta-muted" style="margin-bottom:12px;">Enter your work email. When an email delivery integration is configured, a single-use 1-hour reset token is delivered securely out of band (never exposed in HTTP JSON).</p>' +
-      '<div class="field"><label>Work Email</label><input id="fp-email" type="email" class="input" required></div>' +
+      '<div class="field"><label for="fp-email">Work Email</label><input id="fp-email" type="email" class="input" required></div>' +
       '<button type="button" class="btn btn-primary" onclick="sendForgotPwd()">Request Reset Token</button>' +
       '<hr style="margin:16px 0;border:none;border-top:1px solid var(--border);">' +
-      '<div class="field"><label>Reset Token</label><input id="rp-tok" class="input ta-mono" placeholder="Paste token from email"></div>' +
-      '<div class="field"><label>New Password</label><input id="rp-pwd" type="password" class="input" minlength="8"></div>' +
+      '<div class="field"><label for="rp-tok">Reset Token</label><input id="rp-tok" class="input ta-mono" placeholder="Paste token from email"></div>' +
+      '<div class="field"><label for="rp-pwd">New Password</label><input id="rp-pwd" type="password" class="input" minlength="8"></div>' +
       '<button type="button" class="btn btn-outline" onclick="completeResetPwd()">Confirm New Password</button>' +
       '<div id="fp-msg" style="margin-top:10px;font-size:13px;"></div>'
     );

@@ -336,3 +336,69 @@ tbody tr:hover { background: rgba(14, 124, 91, 0.03); }
   .search-trigger { min-width: 0; }
   .pub-actions .btn { display: none; }
 }
+
+/* ============================================================================
+   MICRO-INTERACTIONS: ARROWS, COLLAPSIBLE SIDEBAR GROUPS, PROGRESSIVE STEPS
+   ============================================================================ */
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+
+.ta-arrow {
+  display: inline-block;
+  transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.cta-arrow-btn:hover .ta-arrow,
+.cta-arrow-btn:focus-visible .ta-arrow,
+.cta-arrow-link:hover .ta-arrow,
+.cta-arrow-link:focus-visible .ta-arrow,
+.card-hover:hover .ta-arrow {
+  transform: translateX(4px);
+}
+
+.nav-group-toggle {
+  width: 100%; display: flex; justify-content: space-between; align-items: center;
+  background: transparent; border: none; color: #7F988C; cursor: pointer;
+  font-size: 11px; font-weight: 700; padding: 0 10px 6px; letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.nav-group-toggle:hover { color: #C6D5CD; }
+.nav-chevron {
+  display: inline-block; font-size: 14px; line-height: 1;
+  transform: rotate(90deg);
+  transition: transform 0.18s ease;
+}
+.nav-group.collapsed .nav-chevron { transform: rotate(0deg); }
+.nav-group.collapsed .nav-group-items { display: none; }
+
+.wf-strip {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.wf-stage-pill {
+  padding: 7px 12px; border-radius: 99px; font-size: 12px; font-weight: 800;
+  letter-spacing: 0.04em; background: var(--surface); border: 1px solid var(--border);
+  color: var(--ink-soft); transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
+  cursor: pointer;
+}
+.wf-stage-pill.active, .wf-stage-pill:hover {
+  border-color: var(--emerald); background: var(--emerald-soft); color: var(--emerald);
+}
+.wf-arrow {
+  color: var(--emerald); font-weight: 800; transition: transform 0.18s ease;
+}
+.wf-stage-pill.active + .wf-arrow { transform: translateX(3px); }
+
+.notif-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 18px; height: 18px; padding: 0 5px; border-radius: 99px;
+  background: var(--rose, #DC2626); color: #fff; font-size: 11px; font-weight: 800;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ta-arrow, .nav-chevron, .wf-arrow, .flow-edge-anim, .reveal, .skeleton, .btn, .card {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}

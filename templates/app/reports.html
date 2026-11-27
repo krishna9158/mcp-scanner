@@ -19,7 +19,11 @@
     <span class="badge badge-forest">ZIP Evidence Bundle</span>
     <h2 class="ta-h3" style="margin-top:10px;">Complete Audit Evidence ZIP</h2>
     <p class="ta-muted" style="margin-bottom:14px;">Bundles manifest metadata, saved Privacy Notices, CSV inventory exports, and all uploaded physical files from your Evidence Vault.</p>
-    <a href="/api/dpdp/reports/bundle" class="btn btn-primary btn-sm">Download ZIP Bundle &rarr;</a>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+      <a href="/api/dpdp/reports/bundle" class="btn btn-primary btn-sm cta-arrow-btn">Download ZIP Bundle <span class="ta-arrow" aria-hidden="true">&rarr;</span></a>
+      <button type="button" class="btn btn-outline btn-sm" onclick="runAsyncReportJob('bundle')">Prepare in Background</button>
+    </div>
+    <div id="rep-job-status" style="margin-top:10px;font-size:13px;"></div>
   </div>
 
   <div class="card card-hover">
@@ -39,4 +43,36 @@
     <a href="/api/dpdp/backup/export" class="btn btn-outline btn-sm">Download Workspace Snapshot</a>
   </div>
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  async function runAsyncReportJob(kind) {
+    const out = document.getElementById('rep-job-status');
+    out.textContent = 'Starting background export job...';
+    try {
+      const start = await TA.apiJson('/api/dpdp/reports/jobs', {
+        method: 'POST',
+        body: JSON.stringify({ kind: kind, idempotency_key: kind + '_' + new Date().toISOString().slice(0, 16) }),
+      });
+      const jid = start.job_id;
+      for (let i = 0; i < 40; i++) {
+        await new Promise(function (r) { setTimeout(r, 350); });
+        const st = await TA.apiJson('/api/jobs/' + encodeURIComponent(jid));
+        const j = st.job || {};
+        out.textContent = (j.stage || 'Preparing...') + ' (' + (j.progress || 0) + '%)';
+        if (j.status === 'COMPLETED') {
+          out.innerHTML = '<a class="btn btn-emerald btn-sm" href="/api/jobs/' + encodeURIComponent(jid) + '/download">Ready — Download Compiled Archive</a>';
+          return;
+        }
+        if (j.status === 'FAILED' || j.status === 'CANCELLED') {
+          out.innerHTML = '<span style="color:var(--rose);">' + TA.esc(j.error || 'Job cancelled') + '</span>';
+          return;
+        }
+      }
+    } catch (e) {
+      out.innerHTML = '<span style="color:var(--rose);">' + TA.esc(e.message) + '</span>';
+    }
+  }
+</script>
 {% endblock %}

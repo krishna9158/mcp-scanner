@@ -504,12 +504,12 @@ DPDP_KNOWLEDGE_CORPUS: List[Dict[str, Any]] = [
         "keywords": ["s.o. 5458", "5458", "removal of difficulties", "data audit", "section 10", "october 2026", "clarification"],
         "summary": (
             "The Digital Personal Data Protection (Removal of Difficulties) Order, 2026 (S.O. 5458(E)) clarified textual wording "
-            "in Section 9(1) (children's & persons with disabilities data processing) and amended Section 10(2)(c)(ii) to replace "
+            "in Section 9(1) (children and persons with disabilities who have lawful guardians) and amended Section 10(2)(c)(ii) to replace "
             "'audit' with 'data audit' for Significant Data Fiduciaries, alongside notifications G.S.R. 843(E) and G.S.R. 846(E)."
         ),
         "plain_summary": (
-            "An October 2026 government Gazette order refined the exact phrasing in Section 9(1) on children's data and clarified that "
-            "large Significant Data Fiduciaries must carry out an independent periodic 'data audit' rather than a generic audit."
+            "An October 2026 government Gazette order refined Section 9(1) wording covering children and persons with disabilities who have lawful guardians, "
+            "and clarified that large Significant Data Fiduciaries must carry out an independent periodic 'data audit' rather than a generic audit."
         ),
         "source_doc": "DPDP Act, 2023; S.O. 5458(E) Removal of Difficulties Order, Oct 2026; G.S.R. 843(E) & G.S.R. 846(E)",
         "source_url": "https://www.meity.gov.in/content/digital-personal-data-protection-act-2023",
@@ -621,7 +621,7 @@ def _get_tenant_context(org_id: str) -> Dict[str, Any]:
             for g in (assessment.get("gaps") or [])[:3]
         ]
     return {
-        "org_name": sanitize_plain_text(profile.get("company_name") or "Your Business", 120),
+        "org_name": sanitize_plain_text(profile.get("company_name") or "Registered Organisation", 120),
         "industry": sanitize_plain_text(profile.get("industry") or "Business", 80),
         "inventory_count": len(inventory),
         "vendor_count": len(vendors),

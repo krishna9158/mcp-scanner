@@ -49,6 +49,24 @@
     </div>
 
     <div class="card" style="margin-top:28px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
+        <div>
+          <span class="ta-eyebrow">Live Environment Status</span>
+          <h3 class="ta-h3" style="margin-top:4px;">Configuration-Aware Security Control Matrix</h3>
+        </div>
+        <div id="trust-posture-pill"><span class="badge badge-neutral">Checking live configuration...</span></div>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Security Control</th><th>Current State</th><th>Evidence &amp; Configuration Basis</th></tr></thead>
+          <tbody id="trust-matrix-body">
+            <tr><td colspan="3" class="ta-muted">Loading live control states from /api/public/trust-status...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:28px;">
       <h3 class="ta-h3">Verified Security Architecture &amp; Statutory Disclaimers</h3>
       <p class="ta-muted">1. <strong>Not a Government Certification Body:</strong> Neither MeitY nor the Data Protection Board of India certifies compliance tools under the Digital Personal Data Protection Act, 2023. TrustAudit assists operational readiness and is not an accredited SOC 2/ISO registrar or law firm.<br>
       2. <strong>Not a Statutory Consent Manager:</strong> Institutional Board provisions commenced on 13 November 2025, Section 6(9) and Rule 4 (Consent Managers) commenced on 13 November 2026, and substantive obligations (Sections 3–17, including Section 8(5) reasonable security safeguards, and Rules 3, 5–16, 22–23) are scheduled to commence on 13 May 2027. TrustAudit is not a registered Consent Manager under Section 6(9).</p>
@@ -60,7 +78,7 @@
       <h3 class="ta-h3" style="margin-top:10px;">Live Security Telemetry &amp; PII Masking Sandbox</h3>
       <div class="grid-2" style="margin-top:14px;">
         <div>
-          <label class="field" style="font-size:13px;font-weight:700;">Test PII Scrubbing Layer Before AI Context</label>
+          <label for="sandbox-input-val" class="field" style="font-size:13px;font-weight:700;display:block;">Test PII Scrubbing Layer Before AI Context</label>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
             <input id="sandbox-input-val" class="input" style="flex:1;" value="Customer ravi@clinic.in (+91 9876543210, ABCDE1234F) requested invoice copy">
             <button type="button" class="btn btn-primary btn-sm" onclick="runMaskingDemo()">Simulate Redaction</button>
@@ -115,5 +133,31 @@
       '2. File Upload Security: Allowlists .pdf/.png/.jpg/.jpeg/.txt/.csv/.md/.docx/.xlsx/.json under 5 MB with magic-byte checks and nosniff headers.'
     );
   }
+  function stateBadgeClass(st) {
+    if (st === 'Enabled and verified by automated test') return 'badge-emerald';
+    if (st === 'Enabled but not independently tested') return 'badge-forest';
+    if (st === 'Partially configured') return 'badge-amber';
+    if (st === 'Not enabled' || st === 'Requires administrator action') return 'badge-rose';
+    return 'badge-neutral';
+  }
+  async function loadTrustMatrix() {
+    const body = document.getElementById('trust-matrix-body');
+    const pill = document.getElementById('trust-posture-pill');
+    try {
+      const data = await TA.apiJson('/api/public/trust-status');
+      const rows = data.controls_matrix || [];
+      const ps = data.posture_state || 'healthy';
+      pill.innerHTML = '<span class="badge ' + (ps === 'verified' ? 'badge-emerald' : 'badge-amber') + '">' +
+        TA.esc(data.posture_summary || 'Service Healthy • Configuration Inspected') + '</span>';
+      body.innerHTML = rows.map(function (r) {
+        return '<tr><td><strong>' + TA.esc(r.control) + '</strong></td>' +
+          '<td><span class="badge ' + stateBadgeClass(r.state) + '">' + TA.esc(r.state) + '</span></td>' +
+          '<td class="ta-muted" style="font-size:13px;">' + TA.esc(r.basis || '') + '</td></tr>';
+      }).join('');
+    } catch (e) {
+      if (body) body.innerHTML = '<tr><td colspan="3" class="ta-muted">Unable to query live control matrix: ' + TA.esc(e.message) + '</td></tr>';
+    }
+  }
+  loadTrustMatrix();
 </script>
 {% endblock %}

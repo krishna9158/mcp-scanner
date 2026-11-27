@@ -13,15 +13,18 @@ Stores and manages all DPDP compliance artifacts per organization:
 - Remediation Centre Action Items
 """
 
+import copy
 import csv
 import datetime
 import io
 import json
 import os
 import re
+import threading
 import uuid
 from typing import Any, Dict, List, Optional, Tuple
 
+import demo_fixture
 import dpdp_commencement
 import dpdp_penalties
 from dpdp_engine import DPDP_REQUIREMENTS, INDUSTRY_TEMPLATES
@@ -84,18 +87,58 @@ def _empty_store() -> Dict[str, Any]:
     }
 
 
-def _load_dpdp_store() -> Dict[str, Any]:
+_DPDP_LOCK = threading.RLock()
+_DPDP_CACHE_KEY: Optional[Tuple[str, int, int]] = None
+_DPDP_CACHE_DATA: Optional[Dict[str, Any]] = None
+_DPDP_CACHE_JSON: Optional[str] = None
+
+
+def _read_dpdp_store_cached() -> Dict[str, Any]:
+    """Thread-safe stat-keyed cache preventing repeated 4 MB JSON parses on read paths."""
+    global _DPDP_CACHE_KEY, _DPDP_CACHE_DATA, _DPDP_CACHE_JSON
     _ensure_data_dir()
-    if not os.path.exists(DPDP_DATA_FILE):
-        initial = _empty_store()
-        atomic_write_json(DPDP_DATA_FILE, initial)
-        return initial
-    return safe_read_json(DPDP_DATA_FILE, _empty_store)
+    abs_path = os.path.abspath(DPDP_DATA_FILE)
+    with _DPDP_LOCK:
+        if not os.path.exists(abs_path):
+            initial = _empty_store()
+            _save_dpdp_store(initial)
+            return _DPDP_CACHE_DATA or initial
+        try:
+            st = os.stat(abs_path)
+            stat_key = (abs_path, int(getattr(st, "st_mtime_ns", int(st.st_mtime * 1e9))), int(st.st_size))
+        except OSError:
+            stat_key = None
+        if stat_key and stat_key == _DPDP_CACHE_KEY and _DPDP_CACHE_DATA is not None:
+            return _DPDP_CACHE_DATA
+        data = safe_read_json(abs_path, _empty_store)
+        _DPDP_CACHE_DATA = data
+        _DPDP_CACHE_JSON = json.dumps(data)
+        _DPDP_CACHE_KEY = stat_key
+        return data
+
+
+def _load_dpdp_store() -> Dict[str, Any]:
+    """Returns a fresh mutable copy of DPDP store without repeated disk reads."""
+    with _DPDP_LOCK:
+        cached = _read_dpdp_store_cached()
+        if _DPDP_CACHE_JSON is not None:
+            return json.loads(_DPDP_CACHE_JSON)
+        return copy.deepcopy(cached)
 
 
 def _save_dpdp_store(data: Dict[str, Any]) -> None:
+    global _DPDP_CACHE_KEY, _DPDP_CACHE_DATA, _DPDP_CACHE_JSON
     _ensure_data_dir()
-    atomic_write_json(DPDP_DATA_FILE, data)
+    abs_path = os.path.abspath(DPDP_DATA_FILE)
+    with _DPDP_LOCK:
+        atomic_write_json(abs_path, data)
+        _DPDP_CACHE_DATA = copy.deepcopy(data)
+        _DPDP_CACHE_JSON = json.dumps(data)
+        try:
+            st = os.stat(abs_path)
+            _DPDP_CACHE_KEY = (abs_path, int(getattr(st, "st_mtime_ns", int(st.st_mtime * 1e9))), int(st.st_size))
+        except OSError:
+            _DPDP_CACHE_KEY = None
 
 
 # ==============================================================================
@@ -103,8 +146,17 @@ def _save_dpdp_store(data: Dict[str, Any]) -> None:
 # ==============================================================================
 
 def get_onboarding_profile(org_id: str) -> Optional[Dict[str, Any]]:
-    store = _load_dpdp_store()
-    return store.get("onboarding_profiles", {}).get(org_id)
+    store = _read_dpdp_store_cached()
+    prof = store.get("onboarding_profiles", {}).get(org_id)
+    if prof:
+        res = dict(prof)
+        if demo_fixture.is_demo_org(org_id, profile=res):
+            res["company_name"] = demo_fixture.DEMO_ORG_NAME
+            res["is_demo"] = True
+        return res
+    if demo_fixture.is_demo_org(org_id):
+        return demo_fixture.get_demo_onboarding_profile()
+    return None
 
 
 def save_onboarding_profile(org_id: str, profile_data: Dict[str, Any]) -> Dict[str, Any]:
@@ -142,8 +194,8 @@ def save_onboarding_profile(org_id: str, profile_data: Dict[str, Any]) -> Dict[s
 # ==============================================================================
 
 def get_data_inventory(org_id: str) -> List[Dict[str, Any]]:
-    store = _load_dpdp_store()
-    return store.get("data_inventories", {}).get(org_id, [])
+    store = _read_dpdp_store_cached()
+    return copy.deepcopy(store.get("data_inventories", {}).get(org_id, []))
 
 def add_inventory_entry(org_id: str, entry_data: Dict[str, Any]) -> Dict[str, Any]:
     store = _load_dpdp_store()
@@ -286,19 +338,22 @@ def import_inventory_csv(org_id: str, csv_content: str) -> int:
 # ==============================================================================
 
 def get_assessment(org_id: str) -> Dict[str, Any]:
-    store = _load_dpdp_store()
+    store = _read_dpdp_store_cached()
     assessment = store.get("assessments", {}).get(org_id)
     if not assessment:
-        # Generate initial default evaluation against DPDP_REQUIREMENTS
-        assessment = _initialize_assessment(org_id)
-        store["assessments"][org_id] = assessment
-        _save_dpdp_store(store)
-    return assessment
+        writable = _load_dpdp_store()
+        assessment = writable.get("assessments", {}).get(org_id)
+        if not assessment:
+            assessment = _initialize_assessment(org_id)
+            writable.setdefault("assessments", {})[org_id] = assessment
+            _save_dpdp_store(writable)
+    return copy.deepcopy(assessment)
+
 
 def _initialize_assessment(org_id: str) -> Dict[str, Any]:
     profile = get_onboarding_profile(org_id) or {}
     now = datetime.datetime.now(datetime.timezone.utc).isoformat()
-    is_demo = org_id in ("demo", "acme") or org_id.startswith("demo-") or profile.get("is_demo") is True
+    is_demo = demo_fixture.is_demo_org(org_id, profile=profile)
     
     controls_assessment = []
     gaps = []
@@ -530,8 +585,8 @@ def calculate_dynamic_readiness(org_id: str) -> Dict[str, Any]:
 # ==============================================================================
 
 def get_privacy_notices(org_id: str) -> List[Dict[str, Any]]:
-    store = _load_dpdp_store()
-    return store.get("privacy_notices", {}).get(org_id, [])
+    store = _read_dpdp_store_cached()
+    return copy.deepcopy(store.get("privacy_notices", {}).get(org_id, []))
 
 
 def generate_privacy_notice(org_id: str, notice_params: Dict[str, Any]) -> Dict[str, Any]:
@@ -540,7 +595,8 @@ def generate_privacy_notice(org_id: str, notice_params: Dict[str, Any]) -> Dict[
 
     now = datetime.datetime.now(datetime.timezone.utc).isoformat()
     profile = get_onboarding_profile(org_id) or {}
-    company_name = sanitize_plain_text(notice_params.get("company_name") or profile.get("company_name") or "Your Business", 160)
+    fallback_org = demo_fixture.DEMO_ORG_NAME if demo_fixture.is_demo_org(org_id, profile=profile) else "Registered Organisation"
+    company_name = sanitize_plain_text(notice_params.get("company_name") or profile.get("company_name") or fallback_org, 160)
     grievance_email = sanitize_plain_text(notice_params.get("grievance_email") or profile.get("contact_email") or "", 160) or "[Add Grievance Officer Email]"
     grievance_officer = sanitize_plain_text(notice_params.get("grievance_officer") or "Privacy & Grievance Contact", 120)
     address = sanitize_plain_text(notice_params.get("address") or profile.get("address") or "[Add Registered Business Address]", 240)
@@ -651,8 +707,8 @@ def delete_privacy_notice(org_id: str, notice_id: str) -> bool:
 # ==============================================================================
 
 def get_consent_records(org_id: str) -> List[Dict[str, Any]]:
-    store = _load_dpdp_store()
-    return store.get("consent_records", {}).get(org_id, [])
+    store = _read_dpdp_store_cached()
+    return copy.deepcopy(store.get("consent_records", {}).get(org_id, []))
 
 def record_consent(org_id: str, consent_data: Dict[str, Any]) -> Dict[str, Any]:
     store = _load_dpdp_store()
@@ -677,8 +733,8 @@ def record_consent(org_id: str, consent_data: Dict[str, Any]) -> Dict[str, Any]:
     return record
 
 def get_withdrawal_requests(org_id: str) -> List[Dict[str, Any]]:
-    store = _load_dpdp_store()
-    return store.get("withdrawal_requests", {}).get(org_id, [])
+    store = _read_dpdp_store_cached()
+    return copy.deepcopy(store.get("withdrawal_requests", {}).get(org_id, []))
 
 def submit_consent_withdrawal(org_id: str, request_data: Dict[str, Any]) -> Dict[str, Any]:
     store = _load_dpdp_store()
@@ -734,8 +790,8 @@ def submit_consent_withdrawal(org_id: str, request_data: Dict[str, Any]) -> Dict
 # ==============================================================================
 
 def get_rights_requests(org_id: str) -> List[Dict[str, Any]]:
-    store = _load_dpdp_store()
-    return store.get("rights_requests", {}).get(org_id, [])
+    store = _read_dpdp_store_cached()
+    return copy.deepcopy(store.get("rights_requests", {}).get(org_id, []))
 
 def submit_rights_request(org_id: str, request_data: Dict[str, Any]) -> Dict[str, Any]:
     store = _load_dpdp_store()
@@ -810,8 +866,8 @@ def update_rights_request_full(org_id: str, request_id: str, updates: Dict[str, 
 # ==============================================================================
 
 def get_vendors(org_id: str) -> List[Dict[str, Any]]:
-    store = _load_dpdp_store()
-    return store.get("vendors", {}).get(org_id, [])
+    store = _read_dpdp_store_cached()
+    return copy.deepcopy(store.get("vendors", {}).get(org_id, []))
 
 def add_vendor(org_id: str, vendor_data: Dict[str, Any]) -> Dict[str, Any]:
     store = _load_dpdp_store()
@@ -881,8 +937,8 @@ def delete_vendor(org_id: str, vendor_id: str) -> bool:
 # ==============================================================================
 
 def get_retention_schedules(org_id: str) -> List[Dict[str, Any]]:
-    store = _load_dpdp_store()
-    return store.get("retention_schedules", {}).get(org_id, [])
+    store = _read_dpdp_store_cached()
+    return copy.deepcopy(store.get("retention_schedules", {}).get(org_id, []))
 
 def add_retention_schedule(org_id: str, schedule_data: Dict[str, Any]) -> Dict[str, Any]:
     store = _load_dpdp_store()
@@ -933,8 +989,8 @@ def delete_retention_schedule(org_id: str, schedule_id: str) -> bool:
     return False
 
 def get_erasure_tasks(org_id: str) -> List[Dict[str, Any]]:
-    store = _load_dpdp_store()
-    return store.get("erasure_tasks", {}).get(org_id, [])
+    store = _read_dpdp_store_cached()
+    return copy.deepcopy(store.get("erasure_tasks", {}).get(org_id, []))
 
 def create_erasure_task(org_id: str, task_data: Dict[str, Any]) -> Dict[str, Any]:
     store = _load_dpdp_store()
@@ -988,8 +1044,8 @@ def update_erasure_task(org_id: str, task_id: str, status: str, proof_hash: Opti
 # ==============================================================================
 
 def get_breach_incidents(org_id: str) -> List[Dict[str, Any]]:
-    store = _load_dpdp_store()
-    return store.get("breach_incidents", {}).get(org_id, [])
+    store = _read_dpdp_store_cached()
+    return copy.deepcopy(store.get("breach_incidents", {}).get(org_id, []))
 
 def log_breach_incident(org_id: str, incident_data: Dict[str, Any]) -> Dict[str, Any]:
     store = _load_dpdp_store()
@@ -1144,8 +1200,8 @@ def save_website_scan(org_id: str, scan_data: Dict[str, Any]) -> Dict[str, Any]:
 
 def get_website_scans(org_id: str) -> List[Dict[str, Any]]:
     """Retrieves all past DPDP website scans for the organization."""
-    store = _load_dpdp_store()
-    return store.get("website_scans", {}).get(org_id, [])
+    store = _read_dpdp_store_cached()
+    return copy.deepcopy(store.get("website_scans", {}).get(org_id, []))
 
 def get_website_scan_by_id(org_id: str, scan_id: str) -> Optional[Dict[str, Any]]:
     """Retrieves a specific website scan by its unique scan ID."""
@@ -1379,28 +1435,29 @@ def save_organisational_assessment(org_id: str, assessment_data: Dict[str, Any])
 
 def get_organisational_assessment(org_id: str) -> Dict[str, Any]:
     """Retrieves saved organisational DPDP assessment or provides default structure."""
-    store = _load_dpdp_store()
+    store = _read_dpdp_store_cached()
     existing = store.get("organisational_assessments", {}).get(org_id)
     if existing:
-        return existing
-        
+        return copy.deepcopy(existing)
+
     profile = get_onboarding_profile(org_id) or {}
-    is_demo = org_id in ("demo", "acme") or org_id.startswith("demo-") or profile.get("is_demo") is True
-    
+    is_demo = demo_fixture.is_demo_org(org_id, profile=profile)
+
     if is_demo:
         return {
             "org_id": org_id,
             "is_complete": True,
             "is_demo": True,
+            "demo_banner": demo_fixture.DEMO_DISCLAIMER,
             "current_step": 6,
             "organisation_profile": {
-                "name": profile.get("company_name", "Arogya Diagnostics Clinic Ltd"),
-                "industry": profile.get("industry", "Healthcare (Clinics & Diagnostics)"),
-                "website": profile.get("website_url", "https://arogyaclinic.in"),
+                "name": profile.get("company_name", demo_fixture.DEMO_ORG_NAME),
+                "industry": profile.get("industry", demo_fixture.DEMO_INDUSTRY),
+                "website": profile.get("website_url", demo_fixture.DEMO_WEBSITE),
                 "size": profile.get("organisation_size", "11-50 (Small / Medium)"),
                 "employees": profile.get("employee_count", 25),
-                "locations": "Mumbai, Maharashtra",
-                "contact_email": "dpo@organisation.com"
+                "locations": "Bengaluru & Mumbai, India",
+                "contact_email": demo_fixture.DEMO_PRIVACY_EMAIL,
             },
             "data_collection": {
                 "collects_patient_data": True,
@@ -1729,67 +1786,13 @@ def delete_evidence_artifact(org_id: str, artifact_id: str) -> bool:
     return True
 
 def get_evidence_artifacts(org_id: str, category: Optional[str] = None, status: Optional[str] = None, control_id: Optional[str] = None) -> List[Dict[str, Any]]:
-    """Returns all evidence artifacts uploaded by the organization."""
-    store = _load_dpdp_store()
-    artifacts = store.get("evidence_vault", {}).get(org_id, [])
+    """Returns all evidence artifacts uploaded by the organization without write-on-read."""
+    store = _read_dpdp_store_cached()
+    artifacts = copy.deepcopy(store.get("evidence_vault", {}).get(org_id, []))
     profile = get_onboarding_profile(org_id) or {}
-    is_demo = org_id in ("demo", "acme") or org_id.startswith("demo-") or profile.get("is_demo") is True
+    is_demo = demo_fixture.is_demo_org(org_id, profile=profile)
     if not artifacts and is_demo:
-        # Prepopulate realistic seed evidence for the organization
-        now = datetime.datetime.now(datetime.timezone.utc).isoformat()
-        initial_artifacts = [
-            {
-                "id": f"EVI-NOTICE-{org_id[-4:]}",
-                "title": "Itemised Privacy Notice v1.0 (Sec 5)",
-                "category": "Privacy Notices",
-                "control_id": "DPDP-SEC-05",
-                "filename": "clinic_privacy_notice_v1_0.pdf",
-                "file_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-                "uploaded_by": "Compliance Officer",
-                "uploaded_at": now,
-                "expiry_date": "2027-11-20",
-                "status": "Verified",
-                "review_notes": "Reviewed against Rule 3 plain language and 8th Schedule requirements.",
-                "reviewed_by": "Senior Legal Counsel",
-                "reviewed_at": now,
-                "audit_trail": [{"action": "VERIFIED", "timestamp": now, "actor": "Senior Legal Counsel"}]
-            },
-            {
-                "id": f"EVI-DPA-{org_id[-4:]}",
-                "title": "Signed AWS Mumbai Cloud Hosting DPA",
-                "category": "Processor Contracts",
-                "control_id": "DPDP-SEC-08-01",
-                "filename": "aws_india_dpa_executed.pdf",
-                "file_hash": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
-                "uploaded_by": "DevSecOps Lead",
-                "uploaded_at": now,
-                "expiry_date": "2028-05-15",
-                "status": "Verified",
-                "review_notes": "Section 8(2) mandatory breach cascading and encryption provisions verified.",
-                "reviewed_by": "Data Protection Officer",
-                "reviewed_at": now,
-                "audit_trail": [{"action": "VERIFIED", "timestamp": now, "actor": "Data Protection Officer"}]
-            },
-            {
-                "id": f"EVI-VAPT-{org_id[-4:]}",
-                "title": "Annual Web & API Security VAPT Certificate",
-                "category": "Security Safeguards",
-                "control_id": "DPDP-SEC-08-05",
-                "filename": "annual_vapt_audit_cert_2026.pdf",
-                "file_hash": "sha256:88d4266fd4e6338d13b845fcf289579d209c897823b9217da3e161936f031589",
-                "uploaded_by": "Security Architect",
-                "uploaded_at": now,
-                "expiry_date": "2027-08-10",
-                "status": "Verified",
-                "review_notes": "CERT-In empaneled auditor evaluation report.",
-                "reviewed_by": "Chief Information Security Officer",
-                "reviewed_at": now,
-                "audit_trail": [{"action": "VERIFIED", "timestamp": now, "actor": "CISO"}]
-            }
-        ]
-        store.setdefault("evidence_vault", {})[org_id] = initial_artifacts
-        _save_dpdp_store(store)
-        artifacts = initial_artifacts
+        artifacts = copy.deepcopy(demo_fixture.get_demo_seed_collections()["evidence"])
 
     result = list(artifacts)
     if category:
@@ -2597,8 +2600,8 @@ def save_discovery_suggestions(org_id: str, suggestions: List[Dict[str, Any]]) -
 
 
 def get_discovery_suggestions(org_id: str, status_filter: Optional[str] = None) -> List[Dict[str, Any]]:
-    store = _load_dpdp_store()
-    items = list(store.get("discovery_suggestions", {}).get(org_id, []))
+    store = _read_dpdp_store_cached()
+    items = copy.deepcopy(list(store.get("discovery_suggestions", {}).get(org_id, [])))
     if status_filter:
         low = status_filter.strip().lower()
         items = [i for i in items if str(i.get("status", "")).lower() == low]
@@ -2715,7 +2718,7 @@ ASSESSMENT_TOPICS: List[Dict[str, Any]] = [
     {"id": "topic_retention", "order": 6, "title": "6. Retention and deletion", "legal_ref": "Sections 8(7)–8(8) & Rule 8", "commencement": "Scheduled 13 May 2027", "question": "Have you defined how long customer records stay active and when expired data is deleted unless another Indian law mandates keeping it?", "why_it_matters": "Old personal data cannot be stored forever once the service purpose ends.", "evidence_required": "Retention Policy & verified deletion completion logs", "not_sure_guidance": "Review tax (Income Tax / GST) and sector rules before creating schedules in Data Retention."},
     {"id": "topic_security", "order": 7, "title": "7. Security safeguards", "legal_ref": "Section 8(5) & Rule 6", "commencement": "Scheduled 13 May 2027 (Ceiling up to ₹250 crore)", "question": "Are reasonable safeguards active across your systems (access controls, transport encryption, backups, logs, and storage safeguards)?", "why_it_matters": "Rule 6 outlines encryption/obfuscation, access control, logging, backups, and security reviews to prevent breaches.", "evidence_required": "Security policy, HTTPS check, backup & access review evidence", "not_sure_guidance": "Upload IT security notes or access review checklists into Evidence Vault."},
     {"id": "topic_incidents", "order": 8, "title": "8. Privacy incident response", "legal_ref": "Section 8(6) & Rule 7", "commencement": "Scheduled 13 May 2027 (Ceiling up to ₹200 crore)", "question": "Does your team have an Incident Response Plan covering containment, internal approvals, and Board/customer notifications?", "why_it_matters": "Prompt containment and prepared Rule 7 intimation drafts prevent chaotic incident handling.", "evidence_required": "Incident Response SOP & drill/log records", "not_sure_guidance": "Generate an Incident Response Plan draft from Document Centre and review roles."},
-    {"id": "topic_children", "order": 9, "title": "9. Children's data (where applicable)", "legal_ref": "Section 9 (clarified by S.O. 5458(E), Oct 2026) & Rule 10", "commencement": "Scheduled 13 May 2027 (Ceiling up to ₹200 crore)", "question": "If you process data of minors under 18, do you verify parent/guardian consent and disable behavioral tracking or targeted ads?", "why_it_matters": "Strict prohibition on behavioral profiling and targeted advertising to children.", "evidence_required": "Guardian verification workflow & tracker audit (or N/A declaration)", "not_sure_guidance": "Select 'Not applicable' if you strictly serve adult B2B or adult consumers with zero minor intake."},
+    {"id": "topic_children", "order": 9, "title": "9. Children & persons with disabilities with lawful guardians (where applicable)", "legal_ref": "Section 9(1) (clarified by S.O. 5458(E), Oct 2026) & Rule 10", "commencement": "Scheduled 13 May 2027 (Ceiling up to ₹200 crore)", "question": "If you process data of children under 18 or persons with disabilities who have lawful guardians, do you obtain verifiable parent/lawful guardian consent and block tracking or targeted ads to children?", "why_it_matters": "Section 9(1) governs verifiable consent for children and persons with disabilities who have lawful guardians, alongside strict prohibitions on behavioral tracking and targeted advertising to children.", "evidence_required": "Parent/lawful guardian consent workflow & tracker audit (or N/A declaration)", "not_sure_guidance": "Select 'Not applicable' only if you strictly serve independent adults and process neither children's data nor data involving a lawful guardian under Section 9(1)."},
     {"id": "topic_sdf", "order": 10, "title": "10. Significant Data Fiduciary duties (where applicable)", "legal_ref": "Section 10 (updated to 'data audit' under S.O. 5458(E), Oct 2026) & Rule 11", "commencement": "Conditional upon Central Government notification (13 May 2027)", "question": "If notified as a Significant Data Fiduciary, have you planned for a resident DPO, periodic DPIA, and independent data audit?", "why_it_matters": "Applies only to high-volume/high-sensitivity fiduciaries notified by the Central Government.", "evidence_required": "SDF applicability note / DPO resolution (or N/A assessment)", "not_sure_guidance": "Most SMEs and startups are NOT Significant Data Fiduciaries unless notified by the Government; pick 'Not sure' or 'Not applicable' for guidance."},
 ]
 
@@ -2725,8 +2728,8 @@ def get_assessment_topics(org_id: str) -> Dict[str, Any]:
     Returns the 10 understandable guided assessment topics mapped with saved topic responses
     and honest 5-stage verification state: Not assessed -> Business self-attested -> Evidence uploaded -> Evidence reviewed -> Verified.
     """
-    store = _load_dpdp_store()
-    saved_map = store.setdefault("organisational_assessments", {}).get(f"{org_id}::topics", {})
+    store = _read_dpdp_store_cached()
+    saved_map = store.get("organisational_assessments", {}).get(f"{org_id}::topics", {})
     evidence = get_evidence_artifacts(org_id)
     verified_ev = [e for e in evidence if e.get("status") == "Verified"]
     reviewed_ev = [e for e in evidence if e.get("status") in ("Verified", "Evidence reviewed", "Under review")]
@@ -2861,20 +2864,40 @@ def save_vendor_questionnaire(org_id: str, vendor_id: str, responses: Dict[str, 
     return q_rec
 
 
-def get_portal_config(org_id: str, default_name: str = "Your Business", default_slug: str = "") -> Dict[str, Any]:
-    store = _load_dpdp_store()
+def get_portal_config(org_id: str, default_name: str = "Registered Organisation", default_slug: str = "") -> Dict[str, Any]:
+    store = _read_dpdp_store_cached()
+    if demo_fixture.is_demo_org(org_id):
+        saved_demo = store.get("portal_configs", {}).get(org_id)
+        if saved_demo:
+            res = copy.deepcopy(saved_demo)
+            res["brand_name"] = demo_fixture.DEMO_ORG_NAME
+            res["is_demo"] = True
+            res["demo_banner"] = demo_fixture.DEMO_BANNER
+            return res
+        return demo_fixture.get_demo_portal_config()
+
     cfg = store.get("portal_configs", {}).get(org_id)
     if cfg:
-        return dict(cfg)
+        return copy.deepcopy(cfg)
+
     profile = get_onboarding_profile(org_id) or {}
+    org_name = profile.get("company_name") or ""
+    if not org_name or org_name == "Your Business":
+        try:
+            import saas_store
+            org_rec = saas_store.get_organization(org_id) or {}
+            org_name = org_rec.get("name") or default_name
+        except Exception:
+            org_name = default_name
     clean_slug = re.sub(r"[^a-z0-9-]", "-", (default_slug or org_id).lower()).strip("-")
     return {
         "enabled": True,
+        "is_demo": False,
         "slug": clean_slug,
-        "brand_name": profile.get("company_name") or default_name,
-        "contact_email": profile.get("contact_email") or "privacy@yourcompany.in",
+        "brand_name": org_name,
+        "contact_email": profile.get("contact_email") or "",
         "intro_text": "Submit a privacy request (view data summary, request correction, ask for deletion, or raise a privacy grievance). Submitted details are handled strictly by this organisation.",
-        "custom_domain_preview": f"privacy.{clean_slug}.in" if clean_slug else "privacy.yourcompany.in",
+        "custom_domain_preview": f"privacy.{clean_slug}.in" if clean_slug else "",
         "require_human_verification": True,
         "updated_at": "",
     }
@@ -2899,92 +2922,153 @@ def save_portal_config(org_id: str, updates: Dict[str, Any]) -> Dict[str, Any]:
 
 def submit_portal_request_public(org_id: str, payload: Dict[str, Any]) -> Dict[str, Any]:
     """
-    Stores a public Data Principal privacy request with a random verification token
-    for status checking without ever disclosing whether an email exists in any DB.
+    Stores a public Data Principal privacy request with an expiring random verification token
+    and short-window duplicate guard without disclosing whether an email exists in any DB.
     """
     import secrets
+    req_email = sanitize_plain_text(payload.get("email", ""), 120).lower()
+    req_type = str(payload.get("type", "ACCESS")).upper()
+    req_desc = sanitize_plain_text(payload.get("description", ""), 1000)
+
+    now_dt = datetime.datetime.now(datetime.timezone.utc)
+    recent_cutoff = now_dt - datetime.timedelta(minutes=10)
+    for existing in get_rights_requests(org_id):
+        if (
+            str(existing.get("requester_email", "")).lower() == req_email
+            and str(existing.get("type", "")).upper() == req_type
+            and str(existing.get("description", "")).strip().lower() == req_desc.strip().lower()
+        ):
+            rec_at = str(existing.get("received_at", ""))
+            try:
+                parsed = datetime.datetime.fromisoformat(rec_at.replace("Z", "+00:00"))
+                if parsed >= recent_cutoff:
+                    return {
+                        "duplicate": True,
+                        "reference_id": existing["id"],
+                        "verification_code": existing.get("verification_code", ""),
+                        "verification_code_expires_at": existing.get("verification_code_expires_at", ""),
+                        "status": existing.get("status", "RECEIVED"),
+                        "message": "An identical request was recently submitted. Please check status with your reference ID.",
+                    }
+            except Exception:
+                pass
+
     verification_code = secrets.token_hex(3).upper()
+    expires_at = (now_dt + datetime.timedelta(days=30)).isoformat()
     req = submit_rights_request(org_id, {
-        "type": payload.get("type", "ACCESS"),
+        "type": req_type,
         "requester_name": sanitize_plain_text(payload.get("name", ""), 120),
-        "requester_email": sanitize_plain_text(payload.get("email", ""), 120).lower(),
-        "description": sanitize_plain_text(payload.get("description", ""), 1000),
+        "requester_email": req_email,
+        "description": req_desc,
         "verification_code": verification_code,
+        "verification_code_expires_at": expires_at,
         "source_channel": "Customer Privacy Portal",
     })
-    # Persist verification code on the stored record safely
     store = _load_dpdp_store()
     for r in store.get("rights_requests", {}).get(org_id, []):
         if r.get("id") == req.get("id"):
+            r["requester_email"] = req_email
             r["verification_code"] = verification_code
+            r["verification_code_expires_at"] = expires_at
             r["source_channel"] = "Customer Privacy Portal"
             break
     _save_dpdp_store(store)
     return {
+        "duplicate": False,
         "reference_id": req["id"],
         "verification_code": verification_code,
+        "verification_code_expires_at": expires_at,
         "status": req.get("status", "RECEIVED"),
         "message": "If this organisation holds matching records, your request will be verified and reviewed per published grievance processes.",
     }
 
 
 def lookup_portal_request_public(org_id: str, reference_id: str, verification_code: str) -> Optional[Dict[str, Any]]:
-    """Checks request status STRICTLY matching both reference_id AND verification_code without exposing personal details."""
+    """Checks request status strictly matching non-expired reference_id + verification_code."""
     ref = (reference_id or "").strip().upper()
     code = (verification_code or "").strip().upper()
     if not ref or not code:
         return None
+    now_dt = datetime.datetime.now(datetime.timezone.utc)
     for r in get_rights_requests(org_id):
         if str(r.get("id", "")).upper() == ref and str(r.get("verification_code", "")).upper() == code:
+            exp = r.get("verification_code_expires_at")
+            if exp:
+                try:
+                    if datetime.datetime.fromisoformat(str(exp).replace("Z", "+00:00")) < now_dt:
+                        return None
+                except Exception:
+                    pass
             return {
                 "reference_id": r["id"],
                 "type": r.get("type"),
                 "status": r.get("status"),
                 "received_at": r.get("received_at"),
                 "updated_at": r.get("updated_at"),
+                "verification_code_expires_at": exp,
                 "public_status_note": "Verified reference matched. Status updates are posted by the organisation administrator.",
             }
     return None
 
 
-def get_privacy_profile_config(org_id: str, default_name: str = "Your Business") -> Dict[str, Any]:
-    store = _load_dpdp_store()
+def get_privacy_profile_config(org_id: str, default_name: str = "") -> Dict[str, Any]:
+    store = _read_dpdp_store_cached()
+    if demo_fixture.is_demo_org(org_id):
+        saved_demo = store.get("privacy_profiles", {}).get(org_id)
+        if saved_demo:
+            res = copy.deepcopy(saved_demo)
+            res["headline"] = demo_fixture.DEMO_ORG_NAME
+            res["is_demo"] = True
+            res["demo_banner"] = demo_fixture.DEMO_DISCLAIMER
+            return res
+        return demo_fixture.get_demo_privacy_profile_config()
+
     cfg = store.get("privacy_profiles", {}).get(org_id)
     if cfg:
-        return dict(cfg)
+        return copy.deepcopy(cfg)
+
     profile = get_onboarding_profile(org_id) or {}
+    org_name = profile.get("company_name") or ""
+    if not org_name or org_name == "Your Business":
+        try:
+            import saas_store
+            org_rec = saas_store.get_organization(org_id) or {}
+            org_name = org_rec.get("name") or default_name or "Registered Organisation"
+        except Exception:
+            org_name = default_name or "Registered Organisation"
+
     return {
         "published": True,
-        "headline": profile.get("company_name") or default_name,
-        "privacy_contact_name": profile.get("grievance_officer") or "Privacy & Grievance Contact",
-        "privacy_contact_email": profile.get("contact_email") or "privacy@yourcompany.in",
+        "is_demo": False,
+        "headline": org_name,
+        "privacy_contact_name": profile.get("grievance_officer") or "",
+        "privacy_contact_email": profile.get("contact_email") or "",
         "show_approved_notice": True,
         "show_portal_link": True,
         "show_last_review_date": True,
-        "selected_practices": [
-            "Dedicated Grievance Officer contact published",
-            "Customer Privacy Request Portal active for access & correction enquiries",
-            "Written vendor agreements & retention schedules actively tracked",
-        ],
+        # Strictly NO fabricated default claims until explicitly reviewed & confirmed by business
+        "selected_practices": [],
         "approved_document_ids": [],
-        "last_reviewed_at": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d"),
+        "last_reviewed_at": None,
     }
 
 
 def save_privacy_profile_config(org_id: str, updates: Dict[str, Any]) -> Dict[str, Any]:
     cur = get_privacy_profile_config(org_id)
     store = _load_dpdp_store()
+    now_date = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d")
     cur.update({
         "published": bool(updates.get("published", cur["published"])),
         "headline": sanitize_plain_text(updates.get("headline") or cur["headline"], 140),
-        "privacy_contact_name": sanitize_plain_text(updates.get("privacy_contact_name") or cur["privacy_contact_name"], 100),
-        "privacy_contact_email": sanitize_plain_text(updates.get("privacy_contact_email") or cur["privacy_contact_email"], 120),
+        "privacy_contact_name": sanitize_plain_text(updates.get("privacy_contact_name") if updates.get("privacy_contact_name") is not None else cur.get("privacy_contact_name", ""), 100),
+        "privacy_contact_email": sanitize_plain_text(updates.get("privacy_contact_email") if updates.get("privacy_contact_email") is not None else cur.get("privacy_contact_email", ""), 120),
         "show_approved_notice": bool(updates.get("show_approved_notice", True)),
         "show_portal_link": bool(updates.get("show_portal_link", True)),
         "show_last_review_date": bool(updates.get("show_last_review_date", True)),
-        "selected_practices": [sanitize_plain_text(p, 160) for p in updates.get("selected_practices", cur["selected_practices"]) if str(p).strip()][:10],
+        "selected_practices": [sanitize_plain_text(p, 160) for p in updates.get("selected_practices", cur.get("selected_practices", [])) if str(p).strip()][:10],
         "approved_document_ids": list(updates.get("approved_document_ids", cur.get("approved_document_ids", [])))[:20],
-        "last_reviewed_at": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d"),
+        "last_reviewed_at": now_date,
+        "reviewed_by": sanitize_plain_text(updates.get("reviewed_by") or "Workspace Administrator", 100),
     })
     store.setdefault("privacy_profiles", {})[org_id] = cur
     _save_dpdp_store(store)
@@ -2995,7 +3079,9 @@ def get_public_privacy_profile(org_id: str, org_slug: str) -> Optional[Dict[str,
     """
     Returns ONLY public-approved fields for an organisation's Shareable Privacy Profile.
     STRICTLY excludes inventory, vendor contracts, customer requests, security configs, evidence files, or internal assessments.
+    Never shows unverified claims or fake review timestamps.
     """
+    is_demo = demo_fixture.is_demo_org(org_id) or demo_fixture.is_demo_slug(org_slug)
     cfg = get_privacy_profile_config(org_id)
     if not cfg.get("published"):
         return None
@@ -3009,8 +3095,10 @@ def get_public_privacy_profile(org_id: str, org_slug: str) -> Optional[Dict[str,
     ]
     return {
         "org_name": cfg["headline"],
-        "privacy_contact_name": cfg["privacy_contact_name"],
-        "privacy_contact_email": cfg["privacy_contact_email"],
+        "is_demo": is_demo,
+        "demo_banner": demo_fixture.DEMO_DISCLAIMER if is_demo else None,
+        "privacy_contact_name": cfg.get("privacy_contact_name") or "",
+        "privacy_contact_email": cfg.get("privacy_contact_email") or "",
         "portal_url": f"/portal/{org_slug}" if cfg.get("show_portal_link") else None,
         "approved_notice": {"title": latest_notice.get("title"), "version": latest_notice.get("version"), "content": latest_notice.get("content")} if latest_notice else None,
         "approved_documents": approved_docs,
@@ -3021,8 +3109,8 @@ def get_public_privacy_profile(org_id: str, org_slug: str) -> Optional[Dict[str,
 
 
 def get_generated_documents(org_id: str) -> List[Dict[str, Any]]:
-    store = _load_dpdp_store()
-    return store.get("generated_documents", {}).get(org_id, [])
+    store = _read_dpdp_store_cached()
+    return copy.deepcopy(store.get("generated_documents", {}).get(org_id, []))
 
 
 def get_generated_document(org_id: str, doc_id: str) -> Optional[Dict[str, Any]]:
@@ -3158,3 +3246,192 @@ def delete_all_org_dpdp_data(org_id: str) -> None:
             os.rmdir(org_dir)
     except Exception:
         pass
+
+
+def get_home_summary_fast(org_id: str) -> Dict[str, Any]:
+    """
+    Single-pass cached computation for /api/dpdp/home-summary.
+    Reads _DPDP_CACHE_DATA once instead of parsing 4+ MB JSON 30 times per request.
+    """
+    store = _read_dpdp_store_cached()
+    profile = copy.deepcopy(store.get("onboarding_profiles", {}).get(org_id) or {})
+    if not profile and demo_fixture.is_demo_org(org_id):
+        profile = demo_fixture.get_demo_onboarding_profile()
+    elif profile and demo_fixture.is_demo_org(org_id, profile=profile):
+        profile["company_name"] = demo_fixture.DEMO_ORG_NAME
+        profile["is_demo"] = True
+
+    inventory = store.get("data_inventories", {}).get(org_id, [])
+    scans = store.get("website_scans", {}).get(org_id, [])
+    notices = store.get("privacy_notices", {}).get(org_id, [])
+    vendors = store.get("vendors", {}).get(org_id, [])
+    requests_list = store.get("rights_requests", {}).get(org_id, [])
+    retention = store.get("retention_schedules", {}).get(org_id, [])
+    incidents = store.get("breach_incidents", {}).get(org_id, [])
+    consents = store.get("consent_records", {}).get(org_id, [])
+    evidence = store.get("evidence_vault", {}).get(org_id, [])
+    if not evidence and demo_fixture.is_demo_org(org_id, profile=profile):
+        evidence = demo_fixture.get_demo_seed_collections()["evidence"]
+
+    assessment = store.get("assessments", {}).get(org_id)
+    rem_tasks_all = (assessment or {}).get("remediation_tasks")
+    if rem_tasks_all is None:
+        rem_tasks_all = _initialize_assessment(org_id).get("remediation_tasks", [])
+
+    has_notice = bool(notices) or any("notice" in (e.get("category", "") + e.get("title", "")).lower() for e in evidence)
+    steps = [
+        {"key": "business_profile", "title": "Tell us about your business", "completed": bool(profile.get("onboarding_completed") or (profile.get("company_name") and profile.get("industry"))), "action_view": "onboarding", "action_label": "Complete setup"},
+        {"key": "customer_data", "title": "Record your customer data", "completed": len(inventory) > 0, "action_view": "inventory", "action_label": "Add customer data"},
+        {"key": "website_scan", "title": "Scan your website", "completed": len(scans) > 0, "action_view": "scanner", "action_label": "Scan website"},
+        {"key": "privacy_notice", "title": "Create or upload your Privacy Notice", "completed": has_notice, "action_view": "notices", "action_label": "Create Privacy Notice"},
+        {"key": "vendors", "title": "Add companies you share data with", "completed": len(vendors) > 0, "action_view": "vendors", "action_label": "Add a company"},
+        {"key": "evidence", "title": "Upload proof into Evidence Vault", "completed": len(evidence) > 0, "action_view": "evidence", "action_label": "Upload proof"},
+    ]
+    completed_count = sum(1 for s in steps if s["completed"])
+    setup_progress = {
+        "completed_count": completed_count,
+        "total_steps": 6,
+        "steps": steps,
+        "next_recommended_step": next((s for s in steps if not s["completed"]), None),
+        "onboarding_completed": bool(profile.get("onboarding_completed")),
+    }
+
+    attention: List[Dict[str, Any]] = []
+    if not inventory:
+        attention.append({"id": "attn-inventory", "title": "List what customer details your business collects", "why": "Every privacy notice, vendor check, and deletion rule starts with knowing what customer data you hold.", "action_label": "Add customer data", "fix_target": "inventory", "severity": "HIGH"})
+    if not notices:
+        attention.append({"id": "attn-notice", "title": "Create your customer Privacy Notice draft", "why": "Customers need clear plain-English details of what you collect, why you collect it, and who to contact.", "action_label": "Create Privacy Notice", "fix_target": "notices", "severity": "HIGH"})
+    unsigned_vendors = [v for v in vendors if not any(w in str(v.get("dpa_status", "")).upper() for w in ("SIGNED", "EXECUTED", "ACTIVE"))]
+    if unsigned_vendors:
+        v0 = unsigned_vendors[0]
+        attention.append({"id": "attn-vendor-dpa", "title": f"Check agreement with {v0.get('name', 'vendor')} ({len(unsigned_vendors)} pending)", "why": "Section 8(2) requires written contracts with software, lab, and cloud vendors that handle your customer data.", "action_label": "Review companies", "fix_target": "vendors", "severity": "HIGH"})
+    elif not vendors:
+        attention.append({"id": "attn-vendors-empty", "title": "Add software, lab, or courier companies you share data with", "why": "Track billing tools, hosting, labs, and payment gateways so contracts and risks stay organised.", "action_label": "Add company", "fix_target": "vendors", "severity": "MEDIUM"})
+    if scans:
+        open_gaps = [f for f in scans[0].get("findings", []) if f.get("severity") in ("CRITICAL", "HIGH")]
+        if open_gaps:
+            attention.append({"id": "attn-scan-gap", "title": open_gaps[0].get("title", "Fix website privacy issue"), "why": f"Found on {scans[0].get('target_url', 'your website')} during your website privacy check.", "action_label": "Fix this", "fix_target": "scanner", "severity": open_gaps[0].get("severity", "HIGH")})
+    else:
+        attention.append({"id": "attn-scan-run", "title": "Check your public website for visible privacy gaps", "why": "Find missing privacy notice links, pre-checked boxes, or third-party scripts on your public website.", "action_label": "Run website check", "fix_target": "scanner", "severity": "MEDIUM"})
+    open_req = [r for r in requests_list if r.get("status") not in ("COMPLETED", "REJECTED")]
+    if open_req:
+        attention.append({"id": "attn-requests", "title": f"Respond to {len(open_req)} open customer privacy request(s)", "why": "Keep verification and response records ready so no customer enquiry is missed.", "action_label": "Open requests", "fix_target": "rights", "severity": "HIGH"})
+    for rt in [t for t in rem_tasks_all if t.get("status") not in ("Resolved", "Completed", "RESOLVED", "Not applicable")][:3]:
+        attention.append({"id": rt.get("id"), "title": rt.get("title", "Follow-up task"), "why": rt.get("description", "Action item from your Action Plan."), "action_label": "Fix this", "fix_target": "remediation", "severity": rt.get("severity", "MEDIUM")})
+    attention = attention[:3]
+
+    events: List[Dict[str, Any]] = []
+    for sc in scans[:5]:
+        events.append({"timestamp": sc.get("scanned_at") or sc.get("created_at") or "", "title": f"Website scanned: {sc.get('target_url', '')}", "category": "Website Check", "target_view": "scanner"})
+    for ev in evidence[:5]:
+        events.append({"timestamp": ev.get("uploaded_at") or "", "title": f"Evidence uploaded: {ev.get('title', ev.get('filename', 'Document'))} ({ev.get('status', 'Uploaded')})", "category": "Evidence Vault", "target_view": "evidence"})
+    for n in notices[:5]:
+        events.append({"timestamp": n.get("updated_at") or n.get("created_at") or "", "title": f"Privacy Notice saved: {n.get('title', 'Notice')} ({n.get('version', 'v1.0')})", "category": "Privacy Notice", "target_view": "notices"})
+    for req in requests_list[:5]:
+        events.append({"timestamp": req.get("received_at") or "", "title": f"Customer privacy request logged ({req.get('type', 'ACCESS')} - {req.get('status', 'RECEIVED')})", "category": "Customer Requests", "target_view": "rights"})
+    for inc in incidents[:5]:
+        events.append({"timestamp": inc.get("created_at") or "", "title": f"Incident logged: {inc.get('title', 'Security Incident')}", "category": "Incident Response", "target_view": "breaches"})
+    for aud in get_audit_logs(org_id, limit=8):
+        events.append({"timestamp": aud.get("timestamp", ""), "title": f"Account event: {aud.get('action', '')}", "category": "Audit Trail", "target_view": "settings"})
+    events.sort(key=lambda e: str(e.get("timestamp", "")), reverse=True)
+
+    return {
+        "profile": profile,
+        "setup_progress": setup_progress,
+        "attention_tasks": attention,
+        "recent_activity": events[:10],
+        "counts": {
+            "inventory_count": len(inventory),
+            "vendor_count": len(vendors),
+            "vendors_count": len(vendors),
+            "notice_count": len(notices),
+            "consent_count": len(consents),
+            "request_count": len(requests_list),
+            "rights_requests_count": len(requests_list),
+            "open_requests_count": len(open_req),
+            "retention_count": len(retention),
+            "incident_count": len(incidents),
+            "evidence_count": len(evidence),
+            "evidence_awaiting_review_count": sum(1 for e in evidence if e.get("status") in ("Uploaded", "Pending review")),
+            "scan_count": len(scans),
+            "website_scans_count": len(scans),
+        },
+        "latest_scan": copy.deepcopy(scans[0]) if scans else None,
+    }
+
+
+def get_notifications(org_id: str) -> List[Dict[str, Any]]:
+    """
+    Computes genuine actionable notifications strictly from real stored workspace records:
+    overdue action tasks, expiring evidence, unsigned vendor contracts, open customer requests, and security events.
+    """
+    store = _read_dpdp_store_cached()
+    today_str = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d")
+    in_30_days = (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=30)).strftime("%Y-%m-%d")
+    notifs: List[Dict[str, Any]] = []
+
+    requests_list = store.get("rights_requests", {}).get(org_id, [])
+    for r in requests_list:
+        if r.get("status") not in ("COMPLETED", "REJECTED"):
+            notifs.append({
+                "id": f"notif-req-{r.get('id')}",
+                "kind": "customer_request",
+                "severity": "HIGH",
+                "title": f"Open {r.get('type', 'Privacy')} Request ({r.get('id')})",
+                "detail": f"Status: {r.get('status', 'RECEIVED')}. Review and respond cleanly.",
+                "href": "/app/requests",
+            })
+
+    tasks = (store.get("assessments", {}).get(org_id) or {}).get("remediation_tasks", [])
+    for t in tasks:
+        if t.get("status") in ("Resolved", "Completed", "RESOLVED", "Not applicable"):
+            continue
+        due = str(t.get("due_date") or t.get("deadline") or "")[:10]
+        if due and due < today_str:
+            notifs.append({
+                "id": f"notif-tsk-{t.get('id')}",
+                "kind": "overdue_task",
+                "severity": "HIGH",
+                "title": f"Overdue Action Task: {t.get('title', 'Task')}",
+                "detail": f"Due {due}. Open Action Plan to update or resolve.",
+                "href": "/app/action-plan",
+            })
+
+    evidence = store.get("evidence_vault", {}).get(org_id, [])
+    for e in evidence:
+        exp = str(e.get("expiry_date") or "")[:10]
+        if exp and exp <= in_30_days:
+            notifs.append({
+                "id": f"notif-evi-{e.get('id')}",
+                "kind": "evidence_expiry",
+                "severity": "MEDIUM" if exp >= today_str else "HIGH",
+                "title": f"Evidence {'Expired' if exp < today_str else 'Expiring Soon'}: {e.get('title', e.get('filename', 'Document'))}",
+                "detail": f"Expiry date: {exp}. Upload a current version to Evidence Vault.",
+                "href": "/app/evidence",
+            })
+
+    vendors = store.get("vendors", {}).get(org_id, [])
+    for v in vendors:
+        if not any(ok in str(v.get("dpa_status", "")).upper() for ok in ("SIGNED", "EXECUTED", "ACTIVE")):
+            notifs.append({
+                "id": f"notif-vnd-{v.get('id')}",
+                "kind": "vendor_dpa",
+                "severity": "MEDIUM",
+                "title": f"Vendor DPA Pending: {v.get('name', 'Processor')}",
+                "detail": "Written Section 8(2) agreement is not yet marked signed.",
+                "href": "/app/vendors",
+            })
+
+    for aud in get_audit_logs(org_id, limit=10):
+        act = str(aud.get("action", ""))
+        if act in ("auth.login_failed", "auth.mfa_disabled", "auth.mfa_recovery_used"):
+            notifs.append({
+                "id": f"notif-sec-{aud.get('timestamp', '')}",
+                "kind": "security_alert",
+                "severity": "HIGH" if act == "auth.mfa_disabled" else "MEDIUM",
+                "title": f"Security Alert: {act}",
+                "detail": f"Actor: {aud.get('actor_email', 'Account')} at {str(aud.get('timestamp', ''))[:19]}",
+                "href": "/app/settings",
+            })
+
+    return notifs[:25]

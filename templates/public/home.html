@@ -11,8 +11,8 @@
         <h1 class="ta-h1">Your Business Has Customer Data. We Help You Stay in Control.</h1>
         <p class="ta-lead">Understand your DPDP readiness, map how personal information moves through your business and manage privacy operations from one simple platform.</p>
         <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:26px;">
-          <a href="/register" class="btn btn-primary btn-lg">Start My Free Assessment</a>
-          <a href="/demo" class="btn btn-outline btn-lg">Explore the Platform</a>
+          <a href="/register?plan=free" class="btn btn-primary btn-lg cta-arrow-btn">Start My Free Assessment <span class="ta-arrow" aria-hidden="true">&rarr;</span></a>
+          <a href="/demo" class="btn btn-outline btn-lg cta-arrow-btn">Explore the Platform <span class="ta-arrow" aria-hidden="true">&rarr;</span></a>
         </div>
         <div style="display:flex;gap:22px;flex-wrap:wrap;margin-top:24px;font-size:13.5px;color:var(--ink-soft);font-weight:600;">
           <span>&#10003; Assisted onboarding &bull; zero blank-page guesswork</span>
@@ -78,8 +78,9 @@
           <h2 class="ta-h2" style="margin-top:10px;">Run an Instant Public Website Check</h2>
           <p class="ta-muted" style="font-size:15px;">Inspect public HTTPS transport, privacy notice links, enquiry forms, and visible tracking scripts before writing a single spreadsheet row. <em>Note: website inspection cannot read internal private databases.</em></p>
           <form onsubmit="runHomeQuickScan(event)" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;">
+            <label for="home-scan-url" class="sr-only">Website URL to inspect</label>
             <input id="home-scan-url" type="url" class="input" style="flex:1;min-width:240px;" placeholder="https://yourcompany.in" required>
-            <button id="home-scan-btn" type="submit" class="btn btn-primary">Inspect Public Website</button>
+            <button id="home-scan-btn" type="submit" class="btn btn-primary cta-arrow-btn">Inspect Public Website <span class="ta-arrow" aria-hidden="true">&rarr;</span></button>
           </form>
           <div id="home-scan-result" style="margin-top:16px;"></div>
         </div>

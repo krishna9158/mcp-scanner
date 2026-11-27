@@ -563,10 +563,10 @@ DPDP_REQUIREMENTS: List[Dict[str, Any]] = [
         "section": "Section 9",
         "legal_reference": "Section 9, Rule 10",
         "rule_ref": "Rule 10",
-        "title": "Children's Personal Data & Verifiable Parental Consent",
-        "rule_title": "Processing of Children's & Disabled Persons' Personal Data",
-        "description": "Obtain verifiable parental consent before processing personal data of children under 18; strict ban on behavioral monitoring, tracking, or targeted advertising directed at children.",
-        "explanation": "Special protections for minors. Requires verifiable guardian consent before handling pediatric or student data, and strictly bans ad-targeting or behavioral profiling.",
+        "title": "Children's & Protected Persons' Personal Data (Section 9(1))",
+        "rule_title": "Processing of Personal Data of Children & Persons with Disabilities with Lawful Guardians",
+        "description": "Obtain verifiable consent of the parent or lawful guardian before processing personal data of children under 18 or persons with disabilities who have lawful guardians (Section 9(1)); strict ban on behavioral monitoring, tracking, or targeted advertising directed at children.",
+        "explanation": "Special protections under Section 9(1) apply to children under 18 and persons with disabilities who have lawful guardians. Requires verifiable parent or lawful guardian consent prior to processing, and bans behavioral monitoring or targeted advertising to children.",
         "applicability_conditions": ["processes_minor_data"],
         "industry_conditions": ["hospitals", "clinics", "diagnostic_centres", "education", "gaming", "ecommerce"],
         "effective_date": "13 May 2027",
@@ -1416,12 +1416,12 @@ AI_KNOWLEDGE_BASE = [
         "section": "Section 9 of DPDP Act, 2023 read with Rule 10 & October 2026 Removal of Difficulties Order",
         "effective_status": "Scheduled to commence on 13 May 2027",
         "answer": (
-            "Section 9 strictly governs the processing of personal data of children (defined as under 18 years of age) "
-            "and persons with disabilities. Data Fiduciaries must obtain verifiable parental consent before processing "
-            "such data. They are prohibited from undertaking tracking, behavioral monitoring, or targeted advertising "
+            "Section 9(1) strictly governs the processing of personal data of children (defined as under 18 years of age) "
+            "and persons with disabilities who have lawful guardians. Data Fiduciaries must obtain verifiable consent of "
+            "the parent or lawful guardian before processing such data. They are prohibited from undertaking tracking, behavioral monitoring, or targeted advertising "
             "directed at children, or any processing likely to cause detrimental effect on a child's well-being. "
-            "The October 2026 Removal of Difficulties Order provides statutory textual and cross-reference alignment "
-            "relating to Section 9 and Section 10 without altering the core duty to verify parent/guardian consent."
+            "The October 2026 Removal of Difficulties Order (S.O. 5458(E)) clarified textual wording in Section 9(1) "
+            "and replaced 'audit' with 'data audit' in Section 10(2)(c)(ii)."
         ),
         "source": "DPDP Act, 2023, Section 9; Rule 10; October 2026 Removal of Difficulties Order",
         "expert_review": "Required for platforms offering pediatric or minor services."

@@ -3,39 +3,55 @@
 {% block content %}
 <section class="ta-section" style="padding-top:44px;">
   <div class="ta-container" style="max-width:920px;">
-    <div style="padding:14px 18px;border-radius:12px;background:var(--amber-soft);color:var(--amber);font-size:13.5px;font-weight:700;margin-bottom:24px;">
+    {% if profile.is_demo %}
+    <div style="padding:12px 16px;border-radius:12px;background:var(--amber-soft);color:var(--amber);font-size:13.5px;font-weight:700;margin-bottom:14px;">
+      {{ profile.demo_banner or 'DEMO DATA — FOR ILLUSTRATION ONLY.' }} Sample organisation profile shown for illustration only.
+    </div>
+    {% endif %}
+    <div style="padding:14px 18px;border-radius:12px;background:rgba(15,43,34,0.06);color:var(--ink);font-size:13.5px;font-weight:600;margin-bottom:24px;border:1px solid var(--border);">
       {{ profile.mandatory_disclaimer }}
     </div>
 
     <div class="card" style="margin-bottom:20px;">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:14px;">
         <div>
-          <span class="badge badge-emerald">Organisational Privacy Profile</span>
+          <span class="badge {% if profile.is_demo %}badge-amber{% else %}badge-emerald{% endif %}">
+            {% if profile.is_demo %}Sample Demo Profile{% else %}Organisational Privacy Profile{% endif %}
+          </span>
           <h1 class="ta-h2" style="margin-top:8px;">{{ profile.org_name }}</h1>
           {% if profile.last_reviewed_at %}
           <div class="ta-muted">Last Reviewed by Organisation: <strong>{{ profile.last_reviewed_at }}</strong></div>
+          {% else %}
+          <div class="ta-muted">Review Status: <span class="badge badge-neutral">Not yet formally reviewed by organisation</span></div>
           {% endif %}
         </div>
         {% if profile.portal_url %}
-        <a href="{{ profile.portal_url }}" class="btn btn-primary">Open Customer Privacy Portal</a>
+        <a href="{{ profile.portal_url }}" class="btn btn-primary cta-arrow-btn">Open Customer Privacy Portal <span class="ta-arrow" aria-hidden="true">&rarr;</span></a>
         {% endif %}
       </div>
 
       <div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--border);">
-        <strong>Privacy &amp; Grievance Contact:</strong> {{ profile.privacy_contact_name }} &mdash; <a href="mailto:{{ profile.privacy_contact_email }}">{{ profile.privacy_contact_email }}</a>
+        <strong>Privacy &amp; Grievance Contact:</strong>
+        {% if profile.privacy_contact_email %}
+          {{ profile.privacy_contact_name or 'Privacy Contact' }} &mdash; <a href="mailto:{{ profile.privacy_contact_email }}">{{ profile.privacy_contact_email }}</a>
+        {% else %}
+          <span class="ta-muted">Not configured yet by organisation administrator.</span>
+        {% endif %}
       </div>
     </div>
 
-    {% if profile.selected_practices %}
     <div class="card" style="margin-bottom:20px;">
       <h2 class="ta-h3">Organisation-Published Privacy Practices</h2>
+      {% if profile.selected_practices %}
       <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;margin-top:10px;font-size:14px;color:var(--ink-soft);">
         {% for p in profile.selected_practices %}
         <li>&#10003; {{ p }}</li>
         {% endfor %}
       </ul>
+      {% else %}
+      <p class="ta-muted" style="margin-top:8px;">This organisation has not yet published self-attested privacy statements. TrustAudit only displays claims explicitly saved and confirmed by the organisation.</p>
+      {% endif %}
     </div>
-    {% endif %}
 
     {% if profile.approved_notice %}
     <div class="card" style="margin-bottom:20px;">

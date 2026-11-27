@@ -45,13 +45,13 @@ FIELD_DETECTION_PATTERNS = [
         "lawful_basis": "DPDP Section 7(c) Statutory Obligation"
     },
     {
-        "category": "Children's & Minor Student Records",
-        "principal_type": "Children / Minors (Under 18)",
+        "category": "Children's & Protected Persons' Records",
+        "principal_type": "Children (<18) & Persons with Lawful Guardians",
         "sensitivity": "CRITICAL",
         "patterns": [r"minor", r"child", r"student_dob", r"guardian", r"parent_consent", r"grade", r"school_id"],
-        "reason": "Under Section 9, processing data of minors requires verifiable parental consent and prohibits behavioral tracking.",
+        "reason": "Under Section 9(1), processing personal data of children under 18 or persons with disabilities who have lawful guardians requires verifiable parent or lawful guardian consent, and prohibits behavioral tracking of children.",
         "suggested_retention": "Duration of enrollment + 3 years",
-        "lawful_basis": "DPDP Section 9 (Verifiable Parental Consent)"
+        "lawful_basis": "DPDP Section 9(1) (Verifiable Parent / Lawful Guardian Consent)"
     },
     {
         "category": "Customer Contact & Demographic Information",
